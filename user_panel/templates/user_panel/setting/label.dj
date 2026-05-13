@@ -460,8 +460,8 @@
                         </p>
                         <div class="flex justify-between items-center powered_by_hide" id="powered_by">
                             <p class="font-bold text-xs">Powered By Idiotship</p>
-                            <div id="shipzee_logo" class="ml-2">
-                                <img src="{% static 'images/logo/shipzee_logo.png' %}"
+                            <div id="idiotship_logo" class="ml-2">
+                                <img src="{% static 'images/logo/idiotship_logo.png' %}"
                                      alt="Idiotship Logo"
                                      class="h-6 object-contain">
                             </div>

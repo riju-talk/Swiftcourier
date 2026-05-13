@@ -1073,7 +1073,7 @@ def download_manifest(request):
                 "timestamp": timestamp.strftime("%B %d, %Y, %I:%M %p"),
                 "courier": courier,
                 "user": request.user,
-                "logo": static("images/logo/shipzee_logo.png"),
+                "logo": static("images/logo/idiotship_logo.png"),
                 "manifest_id": f"MANIFEST-{'_'.join(courier.name.split())}-{timestamp.strftime('%Y%m%d_%H%M%S')}",
             },
         )

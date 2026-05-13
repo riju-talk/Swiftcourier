@@ -7,7 +7,7 @@
  */
 (function () {
   var MM_TO_PT = 2.834645669;
-  var SHIPZEE_POWERED_LOGO = "/static/images/logo/shipzee_logo.png";
+  var SHIPZEE_POWERED_LOGO = "/static/images/logo/idiotship_logo.png";
   var LABELS_PER_PDF_CHUNK = 15;
   var DOC_BUILD_YIELD_EVERY = 8;
   var LOGO_BATCH_SIZE = 12;

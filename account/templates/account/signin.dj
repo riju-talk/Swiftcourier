@@ -6,7 +6,7 @@
 
 {% load static %}
 
-{% with parcel_logo='images/logo/shipzee_logo_288x66.png' %}
+{% with parcel_logo='images/logo/idiotship_logo_288x66.png' %}
 
 {% block css %}
 <style>

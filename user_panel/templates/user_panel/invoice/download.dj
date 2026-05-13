@@ -60,7 +60,7 @@
 
       <div class="top-right">
         <div>
-          <img src="{% static 'images/logo/shipzee_logo.png' %}" alt="logo" class="logo-sm" />
+          <img src="{% static 'images/logo/idiotship_logo.png' %}" alt="logo" class="logo-sm" />
         </div>
         <div class="bill-to">
           <div class="title">Client:</div>
