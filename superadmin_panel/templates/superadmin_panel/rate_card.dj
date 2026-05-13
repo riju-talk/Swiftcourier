@@ -1,0 +1,874 @@
+{% extends "components/layouts/layout.dj" %}
+
+
+{% block title %}
+    Rate Card
+{% endblock title %}
+
+
+{% load static %}
+
+{% block css %}
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .dark body {
+            background-color: #0f172a;
+        }
+
+        .input-compact {
+            width: 80px;
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            background-color: white;
+            text-align: center;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .dark .input-compact {
+            border-color: #334155;
+            background-color: #1e293b;
+            color: #e2e8f0;
+        }
+
+        .input-compact:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+        }
+
+        .input-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .dark .input-label {
+            color: #94a3b8;
+        }
+
+        .table-header {
+            position: sticky;
+            top: 0;
+            background-color: #f1f5f9;
+            z-index: 10;
+        }
+
+        .dark .table-header {
+            background-color: #1e293b;
+        }
+
+        .table-row:hover {
+            background-color: #f8fafc;
+        }
+
+        .dark .table-row:hover {
+            background-color: #1e293b;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .dark .card {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .surface-badge {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .air-badge {
+            background-color: #f0fdf4;
+            color: #15803d;
+        }
+
+        .express-badge {
+            background-color: #fdf2f8;
+            color: #db2777;
+        }
+
+        .hyperlocal-badge {
+            background-color: #fffbeb;
+            color: #b45309;
+        }
+
+        .dark .surface-badge {
+            background-color: #1e3a8a;
+            color: #dbeafe;
+        }
+
+        .dark .air-badge {
+            background-color: #14532d;
+            color: #bbf7d0;
+        }
+
+        .dark .express-badge {
+            background-color: #831843;
+            color: #fbcfe8;
+        }
+
+        .dark .hyperlocal-badge {
+            background-color: #78350f;
+            color: #fde68a;
+        }
+
+        .price-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 8px 0;
+        }
+
+        .additional-info {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        .dark .additional-info {
+            color: #94a3b8;
+        }
+
+        .price-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .price-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .price-type {
+            font-size: 0.75rem;
+            color: #64748b;
+            width: 60px;
+            text-align: right;
+        }
+
+        .dark .price-type {
+            color: #94a3b8;
+        }
+
+        .zone-header {
+            min-width: 120px;
+            text-align: center;
+        }
+
+        @media (max-width: 1280px) {
+            .responsive-table {
+                overflow-x: auto;
+                display: block;
+            }
+
+            .responsive-table table {
+                min-width: 1000px;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+{% endblock css %}
+
+
+{% block body %}
+    <div>
+        <button onclick="history.back()"
+                class="border border-blue-500 hover:bg-blue-700 text-blue-500 hover:text-white font-bold py-2 px-4 rounded">
+            Back
+        </button>
+    </div>
+    <div class="min-h-screen py-8 px-4 sm:px-6">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Courier Rate Management</h1>
+                    <p class="text-gray-600 dark:text-gray-400 mt-1">Manage shipping rates across different couriers and zones</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white rounded-lg flex items-center">
+                        <i class="fas fa-download mr-2"></i> Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card Container -->
+            <div class="card bg-white dark:bg-gray-800 p-6">
+                <!-- Filters Section -->
+                <div class="flex flex-wrap gap-4 justify-between items-center mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-wrap gap-4">
+                        <!-- Mode Filter -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mode / Type</label>
+                            <div class="relative">
+                                <select class="w-44 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    <option value="">All Types</option>
+                                    <option value="Surface">Surface</option>
+                                    <option value="Air">Air</option>
+                                    <option value="Express">Express</option>
+                                    <option value="Hyperlocal">Hyperlocal</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
+                                    <i class="fas fa-chevron-down text-sm"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Weight Filter -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Weight</label>
+                            <div class="relative">
+                                <select class="w-44 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                                    <option value="">All Weights</option>
+                                    <option value="0.5kg">0.5 KG</option>
+                                    <option value="1kg">1 KG</option>
+                                    <option value="1.5kg">1.5 KG</option>
+                                    <option value="2kg">2 KG</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
+                                    <i class="fas fa-chevron-down text-sm"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <div class="relative">
+                            <input type="text"
+                                   placeholder="Search couriers"
+                                   class="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Section -->
+                <form action="{% url 'superadmin_panel:assign-rate-card' %}" method="post">
+                    {% csrf_token %}
+                    <input hidden name="courier_id" value="{{ courier.id }}">
+                    <div class="responsive-table overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="table-header">
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Courier</th>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Mode</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300 zone-header">Within City</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300 zone-header">Within State</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300 zone-header">Metro</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300 zone-header">Rest of India</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300 zone-header">NE / J&K</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300">COD ₹</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700 dark:text-gray-300">COD %</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <!-- Xpressbees Row -->
+                                <tr class="table-row bg-white dark:bg-gray-800">
+                                    <td class="px-4 py-3 font-medium whitespace-nowrap align-top">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-3">
+                                                <i class="fas fa-shipping-fast text-blue-600 dark:text-blue-400"></i>
+                                            </div>
+                                            Xpressbees
+                                        </div>
+                                        <div class="additional-info">Addl. 0.5kg</div>
+                                    </td>
+
+                                    <td class="px-4 py-3 align-top">
+                                        <span class="badge surface-badge">Surface</span>
+                                    </td>
+
+                                    <!-- Within City -->
+                                    <td class="px-2 py-2">
+                                        <div class="price-input-group">
+                                            <div class="price-row">
+                                                <input type="text"
+                                                       name="surface_within_city_forward_base"
+                                                       placeholder="Base F"
+                                                       class="input-compact"
+                                                       value="100">
+                                                <input type="text"
+                                                       name="surface_within_city_rto_base"
+                                                       placeholder="Base RTO"
+                                                       class="input-compact"
+                                                       value="100">
+                                            </div>
+                                            <div class="price-row">
+                                                <input type="text"
+                                                       name="surface_within_city_forward_additional"
+                                                       placeholder="Adnl. F"
+                                                       class="input-compact"
+                                                       value="100">
+                                                <input type="text"
+                                                       name="surface_within_city_rto_additional"
+                                                       placeholder="Adnl. RTO"
+                                                       class="input-compact"
+                                                       value="100">
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Within State -->
+                                    <td class="px-2 py-2">
+                                        <div class="price-input-group">
+                                            <div class="price-row">
+                                                <input type="text"
+                                                       name="surface_within_state_forward_base"
+                                                       placeholder="Base F"
+                                                       class="input-compact"
+                                                       value="100">
+                                                <input type="text"
+                                                       name="surface_within_state_rto_base"
+                                                       placeholder="Base RTO"
+                                                       class="input-compact"
+                                                       value="100">
+                                            </div>
+                                            <div class="price-row">
+                                                <input type="text"
+                                                       name="surface_within_state_forward_additional"
+                                                       placeholder="Adnl. F"
+                                                       class="input-compact"
+                                                       value="100">
+                                                <input type="text"
+                                                       name="surface_within_state_rto_additional"
+                                                       placeholder="Adnl. RTO"
+                                                       class="input-compact"
+                                                       value="100">
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Metro -->
+                                    <td class="px-2 py-2">
+                                        <div class="price-input-group">
+                                            <div class="price-row">
+                                                <input type="text"
+                                                       name="surface_metro_to_metro_forward_base"
+                                                       placeholder="Base F"
+                                                       class="input-compact"
+                                                       value="100">
+                                                <input type="text"
+                                                       name="surface_metro_to_metro_rto_base"
+                                                       placeholder="Base RTO"
+                                                       class="input-compact"
+                                                       value="100">
+                                            </div>
+                                            <div class="price-row">
+                                                <input type="text"
+                                                       name="surface_metro_to_metro_forward_additional"
+                                                       placeholder="Adnl. F"
+                                                       class="input-compact"
+                                                       value="100">
+                                                <input type="text"
+                                                       name="surface_metro_to_metro_rto_additional"
+                                                       placeholder="Adnl. RTO"
+                                                       class="input-compact"
+                                                       value="100">
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Rest of India -->
+                                    <td class="px-2 py-2">
+                                        <div class="price-input-group">
+                                            <div class="price-row">
+                                                <input type="text"
+                                                       name="surface_rest_of_india_forward_base"
+                                                       placeholder="Base F"
+                                                       class="input-compact"
+                                                       value="100">
+                                                <input type="text"
+                                                       name="surface_rest_of_india_rto_base"
+                                                       placeholder="Base RTO"
+                                                       class="input-compact"
+                                                       value="100">
+                                            </div>
+                                            <div class="price-row">
+                                                <input type="text"
+                                                       name="surface_rest_of_india_forward_additional"
+                                                       placeholder="Adnl. F"
+                                                       class="input-compact"
+                                                       value="100">
+                                                <input type="text"
+                                                       name="surface_rest_of_india_rto_additional"
+                                                       placeholder="Adnl. RTO"
+                                                       class="input-compact"
+                                                       value="100">
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- NE / J&K -->
+                                    <td class="px-2 py-2">
+                                        <div class="price-input-group">
+                                            <div class="price-row">
+                                                <input type="text"
+                                                       name="surface_ne_jk_forward_base"
+                                                       placeholder="Base F"
+                                                       class="input-compact"
+                                                       value="100">
+                                                <input type="text"
+                                                       name="surface_ne_jk_rto_base"
+                                                       placeholder="Base RTO"
+                                                       class="input-compact"
+                                                       value="100">
+                                            </div>
+                                            <div class="price-row">
+                                                <input type="text"
+                                                       name="surface_ne_jk_forward_additional"
+                                                       placeholder="Adnl. F"
+                                                       class="input-compact"
+                                                       value="100">
+                                                <input type="text"
+                                                       name="surface_ne_jk_rto_additional"
+                                                       placeholder="Adnl. RTO"
+                                                       class="input-compact"
+                                                       value="100">
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- COD Charges -->
+                                    <td class="px-4 py-3 text-center">
+                                        <input type="text"
+                                               name="surface_cod_charges"
+                                               placeholder="30"
+                                               class="input-compact"
+                                               value="100">
+                                    </td>
+
+                                    <!-- COD % -->
+                                    <td class="px-4 py-3 text-center">
+                                        <input type="text"
+                                               name="surface_cod_percentage"
+                                               placeholder="1.5%"
+                                               class="input-compact"
+                                               value="100">
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+
+
+                    <!-- 1) Hidden JSON data -->
+                    {{ users|json_script:"all-users-data" }}
+
+
+                    <!-- 2) Multi‑select section -->
+                    <div id="multi-select-section">
+                        <section class="container mx-auto p-6">
+                            <h2 class="text-2xl font-semibold mb-4">Assign Rates: Select Users</h2>
+
+                            <!-- Selected tags -->
+                            <div id="selected-tags" class="flex flex-wrap gap-2 mb-4"></div>
+
+                            <!-- Search input + suggestion box -->
+                            <div class="relative w-full max-w-md">
+                                <input id="user-search"
+                                       type="text"
+                                       placeholder="Search users..."
+                                       class="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                       autocomplete="off" />
+                                <ul id="suggestions"
+                                    class="absolute z-20 w-full bg-white border rounded-b-lg shadow max-h-60 overflow-y-auto hidden">
+                                </ul>
+                            </div>
+
+                            <!-- Hidden input for selected IDs -->
+                            <input type="hidden" name="selected_user_ids" id="selected-user-ids">
+                            <input type="hidden" name="user_id" id="one_user_id">
+                        </section>
+                    </div>
+
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-between mt-6">
+                        <div class="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+                            <i class="fas fa-info-circle mr-2"></i> 5 couriers shown
+                        </div>
+                        <div class="flex space-x-3">
+                            <button type="reset"
+                                    class="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                Reset Changes
+                            </button>
+                            <button type="submit"
+                                    class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow transition flex items-center">
+                                <i class="fas fa-save mr-2"></i> Save Rates
+                            </button>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Info Section -->
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card bg-white dark:bg-gray-800 p-5">
+                    <div class="flex items-start">
+                        <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg mr-4">
+                            <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg mb-1">Zone Definitions</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">
+                                Within City: Same city delivery
+                                <br>
+                                Within State: Same state delivery
+                                <br>
+                                Metro: Delivery to metro cities
+                                <br>
+                                Rest of India: Non-metro cities
+                                <br>
+                                NE / J&amp;K: North East &amp; Jammu/Kashmir
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-white dark:bg-gray-800 p-5">
+                    <div class="flex items-start">
+                        <div class="bg-green-100 dark:bg-green-900 p-3 rounded-lg mr-4">
+                            <i class="fas fa-percentage text-green-600 dark:text-green-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg mb-1">Weight Pricing</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm">
+                                Base price: For first kg (or 0.5kg as specified)
+                                <br>
+                                Additional price: Per kg or 0.5kg beyond base weight
+                                <br>
+                                Example: ₹35 base + ₹25 per 0.5kg
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <!-- Terms & Conditions -->
+            <div class="card bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow mt-8">
+                <div class="flex items-start space-x-4">
+
+                    <!-- Icon -->
+                    <div class="flex-shrink-0 bg-yellow-100 dark:bg-yellow-900 p-3 rounded-xl">
+                        <i class="fas fa-file-contract text-yellow-600 dark:text-yellow-400 text-2xl"></i>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="flex-1">
+                        <h3 class="font-bold text-xl mb-4 text-gray-800 dark:text-gray-100">Terms & Conditions</h3>
+
+                        <ul class="space-y-3 text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                            <li class="flex items-start">
+                                <span class="font-semibold mr-2 text-yellow-600 dark:text-yellow-400">1.</span>
+                                <span>Above prices are inclusive of GST.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="font-semibold mr-2 text-yellow-600 dark:text-yellow-400">2.</span>
+                                <span>Chargeable Weight will be Physical / Dead Weight or Volumetric Weight whichever is Higher.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="font-semibold mr-2 text-yellow-600 dark:text-yellow-400">3.</span>
+                                <span>COD Charges will be fixed COD charge or COD % of the order value whichever is Higher.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="font-semibold mr-2 text-yellow-600 dark:text-yellow-400">4.</span>
+                                <span>Volumetric Weight (Kilogram) calculation as per IATA - Length (cm) × Breadth (cm) × Height (cm) / 5000.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="font-semibold mr-2 text-yellow-600 dark:text-yellow-400">5.</span>
+                                <span>Other Charges like Octroi, state entry tax and fees, address correction charges if applicable shall be charged extra.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="font-semibold mr-2 text-yellow-600 dark:text-yellow-400">6.</span>
+                                <span>RTO (return to origin) shipment will be charged separately from the forward delivery rate, which will be same as Forward Rates.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="font-semibold mr-2 text-yellow-600 dark:text-yellow-400">7.</span>
+                                <span>The maximum liability if any is limited to ₹1000/- in event of a claim by the Merchant, provided such claim is raised within one (1) month from the date of such damage or loss or theft.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="font-semibold mr-2 text-yellow-600 dark:text-yellow-400">8.</span>
+                                <span>The Merchant shall not book / handover or allow to be handed over any Product which is banned, restricted, illegal, prohibited, stolen, infringing of any third-party rights, liquid materials, hazardous or dangerous, or in breach of any law or regulation in force in India.</span>
+                            </li>
+                        </ul>
+
+                        <p class="text-gray-500 dark:text-gray-400 text-xs mt-4 italic">
+                            Other terms and conditions will be applicable as defined in the agreement.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock body %}
+
+
+{% block js %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Extract user_id from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('user_id');
+
+            if (userId) {
+                document.getElementById('multi-select-section').classList.add('hidden');
+                document.getElementById('one_user_id').value = userId;
+
+                const selectedTags = document.getElementById('selected-tags');
+                selectedTags.innerHTML = `
+                    <div class="flex items-center bg-blue-600 text-white px-3 py-1 rounded-full">
+                        <span>User ID: ${userId}</span>
+                    </div>
+                `;
+            }
+            // — Setup & caching —
+            const raw = document.getElementById('all-users-data').textContent;
+            let allUsers = [];
+            try {
+                allUsers = JSON.parse(raw).map(u => ({
+                    id: String(u.id),
+                    name: u.full_name || '',
+                    lc: (u.full_name || '').toLowerCase()
+                }));
+            } catch (e) {
+                console.error('User JSON parse error:', e);
+                return;
+            }
+
+            const $search = document.getElementById('user-search');
+            const $sugg = document.getElementById('suggestions');
+            const $tags = document.getElementById('selected-tags');
+            const $hidden = document.getElementById('selected-user-ids');
+            const selected = new Map(); // id -> name
+            let matches = []; // current filtered matches
+            let activeIndex = -1; // keyboard nav index
+
+            // — Helpers —
+            const debounce = (fn, ms = 200) => {
+                let t;
+                return (...a) => {
+                    clearTimeout(t);
+                    t = setTimeout(() => fn(...a), ms)
+                };
+            };
+
+            function updateHidden() {
+                $hidden.value = Array.from(selected.keys()).join(',');
+            }
+
+            function renderTags() {
+                $tags.innerHTML = '';
+                for (let [id, name] of selected) {
+                    const tag = document.createElement('div');
+                    tag.className = 'flex items-center bg-blue-600 text-white px-3 py-1 rounded-full';
+                    tag.innerHTML = `
+        <span class="truncate max-w-xs">${name}</span>
+        <button type="button" class="ml-2 text-white" data-id="${id}">&times;</button>
+      `;
+                    $tags.appendChild(tag);
+                }
+                updateHidden();
+            }
+
+            function hideSugg() {
+                $sugg.classList.add('hidden');
+                activeIndex = -1;
+            }
+
+            function renderSuggestions() {
+                $sugg.innerHTML = '';
+                if (!matches.length) {
+                    $sugg.innerHTML = '<li class="px-4 py-2 text-gray-500">No matches</li>';
+                } else {
+                    matches.slice(0, 10).forEach((u, i) => {
+                        const li = document.createElement('li');
+                        li.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer';
+                        li.textContent = u.name;
+                        li.dataset.id = u.id;
+                        li.dataset.name = u.name;
+                        li.dataset.index = i;
+                        li.addEventListener('click', () => selectUser(i));
+                        $sugg.appendChild(li);
+                    });
+                }
+                $sugg.classList.remove('hidden');
+                highlightActive();
+            }
+
+            function highlightActive() {
+                const items = $sugg.querySelectorAll('li');
+                items.forEach((li, i) => {
+                    li.classList.toggle('bg-blue-100', i === activeIndex);
+                });
+            }
+
+            function selectUser(idx) {
+                const u = matches[idx];
+                if (!u) return;
+                selected.set(u.id, u.name);
+                renderTags();
+                $search.value = '';
+                hideSugg();
+            }
+
+            // — Event Listeners —
+            $search.addEventListener('input', debounce(e => {
+                const q = e.target.value.trim().toLowerCase();
+                if (!q) return hideSugg();
+                matches = allUsers.filter(u => u.lc.includes(q) && !selected.has(u.id));
+                renderSuggestions();
+            }));
+
+            $search.addEventListener('keydown', e => {
+                if ($sugg.classList.contains('hidden')) return;
+                const max = Math.min(matches.length, 10) - 1;
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    activeIndex = activeIndex < max ? activeIndex + 1 : 0;
+                    highlightActive();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    activeIndex = activeIndex > 0 ? activeIndex - 1 : max;
+                    highlightActive();
+                } else if (e.key === 'Enter') {
+                    if (activeIndex >= 0) {
+                        e.preventDefault(); // prevent form submit
+                        selectUser(activeIndex);
+                    }
+                } else if (e.key === 'Escape') {
+                    hideSugg();
+                }
+            });
+
+            // Click on suggestion via delegation (if needed)
+            $sugg.addEventListener('click', e => {
+                const li = e.target.closest('li[data-index]');
+                if (!li) return;
+                selectUser(Number(li.dataset.index));
+            });
+
+            // Deselect tag
+            $tags.addEventListener('click', e => {
+                const btn = e.target.closest('button[data-id]');
+                if (!btn) return;
+                selected.delete(btn.dataset.id);
+                renderTags();
+            });
+
+            // Hide suggestions on outside click
+            document.addEventListener('click', e => {
+                if (!e.target.closest('#user-search') && !e.target.closest('#suggestions')) {
+                    hideSugg();
+                }
+            });
+
+            // Initial render
+            renderTags();
+        });
+    </script>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        // Check for saved theme preference or respect OS setting
+        if (localStorage.getItem('theme') === 'light' ||
+            (!('theme' in localStorage) &&
+                window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('light');
+        } else {
+            html.classList.remove('light');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        });
+
+        // Input formatting
+        document.querySelectorAll('.input-compact').forEach(input => {
+            input.addEventListener('focus', function() {
+                if (this.value === '') {
+                    this.value = this.placeholder.replace('₹', '').replace('%', '');
+                }
+            });
+
+            input.addEventListener('blur', function() {
+                if (this.value === '') {
+                    this.value = '';
+                } else if (this.name.includes('cod_percent')) {
+                    this.value = this.value + '%';
+                } else if (!this.value.includes('₹')) {
+                    this.value = '₹' + this.value;
+                }
+            });
+        });
+
+        // Auto-tab between fields for faster data entry
+        document.querySelectorAll('.input-compact').forEach((input, index, inputs) => {
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === 'Tab') {
+                    e.preventDefault();
+                    const nextIndex = index + 1;
+                    if (nextIndex < inputs.length) {
+                        inputs[nextIndex].focus();
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock js %}

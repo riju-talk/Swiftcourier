@@ -1,0 +1,159 @@
+{% extends "components/layouts/layout.dj" %}
+{% load static %}
+
+{% block title %}Invoices{% endblock title %}
+
+{% block css %}
+    <style>
+        [x-cloak] { display: none !important; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 9999px; }
+    </style>
+{% endblock css %}
+
+{% block body %}
+    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-center p-4 border-b dark:border-gray-700 gap-4">
+            <div class="flex items-center gap-4">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Invoices</h2>
+
+                <!-- 🔍 SEARCH -->
+                <input
+                    type="text"
+                    id="searchInput"
+                    name="q"
+                    placeholder="Search..."
+                    value="{{ request.GET.q }}"
+                    class="w-48 px-3 py-1.5 border rounded-lg text-sm
+                        focus:outline-none focus:ring-2 focus:ring-blue-500
+                        dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        <th class="px-2 py-1 text-left text-xs">Invoice #</th>
+                        <th class="px-2 py-1 text-center text-xs">Service</th>
+                        <th class="px-2 py-1 text-center text-xs">Date</th>
+                        <th class="px-2 py-1 text-center text-xs">Period</th>
+                        <th class="px-2 py-1 text-center text-xs">Amount</th>
+                        <th class="px-2 py-1 text-right text-xs">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y dark:divide-gray-700">
+                    {% for invoice in invoices %}
+                    <tr>
+                        <td class="px-2 py-1 text-xs">{{ invoice.number }}</td>
+                        <td class="px-2 py-1 text-center text-xs">{{ invoice.service_type }}</td>
+                        <td class="px-2 py-1 text-center text-xs">{{ invoice.date_from }}</td>
+                        <td class="px-2 py-1 text-center text-xs">{{ invoice.date_to }}</td>
+                        <td class="px-2 py-1 text-center text-xs">{{ invoice.amount }}</td>
+                        <td class="px-2 py-1 text-right text-xs">
+                            {% if invoice.pdf_file %}
+                            <a href="{{ invoice.pdf_file.url|default:"#" }}" target="_blank">PDF</a>
+                            |
+                            {% endif %}
+                            {% if invoice.excel_file %}
+                            <a href="{{ invoice.excel_file.url|default:"#" }}" target="_blank">Excel</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-gray-500">
+                            No invoices found
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="p-4 border-t dark:border-gray-700 flex flex-col sm:flex-row justify-between gap-4">
+            <!-- Page Size -->
+            <div class="flex items-center gap-2">
+                <span class="text-sm">Show</span>
+                <select id="pageSize" onchange="updatePageSize(this.value)"
+                    class="px-2 py-1 border rounded text-sm dark:bg-gray-700">
+                    <option value="10" {% if page_size == 10 %}selected{% endif %}>10</option>
+                    <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
+                    <option value="100" {% if page_size == 100 %}selected{% endif %}>100</option>
+                    <option value="200" {% if page_size == 200 %}selected{% endif %}>200</option>
+                    <option value="500" {% if page_size == 500 %}selected{% endif %}>500</option>  
+                </select>
+            </div>
+
+            <!-- Page Controls -->
+            <div class="flex gap-1 flex-wrap">
+                <button onclick="navigatePage('prev')" {% if not page_obj.has_previous %}disabled{% endif %}>
+                    Prev
+                </button>
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                    <button onclick="navigatePage({{ num }})"
+                        class="{% if num == page_obj.number %}font-bold text-blue-600{% endif %}">
+                        {{ num }}
+                    </button>
+                    {% endif %}
+                {% endfor %}
+
+                <button onclick="navigatePage('next')" {% if not page_obj.has_next %}disabled{% endif %}>
+                    Next
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock body %}
+
+{% block js %}
+    <script>
+        /* ---------------- SEARCH ---------------- */
+        document.getElementById('searchInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                updateSearchParams(e.target.value);
+            }
+        });
+
+        function updateSearchParams(value) {
+            const params = new URLSearchParams(window.location.search);
+
+            if (value.trim()) {
+                params.set('q', value);
+            } else {
+                params.delete('q');
+            }
+
+            params.set('page', 1);
+            window.location.search = params.toString();
+        }
+
+        /* ---------------- PAGINATION ---------------- */
+        function navigatePage(action) {
+            const params = new URLSearchParams(window.location.search);
+            let page = parseInt(params.get('page') || 1);
+
+            if (action === 'prev') page--;
+            else if (action === 'next') page++;
+            else page = action;
+
+            params.set('page', page);
+            window.location.search = params.toString();
+        }
+
+        function updatePageSize(size) {
+            const params = new URLSearchParams(window.location.search);
+            params.set('page_size', size);
+            params.set('page', 1);
+            window.location.search = params.toString();
+        }
+    </script>
+{% endblock js %}

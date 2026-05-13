@@ -1,0 +1,15 @@
+base url: /api/external/v1
+
+
+1. user login                                                    - /auth/login/
+2. order shipment                                                - /ship-order/
+3. track order                                                   - /track/{awb}/
+4. cancel shipment                                               - /cancel/                 (body: awb_numbers)
+5. generate manifest                                             - /generate-manifest/      (body: awb_numbers)
+6. list all couriers                                             - /couriers/
+7. courier serviceability                                        - /courier-serviceability/
+8. list ndr orders                                               - /ndr/
+9. take action on ndr (re-attempt, change_address, change_phone) - /ndr/action/
+
+
+- Webhook

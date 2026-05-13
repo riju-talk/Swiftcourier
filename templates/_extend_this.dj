@@ -1,0 +1,15 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+{% endblock title %}
+
+{% load static %}
+
+{% block css %}
+{% endblock css %}
+
+{% block body %}
+{% endblock body %}
+
+{% block js %}
+{% endblock js %}

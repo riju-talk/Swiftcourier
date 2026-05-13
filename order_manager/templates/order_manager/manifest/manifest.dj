@@ -1,0 +1,113 @@
+<div class="manifest-section">
+
+    <h1>
+        <img src="{{ logo }}" alt="IdiotShip Logo" width="50px" />
+        IdiotShip Manifest
+    </h1>
+
+    <!-- HEADER -->
+    <div class="header-box">
+        <div class="header-left">
+            <p>
+                <strong>Seller:</strong> {{ user.full_name }}
+            </p>
+            <p>
+                <strong>Courier:</strong> {{ courier.name }}
+            </p>
+        </div>
+
+        <div class="header-right">
+            <p>
+                <strong>Generated on:</strong> {{ timestamp }}
+            </p>
+
+            <p>
+                <strong>Manifest ID:</strong>
+                {{ manifest_id }}
+            </p>
+
+            <p>
+                <strong>Total shipments to dispatch:</strong> {{ orders|length }}
+            </p>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Order No</th>
+                <th>Contents</th>
+                <th>AWB No</th>
+                <th>Barcode</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ order.get_order_id }}</td>
+                    <td>
+                        1. {{ order.items.first.product.name }}
+                        <br>
+                        <small>SKU: {{ order.items.first.product.sku|default:"N/A" }}</small>
+                    </td>
+                    <td>{{ order.awb_number }}</td>
+                    <td>
+                        <img src="{{ order.barcode.url }}" alt="Barcode" style="width: 100px;">
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- FOOTER TITLE -->
+    <h2 class="footer-title">To Be Filled By Logistics Executive</h2>
+
+    <div class="footer-grid">
+        <div class="footer-col">
+            <div class="line">
+                <strong>Pick up time:</strong>
+            </div>
+            <div class="line">
+                <strong>FE Name:</strong>
+            </div>
+            <div class="line">
+                <strong>FE Signature:</strong>
+            </div>
+            <div class="line">
+                <strong>FE Phone:</strong>
+            </div>
+        </div>
+
+        <div class="footer-col">
+            <div class="line">
+                <strong>Total items picked:</strong>
+            </div>
+            <div class="line">
+                <strong>Seller Name:</strong> {{ seller_name }}
+            </div>
+            <div class="line">
+                <strong>Seller Signature:</strong>
+            </div>
+            <div class="line">
+                <strong>Date & Time:</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADDRESS -->
+    <div class="small-text">
+        <p>{{ user.get_full_address }}</p>
+
+        <p>
+            <strong>Contact:</strong> {{ user.contact_no }}
+        </p>
+    </div>
+
+    <!-- WATERMARK -->
+    <p class="small-text watermark">This is a system generated document</p>
+
+</div>

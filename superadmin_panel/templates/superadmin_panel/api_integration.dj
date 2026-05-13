@@ -1,0 +1,184 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+Api Integration
+{% endblock title %}
+
+{% load static %}
+
+{% block css %}
+{% endblock css %}
+
+{% block body %}
+    <div x-data="basic">
+        <div class="panel mt-6">
+            <h5 class="font-semibold text-lg dark:text-white-light">Api Integration</h5>
+            <table id="myTable" class="whitespace-nowrap table-hover">
+                <!-- table will be populated by simple-datatables -->
+            </table>
+        </div>
+    </div>
+{% endblock body %}
+
+{% block js %}
+    <script defer src="{% static 'assets/js/apexcharts.js' %}"></script>
+    <script src="{% static 'assets/js/simple-datatables.js' %}"></script>
+
+    <script>
+        document.addEventListener("alpine:init", () => {
+            Alpine.data("basic", () => ({
+                datatable: null,
+
+                init() {
+                    this.datatable = new simpleDatatables.DataTable('#myTable', {
+                        data: {
+                            headings: [
+                                // “select all” checkbox in header
+                                `<input type="checkbox" @click="toggleAll($event)" />`,
+                                "CHANNEL",
+                                "ORDER ID",
+                                "DATE",
+                                "CUSTOMER",
+                                "PRODUCTS",
+                                "QTY",
+                                "AMT",
+                                "TYPE",
+                                "STATUS"
+                            ],
+                            data: [
+                                // two demo rows only
+                                [
+                                    '', // checkbox cell (rendered via columns.render)
+                                    'Email', // CHANNEL
+                                    'ORD-00123', // ORDER ID
+                                    '2025-04-15', // DATE
+                                    'John Doe', // CUSTOMER
+                                    'T‑Shirt, Mug', // PRODUCTS
+                                    3, // QTY
+                                    '$75.00', // AMT
+                                    'Standard', // TYPE
+                                    'Failed' // STATUS
+                                ],
+                                [
+                                    '',
+                                    'Social',
+                                    'ORD-00124',
+                                    '2025-04-16',
+                                    'Jane Smith',
+                                    'Hoodie',
+                                    1,
+                                    '$40.00',
+                                    'Express',
+                                    'Failed'
+                                ]
+                            ]
+                        },
+                        searchable: true,
+                        perPage: 10,
+                        perPageSelect: [10, 20, 30, 50, 100],
+                        columns: [{
+                                select: 0,
+                                sortable: false,
+                                render: (data, cell, row) => {
+                                    // per-row checkbox
+                                    return `<input type="checkbox" class="row-checkbox" />`;
+                                }
+                            }
+                            // All other columns will render as simple text by default
+                        ],
+                        firstLast: true,
+                        firstText: '<svg …>…</svg>',
+                        lastText: '<svg …>…</svg>',
+                        prevText: '<svg …>…</svg>',
+                        nextText: '<svg …>…</svg>',
+                        labels: {
+                            perPage: "{select}"
+                        },
+                        layout: {
+                            top: "{search}",
+                            bottom: "{info}{select}{pager}"
+                        }
+                    });
+
+                    // keep your chart hooks in case you add sparkline columns later
+                    this.datatable.on('datatable.sort', () => this.initChart());
+                    this.datatable.on('datatable.page', () => this.initChart());
+                    this.datatable.on('datatable.perpage', () => this.initChart());
+                    setTimeout(() => this.initChart(), 300);
+                },
+
+                // toggle all row checkboxes
+                toggleAll(event) {
+                    const checked = event.target.checked;
+                    document.querySelectorAll('.row-checkbox').forEach(chk => {
+                        chk.checked = checked;
+                    });
+                },
+
+                // chart init stub
+                initChart() {
+                    const ele = document.querySelectorAll('.progress-chart');
+                    ele.forEach((el, i) => {
+                        el.innerHTML = '';
+                        new ApexCharts(el, this.chart_options).render();
+                    });
+                },
+
+                get chart_options() {
+                    return {
+                        series: [{
+                            data: [21, 9, 36, 12, 44, 25, 59]
+                        }],
+                        chart: {
+                            type: 'line',
+                            height: 30,
+                            sparkline: {
+                                enabled: true
+                            }
+                        },
+                        stroke: {
+                            curve: 'smooth',
+                            width: 2
+                        },
+                        markers: {
+                            size: [4, 7],
+                            strokeWidth: 0
+                        },
+                        colors: [this.randomColor()],
+                        grid: {
+                            padding: {
+                                top: 5,
+                                bottom: 5
+                            }
+                        },
+                        tooltip: {
+                            x: {
+                                show: false
+                            },
+                            y: {
+                                title: {
+                                    formatter: () => ''
+                                }
+                            }
+                        }
+                    };
+                },
+
+                randomColor() {
+                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    return c[Math.floor(Math.random() * c.length)];
+                },
+
+                // (you can remove unused methods below if you like)
+                randomStatusColor() {
+                    /* … */ },
+                randomStatus() {
+                    /* … */ },
+                getRandomNumber() {
+                    /* … */ },
+                getCountry() {
+                    /* … */ }
+            }));
+        });
+    </script>
+{% endblock js %}

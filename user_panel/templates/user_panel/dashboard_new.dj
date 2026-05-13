@@ -1,0 +1,1792 @@
+{% extends 'components/layouts/layout.dj' %}
+
+{% block title %}
+  Sales Analytics — Reports & Exports
+{% endblock %}
+
+{% load static %}
+
+{% block css %}
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    /* Modal Overlay */
+    .modal-overlay {
+      display: none !important;
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(2px);
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .modal-overlay.active {
+      display: flex !important;
+    }
+    .modal-overlay > div {
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(8px);
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      .modal-overlay > div {
+        background: rgba(30, 41, 59, 0.97);
+      }
+    }
+    
+    /* Calendar Styles */
+    .calendar {
+      width: 100%;
+      min-width: 240px;
+      max-width: 280px;
+    }
+    
+    @media (max-width: 640px) {
+      .calendar {
+        min-width: 200px;
+        max-width: 100%;
+      }
+    }
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      background-color: #ffffff;
+      color: #1f2937;
+    }
+    .calendar-header select {
+      background: transparent;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      padding: 2px 4px;
+      font-size: 10px;
+      font-weight: bold;
+      color: inherit;
+      cursor: pointer;
+    }
+    .calendar-header select:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+    @media (prefers-color-scheme: dark) {
+      .calendar-header {
+        border-bottom-color: #475569;
+        background-color: #1e293b;
+        color: #f1f5f9;
+      }
+    }
+    .calendar-header button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px 6px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+      color: inherit;
+    }
+    .calendar-header button:hover {
+      background-color: #f3f4f6;
+    }
+    @media (prefers-color-scheme: dark) {
+      .calendar-header button:hover {
+        background-color: #334155;
+      }
+    }
+    .calendar-body {
+      padding: 10px 12px;
+      background-color: #ffffff;
+      color: #1f2937;
+    }
+    @media (prefers-color-scheme: dark) {
+      .calendar-body {
+        background-color: #1e293b;
+        color: #f1f5f9;
+      }
+    }
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      margin-bottom: 8px;
+    }
+    .day-header {
+      text-align: center;
+      font-weight: 600;
+      color: #6b7280;
+      font-size: 10px;
+      padding: 6px 0;
+      text-transform: uppercase;
+    }
+    @media (prefers-color-scheme: dark) {
+      .day-header {
+        color: #94a3b8;
+      }
+    }
+    .day {
+      text-align: center;
+      padding: 6px 2px;
+      cursor: pointer;
+      border-radius: 3px;
+      font-size: 12px;
+      transition: all 0.2s;
+      color: inherit;
+    }
+    .day:hover:not(.other-month) {
+      background-color: #e5e7eb;
+    }
+    @media (prefers-color-scheme: dark) {
+      .day:hover:not(.other-month) {
+        background-color: #334155;
+      }
+    }
+    .day.other-month {
+      color: #d1d5db;
+      cursor: default;
+    }
+    @media (prefers-color-scheme: dark) {
+      .day.other-month {
+        color: #64748b;
+      }
+    }
+    .day.selected {
+      background-color: #3b82f6;
+      color: white;
+      font-weight: 600;
+    }
+    .day.in-range {
+      background-color: #dbeafe;
+      color: #0284c7;
+    }
+    @media (prefers-color-scheme: dark) {
+      .day.in-range {
+        background-color: #1e3a5f;
+        color: #7dd3fc;
+      }
+    }
+    
+    /* Modal Overlay */
+    .modal-overlay {
+      display: none !important;
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(2px);
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    
+    .modal-overlay.active {
+      display: flex !important;
+    }
+    
+    .modal-overlay > div {
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(8px);
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      .modal-overlay > div {
+        background: rgba(30, 41, 59, 0.97);
+      }
+    }
+    
+    /* Calendar Styles */
+    .calendar {
+      width: 100%;
+      min-width: 240px;
+      max-width: 280px;
+    }
+    
+    @media (max-width: 640px) {
+      .calendar {
+        min-width: 200px;
+        max-width: 100%;
+      }
+    }
+    
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-bottom: 1px solid #e5e7eb;
+      background-color: #ffffff;
+      color: #1f2937;
+    }
+    
+    .calendar-header select {
+      background: transparent;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      padding: 2px 4px;
+      font-size: 10px;
+      font-weight: bold;
+      color: inherit;
+      cursor: pointer;
+    }
+    
+    .calendar-header select:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      .calendar-header {
+        border-bottom-color: #475569;
+        background-color: #1e293b;
+        color: #f1f5f9;
+      }
+    }
+    
+    .calendar-header button {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px 6px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+      color: inherit;
+    }
+    
+    .calendar-header button:hover {
+      background-color: #f3f4f6;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      .calendar-header button:hover {
+        background-color: #334155;
+      }
+    }
+    
+    .calendar-body {
+      padding: 10px 12px;
+      background-color: #ffffff;
+      color: #1f2937;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      .calendar-body {
+        background-color: #1e293b;
+        color: #f1f5f9;
+      }
+    }
+    
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      margin-bottom: 8px;
+    }
+    
+    .day-header {
+      text-align: center;
+      font-weight: 600;
+      color: #6b7280;
+      font-size: 10px;
+      padding: 6px 0;
+      text-transform: uppercase;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      .day-header {
+        color: #94a3b8;
+      }
+    }
+    
+    .day {
+      text-align: center;
+      padding: 6px 2px;
+      cursor: pointer;
+      border-radius: 3px;
+      font-size: 12px;
+      transition: all 0.2s;
+      color: inherit;
+    }
+    
+    .day:hover:not(.other-month) {
+      background-color: #e5e7eb;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      .day:hover:not(.other-month) {
+        background-color: #334155;
+      }
+    }
+    
+    .day.other-month {
+      color: #d1d5db;
+      cursor: default;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      .day.other-month {
+        color: #64748b;
+      }
+    }
+    
+    .day.selected {
+      background-color: #3b82f6;
+      color: white;
+      font-weight: 600;
+    }
+    
+    .day.in-range {
+      background-color: #dbeafe;
+      color: #0284c7;
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      .day.in-range {
+        background-color: #1e3a5f;
+        color: #7dd3fc;
+      }
+    }
+    
+    /* Bar Chart Styles */
+    .bar-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 22px;
+      margin: 0 4px;
+      margin-top: 4px;
+      position: relative;
+      height: 100px;
+    }
+    
+    .bar-background {
+      width: 14px;
+      height: 100px;
+      background-color: #d1d5db;
+      opacity: 0.3;
+      border-radius: 12px;
+      position: absolute;
+      bottom: 0;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    
+    .bar {
+      width: 14px;
+      border-radius: 7px;
+      transition: opacity 0.2s;
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+    
+    .bar-bottom {
+      bottom: 0;
+      top: auto;
+      transform: none;
+    }
+    
+    .bar-label {
+      margin-top: 4px;
+      font-size: 10px;
+      font-weight: 500;
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    
+    #tooltip {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1000;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    
+    /* Driving Hours Card Styles */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    .pie-card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .pie-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .pie-icon {
+      width: 32px;
+      height: 32px;
+      background-color: #dbeafe;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+    }
+    
+    .pie-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+    }
+    
+    .pie-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    
+    .pie-data {
+      flex: 1;
+    }
+    
+    .pie-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+    }
+    
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    
+    .legend-text {
+      font-size: 14px;
+      color: #6b7280;
+    }
+    
+    .pie-chart {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      margin: 25px auto 0 auto;
+    }
+    
+    .donut-chart {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: conic-gradient(#f97316 0% 60%, #3b82f6 60% 100%);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .donut-chart:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .donut-hole {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 80px;
+      height: 80px;
+      background-color: #f5f7fb;
+      border-radius: 50%;
+    }
+    
+    .pie-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+    }
+    
+    /* Circular Meter Styles */
+    .meter-container {
+      width: 120px;
+      height: 120px;
+      margin: 20px auto;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    
+    .meter-container:hover {
+      transform: scale(1.05);
+    }
+    
+    .meter-container:hover .meter-fill {
+      filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.6));
+    }
+    
+    .meter-circle {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    
+    .meter-bg {
+      fill: none;
+      stroke: #e5e7eb;
+      stroke-width: 10;
+    }
+    
+    .meter-fill {
+      fill: none;
+      stroke: #10b981;
+      stroke-width: 10;
+      stroke-linecap: round;
+      transition: stroke-dasharray 1s ease-in-out, filter 0.3s ease;
+    }
+    
+    .meter-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 18px;
+      font-weight: bold;
+      color: #374151;
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+  {% if notices %}
+  <div class="fixed inset-0 z-50 flex items-center justify-center">
+
+      <!-- Overlay (FIXED + full screen) -->
+      <div class="fixed inset-0 bg-black/50"></div>
+
+      <!-- Notice Box -->
+      <div class="relative z-10 bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4">
+          
+          <h2 class="text-xl font-bold text-center mb-4">
+              📢 Notices
+          </h2>
+
+          <ul class="list-disc list-inside space-y-2 text-gray-700">
+              {% for notice in notices %}
+                  <li>{{ notice.notice }}</li>
+              {% endfor %}
+          </ul>
+
+          <div class="mt-6 text-center">
+              <button 
+                  onclick="this.closest('.fixed').remove()" 
+                  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                  Close
+              </button>
+          </div>
+
+      </div>
+  </div>
+  {% endif %}
+
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded z-50">Skip to main content</a>
+  <a href="#navigation" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-32 bg-blue-600 text-white px-4 py-2 rounded z-50">Skip to navigation</a>
+
+  <div class="rounded-xl">
+    <!-- Top white cards above filter -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <!-- Today Order -->
+      <div class="group relative overflow-visible rounded-xl p-5 border border-gray-100 dark:border-slate-700 bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1">
+        <h3 class="pie-title text-black dark:text-white"><b>Total Daily Orders</b></h3>
+
+        <div class="flex gap-1 mt-10 justify-end" id="todayOrdersChart">
+          <div class="text-left mt-15"></div>
+
+          <div class="absolute top-4 right-4 flex items-center justify-center w-10 h-10 rounded bg-emerald-50 text-emerald-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+          </div>
+        </div>
+        <div class="text-lg font-bold mb-8" style="margin-top: -8px;">
+          <p class="text-md">Orders</p>
+        </div>
+      </div>
+
+      <!-- Top 5 Couriers -->
+      <div class="group relative overflow-hidden rounded-xl p-5 border border-gray-100 dark:border-slate-700 bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1">
+        <h3 class="pie-title text-black dark:text-white"><b>Top 5 Couriers</b></h3>
+
+        <div class="absolute top-4 right-4 flex items-center justify-center w-10 h-10 rounded bg-indigo-50 text-indigo-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        </div>
+        <div class="flex gap-4 mt-8 justify-center relative" style="height: 100px;">
+          {% for courier, value in top_5_couriers.items %}
+          <div class="bar-container" data-day="{{ courier }}" data-orders="{{ value.orders }}" style="position: relative; height: 100%;">
+            <div class="bar bar-bottom bg-red-500" style="height: {{ value.percentage }}px; bottom: 2px;"></div>
+            <span class="bar-label text-xs text-gray-600" style="position: absolute; bottom: -65px; left: 50%; transform: translateX(-50%);">{{ courier }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Driving Hours -->
+      <div class="group relative overflow-hidden rounded-xl p-5 border border-gray-100 dark:border-slate-700 bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1">
+        <div class="pie-header">
+          <h3 class="pie-title text-black dark:text-white"><b>COD Vs Prepaid</b></h3>
+        </div>
+
+        <div class="absolute top-8 right-4 flex items-center justify-center w-10 h-10 rounded bg-orange-50 text-orange-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l2 2M12 6a6 6 0 100 12 6 6 0 000-12z"></path>
+          </svg>
+        </div>
+        <div class="pie-content">
+          <div class="pie-data"></div>
+          <div class="pie-chart">
+            <div class="donut-chart"></div>
+            <div class="donut-hole"></div>
+          </div>
+        </div>
+        <div class="pie-legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background-color: #f97316;"></div>
+            <span class="legend-text">COD</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background-color: #3b82f6;"></div>
+            <span class="legend-text">Prepaid</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="group relative overflow-hidden rounded-xl p-5 border border-gray-100 dark:border-slate-700 bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1">
+        <div class="pie-header">
+          <h3 class="card-title text-lg text-black dark:text-white">
+            <b>Pickup Completion</b>
+          </h3>
+        </div>
+
+        <div class="absolute top-4 right-4 flex items-center justify-center w-10 h-10 rounded bg-blue-50 text-blue-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        </div>
+
+        <div class="card-content">
+          <div class="meter-container">
+            <svg class="meter-circle" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="50" class="meter-bg" />
+              <circle cx="60" cy="60" r="50" class="meter-fill" />
+            </svg>
+            <div class="meter-text text-black dark:text-white">75%</div>
+          </div>
+          <div class="meter-labels">
+            <span>
+              Pickup Completed: <span id="completed-text">75</span>
+            </span>
+            </br>
+            <span>
+              Pickup Pending: <span id="pending-text">25</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700">
+      <div class="px-6 py-5 grid grid-cols-1 md:grid-cols-5 gap-4 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700">
+        <div class="col-span-1">
+          <label class="block text-gray-700 dark:text-white text-xs font-semibold uppercase tracking-wide mb-2">Date Range</label>
+          <input type="text" id="dateRangeInput" value="09/01/2022 - 01/22/2026" class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 cursor-pointer bg-white dark:bg-slate-600 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" readonly />
+        </div>
+
+        <div class="col-span-1">
+          <label class="block text-gray-700 dark:text-white text-xs font-semibold uppercase tracking-wide mb-2">Method</label>
+          <select class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            <option value="all" selected>All</option>
+            <option value="prepaid">Prepaid</option>
+            <option value="cod">COD</option>
+          </select>
+        </div>
+
+        <div class="col-span-1">
+          <label class="block text-gray-700 dark:text-white text-xs font-semibold uppercase tracking-wide mb-2">Courier</label>
+          <select class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            <option value="all" selected>All</option>
+            {% for courier in couriers %}
+              <option value="{{ courier.id }}">{{ courier.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="md:col-span-2 flex items-end gap-3 justify-end">
+          <button id="applyFilters" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-md text-sm transition-colors">Apply</button>
+          <button id="clearFilters" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md text-sm transition-colors">Clear</button>
+          <button id="bulkExport" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-medium rounded-md text-sm transition-colors">Bulk Export</button>
+        </div>
+      </div>
+
+      <!-- Date Range Picker Modal -->
+      <div id="dateModal" class="modal-overlay">
+        <div class="rounded-lg shadow-2xl p-4 sm:p-6 w-full max-w-sm sm:max-w-2xl bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700">
+          <div class="flex justify-between items-center mb-5 pb-4 border-b border-gray-200 dark:border-slate-700">
+            <h2 class="text-lg font-bold text-gray-900 dark:text-white">Select Date Range</h2>
+            <button id="closeModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-2xl leading-none">&times;</button>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
+            <!-- Filter Buttons (Left Side) -->
+            <div class="flex sm:flex-col gap-2 overflow-x-auto sm:overflow-visible min-w-max sm:min-w-fit">
+              <p class="text-xs font-bold text-gray-700 dark:text-white uppercase tracking-wider mb-2 sm:block hidden">Quick Select</p>
+              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all flex-shrink-0" data-range="today">Today</button>
+              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all flex-shrink-0" data-range="yesterday">Yesterday</button>
+              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all flex-shrink-0" data-range="last7">Last 7 days</button>
+              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all flex-shrink-0" data-range="last30">Last 30 days</button>
+            </div>
+
+            <!-- Calendars (Right Side) -->
+            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto justify-center sm:justify-start overflow-x-auto">
+              <div class="calendar bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md shadow-sm">
+                <div class="calendar-header">
+                  <button id="prevYear" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs">◄◄</button>
+                  <button id="prevMonth" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">&lt;</button>
+                  <span id="currentMonth" class="font-bold text-xs text-gray-900 dark:text-white"></span>
+                  <button id="nextMonth" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">&gt;</button>
+                  <button id="nextYear" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs">►►</button>
+                </div>
+                <div class="calendar-body">
+                  <div class="calendar-days" id="calendarDays"></div>
+                </div>
+              </div>
+
+              <div class="calendar bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md shadow-sm">
+                <div class="calendar-header">
+                  <button id="prevYear2" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs">◄◄</button>
+                  <button id="prevMonth2" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">&lt;</button>
+                  <span id="currentMonth2" class="font-bold text-xs text-gray-900 dark:text-white"></span>
+                  <button id="nextMonth2" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">&gt;</button>
+                  <button id="nextYear2" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs">►►</button>
+                </div>
+                <div class="calendar-body">
+                  <div class="calendar-days" id="calendarDays2"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-3 justify-end mt-6 pt-4 border-t border-gray-200 dark:border-slate-700">
+            <button id="resetDateRange" class="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 font-medium text-sm transition-colors">Reset</button>
+            <button id="cancelModal" class="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 font-medium text-sm transition-colors">Cancel</button>
+            <button id="applyDateRange" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md text-sm transition-colors">Apply</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="px-6 py-6">
+        <div id="shipment-summary" class="tab-content">
+          <!-- Top metric cards (dashboard style) with icons and hover effects -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 mb-6">
+            <!-- Active Shipments -->
+            <div class="group relative overflow-hidden rounded-lg p-5 border border-gray-100 dark:border-slate-700 bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1">
+              <div class="flex items-start justify-between">
+                <div>
+                  <div class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ total_shipments }}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Total Order</div>
+                </div>
+                <div class="flex items-center justify-center w-10 h-10 rounded bg-emerald-50 text-emerald-600">
+                  <!-- truck icon -->
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7h13l4 4v7a1 1 0 01-1 1h-1m-14-12V5a2 2 0 012-2h7m0 0v4m0 0h4" />
+                  </svg>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center gap-2">
+                <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded">{{ shipment_growth }}%</span>
+                <span class="text-xs text-gray-500">vs last period</span>
+              </div>
+            </div>
+
+            <!-- Delivery Rate -->
+            <div class="group relative overflow-hidden rounded-lg p-5 border border-gray-100 dark:border-slate-700 bg-gradient-to-br from-white to-indigo-50 dark:from-slate-800 dark:to-slate-800 shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1">
+              <div class="flex items-start justify-between">
+                <div>
+                  <div class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ delivery_rate }}%</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Delivery Rate</div>
+                </div>
+                <div class="flex items-center justify-center w-10 h-10 rounded bg-indigo-100 text-indigo-600">
+                  <!-- check icon -->
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414-1.414L8 11.172 4.707 7.879a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center gap-2">
+                <span class="text-xs bg-green-50 text-green-700 px-2 py-1 rounded">{{ delivery_rate_growth }}%</span>
+                <span class="text-xs text-gray-500">MoM</span>
+              </div>
+            </div>
+
+            <!-- In Transit -->
+            <div class="group relative overflow-hidden rounded-lg p-5 border border-gray-100 dark:border-slate-700 bg-gradient-to-br from-white to-purple-50 dark:from-slate-800 shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1">
+              <div class="flex items-start justify-between">
+                <div>
+                  <div class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ in_transit }}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">In Transit</div>
+                </div>
+                <div class="flex items-center justify-center w-10 h-10 rounded bg-purple-100 text-purple-600">
+                  <!-- box icon -->
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2 6.5V4a2 2 0 012-2h12a2 2 0 012 2v2.5M2 6.5l8 4.5 8-4.5M2 6.5v7.5a2 2 0 002 2h12a2 2 0 002-2V6.5" />
+                  </svg>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center gap-2">
+                <span class="text-xs bg-teal-50 text-teal-700 px-2 py-1 rounded">{{ in_transit_growth }}%</span>
+                <span class="text-xs text-gray-500">vs prev wk</span>
+              </div>
+            </div>
+
+            <!-- RTO Rate -->
+            <div class="group relative overflow-hidden rounded-lg p-5 border border-gray-100 dark:border-slate-700 bg-gradient-to-br from-white to-yellow-50 dark:from-slate-800 shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1">
+              <div class="flex items-start justify-between">
+                <div>
+                  <div class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ rto_rate }}%</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">RTO Rate</div>
+                </div>
+                <div class="flex items-center justify-center w-10 h-10 rounded bg-yellow-100 text-yellow-700">
+                  <!-- straight-line return arrow (RTO) -->
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M21 11H6.414l4.293-4.293a1 1 0 10-1.414-1.414l-6 6a1 1 0 000 1.414l6 6a1 1 0 001.414-1.414L6.414 13H21a1 1 0 000-2z" />
+                  </svg>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center gap-2">
+                <span class="text-xs bg-red-50 text-red-700 px-2 py-1 rounded">{{ rto_rate_growth }}%</span>
+                <span class="text-xs text-gray-500">trend</span>
+              </div>
+            </div>
+
+            <!-- Avg TAT -->
+            <div class="group relative overflow-hidden rounded-lg p-5 border border-gray-100 dark:border-slate-700 bg-gradient-to-br from-white to-pink-50 dark:from-slate-800 shadow-sm hover:shadow-lg transition-transform transform hover:-translate-y-1">
+              <div class="flex items-start justify-between">
+                <div>
+                  <div class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ avg_tat }}d</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Avg TAT</div>
+                </div>
+                <div class="flex items-center justify-center w-10 h-10 rounded bg-pink-100 text-pink-600">
+                  <!-- clock icon -->
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l2 2M12 6a6 6 0 100 12 6 6 0 000-12z" />
+                  </svg>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center gap-2">
+                <span class="text-xs bg-red-50 text-red-700 px-2 py-1 rounded">{{ tat_growth }}%</span>
+                <span class="text-xs text-gray-500">vs last mo</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style="border-radius: 8px;">
+            <!-- Order Placed -->
+            <div class="flex items-start gap-4 rounded-lg p-4 border border-yellow-100 dark:border-slate-700 bg-yellow-50 dark:bg-slate-800 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 flex items-center justify-center rounded bg-yellow-200 text-yellow-800">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 3h14v4H3zM3 11h14v6H3z" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="text-sm font-bold text-yellow-900 dark:text-white">ORDER_PLACED</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Order Placed / Manifested</div>
+                  </div>
+                  <div class="text-2xl font-semibold text-yellow-900 dark:text-white">{{ status_summary.placed.value|default:'0' }}</div>
+                </div>
+                <div class="mt-3 text-sm text-yellow-700">{{ status_summary.placed.growth|default:'0' }}%</div>
+              </div>
+            </div>
+
+            <!-- Ready to Ship -->
+            <div class="flex items-start gap-4 rounded-lg p-4 border border-emerald-100 dark:border-slate-700 bg-emerald-50 dark:bg-slate-800 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 flex items-center justify-center rounded bg-emerald-200 text-emerald-800">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M3 3h14v2H3V3zm0 4h14v6H3V7zm2 8a1 1 0 100 2 1 1 0 000-2zm10 0a1 1 0 100 2 1 1 0 000-2z" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="text-sm font-bold text-emerald-900 dark:text-white">READY_TO_SHIP</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Packed & Ready</div>
+                  </div>
+                  <div class="text-2xl font-semibold text-emerald-900 dark:text-white">{{ status_summary.ready_to_ship.value|default:'0' }}</div>
+                </div>
+                <div class="mt-3 text-sm text-emerald-700">{{ status_summary.ready_to_ship.growth|default:'0' }}%</div>
+              </div>
+            </div>
+
+            <!-- In Transit -->
+            <div class="flex items-start gap-4 rounded-lg p-4 border border-indigo-100 dark:border-slate-700 bg-indigo-50 dark:bg-slate-800 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 flex items-center justify-center rounded bg-indigo-200 text-indigo-800">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 7h13l4 4v6a1 1 0 01-1 1h-1M3 7V5a2 2 0 012-2h7" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="text-sm font-bold text-indigo-900 dark:text-white">INTRANSIT</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">In Transit</div>
+                  </div>
+                  <div class="text-2xl font-semibold text-indigo-900 dark:text-white">{{ status_summary.in_transit.value|default:'0' }}</div>
+                </div>
+                <div class="mt-3 text-sm text-indigo-700">{{ status_summary.in_transit.growth|default:'0' }}%</div>
+              </div>
+            </div>
+
+            <!-- Out for Delivery -->
+            <div class="flex items-start gap-4 rounded-lg p-4 border border-purple-100 dark:border-slate-700 bg-purple-50 dark:bg-slate-800 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 flex items-center justify-center rounded bg-purple-200 text-purple-800">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 7a1 1 0 011-1h11a1 1 0 01.707.293l3 3A1 1 0 0120 10v5a1 1 0 01-1 1h-1a3 3 0 01-6 0H9a3 3 0 01-6 0H4a1 1 0 01-1-1V7zM7 17a1 1 0 100-2 1 1 0 000 2zm10 0a1 1 0 100-2 1 1 0 000 2z" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="text-sm font-bold text-purple-900 dark:text-white">OUT_FOR_DELIVERY</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Shipment Out For Delivery</div>
+                  </div>
+                  <div class="text-2xl font-semibold text-purple-900 dark:text-white">{{ status_summary.out_for_delivery.value|default:'0' }}</div>
+                </div>
+                <div class="mt-3 text-sm text-purple-700">{{ status_summary.out_for_delivery.growth|default:'0' }}%</div>
+              </div>
+            </div>
+
+            <!-- Delivered -->
+            <div class="flex items-start gap-4 rounded-lg p-4 border border-sky-100 dark:border-slate-700 bg-sky-50 dark:bg-slate-800 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 flex items-center justify-center rounded bg-sky-200 text-sky-800">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M16.707 5.293a1 1 0 00-1.414-1.414L8 11.172 4.707 7.879a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8z" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="text-sm font-bold text-sky-900 dark:text-white">DELIVERED</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Shipment Delivered</div>
+                  </div>
+                  <div class="text-2xl font-semibold text-sky-900 dark:text-white">{{ status_summary.delivered.value|default:'0' }}</div>
+                </div>
+                <div class="mt-3 text-sm text-sky-700">{{ status_summary.delivered.growth|default:'0' }}%</div>
+              </div>
+            </div>
+
+            <!-- Failed Delivery -->
+            <div class="flex items-start gap-4 rounded-lg p-4 border border-rose-100 dark:border-slate-700 bg-rose-50 dark:bg-slate-800 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 flex items-center justify-center rounded bg-rose-200 text-rose-800">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 8l4 4M12 8l-4 4" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="text-sm font-bold text-rose-900 dark:text-white">FAILED_DELIVERY</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">NDR</div>
+                  </div>
+                  <div class="text-2xl font-semibold text-rose-900 dark:text-white">{{ status_summary.failed_delivery.value|default:'0' }}</div>
+                </div>
+                <div class="mt-3 text-sm text-rose-700">{{ status_summary.failed_delivery.growth|default:'0' }}%</div>
+              </div>
+            </div>
+
+            <!-- Order Canceled -->
+            <div class="flex items-start gap-4 rounded-lg p-4 border border-rose-100 dark:border-slate-700 bg-rose-50 dark:bg-slate-800 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 flex items-center justify-center rounded bg-rose-200 text-rose-800">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm2.5-10.5a.75.75 0 10-1.06-1.06L10 8.94 8.56 7.44a.75.75 0 10-1.06 1.06L8.94 10l-1.44 1.44a.75.75 0 101.06 1.06L10 11.06l1.44 1.44a.75.75 0 101.06-1.06L11.06 10l1.44-1.44z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="text-sm font-bold text-rose-900 dark:text-white">ORDER_CANCELLED</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Customer Cancelled</div>
+                  </div>
+                  <div class="text-2xl font-semibold text-rose-900 dark:text-white">{{ status_summary.cancelled.value|default:'0' }}</div>
+                </div>
+                <div class="mt-3 text-sm text-rose-700">{{ status_summary.cancelled.growth|default:'0' }}%</div>
+              </div>
+            </div>
+
+            <!-- RTO Delivered -->
+            <div class="flex items-start gap-4 rounded-lg p-4 border border-red-100 dark:border-slate-700 bg-red-50 dark:bg-slate-800 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 flex items-center justify-center rounded bg-red-200 text-red-800">
+                <!-- RTO delivered icon (circle with straight arrow) -->
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="text-sm font-bold text-red-900 dark:text-white">RTO</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Returned To Origin</div>
+                  </div>
+                  <div class="text-2xl font-semibold text-red-900 dark:text-white">{{ status_summary.rto.value|default:'0' }}</div>
+                </div>
+                <div class="mt-3 text-sm text-red-700">{{ status_summary.rto.growth|default:'0' }}%</div>
+              </div>
+            </div>
+
+            <!-- Lost -->
+            <div class="flex items-start gap-4 rounded-lg p-4 border border-stone-100 dark:border-slate-700 bg-stone-50 dark:bg-slate-800 shadow-sm hover:shadow-md transition-all">
+              <div class="w-12 h-12 flex items-center justify-center rounded bg-stone-200 text-stone-800">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zM9 7a1 1 0 112 0v1a1 1 0 11-2 0V7zm1 4a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <div class="text-sm font-bold text-stone-900 dark:text-white">LOST</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Potentially Lost/ Damaged</div>
+                  </div>
+                  <div class="text-2xl font-semibold text-stone-900 dark:text-white">{{ status_summary.lost.value|default:'0' }}</div>
+                </div>
+                <div class="mt-3 text-sm text-stone-700">{{ status_summary.lost.growth|default:'0' }}%</div>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs text-red-500 dark:text-red-300 mt-4">Note: Stats are not real time; there may be a slight delay.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  {{ total_daily_orders|json_script:"daily-orders-data" }}
+
+  <script>
+            // Date Range Picker Logic
+            let startDate = null
+            let endDate = null
+            let currentMonth1 = new Date()
+            let currentMonth2 = new Date(new Date().setMonth(new Date().getMonth() + 1))
+
+            const dateInput = document.getElementById('dateRangeInput')
+            const modal = document.getElementById('dateModal')
+            const closeModalBtn = document.getElementById('closeModal')
+            const cancelModalBtn = document.getElementById('cancelModal')
+            const applyDateRangeBtn = document.getElementById('applyDateRange')
+
+            // Open modal on input click
+            dateInput.addEventListener('click', () => {
+                modal.classList.add('active')
+                renderCalendars()
+            })
+
+            // Close modal
+            closeModalBtn.addEventListener('click', () => modal.classList.remove('active'))
+            cancelModalBtn.addEventListener('click', () => modal.classList.remove('active'))
+
+            // Navigation buttons
+            document.getElementById('prevMonth').addEventListener('click', () => {
+                currentMonth1.setMonth(currentMonth1.getMonth() - 1)
+                renderCalendars()
+            })
+
+            document.getElementById('nextMonth').addEventListener('click', () => {
+                currentMonth1.setMonth(currentMonth1.getMonth() + 1)
+                renderCalendars()
+            })
+
+            document.getElementById('prevYear').addEventListener('click', () => {
+                currentMonth1.setFullYear(currentMonth1.getFullYear() - 1)
+                renderCalendars()
+            })
+
+            document.getElementById('nextYear').addEventListener('click', () => {
+                currentMonth1.setFullYear(currentMonth1.getFullYear() + 1)
+                renderCalendars()
+            })
+
+            document.getElementById('prevMonth2').addEventListener('click', () => {
+                currentMonth2.setMonth(currentMonth2.getMonth() - 1)
+                renderCalendars()
+            })
+
+            document.getElementById('nextMonth2').addEventListener('click', () => {
+                currentMonth2.setMonth(currentMonth2.getMonth() + 1)
+                renderCalendars()
+            })
+
+            document.getElementById('prevYear2').addEventListener('click', () => {
+                currentMonth2.setFullYear(currentMonth2.getFullYear() - 1)
+                renderCalendars()
+            })
+
+            document.getElementById('nextYear2').addEventListener('click', () => {
+                currentMonth2.setFullYear(currentMonth2.getFullYear() + 1)
+                renderCalendars()
+            })
+
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const today = new Date()
+                    today.setHours(0, 0, 0, 0)
+
+                    let start, end
+                    switch (btn.dataset.range) {
+                        case 'today':
+                            start = new Date(today)
+                            end = new Date(today)
+                            break
+                        case 'yesterday':
+                            start = new Date(today)
+                            start.setDate(today.getDate() - 1)
+                            end = new Date(start)
+                            break
+                        case 'last7':
+                            end = new Date(today)
+                            start = new Date(today)
+                            start.setDate(today.getDate() - 6)
+                            break
+                        case 'last30':
+                            end = new Date(today)
+                            start = new Date(today)
+                            start.setDate(today.getDate() - 29)
+                            break
+                        case 'thisMonth':
+                            start = new Date(today.getFullYear(), today.getMonth(), 1)
+                            end = new Date(today)
+                            break
+                        case 'lastMonth':
+                            start = new Date(today.getFullYear(), today.getMonth() - 1, 1)
+                            end = new Date(today.getFullYear(), today.getMonth(), 0)
+                            break
+                        case 'thisYear':
+                            start = new Date(today.getFullYear(), 0, 1)
+                            end = new Date(today)
+                            break
+                        case 'lastYear':
+                            start = new Date(today.getFullYear() - 1, 0, 1)
+                            end = new Date(today.getFullYear() - 1, 11, 31)
+                            break
+                    }
+                    startDate = start
+                    endDate = end
+                    currentMonth1 = new Date(start)
+                    currentMonth2 = new Date(start)
+                    currentMonth2.setMonth(currentMonth2.getMonth() + 1)
+                    renderCalendars()
+                })
+            })
+
+            // Apply date range
+            applyDateRangeBtn.addEventListener('click', () => {
+                if (startDate && endDate) {
+                    const formatDate = (date) => {
+                        const month = String(date.getMonth() + 1).padStart(2, '0')
+                        const day = String(date.getDate()).padStart(2, '0')
+                        const year = date.getFullYear()
+                        return `${month}/${day}/${year}`
+                    }
+                    dateInput.value = `${formatDate(startDate)} - ${formatDate(endDate)}`
+                    modal.classList.remove('active')
+                }
+            })
+
+            // Reset date range
+            document.getElementById('resetDateRange').addEventListener('click', () => {
+                startDate = null
+                endDate = null
+                const today = new Date()
+                currentMonth1 = new Date(today)
+                currentMonth2 = new Date(today)
+                currentMonth2.setMonth(currentMonth2.getMonth() + 1)
+                renderCalendars()
+            })
+
+            function renderCalendars() {
+                renderCalendar('calendarDays', 'currentMonth', currentMonth1)
+                renderCalendar('calendarDays2', 'currentMonth2', currentMonth2)
+            }
+
+            function renderCalendar(containerId, monthLabelId, month) {
+                const container = document.getElementById(containerId)
+                const monthLabel = document.getElementById(monthLabelId)
+
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+                monthLabel.textContent = `${monthNames[month.getMonth()]} ${month.getFullYear()}`
+
+                container.innerHTML = ''
+
+                // Day headers
+                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+                dayNames.forEach((day) => {
+                    const dayEl = document.createElement('div')
+                    dayEl.className = 'day-header'
+                    dayEl.textContent = day
+                    container.appendChild(dayEl)
+                })
+
+                // Get first day of month and number of days
+                const firstDay = new Date(month.getFullYear(), month.getMonth(), 1).getDay()
+                const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate()
+                const daysInPrevMonth = new Date(month.getFullYear(), month.getMonth(), 0).getDate()
+
+                // Previous month days
+                for (let i = firstDay - 1; i >= 0; i--) {
+                    const dayEl = document.createElement('div')
+                    dayEl.className = 'day other-month'
+                    dayEl.textContent = daysInPrevMonth - i
+                    container.appendChild(dayEl)
+                }
+
+                // Current month days
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayEl = document.createElement('div')
+                    const currentDate = new Date(month.getFullYear(), month.getMonth(), day)
+                    dayEl.className = 'day'
+                    dayEl.textContent = day
+
+                    // Check if date is before start date when start date is selected
+                    const isBeforeStartDate = startDate && currentDate < startDate && !endDate
+
+                    // Check if date is selected or in range
+                    if (startDate && endDate) {
+                        if (currentDate.toDateString() === startDate.toDateString() || currentDate.toDateString() === endDate.toDateString()) {
+                            dayEl.classList.add('selected')
+                        } else if (currentDate > startDate && currentDate < endDate) {
+                            dayEl.classList.add('in-range')
+                        }
+                    } else if (startDate && currentDate.toDateString() === startDate.toDateString()) {
+                        dayEl.classList.add('selected')
+                    }
+
+                    // Disable dates before start date
+                    if (isBeforeStartDate) {
+                        dayEl.classList.add('other-month')
+                        dayEl.style.cursor = 'not-allowed'
+                        dayEl.style.opacity = '0.5'
+                    } else {
+                        dayEl.addEventListener('click', () => {
+                            if (!startDate || (startDate && endDate)) {
+                                startDate = currentDate
+                                endDate = null
+                            } else if (currentDate < startDate) {
+                                // Don't allow selecting date before start date
+                                return
+                            } else {
+                                endDate = currentDate
+                            }
+                            renderCalendars()
+                        })
+                    }
+
+                    container.appendChild(dayEl)
+                }
+
+                // Next month days
+                const totalCells = container.children.length - 7 // Subtract day headers
+                const remainingCells = 42 - totalCells
+                for (let day = 1; day <= remainingCells; day++) {
+                    const dayEl = document.createElement('div')
+                    dayEl.className = 'day other-month'
+                    dayEl.textContent = day
+                    container.appendChild(dayEl)
+                }
+            }
+
+            // Initialize calendars on page load
+            renderCalendars()
+
+            // Function to get URL parameters
+            function getUrlParams() {
+                const params = {}
+                const urlParams = new URLSearchParams(window.location.search)
+                for (const [key, value] of urlParams) {
+                    params[key] = value
+                }
+                return params
+            }
+
+            // Function to set filters from URL parameters on page load
+            function setFiltersFromUrl() {
+                const params = getUrlParams()
+                const dateRangeInput = document.getElementById('dateRangeInput')
+                const methodSelect = document.querySelectorAll('.px-6.py-5 select')[0]
+                const courierSelect = document.querySelectorAll('.px-6.py-5 select')[1]
+
+                if (params.date_from && params.date_to) {
+                    dateRangeInput.value = `${params.date_from} - ${params.date_to}`
+                }
+                if (params.method) {
+                    methodSelect.value = params.method
+                }
+                if (params.courier) {
+                    courierSelect.value = params.courier
+                }
+            }
+
+            // Call setFiltersFromUrl on page load
+            setFiltersFromUrl()
+
+            // Close modal when clicking outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active')
+                }
+            })
+
+            // Apply Filters button - updates URL with query parameters
+            document.getElementById('applyFilters').addEventListener('click', () => {
+                const dateRange = document.getElementById('dateRangeInput').value
+                const method = document.querySelectorAll('.px-6.py-5 select')[0].value || ''
+                const courier = document.querySelectorAll('.px-6.py-5 select')[1].value || ''
+
+                if (dateRange) {
+                    const [dateFrom, dateTo] = dateRange.split(' - ')
+                    const params = new URLSearchParams()
+                    if (dateFrom) params.set('date_from', dateFrom.trim())
+                    if (dateTo) params.set('date_to', dateTo.trim())
+                    if (method) params.set('method', method)
+                    if (courier) params.set('courier', courier)
+
+                    const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '')
+                    window.location.href = newUrl
+                } else {
+                    alert('Please select a date range first.')
+                }
+            })
+
+            // Clear Filters button - resets to default
+            document.getElementById('clearFilters').addEventListener('click', () => {
+                document.getElementById('dateRangeInput').value = '09/01/2022 - 01/30/2026'
+                const selects = document.querySelectorAll('.px-6.py-5 select')
+                selects.forEach((select) => (select.value = 'All'))
+                startDate = null
+                endDate = null
+                renderCalendars()
+                alert('Filters cleared! All data displayed.')
+            })
+
+
+            // Bulk Export button - exports data
+            document.getElementById('bulkExport').addEventListener('click', () => {
+                const dateRange = document.getElementById('dateRangeInput').value
+                const method = document.querySelectorAll('.px-6.py-5 select')[0].value || 'All'
+                const courier = document.querySelectorAll('.px-6.py-5 select')[1].value || 'All'
+
+                alert('Exporting data...\n\nDate Range: ' + dateRange + '\nMethod: ' + method + '\nCourier: ' + courier + '\n\nFile will be downloaded as export.csv')
+            })
+
+            // Bar chart hover tooltips
+            if (!document.getElementById('tooltip')) {
+                const tooltip = document.createElement('div')
+                tooltip.id = 'tooltip'
+                document.body.appendChild(tooltip)
+            }
+
+            const tooltip = document.getElementById('tooltip')
+            const barContainers = document.querySelectorAll('.bar-container')
+            const orders = Array.from(barContainers).map(container => parseInt(container.getAttribute('data-orders')))
+            const bars = document.querySelectorAll('.bar')
+
+            bars.forEach((bar, index) => {
+                bar.addEventListener('mouseenter', function (e) {
+                    const container = this.closest('.bar-container')
+                    const value = container.getAttribute('data-orders')
+                    const day = container.getAttribute('data-day')
+                    const diff = index > 0 ? orders[index] - orders[index - 1] : 0
+                    const diffText = index > 0 ? ` (${diff > 0 ? '+' : ''}${diff} vs prev)` : ''
+                    tooltip.textContent = `${day}: ${value} Orders${diffText}`
+                    tooltip.classList.remove('hidden')
+                    tooltip.style.left = e.clientX + 10 + 'px'
+                    tooltip.style.top = e.clientY - 10 + 'px'
+                })
+
+                bar.addEventListener('mousemove', function (e) {
+                    tooltip.style.left = e.clientX + 10 + 'px'
+                    tooltip.style.top = e.clientY - 10 + 'px'
+                })
+
+                bar.addEventListener('mouseleave', function () {
+                    tooltip.classList.add('hidden')
+                })
+            })
+
+            // Bar label hover tooltips
+            const barLabels = document.querySelectorAll('.bar-label')
+
+            barLabels.forEach((label, index) => {
+                label.addEventListener('mouseenter', function (e) {
+                    const container = this.closest('.bar-container')
+                    const value = container.getAttribute('data-orders')
+                    const day = container.getAttribute('data-day')
+                    const diff = index > 0 ? orders[index] - orders[index - 1] : 0
+                    const diffText = index > 0 ? ` (${diff > 0 ? '+' : ''}${diff} vs prev)` : ''
+                    tooltip.textContent = `${day}: ${value} Orders${diffText}`
+                    tooltip.classList.remove('hidden')
+                    tooltip.style.left = e.clientX + 10 + 'px'
+                    tooltip.style.top = e.clientY - 10 + 'px'
+                })
+
+                label.addEventListener('mousemove', function (e) {
+                    tooltip.style.left = e.clientX + 10 + 'px'
+                    tooltip.style.top = e.clientY - 10 + 'px'
+                })
+
+                label.addEventListener('mouseleave', function () {
+                    tooltip.classList.add('hidden')
+                })
+            })
+
+            // Initialize meter
+            const meterCircle = document.querySelector('.meter-fill')
+            const meterText = document.querySelector('.meter-text')
+            const completedText = document.getElementById('completed-text')
+            const pendingText = document.getElementById('pending-text')
+            const totalPickups = 90
+            const completedPickups = 0
+            const pendingPickups = totalPickups - completedPickups
+            const percentage = (completedPickups / totalPickups) * 100;
+            const circumference = 2 * Math.PI * 50;
+            // Set a minimum arc for low values (e.g., 10% of circumference)
+            const minArcPercent = 1; // Minimum arc percent for visibility
+            let arcPercent = percentage;
+            if (completedPickups > 0 && percentage < minArcPercent) {
+                arcPercent = minArcPercent;
+            }
+            meterCircle.style.strokeDasharray = circumference;
+            // Calculate offset so that the arc is drawn correctly
+            const strokeDashoffset = circumference - (arcPercent / 100) * circumference;
+            meterCircle.style.strokeDashoffset = strokeDashoffset;
+            meterText.textContent = Math.round(percentage) + '%';
+            completedText.textContent = completedPickups;
+            pendingText.textContent = pendingPickups;
+
+            // Add tooltip for meter chart
+            const meterContainer = document.querySelector('.meter-container')
+            if (meterContainer) {
+                meterContainer.addEventListener('mouseenter', function (e) {
+                    tooltip.textContent = `Completed: ${completedPickups} | Pending: ${pendingPickups} | Total: ${totalPickups}`
+                    tooltip.classList.remove('hidden')
+                    tooltip.style.left = e.clientX + 10 + 'px'
+                    tooltip.style.top = e.clientY - 10 + 'px'
+                })
+
+                meterContainer.addEventListener('mousemove', function (e) {
+                    tooltip.style.left = e.clientX + 10 + 'px'
+                    tooltip.style.top = e.clientY - 10 + 'px'
+                })
+
+                meterContainer.addEventListener('mouseleave', function () {
+                    tooltip.classList.add('hidden')
+                })
+            }
+
+            // Function to update pie chart data
+            function updatePieChart(codCount, prepaidCount) {
+              const donutChart = document.querySelector('.donut-chart')
+              if (!donutChart) return
+
+              const totalOrders = codCount + prepaidCount
+              if (totalOrders === 0) return
+
+              const codPercentage = ((codCount / totalOrders) * 100).toFixed(1)
+              const prepaidPercentage = ((prepaidCount / totalOrders) * 100).toFixed(1)
+
+              // Update conic-gradient based on percentages
+              const codPercent = parseFloat(codPercentage)
+              donutChart.style.background = `conic-gradient(#f97316 0% ${codPercent}%, #3b82f6 ${codPercent}% 100%)`
+
+              // Store data in data attributes for tooltip
+              donutChart.setAttribute('data-cod', codCount)
+              donutChart.setAttribute('data-prepaid', prepaidCount)
+              donutChart.setAttribute('data-cod-percentage', codPercentage)
+              donutChart.setAttribute('data-prepaid-percentage', prepaidPercentage)
+            }
+
+            // Add tooltip for pie chart (donut chart) - COD vs Prepaid
+            const donutChart = document.querySelector('.donut-chart')
+
+            // Static data for COD vs Prepaid
+            const codOrders = {{ cod_vs_prepaid.cod }}
+            const prepaidOrders = {{ cod_vs_prepaid.prepaid }}
+            const totalOrders = codOrders + prepaidOrders
+
+            // Initialize pie chart with data
+            updatePieChart(codOrders, prepaidOrders)
+
+            if (donutChart) {
+              donutChart.addEventListener('mouseenter', function(e) {
+                const cod = parseFloat(this.getAttribute('data-cod'))
+                const prepaid = parseFloat(this.getAttribute('data-prepaid'))
+                const codPct = this.getAttribute('data-cod-percentage')
+                const prepaidPct = this.getAttribute('data-prepaid-percentage')
+                tooltip.innerHTML = `<strong>COD vs Prepaid</strong><br/>COD: ${cod} (${codPct}%)<br/>Prepaid: ${prepaid} (${prepaidPct}%)`
+                tooltip.classList.remove('hidden')
+                tooltip.style.left = e.clientX + 10 + 'px'
+                tooltip.style.top = e.clientY - 10 + 'px'
+              })
+
+              donutChart.addEventListener('mousemove', function(e) {
+                tooltip.style.left = e.clientX + 10 + 'px'
+                tooltip.style.top = e.clientY - 10 + 'px'
+              })
+
+              donutChart.addEventListener('mouseleave', function() {
+                tooltip.classList.add('hidden')
+              })
+            }
+
+
+            // Function to generate last 5 days including weekends
+            function generateLast5Days() {
+                const days = [];
+                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                const today = new Date();
+
+                for (let i = 4; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() - i);
+                    days.push({
+                        day: dayNames[date.getDay()],
+                        date: date,
+                        // Mock data - in real app, fetch from API
+                        orders: Math.floor(Math.random() * 80) + 20
+                    });
+                }
+                // Reverse so today appears leftmost
+                return days.reverse();
+            }
+
+            // Function to render the dynamic bar chart
+            function renderTodayOrdersChart() {
+                const chartContainer = document.getElementById('todayOrdersChart');
+                if (!chartContainer) return;
+
+                const last5Days = JSON.parse(document.getElementById('daily-orders-data').textContent);
+                console.log(last5Days);
+                const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500'];
+
+                // Find the position to insert bars (before the icon div)
+                const textLeftDiv = chartContainer.querySelector('.text-left');
+
+                // Create bars for each day
+                last5Days.forEach((dayData, index) => {
+                    const barContainer = document.createElement('div');
+                    barContainer.className = 'bar-container';
+                    barContainer.setAttribute('data-day', dayData.day);
+                    barContainer.setAttribute('data-orders', dayData.orders);
+
+                    // Calculate height (max 80px for visibility)
+                    const height = Math.min(dayData.orders, 80);
+
+                    barContainer.innerHTML = `
+                      <div class="bar-background"></div>
+                      <div class="bar ${colors[index]}" style="height: ${height}px;"></div>
+                      <span class="bar-value hidden absolute top-0 left-1/2 transform -translate-x-1/2 text-xs font-bold text-white">${dayData.orders}</span>
+                      <span class="bar-label text-xs text-gray-600 mt-1">${dayData.day}</span>
+                    `;
+
+                    // Insert after text-left div
+                    chartContainer.insertBefore(barContainer, textLeftDiv.nextSibling);
+                });
+
+                // Update the total orders display (today's orders)
+                const totalOrdersDiv = chartContainer.parentElement.querySelector('.text-lg');
+                if (totalOrdersDiv) {
+                    const todayOrders = last5Days[last5Days.length - 1].orders;
+                    totalOrdersDiv.innerHTML = `${todayOrders}<br><p class="text-md">Orders</p>`;
+                }
+
+                // Re-initialize tooltip functionality for new bars
+                initializeBarTooltips();
+            }
+
+            // Initialize bar tooltips
+            function initializeBarTooltips() {
+                const newBarContainers = document.querySelectorAll('#todayOrdersChart .bar-container');
+                const newOrders = Array.from(newBarContainers).map(container => parseInt(container.getAttribute('data-orders')));
+                const newBars = document.querySelectorAll('#todayOrdersChart .bar');
+
+                newBars.forEach((bar, index) => {
+                    bar.addEventListener('mouseenter', function (e) {
+                        const container = this.closest('.bar-container');
+                        const value = container.getAttribute('data-orders');
+                        const day = container.getAttribute('data-day');
+                        const diff = index > 0 ? newOrders[index] - newOrders[index - 1] : 0;
+                        const diffText = index > 0 ? ` (${diff > 0 ? '+' : ''}${diff} vs prev)` : '';
+                        tooltip.textContent = `${day}: ${value} Orders${diffText}`;
+                        tooltip.classList.remove('hidden');
+                        tooltip.style.left = e.clientX + 10 + 'px';
+                        tooltip.style.top = e.clientY - 10 + 'px';
+                    });
+
+                    bar.addEventListener('mousemove', function (e) {
+                        tooltip.style.left = e.clientX + 10 + 'px';
+                        tooltip.style.top = e.clientY - 10 + 'px';
+                    });
+
+                    bar.addEventListener('mouseleave', function () {
+                        tooltip.classList.add('hidden');
+                    });
+                });
+
+                // Bar label hover tooltips
+                const newBarLabels = document.querySelectorAll('#todayOrdersChart .bar-label');
+                newBarLabels.forEach((label, index) => {
+                    label.addEventListener('mouseenter', function (e) {
+                        const container = this.closest('.bar-container');
+                        const value = container.getAttribute('data-orders');
+                        const day = container.getAttribute('data-day');
+                        const diff = index > 0 ? newOrders[index] - newOrders[index - 1] : 0;
+                        const diffText = index > 0 ? ` (${diff > 0 ? '+' : ''}${diff} vs prev)` : '';
+                        tooltip.textContent = `${day}: ${value} Orders${diffText}`;
+                        tooltip.classList.remove('hidden');
+                        tooltip.style.left = e.clientX + 10 + 'px';
+                        tooltip.style.top = e.clientY - 10 + 'px';
+                    });
+
+                    label.addEventListener('mousemove', function (e) {
+                        tooltip.style.left = e.clientX + 10 + 'px';
+                        tooltip.style.top = e.clientY - 10 + 'px';
+                    });
+
+                    label.addEventListener('mouseleave', function () {
+                        tooltip.classList.add('hidden');
+                    });
+                });
+            }
+
+            // Initialize on page load
+            renderTodayOrdersChart();
+
+
+            // D3.js Horizontal Bar Chart for 4 Zones
+            document.addEventListener('DOMContentLoaded', function () {
+                const data = [
+                    { zone: "Zone A", shipments: 850 },
+                    { zone: "Zone B", shipments: 720 },
+                    { zone: "Zone C", shipments: 680 },
+                    { zone: "Zone D", shipments: 590 }
+                ];
+
+                const margin = { top: 20, right: 20, bottom: 60, left: 80 };
+                const containerWidth = d3.select("#zonesBarChart").node().getBoundingClientRect().width;
+                const width = Math.max(400, containerWidth - margin.left - margin.right);
+                const height = 300 - margin.top - margin.bottom;
+
+                const svg = d3.select("#zonesBarChart")
+                    .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+                // Scales
+                const x = d3.scaleLinear()
+                    .domain([0, d3.max(data, d => d.shipments)])
+                    .nice()
+                    .range([0, width]);
+
+                const y = d3.scaleBand()
+                    .domain(data.map(d => d.zone))
+                    .range([0, height])
+                    .padding(0.1);
+
+                // Bars
+                svg.selectAll(".bar")
+                    .data(data)
+                    .enter().append("rect")
+                    .attr("class", "bar")
+                    .attr("x", 0)
+                    .attr("y", d => y(d.zone))
+                    .attr("width", d => x(d.shipments))
+                    .attr("height", y.bandwidth())
+                    .attr("fill", (d, i) => {
+                        const colors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
+                        return colors[i % colors.length];
+                    })
+                    .style("filter", "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))")
+                    .on("mouseover", function (event, d) {
+                        d3.select(this).style("filter", "drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)");
+                        const tooltip = d3.select("body").append("div")
+                            .attr("class", "tooltip")
+                            .style("position", "absolute")
+                            .style("background", "rgba(0, 0, 0, 0.8)")
+                            .style("color", "#fff")
+                            .style("padding", "6px 8px")
+                            .style("border-radius", "4px")
+                            .style("pointer-events", "none")
+                            .style("font-size", "12px")
+                            .style("left", (event.pageX + 10) + "px")
+                            .style("top", (event.pageY - 10) + "px")
+                            .html(`${d.zone}<br/>Shipments: ${d.shipments}`);
+                    })
+                    .on("mouseout", function () {
+                        d3.select(this).style("filter", "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))");
+                        d3.selectAll(".tooltip").remove();
+                    });
+
+                // Axes
+                svg.append("g")
+                    .call(d3.axisLeft(y))
+                    .selectAll("text")
+                    .style("font-size", "12px")
+                    .style("font-weight", "500");
+
+                svg.append("g")
+                    .attr("transform", `translate(0,${height})`)
+                    .call(d3.axisBottom(x))
+                    .selectAll("text")
+                    .style("font-size", "11px");
+
+                // Labels
+                svg.append("text")
+                    .attr("transform", `translate(${width / 2}, ${height + margin.bottom - 10})`)
+                    .style("text-anchor", "middle")
+                    .style("font-size", "12px")
+                    .style("font-weight", "bold")
+                    .text("Shipments");
+
+                svg.append("text")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 0 - margin.left + 20)
+                    .attr("x", 0 - (height / 2))
+                    .attr("dy", "1em")
+                    .style("text-anchor", "middle")
+                    .style("font-size", "12px")
+                    .style("font-weight", "bold")
+                    .text("Zones");
+            });
+
+  </script>
+{% endblock %}

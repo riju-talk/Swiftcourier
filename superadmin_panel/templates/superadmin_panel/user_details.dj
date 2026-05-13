@@ -1,0 +1,596 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+    User Details
+{% endblock title %}
+
+{% load static %}
+
+{% block css %}
+    <style>
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .doc-img {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .doc-img:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .info-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            overflow: auto;
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .download-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-content img {
+                margin: 0 auto 16px;
+            }
+
+            .lottie-player {
+                display: none;
+            }
+        }
+    </style>
+{% endblock css %}
+
+
+{% block body %}
+    <div class="max-w-6xl mx-auto px-4 py-8 fade-in-up">
+
+        <div>
+            <button onclick="history.back()"
+                    class="border border-blue-500 hover:bg-blue-700 text-blue-500 hover:text-white font-bold py-2 px-4 rounded">
+                Back
+            </button>
+        </div>
+
+        <!-- Header -->
+        <div class="relative flex items-center justify-between p-6 bg-blue-600 dark:from-indigo-700 text-white rounded-2xl shadow-lg mb-10 mt-10">
+            <div class="flex items-center gap-6 header-content">
+                <img src="{{ user.photo.url }}"
+                     alt="Profile"
+                     class="w-20 h-20 rounded-full border-4 border-white shadow-md">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight">{{ user.full_name|default:"N/A" }}</h2>
+                    <div class="flex flex-wrap items-center gap-2 mt-2">
+                        <span class="bg-black px-3 py-1 rounded-full text-sm text-white">
+                            IdiotShip Code: <span class="font-medium">CL{{ user.id }}</span>
+                        </span>
+                        <span class="bg-black px-3 py-1 rounded-full text-sm text-white">Joined: {{ user.created_at|date:"M d, Y" }}</span>
+                    </div>
+                </div>
+            </div>
+            <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_tll0j4bb.json" background="transparent" speed="1" style="width: 80px; height: 80px" loop autoplay>
+            </lottie-player>
+            <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+        </div>
+
+        <!-- Info Grid -->
+        <div class="info-grid">
+
+            <!-- User Actions Card -->
+            <div class="p-6 rounded-xl glass-card shadow info-card">
+                <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="info-icon text-sky-500 dark:text-sky-400"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    <h3 class="text-lg font-semibold ml-2">Actions</h3>
+                </div>
+
+                <div class="space-y-3 text-gray-700 dark:text-gray-300">
+                    <!-- Update Password Button -->
+                    <a href="{% url 'account:update-password' user.id %}"
+                       class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-gray-100 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-5 w-5 text-sky-500"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                        </svg>
+                        <span>Update Password</span>
+                    </a>
+
+                    <!-- Assign Admin Button -->
+                    <a href="{% url 'superadmin_panel:assign-admin' %}?user_ids={{ user.id }}"
+                       class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-gray-100 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-5 w-5 text-indigo-500"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span>Assign Admin</span>
+                    </a>
+
+                    <!-- View Rate Card -->
+                    <a href="{% url 'superadmin_panel:view-rate-cards' user.id %}"
+                       class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-gray-100 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-5 w-5 text-purple-500"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2h6v2m-6-4h6V7a2 2 0 00-2-2H9v4H7V5a2 2 0 012-2h4l4 4v10a2 2 0 01-2 2H9a2 2 0 01-2-2v-4z" />
+                        </svg>
+                        <span>View Rate Card</span>
+                    </a>
+
+                    <!-- View Rate Card -->
+                    <a href="{% url 'superadmin_panel:assign-courier-and-rates' user.id %}"
+                       class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-gray-100 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-5 w-5 text-purple-500"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14H15M9 10H15M5 6h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z" />
+                        </svg>
+                        <span>Assign Rate Card</span>
+                    </a>
+                    <!-- Manage Wallet -->
+                    <a href="{% url 'superadmin_panel:manage-wallet' user.id %}"
+                       class="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-gray-100 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="h-5 w-5 text-green-500"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2m4-4h-6" />
+                        </svg>
+                        <span>Manage Wallet</span>
+                    </a>
+
+                </div>
+            </div>
+
+
+
+
+            <!-- Contact & Role -->
+            <div class="p-6 rounded-xl glass-card shadow info-card">
+                <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="info-icon"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <h3 class="text-lg font-semibold">Contact & Role</h3>
+                </div>
+                <div class="space-y-3 text-gray-700 dark:text-gray-300 flex-grow">
+                    <p class="flex items-start">
+                        <span class="font-medium w-32 flex-shrink-0">Email:</span>
+                        <span class="flex-grow">{{ user.email }}</span>
+                    </p>
+                    <p class="flex items-start">
+                        <span class="font-medium w-32 flex-shrink-0">Mobile:</span>
+                        <span class="flex-grow">{{ user.contact_no }}</span>
+                    </p>
+                    <p class="flex items-start">
+                        <span class="font-medium w-32 flex-shrink-0">Role:</span>
+                        <span class="role-badge bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                            {{ user.get_role_display }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Wallet & Account -->
+            <div class="p-6 rounded-xl glass-card shadow info-card">
+                <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="info-icon"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 class="text-lg font-semibold">Account & Balance</h3>
+                </div>
+                <div class="space-y-3 text-gray-700 dark:text-gray-300 flex-grow">
+                    <p class="flex items-start">
+                        <span class="font-medium w-40 flex-shrink-0">Sales Person:</span>
+                        <span class="flex-grow font-mono">{{ user.sales_person }}</span>
+                    </p>
+                    <p class="flex items-start">
+                        <span class="font-medium w-40 flex-shrink-0">KYC Approved By:</span>
+                        <span class="flex-grow font-mono">{{ user.get_kyc.approved_by }}</span>
+                    </p>
+                    <p class="flex items-start">
+                        <span class="font-medium w-40 flex-shrink-0">Wallet:</span>
+                        <span class="flex-grow font-mono">₹<span id="balance">{{ user.balance|floatformat:2 }}</span></span>
+                    </p>
+                    <p class="flex items-start">
+                        <span class="font-medium w-40 flex-shrink-0">Min Balance:</span>
+                        <span class="flex-grow">₹{{ user.min_balance|floatformat:2 }}</span>
+                    </p>
+                    {% if user.role == "admin" %}
+                        <p class="flex items-start">
+                            <span class="font-medium w-40 flex-shrink-0">Commission:</span>
+                            <span class="flex-grow">₹{{ user.commission|floatformat:2 }}/packet</span>
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Address -->
+            <div class="p-6 rounded-xl glass-card shadow info-card">
+                <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="info-icon"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <h3 class="text-lg font-semibold">Address</h3>
+                </div>
+                <div class="space-y-2 text-gray-700 dark:text-gray-300 flex-grow">
+                    <p>{{ user.address }}</p>
+                    <p>{{ user.city }}, {{ user.state }} - {{ user.pin_code }}</p>
+                    <p>{{ user.country|title }}</p>
+                </div>
+            </div>
+
+            <!-- Bank Details -->
+            <div class="p-6 rounded-xl glass-card shadow info-card">
+                <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="info-icon"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    <h3 class="text-lg font-semibold">Bank Details</h3>
+                </div>
+                <div class="space-y-3 text-gray-700 dark:text-gray-300 flex-grow">
+                    <p class="flex items-start">
+                        <span class="font-medium w-24 flex-shrink-0">Bank:</span>
+                        <span class="flex-grow">{{ user.bank_name|default:"-" }}</span>
+                    </p>
+                    <p class="flex items-start">
+                        <span class="font-medium w-24 flex-shrink-0">Acc No:</span>
+                        <span class="flex-grow">{{ user.bank_account_number|default:"-" }}</span>
+                    </p>
+                    <p class="flex items-start">
+                        <span class="font-medium w-24 flex-shrink-0">IFSC:</span>
+                        <span class="flex-grow">{{ user.bank_account_ifsc|default:"-" }}</span>
+                    </p>
+                    <p class="flex items-start">
+                        <span class="font-medium w-24 flex-shrink-0">Type:</span>
+                        <span class="flex-grow">{{ user.bank_account_type|title }}</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Business -->
+            <div class="p-6 rounded-xl glass-card shadow info-card">
+                <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="info-icon"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    <h3 class="text-lg font-semibold">Business</h3>
+                </div>
+                <div class="space-y-3 text-gray-700 dark:text-gray-300 flex-grow">
+                    <p class="flex items-start">
+                        <span class="font-medium w-32 flex-shrink-0">GSTIN:</span>
+                        <span class="flex-grow">{{ user.gstin|default:"-" }}</span>
+                    </p>
+                    <p class="flex items-start">
+                        <span class="font-medium w-32 flex-shrink-0">Brand Name:</span>
+                        <span class="flex-grow">{{ user.company_name|default:"-" }}</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Meta -->
+            <div class="p-6 rounded-xl glass-card shadow info-card">
+                <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="info-icon"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 class="text-lg font-semibold">System Info</h3>
+                </div>
+                <div class="space-y-3 text-gray-700 dark:text-gray-300 flex-grow">
+                    <p class="flex items-start">
+                        <span class="font-medium w-24 flex-shrink-0">Admin:</span>
+                        <span class="flex-grow">{{ user.assigned_admin.full_name|default:"-" }}</span>
+                    </p>
+                    <p class="flex items-start">
+                        <span class="font-medium w-24 flex-shrink-0">Created:</span>
+                        <span class="flex-grow">{{ user.created_at|date:"M d, Y H:i" }}</span>
+                    </p>
+                    <p class="flex items-start">
+                        <span class="font-medium w-24 flex-shrink-0">Updated:</span>
+                        <span class="flex-grow">{{ user.updated_at|date:"M d, Y H:i" }}</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- COD Remittance -->
+            <div class="p-6 rounded-xl glass-card shadow info-card">
+                <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="info-icon"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 class="text-lg font-semibold">COD Remittance</h3>
+                </div>
+                <div class="space-y-3 text-gray-700 dark:text-gray-300 flex-grow">
+                    <p class="flex items-start">
+                        <span class="font-medium w-24 flex-shrink-0">Cycle:</span>
+                        <span class="flex-grow">D+{{ user.cod_remittance_cycle }}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow mt-10">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-semibold text-gray-700 dark:text-white flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-6 w-6"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Uploaded Documents
+                </h3>
+                <span class="text-sm text-gray-500 dark:text-gray-400">Click to view</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {% if user.photo %}
+                    <div class="relative">
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">Photo</p>
+                        <img src="{{ user.photo.url }}"
+                             class="rounded-lg shadow-lg w-full h-40 object-cover doc-img"
+                             alt="Photo"
+                             data-src="{{ user.photo.url }}"
+                             data-title="Photo">
+                    </div>
+                {% endif %}
+                {% if user.gst_certificate %}
+                    <div class="relative">
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">GST Certificate</p>
+                        <img src="{{ user.gst_certificate.url }}"
+                             class="rounded-lg shadow-lg w-full h-40 object-cover doc-img"
+                             alt="GST"
+                             data-src="{{ user.gst_certificate.url }}"
+                             data-title="GST Certificate">
+                    </div>
+                {% endif %}
+                {% if user.pan_card %}
+                    <div class="relative">
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">PAN / DL</p>
+                        <img src="{{ user.pan_card.url }}"
+                             class="rounded-lg shadow-lg w-full h-40 object-cover doc-img"
+                             alt="PAN"
+                             data-src="{{ user.pan_card.url }}"
+                             data-title="PAN / Driving License">
+                    </div>
+                {% endif %}
+                {% if user.aadhaar_card %}
+                    <div class="relative">
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">Aadhaar / Passport</p>
+                        <img src="{{ user.aadhaar_card.url }}"
+                             class="rounded-lg shadow-lg w-full h-40 object-cover doc-img"
+                             alt="Aadhaar"
+                             data-src="{{ user.aadhaar_card.url }}"
+                             data-title="Aadhaar / Passport">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Document Modal -->
+    <div id="docModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImg">
+        <div class="download-btn" id="downloadBtn">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="h-5 w-5"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Download
+        </div>
+    </div>
+{% endblock body %}
+
+{% block js %}
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script>
+        // Animated balance counter
+        const balanceEl = document.getElementById("balance");
+        const balance = parseFloat(balanceEl.innerText);
+        let current = 0;
+        const step = balance / 40;
+
+        const animateBalance = setInterval(() => {
+            current += step;
+            if (current >= balance) {
+                balanceEl.innerText = balance.toFixed(2);
+                clearInterval(animateBalance);
+            } else {
+                balanceEl.innerText = current.toFixed(2);
+            }
+        }, 20);
+
+        // Document modal functionality
+        const modal = document.getElementById("docModal");
+        const modalImg = document.getElementById("modalImg");
+        const downloadBtn = document.getElementById("downloadBtn");
+        const closeBtn = document.getElementsByClassName("close")[0];
+
+        // Get all document images
+        const docImages = document.querySelectorAll('.doc-img');
+
+        docImages.forEach(img => {
+            img.onclick = function() {
+                modal.style.display = "block";
+                modalImg.src = this.dataset.src;
+                downloadBtn.onclick = function() {
+                    const link = document.createElement('a');
+                    link.href = img.dataset.src;
+                    link.download = img.dataset.title.replace(/\s+/g, '_') + '.jpg';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                };
+            };
+        });
+
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        };
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+
+        // Keyboard support for modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                modal.style.display = "none";
+            }
+        });
+    </script>
+{% endblock js %}

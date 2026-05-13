@@ -1,0 +1,567 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Shipping Label</title>
+
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+
+        <style>
+            {% if label_page_size == "a4" %}
+                /* Tighter top margin shifts grid up; printable height 283mm → two ~140mm rows + 3mm gap */
+                @page {
+                    size: A4;
+                    margin: 4mm 10mm 10mm 10mm;
+                }
+            {% elif label_page_size == "a4_single" %}
+                @page {
+                    size: A4;
+                    margin: 10mm;
+                }
+            {% elif label_page_size == "3x5" %}
+                @page {
+                    size: 3in 5in;
+                    margin: 0;
+                }
+            {% else %}
+                @page {
+                    size: 4in 6in;
+                    margin: 0;
+                }
+            {% endif %}
+
+            /* A4 content ~190×283mm. 2×2: (190-3)/2 × (283-3)/2 + 3mm gaps between labels. */
+            body.label-a4 {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body.label-a4 .label-page {
+                display: inline-block;
+                box-sizing: border-box;
+                width: 93.5mm;
+                height: 140mm;
+                max-height: 140mm;
+                margin: 0 3mm 0 0;
+                vertical-align: top;
+                page-break-after: auto;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                overflow: hidden;
+            }
+
+            body.label-a4 .label-page:nth-child(even) {
+                margin-right: 0;
+            }
+
+            body.label-a4 .label-page:nth-child(4n + 1),
+            body.label-a4 .label-page:nth-child(4n + 2) {
+                margin-bottom: 3mm;
+            }
+
+            body.label-a4 .label-page:nth-child(4n + 3),
+            body.label-a4 .label-page:nth-child(4n + 4) {
+                margin-bottom: 0;
+            }
+
+            body.label-a4 .label-page:nth-child(4n) {
+                page-break-after: always;
+            }
+
+            body.label-a4 .label-page:last-child {
+                page-break-after: auto;
+            }
+
+            body.label-a4 .label-content {
+                height: 100%;
+                min-height: 0;
+                max-height: 140mm;
+                overflow: hidden;
+            }
+
+            body.label-a4 .label-content-inner {
+                width: 107%;
+                transform: scale(0.935);
+                transform-origin: top left;
+            }
+
+            body.label-a4 .label-content-inner .header {
+                min-height: 22mm;
+            }
+
+            body.label-a4 .label-content-inner .block:first-of-type {
+                padding-top: 1.5mm;
+                padding-bottom: 2mm;
+            }
+
+            /* One label per A4; 210−20 mm × 297−20 mm printable; symmetric 10 mm margins */
+            body.label-a4-single {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                width: 190mm;
+            }
+
+            body.label-a4-single .label-page {
+                width: 190mm;
+                min-height: 277mm;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                page-break-after: always;
+                page-break-inside: avoid;
+                box-sizing: border-box;
+            }
+
+            body.label-a4-single .label-page:last-child {
+                page-break-after: auto;
+            }
+
+            body.label-a4-single .label-content {
+                width: 190mm;
+                height: 277mm;
+                min-height: 277mm;
+                max-height: 277mm;
+                box-sizing: border-box;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            body.label-a4-single .label-content-inner {
+                width: 100mm;
+                min-height: 150mm;
+                transform: scale(1.847);
+                transform-origin: center center;
+                flex-shrink: 0;
+            }
+
+            body.label-4x6 {
+                margin: 0;
+                padding: 0;
+            }
+
+            body.label-3x5 {
+                margin: 0;
+                padding: 0;
+            }
+
+            body.label-3x5 .label-page {
+                width: 3in;
+                height: 5in;
+                page-break-after: always;
+                overflow: hidden;
+            }
+
+            body.label-3x5 .label-page:last-child {
+                page-break-after: auto;
+            }
+
+            body.label-3x5 .label-content {
+                min-height: 5in;
+                overflow: hidden;
+            }
+
+            body.label-3x5 .label-content-inner {
+                width: 132%;
+                transform: scale(0.76);
+                transform-origin: top left;
+            }
+
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                background: #fff;
+                font-family: "Roboto", Arial, sans-serif;
+            }
+
+            .label-page {
+                page-break-after: always;
+                background: #fff;
+            }
+
+            .label-page:last-child {
+                page-break-after: auto;
+            }
+
+            .label-content {
+                width: 100%;
+                min-height: 150mm;
+                height: auto;
+                border: 0.6px solid #8a8a8a;
+                border-radius: 1.2mm;
+                box-sizing: border-box;
+                overflow: visible;
+            }
+
+            .label-content * {
+                box-sizing: border-box;
+                line-height: 1.25;
+                color: #111;
+                font-size: 3.15mm;
+                min-width: 0;
+            }
+
+            .block {
+                border-bottom: 0.6px solid #8a8a8a;
+                padding: 2.4mm 2.6mm;
+            }
+
+            .header {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                min-height: 26mm;
+            }
+
+            .header-logo {
+                width: 23mm;
+                text-align: center;
+            }
+
+            .header-logo img {
+                max-width: 21mm;
+                max-height: 17mm;
+                object-fit: contain;
+            }
+
+            .deliver {
+                flex: 1;
+                text-align: right;
+                padding-left: 2.4mm;
+                font-size: 3.05mm;
+                max-width: 100%;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            .deliver .name {
+                font-weight: 700;
+                font-size: 3.7mm;
+                margin: 0.8mm 0;
+            }
+
+            .muted {
+                font-size: 2.8mm;
+            }
+
+            .two-col {
+                display: flex;
+            }
+
+            .col {
+                width: 50%;
+                padding: 2.4mm;
+                min-height: 22mm;
+            }
+
+            .col + .col {
+                border-left: 0.6px solid #8a8a8a;
+            }
+
+            .title {
+                font-weight: 700;
+                font-size: 3.9mm;
+                margin-bottom: 1.4mm;
+            }
+
+            .line {
+                font-size: 3.05mm;
+                margin-bottom: 1mm;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            .barcode {
+                text-align: center;
+                margin-top: 1.5mm;
+            }
+
+            .barcode img {
+                width: 100%;
+                max-height: 11.5mm;
+                object-fit: contain;
+            }
+
+            .cod-row {
+                display: flex;
+                align-items: center;
+                min-height: 30mm;
+            }
+
+            .cod-left {
+                width: 30%;
+                text-align: center;
+                font-size: 3.8mm;
+                font-weight: 700;
+            }
+
+            .cod-left .small {
+                font-size: 3.05mm;
+                font-weight: 500;
+            }
+
+            .cod-right {
+                width: 70%;
+                text-align: center;
+                border-left: 0.6px solid #8a8a8a;
+                padding-left: 2.4mm;
+            }
+
+            .cod-awb {
+                font-size: 3.6mm;
+                font-weight: 700;
+                margin-bottom: 1.4mm;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            .products {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 2.9mm;
+                table-layout: fixed;
+            }
+
+            .products th,
+            .products td {
+                border: 0.5px solid #b8b8b8;
+                padding: 1.1mm 1.3mm;
+                text-align: left;
+            }
+
+            .products th:last-child,
+            .products td:last-child {
+                width: 17%;
+                padding-right: 2mm;
+            }
+
+            .products thead {
+                display: table-header-group;
+            }
+
+            .products tr {
+                page-break-inside: avoid;
+            }
+
+            .products th {
+                font-weight: 700;
+                background: #f5f5f5;
+            }
+
+            .products .num {
+                text-align: right;
+                white-space: normal;
+                overflow-wrap: anywhere;
+            }
+
+            .total-row td {
+                font-weight: 700;
+            }
+
+            .pickup {
+                font-size: 3mm;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            .pickup .label {
+                font-weight: 700;
+                margin-bottom: 1.2mm;
+            }
+
+            .footer {
+                text-align: center;
+                font-size: 2.85mm;
+                padding: 2.3mm 2.6mm;
+                border-bottom: 0;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+                display: flex;
+                flex-direction: column;
+                gap: 1mm;
+                align-items: center;
+                justify-content: center;
+                min-height: 12mm;
+            }
+
+            .footer-support {
+                font-size: 2.75mm;
+                font-weight: 500;
+            }
+
+            .footer-note {
+                font-size: 2.65mm;
+                max-width: 88%;
+            }
+
+            .footer-powered {
+                font-size: 2.7mm;
+                font-weight: 700;
+                letter-spacing: 0.2px;
+            }
+        </style>
+    </head>
+
+    <body class="{% if label_page_size == 'a4' %}label-a4{% elif label_page_size == 'a4_single' %}label-a4-single{% elif label_page_size == '3x5' %}label-3x5{% else %}label-4x6{% endif %}">
+
+        <div class="label-page">
+            <div class="label-content">
+                <div class="label-content-inner">
+
+                <div class="block header">
+                    <div class="header-logo">
+                        {% if order.user.label_setting.show_logo and order.user.label_setting.logo %}
+                            <img src="{{ order.user.label_setting.logo.url }}" alt="Logo">
+                        {% endif %}
+                    </div>
+                    <div class="deliver">
+                        <div>Deliver To:</div>
+                        <div class="name">{{ order.shipping_address.name }}</div>
+                        <div>{{ order.shipping_address.line1 }}{% if order.shipping_address.line2 %}, {{ order.shipping_address.line2 }}{% endif %}</div>
+                        <div>{{ order.shipping_address.city }}, {{ order.shipping_address.state }}, {{ order.shipping_address.country }}</div>
+                        <div>{{ order.shipping_address.pincode }}</div>
+                        {% if order.user.label_setting.show_customer_mobile %}
+                            <div>MOBILE NO: {{ order.shipping_address.phone }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="block two-col">
+                    <div class="col">
+                        <div class="title">Order Info</div>
+                        <div class="line">Order Date: {{ order.order_date|date:"M d, Y" }}</div>
+                        <div class="line">Invoice No: {{ order.order_number }}</div>
+                        <div class="barcode">
+                            <img src="{{ order.barcode.url }}" alt="Order Barcode">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="title">Shipping Info</div>
+                        <div class="line">Courier Name: {{ order.logistic_partner.name|default:"N/A" }}</div>
+                        <div class="line">AWB Number: {{ order.awb_number }}</div>
+                        {% if order.user.label_setting.show_weight %}
+                            <div class="line">Weight: {{ order.shipment.package_weight_kg }} KG</div>
+                        {% endif %}
+                        {% if order.user.label_setting.show_dimension %}
+                            <div class="line">
+                                Dimensions (cm): {{ order.shipment.package_length_cm }} X {{ order.shipment.package_width_cm }} X {{ order.shipment.package_height_cm }}
+                            </div>
+                        {% endif %}
+                        {% if order.user.label_setting.show_customer_mobile %}
+                            <div class="line">Mob: {{ order.shipping_address.phone }}</div>
+                        {% endif %}
+                        {% if order.shipping_address.alt_phone %}
+                            <div class="line">Alt. Mob: {{ order.shipping_address.alt_phone }}</div>
+                        {% endif %}
+                        {% if order.shipping_address.email %}
+                            <div class="line">Email: {{ order.shipping_address.email }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="block cod-row">
+                    {% if order.payment.method == "cod" %}
+                    <div class="cod-left">
+                        <div>COD</div>
+                        <div class="small">Collectable</div>
+                        <div class="small">Amount:</div>
+                        <div>₹{{ order.total_amount|floatformat:0 }}</div>
+                    </div>
+                    {% else %}
+                    <div class="cod-left">
+                        <div>Prepaid</div>
+                    </div>
+                    {% endif %}
+                    <div class="cod-right">
+                        <div class="cod-awb">{{ order.awb_number }}</div>
+                        <div class="barcode">
+                            <img src="{{ order.barcode.url }}" alt="AWB Barcode">
+                        </div>
+                    </div>
+                </div>
+
+                {% if order.user.label_setting.show_product %}
+                    <div class="block" style="padding:0;">
+                        <table class="products">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th class="num">Qty</th>
+                                    <th class="num">Rate</th>
+                                    <th class="num">Amount</th>
+                                    {% if order.user.label_setting.show_discount %}<th class="num">Discount</th>{% endif %}
+                                    <th class="num">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order_item in order.items.all %}
+                                    {% if forloop.counter0 < label_product_row_cap|default:100 %}
+                                    <tr>
+                                        <td>{{ order_item.product.name|truncatechars:label_product_name_max }}</td>
+                                        <td class="num">{{ order_item.quantity }}</td>
+                                        <td class="num">₹{{ order_item.unit_price|floatformat:0 }}</td>
+                                        <td class="num">₹{{ order_item.total_price|floatformat:0 }}</td>
+                                        {% if order.user.label_setting.show_discount %}
+                                            <td class="num">₹{{ order.payment.discount|floatformat:0 }}</td>
+                                        {% endif %}
+                                        <td class="num">₹{{ order_item.total_price|floatformat:0 }}</td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if order.items.count > label_product_row_cap|default:100 %}
+                                    <tr>
+                                        <td colspan="{% if order.user.label_setting.show_discount %}6{% else %}5{% endif %}"
+                                            class="num"
+                                            style="text-align:center">....</td>
+                                    </tr>
+                                {% endif %}
+                                {% if order.user.label_setting.show_total_amount %}
+                                    <tr class="total-row">
+                                        <td colspan="{% if order.user.label_setting.show_discount %}5{% else %}4{% endif %}" class="num">Total :</td>
+                                        <td class="num">₹{{ order.total_amount|floatformat:0 }}</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+
+                {% if order.user.label_setting.show_pickup_address %}
+                    <div class="block pickup">
+                        <div class="label">Pickup and Return Address:</div>
+                        <div>
+                            {{ order.hub.name }}, {{ order.hub.address_line1 }}, {{ order.hub.city }}, {{ order.hub.state }}, {{ order.hub.country }} - {{ order.hub.pincode }}, <strong>Mob:</strong> {{ order.hub.phone }}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="footer">
+                    {% if order.user.label_setting.show_support_info %}
+                        <div class="footer-support">
+                            Support: {{ order.user.label_setting.support_phone }}{% if order.user.label_setting.support_email %} | {{ order.user.label_setting.support_email }}{% endif %}
+                        </div>
+                    {% endif %}
+                    <div class="footer-note">
+                        This is computer generated document, hence does not required signature.
+                    </div>
+                    {% if order.user.label_setting.show_powered_by %}
+                        <div class="footer-powered">Powered By Idiotship</div>
+                    {% endif %}
+                </div>
+                </div>
+
+            </div>
+        </div>
+
+    </body>
+</html>

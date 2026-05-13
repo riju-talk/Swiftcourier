@@ -1,0 +1,32 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% load static %}
+
+{% block title %}
+    Rate Card
+{% endblock title %}
+
+
+{% block body %}
+    <div class="p-4">
+        <h1 class="text-xl font-semibold mb-3 text-gray-900 dark:text-gray-100">Rate Card for {{ user.email }}</h1>
+
+        <form method="post"
+              action="{% url 'superadmin_panel:delete-rate-card' 0 %}"
+              id="multi-delete-form"
+              class="mb-4">
+            {% csrf_token %}
+            <input type="hidden" name="user_id" value="{{ user.id }}">
+            <button type="submit"
+                    id="delete-selected"
+                    disabled
+                    class="px-4 py-2 bg-red-600 text-white rounded disabled:opacity-50">Delete Selected</button>
+
+            {% include "components/common/view_rate_card.dj" with rate_cards=user.rate_cards.all %}
+        </form>
+    </div>
+{% endblock body %}
+
+
+{% block js %}
+{% endblock js %}

@@ -1,0 +1,205 @@
+{% extends 'components/layouts/layout.dj' %}
+
+{% block title %}
+  Clients | Super Admin - Dashboard
+{% endblock %}
+
+{% load static %}
+
+{% block body %}
+  <div class="w-full">
+    <!-- Tabs -->
+    <div class="flex flex-wrap gap-2 mb-4">
+      <a href="{% url 'superadmin_panel:dashboard' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">Overview</a>
+      <a href="{% url 'superadmin_panel:dashboard-client' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-blue-600 text-white dark:bg-blue-500">Client</a>
+      <a href="{% url 'superadmin_panel:dashboard-courier-partner' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">Courier Partner</a>
+      <a href="{% url 'superadmin_panel:dashboard-courier-performance' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">Courier Performance</a>
+    </div>
+
+    <!-- Content Container -->
+    <div class="rounded-lg p-4 shadow bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100">
+      <div class="space-y-6">
+        <!-- Header -->
+        <div>
+          <h1 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">All Clients Overview</h1>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Consolidated shipment performance across all active clients</p>
+        </div>
+
+        <!-- Primary KPIs -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+          <div class="rounded-xl p-4 bg-white dark:bg-gray-900 shadow">
+            <p class="text-xs text-gray-500 dark:text-gray-400">Total Shipments</p>
+            <h2 id="totalShipments" class="text-2xl font-bold">48,920</h2>
+          </div>
+
+          <div class="rounded-xl p-4 bg-yellow-50 dark:bg-yellow-900/20 shadow">
+            <p class="text-xs text-yellow-700 dark:text-yellow-400">Pending Pickup</p>
+            <h2 id="pendingPickup" class="text-2xl font-bold">4,320</h2>
+          </div>
+
+          <div class="rounded-xl p-4 bg-blue-50 dark:bg-blue-900/20 shadow">
+            <p class="text-xs text-blue-700 dark:text-blue-400">In Transit</p>
+            <h2 id="inTransit" class="text-2xl font-bold">21,640</h2>
+          </div>
+
+          <div class="rounded-xl p-4 bg-green-50 dark:bg-green-900/20 shadow">
+            <p class="text-xs text-green-700 dark:text-green-400">Delivered</p>
+            <h2 id="delivered" class="text-2xl font-bold">18,110</h2>
+          </div>
+
+          <div class="rounded-xl p-4 bg-red-50 dark:bg-red-900/20 shadow">
+            <p class="text-xs text-red-700 dark:text-red-400">RTO</p>
+            <h2 id="rtoOrders" class="text-2xl font-bold">2,180</h2>
+          </div>
+
+          <div class="rounded-xl p-4 bg-purple-50 dark:bg-purple-900/20 shadow">
+            <p class="text-xs text-purple-700 dark:text-purple-400">NDR</p>
+            <h2 id="ndrOrders" class="text-2xl font-bold">1,670</h2>
+          </div>
+        </div>
+
+        <!-- Business Health -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Client Metrics -->
+          <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Client Metrics</h3>
+
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">Active Clients</span>
+                <span id="activeClients" class="font-semibold">124</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">Clients with Live Orders</span>
+<span id="clientsWithLiveOrders" class="font-semibold">96</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">New Clients (30 days)</span>
+<span id="newClients" class="text-green-600 font-semibold">+18</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Courier Performance -->
+          <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Courier Performance (Avg)</h3>
+
+            <div id="clientCourierPerformance" class="space-y-3 text-sm"></div>
+
+          </div>
+
+          <!-- Risk Indicators -->
+          <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Risk Indicators</h3>
+
+            <ul class="space-y-3 text-sm">
+              <li class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">High RTO Clients</span>
+                <span id="highRtoClients" class="text-red-600 font-semibold">12</span>
+              </li>
+              <li class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">High NDR Rate</span>
+<span id="highNdrClients" class="text-red-600 font-semibold">9%</span>
+              </li>
+              <li class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">SLA Breaches</span>
+<span id="slaBreaches" class="text-yellow-600 font-semibold">38</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- Client-wise Shipment Breakdown -->
+        <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Client Shipment Breakdown</h3>
+            <span class="text-xs text-gray-500 dark:text-gray-400">All active clients</span>
+          </div>
+
+          <!-- Table Wrapper -->
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+              <thead class="bg-gray-100 dark:bg-gray-800">
+                <tr>
+                  <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Client Name</th>
+                  <th class="px-4 py-3 text-center font-semibold text-yellow-700 dark:text-yellow-400">Pending</th>
+                  <th class="px-4 py-3 text-center font-semibold text-blue-700 dark:text-blue-400">In Transit</th>
+                  <th class="px-4 py-3 text-center font-semibold text-green-700 dark:text-green-400">Delivered</th>
+                  <th class="px-4 py-3 text-center font-semibold text-red-700 dark:text-red-400">RTO</th>
+                  <th class="px-4 py-3 text-center font-semibold text-purple-700 dark:text-purple-400">NDR</th>
+                  <th class="px-4 py-3 text-right font-semibold text-gray-700 dark:text-gray-300">Total</th>
+                </tr>
+              </thead>
+
+              <tbody id="clientShipmentTable" class="divide-y divide-gray-200 dark:divide-gray-700">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    fetch(`${window.location.pathname}?data=true`)
+      .then(res => res.json())
+      .then(data => {
+
+        /* ---------- KPIs ---------- */
+        totalShipments.innerText = data.total_orders;
+        pendingPickup.innerText = data.pending_pickup;
+        inTransit.innerText = data.in_transit;
+        delivered.innerText = data.delivered;
+        rtoOrders.innerText = data.rto_orders;
+        ndrOrders.innerText = data.ndr_orders;
+
+        /* ---------- Client Metrics ---------- */
+        activeClients.innerText = data.client_metrices.active;
+        clientsWithLiveOrders.innerText = data.client_metrices.with_live_orders;
+        newClients.innerText = `+${data.client_metrices.new_last_30_days}`;
+
+        /* ---------- Courier Performance (DYNAMIC) ---------- */
+        const courierBox = document.getElementById("clientCourierPerformance");
+        courierBox.innerHTML = "";
+
+        Object.entries(data.courier_performance).forEach(([courier, percent]) => {
+          courierBox.innerHTML += `
+            <div class="flex justify-between">
+              <span class="text-gray-600 dark:text-gray-400">
+                ${courier.charAt(0).toUpperCase() + courier.slice(1)}
+              </span>
+              <span class="text-green-600 font-medium">${percent}%</span>
+            </div>
+          `;
+        });
+
+        /* ---------- Risk Indicators ---------- */
+        highRtoClients.innerText = data.risk_indicator.high_rto_clients;
+        highNdrClients.innerText = `${data.risk_indicator.high_ndr_clients}%`;
+        slaBreaches.innerText = data.risk_indicator.sla_breach;
+
+        /* ---------- Client Shipment Table (DYNAMIC) ---------- */
+        const tableBody = document.getElementById("clientShipmentTable");
+        tableBody.innerHTML = "";
+
+        Object.entries(data.client_shipments).forEach(([client, stats]) => {
+          tableBody.innerHTML += `
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+              <td class="px-4 py-3 font-medium">${client}</td>
+              <td class="px-4 py-3 text-center text-yellow-600">${stats.pending}</td>
+              <td class="px-4 py-3 text-center text-blue-600">${stats.in_transit}</td>
+              <td class="px-4 py-3 text-center text-green-600">${stats.delivered}</td>
+              <td class="px-4 py-3 text-center text-red-600">${stats.rto}</td>
+              <td class="px-4 py-3 text-center text-purple-600">${stats.ndr}</td>
+              <td class="px-4 py-3 text-right font-semibold">${stats.total}</td>
+            </tr>
+          `;
+        });
+      })
+      .catch(err => console.error("Client dashboard error:", err));
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+    Block Pincode
+{% endblock title %}
+
+{% load static %}
+
+{% block css %}
+{% endblock css %}
+
+{% block body %}
+    <div class="p-6" x-data="pincodeManager()">
+        <h2 class="text-2xl font-bold mb-4">Block Pincodes</h2>
+
+        <form method="post" action="{% url 'superadmin_panel:block_pincodes' %}">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label class="block mb-1 font-medium">Enter Pincodes</label>
+                <input type="text"
+                       class="w-full border border-gray-300 rounded px-4 py-2"
+                       placeholder="110011 560001 400001"
+                       @keydown.enter.prevent="addPincodes"
+                       @keydown.space.prevent="addPincodes"
+                       @keydown.
+                       .prevent="addPincodes"
+                       x-model="pincodeInput">
+
+                <!-- Selected Pincodes -->
+                <div class="flex flex-wrap mt-2">
+                    <template x-for="(pin, index) in pincodes" :key="index">
+                        <div class="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full mr-2 mb-2">
+                            <span x-text="pin"></span>
+                            <button type="button"
+                                    class="ml-2 text-red-600 font-bold"
+                                    @click="removePincode(index)">×</button>
+                            <input type="hidden" name="pincodes[]" :value="pin">
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Optional reason -->
+            <div class="mb-4">
+                <label class="block mb-1 font-medium">Reason (Optional)</label>
+                <input type="text"
+                       name="reason"
+                       class="w-full border border-gray-300 rounded px-4 py-2 mb-2"
+                       placeholder="e.g., Heavy rainfall"
+                       x-model="reason">
+
+                <!-- Default reason buttons -->
+                <div class="flex flex-wrap gap-2">
+                    <template x-for="preset in ['Heavy Rainfall', 'Flood Alert', 'Road Block', 'Festival Rush']"
+                              :key="preset">
+                        <button type="button"
+                                @click="reason = preset"
+                                class="bg-gray-200 hover:bg-gray-300 text-sm px-3 py-1 rounded-full">
+                            <span x-text="preset"></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+
+
+
+            <!-- Submit -->
+            <button type="submit"
+                    class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700">Block</button>
+        </form>
+
+        <!-- Already Blocked -->
+        <div class="mt-10">
+            <h3 class="text-xl font-semibold mb-4">Blocked Pincodes</h3>
+            <form method="post" action="{% url 'superadmin_panel:unblock_pincodes' %}">
+                {% csrf_token %}
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                    {% for pin in blocked_pincodes %}
+                        <label class="flex items-center space-x-2 bg-gray-100 p-2 rounded">
+                            <input type="checkbox"
+                                   name="remove_pincodes"
+                                   value="{{ pin.pincode }}"
+                                   class="accent-red-600">
+                            <b>{{ pin.pincode }}</b>
+                            <i class="text-sm text-gray-600">{{ pin.reason }}</i>
+                        </label>
+                    {% empty %}
+                        <p class="col-span-full text-gray-500">No blocked pincodes yet.</p>
+                    {% endfor %}
+                </div>
+
+                {% if blocked_pincodes %}
+                    <button type="submit"
+                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        Unblock Selected
+                    </button>
+                {% endif %}
+            </form>
+        </div>
+
+    </div>
+{% endblock body %}
+
+{% block js %}
+    <script>
+        function pincodeManager() {
+            return {
+                pincodeInput: '',
+                pincodes: [],
+                reason: '', // make sure this is defined here
+                addPincodes() {
+                    let input = this.pincodeInput.trim().replace(/,/g, ' ');
+                    let pins = input.split(/\s+/).filter(pin => /^\d+$/.test(pin));
+                    pins.forEach(pin => {
+                        if (!this.pincodes.includes(pin)) {
+                            this.pincodes.push(pin);
+                        }
+                    });
+                    this.pincodeInput = '';
+                },
+                removePincode(index) {
+                    this.pincodes.splice(index, 1);
+                }
+            }
+        }
+    </script>
+{% endblock js %}

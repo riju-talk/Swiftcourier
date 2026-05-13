@@ -1,0 +1,421 @@
+{% extends "components/layouts/auth_layout.dj" %}
+{% block title %}
+    Sign Up
+{% endblock title %}
+{% load static %}
+{% block css %}
+<style>
+        @media (max-width: 1024px) {
+            .right-panel a {
+                pointer-events: auto !important;
+                position: relative !important;
+                z-index: 10 !important;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .floating-panel.left-panel {
+                display: none !important;
+            }
+        }
+
+    /* Make left panel image fit screen and float text */
+    .left-panel {
+        position: relative;
+        width: 70vw;
+        height: 100vh;
+        overflow: hidden;
+    }
+    #signup-slider {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+    #slider-img {
+        width: 100%;
+        height: 100%;
+        min-width: 100%;
+        min-height: 100%;
+        object-fit: cover !important;
+        display: block;
+        transition: opacity 0.4s;
+        max-width: 90vw;
+        max-height: 100vh;
+        height: auto;
+        margin-bottom: 1.2rem;
+    }
+    #slider-title, #slider-desc {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #2c2c2c;
+        background: rgba(255,255,255,0.7);
+        padding: 1rem  1.8rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        z-index: 2;
+        text-align: center;
+    }
+    #slider-title {
+        top: 20%;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+    #slider-desc {
+        top: 32%;
+        font-size: 0.8rem;
+    }
+    html, body {
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    .gradient-bg {
+        background: linear-gradient(135deg, rgba(211,47,47,0.6) 0%, rgba(107,70,193,1) 40%, rgba(67,160,238,1) 80%, rgba(211,47,47,0.6) 100%);
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+        .left-panel {
+            width: 70vw;
+            max-width: 70vw;
+            min-width: 200px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .right-panel {
+            width: 40vw;
+            max-width: 40vw;
+            min-width: 240px;
+            display: inline-block;
+            vertical-align: middle;
+            padding-right: 32px;
+        }
+    .glass-panel {
+        background: #fff;
+        border-radius: 32px;
+        box-shadow: 0 8px 32px 0 rgba(67,160,238,0.18);
+        width: 80%;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+        z-index: 2;
+        position: relative;
+        min-height: 0;
+        height: auto;
+        padding: 0.1rem 0.01rem;
+        font-size: 0.82rem;
+        box-sizing: border-box;
+        overflow-x: hidden;
+        overflow-y: visible;
+    }
+    .form-panel {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+        min-width: 0;
+        padding: 0;
+    }
+    .signup-form-title {
+        font-size: 0.9rem !important;
+    }
+    .mb-8 {
+        margin-bottom: 0.1rem !important;
+    }
+    .space-y-6 > * + * {
+        margin-top: 0.04rem !important;
+    }
+    .glass-panel input,
+    .glass-panel label,
+    .glass-panel button {
+        font-size: 1.1rem !important;
+        padding-top: 0.3rem !important;
+        padding-bottom: 0.3rem !important;
+        color: #fff !important;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .signup-form-title {
+        font-size: 1.2rem !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    @media (max-width: 1024px) {
+        .glass-panel {
+            padding-right: 64px;
+            min-width: 0 !important;
+            height: auto !important;
+            padding: 0.05rem 0.005rem !important;
+            overflow-y: visible;
+        }
+        .form-panel {
+            padding: 0;
+        }
+        .signup-form-title {
+            font-size: 1rem !important;
+        }
+    }
+    @media (max-width: 640px) {
+                        /* Center the button container on mobile */
+                        .glass-panel form > div[style*="display: flex"] {
+                            display: flex !important;
+                            justify-content: center !important;
+                            align-items: center !important;
+                            width: 100% !important;
+                            margin: 0 !important;
+                            margin-left: 0 !important;
+                        }
+                        .glass-panel button {
+                            width: 75vw !important;
+                            max-width: 75vw !important;
+                            box-sizing: border-box !important;
+                            margin-left: auto !important;
+                            margin-right: auto !important;
+                            display: block !important;
+                            padding-left: 0.5rem !important;
+                            padding-right: 0.5rem !important;
+                        }
+                #slider-desc {
+                    display: none !important;
+                }
+        .gradient-bg {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+            justify-content: flex-start !important;
+            width: 100vw !important;
+            min-width: 0 !important;
+            height: 100vh !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            position: relative !important;
+        }
+
+        /* Hide left panel on mobile (strong selector) */
+        .floating-panel.left-panel {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+
+        /* Make right panel full width and center content on mobile */
+        .right-panel {
+            width: 75vw !important;
+            max-width: 75vw !important;
+            min-width: 0 !important;
+            height: 100vh !important;
+            padding: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin: 0 auto !important;
+            box-sizing: border-box !important;
+            overflow: visible !important;
+            position: static !important;
+            max-height: none !important;
+        }
+
+        #slider-img {
+            max-height: none !important;
+            height: auto !important;
+            overflow-y: visible !important;
+        }
+        .glass-panel {
+            width: 75vw !important;
+            max-width: 75vw !important;
+            height: 100vh !important;
+            margin: auto !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 16px rgba(67,160,238,0.12) !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+            overflow-y: visible;
+        }
+        .glass-panel input{
+            width: fit-content;
+        }
+        .glass-panel button {
+            width: 75vw !important;
+            max-width: 75vw !important;
+            box-sizing: border-box !important;
+            margin: auto !important;
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+        img {
+            max-width: 90vw !important;
+            height: auto !important;
+            display: block !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.6s ease-out forwards;
+    }
+</style>
+{% endblock css %}
+{% block body %}
+    <div class="gradient-bg w-screen h-screen overflow-hidden" style="position:relative;display:flex;align-items:center;justify-content:center;">
+        <!-- Decorative Background -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute inset-0 bg-[url('{% static 'assets/images/auth/map.png' %}')] bg-cover bg-center opacity-10"></div>
+        </div>
+        <!-- Floating Left Panel: Images -->
+            <div class="floating-panel left-panel" style="position:relative;height:100vh;width:70vw;overflow:hidden;">
+            <div id="signup-slider">
+                <img id="slider-img" src="{% static 'images/signup1.jpeg' %}" alt="Signup Slide" />
+                <h2 id="slider-title" class="text-2xl font-bold text-indigo-700 mt-6 mb-2 drop-shadow-lg" style="text-align:center;">Warehousing and Fullfilment<br></h2>
+                <p id="slider-desc" class="text-base text-gray-700 mb-4 px-4 text-center mt-10">Sign up in seconds and start shipping smarter with IdiotShip.</p>
+            </div>
+        </div>
+        <!-- Floating Right Panel: Form -->
+        <div class="floating-panel right-panel" style="position:relative;margin-left:2.5rem;">
+            <div class="form-panel">
+                <div class="mb-8 text-center">
+                    <img src="{% static 'images/logo/shipzee_logo_288x66.png' %}" alt="Logo" class="mx-auto h-5 w-auto" style="max-height:20px;margin-top:12px;" />
+                    <h1 class="mt-4 text-3xl font-bold text-gray-800 signup-form-title">Sign Up</h1>
+                    <p class="mt-2 text-black-600">Enter your details to register</p>
+                </div>
+                <form class="space-y-6" action="{% url 'account:signup' %}" method="post">
+                    {% csrf_token %}
+                    <!-- Full Name -->
+                    <div>
+                        <label for="Name" class="block text-md font-medium text-black-700">Full Name</label>
+                        <div class="relative mt-1">
+                            <input id="Name" name="full_name" type="text" placeholder="Enter Full Name" class="block w-full
+                            rounded-lg border-gray-300 px-4 py-3 pl-10 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required value="{{ fit }}" />
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4z" />
+                                    </svg>
+                                </div>
+                        </div>
+                    </div>
+                    <!-- Email -->
+                    <div>
+                        <label for="Email" class="block text-md font-medium text-black-700">Email</label>
+                        <div class="relative mt-1">
+                            <input id="Email" name="email" type="email" placeholder="Enter Email" class="block w-full rounded-lg border-gray-300 px-4 py-3 pl-10 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required value="{{ fit }}" />
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Contact No -->
+                    <div>
+                        <label for="ContactNo" class="block text-md font-medium text-black-700">Contact No</label>
+                        <div class="relative mt-1">
+                            <input id="ContactNo" name="contact_no" type="tel" placeholder="Enter Contact No" class="block w-full rounded-lg border-gray-300 px-4 py-3 pl-10 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required value="{{ fit }}" />
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Password -->
+                    <div>
+                        <label for="Password" class="block text-md font-medium text-black-700">Password</label>
+                        <div class="relative mt-1">
+                            <input id="Password" name="password" type="password" placeholder="Enter Password" class="block w-full rounded-lg border-gray-300 px-4 py-3 pl-10 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required value="{{ fit }}" />
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Confirm Password -->
+                    <div style="margin-bottom:1.2rem;">
+                        <label for="ConfirmPassword" class="block text-md font-medium text-black-700">Confirm Password</label>
+                        <div class="relative mt-1">
+                            <input id="ConfirmPassword" name="confirm_password" type="password" placeholder="Confirm Password" class="block w-full rounded-lg border-gray-300 px-4 py-3 pl-10 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required value="{{ fit }}" />
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Submit Button -->
+                    <div style="display: flex; width: 100%;">
+                        <button type="submit" class="w-full rounded-lg btn-gradient px-4 py-3 text-md font-bold uppercase text-white shadow-lg transition-all hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                            Sign Up
+                        </button>
+                    </div>
+                </form>
+                <!-- Sign In Link -->
+                <div class="mt-1 mb-2 text-gray-600" style="font-size:0.75rem;margin-bottom:10px;margin-left:20%;">
+                    Already have an account?
+                    <a href="{% url 'account:signin' %}" class="font-bold uppercase text-indigo-600 hover:underline">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}
+{% block js %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Fade in animation for form
+    setTimeout(() => {
+        document.querySelectorAll('.animate-fade-in').forEach(el => {
+            el.classList.add('opacity-100');
+        });
+    }, 100);
+
+    // Slider for left panel
+    const slides = [
+        {
+            img: "{% static 'images/signup1.jpeg' %}",
+            title: "Warehousing and Fullfilment",
+            desc: "Sign up in seconds and start shipping smarter with IdiotShip."
+        },
+        {
+            img: "{% static 'images/signup2.jpeg' %}",
+            title: "PAN India Coverage",
+            desc: "Your data is protected. Enjoy safe and reliable logistics every time."
+        }
+    ];
+    let idx = 0;
+    const imgEl = document.getElementById('slider-img');
+    const titleEl = document.getElementById('slider-title');
+    const descEl = document.getElementById('slider-desc');
+    function showSlide(i) {
+        imgEl.style.opacity = 0;
+        titleEl.style.opacity = 0;
+        descEl.style.opacity = 0;
+        setTimeout(() => {
+            imgEl.src = slides[i].img;
+            titleEl.textContent = slides[i].title;
+            descEl.textContent = slides[i].desc;
+            imgEl.style.opacity = 1;
+            titleEl.style.opacity = 1;
+            descEl.style.opacity = 1;
+        }, 400);
+    }
+    setInterval(function() {
+        idx = (idx + 1) % slides.length;
+        showSlide(idx);
+    }, 4000);
+});
+</script>
+{% endblock js %}

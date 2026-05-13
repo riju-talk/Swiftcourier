@@ -1,0 +1,241 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% load static %}
+
+{% block title %}
+    All Recharges
+{% endblock title %}
+
+
+{% block css %}
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .date-transition {
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            @apply bg-gray-100 dark:bg-gray-700;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            @apply bg-gray-400 dark:bg-gray-500;
+        }
+
+        /* Optimized tooltip styling */
+        .tooltip {
+            min-width: 120px;
+            pointer-events: none;
+            transform-origin: top center;
+            will-change: transform, opacity;
+        }
+
+        /* Dark mode compatibility */
+        .dark .tooltip {
+            background-color: #374151;
+            color: #f9fafb;
+        }
+    </style>
+{% endblock css %}
+
+
+{% block body %}
+    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+
+        <!-- Header Section -->
+        <div class="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b dark:border-gray-700 gap-4">
+            <!-- Left: Title + Search -->
+            <div class="flex items-center gap-4 w-full sm:w-auto">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">All Recharges</h2>
+            </div>
+
+            <!-- Right: Buttons -->
+            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <button id="filterToggleBtn"
+                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-sm"
+                        title="Filter Orders">
+                    <!-- Original filter icon -->
+                    <svg class="w-5 h-5 text-indigo-600"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 019 17v-3.586L3.293 6.707A1 1 0 013 6V4z" />
+                    </svg>
+                    <span id="filterToggleText" class="text-indigo-600 font-semibold">Filter</span>
+                </button>
+                <button class="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm"
+                        id="exportOrderButton">Export</button>
+            </div>
+        </div>
+
+        {% include "components/common/user_panel_filter.dj" %}
+
+        <!-- Table Section -->
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">#</th>
+                        <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">Date</th>
+                        <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">Transaction ID</th>
+                        <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">Amount</th>
+                        <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">Closing Amount</th>
+                        <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">Transaction Type</th>
+                        <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">Narration</th>
+                        <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">Transaction Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    {% for txn in page_obj %}
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <td class="px-2 py-1 text-xs text-gray-700 dark:text-gray-300">{{ forloop.counter0|add:page_obj.start_index }}</td>
+                            <td class="px-2 py-1 text-xs text-gray-700 dark:text-gray-300">{{ txn.created_at|date:"Y-m-d H:i" }}</td>
+                            <td class="px-2 py-1 text-xs text-gray-700 dark:text-gray-300">{{ txn.merchant_transaction_id }}</td>
+                            <td class="px-2 py-1 text-xs
+                                       {% if txn.transaction_type == 'debit' %}
+                                           text-red-600 dark:text-red-400
+                                       {% else %}
+                                           text-green-600 dark:text-green-400
+                                       {% endif %}">
+                                {% if txn.transaction_type == "debit" %}-{% else %} + {% endif %}
+                                {{ txn.amount }}
+                            </td>
+                            <td class="px-2 py-1 text-xs text-gray-700 dark:text-gray-300">₹{{ txn.closing_amount }}</td>
+                            <td class="px-2 py-1 text-xs text-gray-700 dark:text-gray-300">{{ txn.get_transaction_type_display }}</td>
+                            <td class="px-2 py-1 text-xs text-gray-700 dark:text-gray-300">{{ txn.get_desc_display }}</td>
+                            <td class="px-2 py-1 text-xs text-gray-700 dark:text-gray-300">{{ txn.status }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="8"
+                                class="px-2 py-1 text-center text-gray-400 dark:text-gray-500">
+                                No wallet recharges found.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+
+
+        {% include "components/common/pagination.dj" %}
+    </div>
+{% endblock body %}
+
+
+
+{% block js %}
+    <script defer src="{% static 'assets/js/apexcharts.js' %}"></script>
+    <script src="{% static 'assets/js/simple-datatables.js' %}"></script>
+
+    <script>
+        // Action Menu Handling
+        document.querySelectorAll('.action-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const menu = button.nextElementSibling;
+                const isOpen = !menu.classList.contains('hidden');
+
+                // Close all other menus
+                document.querySelectorAll('.action-menu').forEach(m => m.classList.add('hidden'));
+
+                // Toggle current menu
+                menu.classList.toggle('hidden', isOpen);
+            });
+        });
+
+        // Close menus when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.action-btn')) {
+                document.querySelectorAll('.action-menu').forEach(menu => {
+                    menu.classList.add('hidden');
+                });
+            }
+        });
+
+        // Checkbox Handling
+        function updateActionButtons() {
+            const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+            document.getElementById('actionButtons').classList.toggle('hidden', checkedCount === 0);
+            document.getElementById('cancelActionButtons').classList.toggle('hidden', checkedCount === 0);
+        }
+
+        document.getElementById('selectAll').addEventListener('change', (e) => {
+            document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+                checkbox.checked = e.target.checked;
+            });
+            updateActionButtons();
+        });
+
+        document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', updateActionButtons);
+        });
+
+        // Modal Handling
+        function openModal() {
+            document.getElementById('shipModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('shipModal').classList.add('hidden');
+        }
+
+        // Add debounce to prevent too many requests
+        function handleSearch(value) {
+            updateSearchParams(value);
+        }
+
+        function updateSearchParams(searchTerm) {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            if (searchTerm.trim()) {
+                urlParams.set('q', searchTerm);
+            } else {
+                urlParams.delete('q');
+            }
+
+            // Reset to first page when searching
+            urlParams.set('page', 1);
+            window.location.search = urlParams.toString();
+        }
+
+        document.getElementById('searchInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                updateSearchParams(e.target.value);
+            }
+        });
+
+        const shipSelectedOrders = () => {
+            // Get all checked checkboxes with class 'ship-order-ids'
+            const selectedCheckboxes = document.querySelectorAll('.ship-order-ids:checked');
+
+            // Extract values (order IDs) from the checked checkboxes
+            const orderIds = Array.from(selectedCheckboxes).map(checkbox => checkbox.value);
+
+            // Find the hidden input inside the form
+            const hiddenInput = document.querySelector('#shipForm input[name="order_ids"]');
+
+            // Set the value of the hidden input to comma-separated order IDs
+            hiddenInput.value = orderIds.join(',');
+
+            // Submit the form programmatically
+            document.getElementById('shipForm').submit();
+        };
+    </script>
+
+{% endblock js %}

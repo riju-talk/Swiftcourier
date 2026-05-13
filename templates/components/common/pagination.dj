@@ -1,0 +1,108 @@
+<!-- Pagination -->
+<div class="p-4 border-t dark:border-gray-700">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-4">
+            <span class="text-sm text-gray-700 dark:text-gray-300">Show:</span>
+            <select id="pageSize"
+                    onchange="updatePageSize(this.value)"
+                    class="px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                <option value="10" {% if page_size == 10 %}selected{% endif %}>10</option>
+                <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
+                <option value="100" {% if page_size == 100 %}selected{% endif %}>100</option>
+                <option value="200" {% if page_size == 200 %}selected{% endif %}>200</option>
+                <option value="500" {% if page_size == 500 %}selected{% endif %}>500</option>
+            </select>
+        </div>
+
+        <div class="flex gap-1 flex-wrap">
+            <button onclick="navigatePage('prev')"
+                    class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded text-sm dark:text-gray-100"
+                    {% if not page_obj.has_previous %}disabled{% endif %}>Previous</button>
+
+            {% if page_obj.number > 3 %}
+                <button onclick="navigatePage(1)"
+                        class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded text-sm dark:text-gray-100">
+                    1
+                </button>
+                <span class="px-2 text-gray-500 dark:text-gray-300">...</span>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+                    <button onclick="navigatePage({{ num }})"
+                            class="px-3 py-1
+                                   {% if num == page_obj.number %}
+                                       bg-blue-100 text-blue-600
+                                   {% else %}
+                                       bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600
+                                   {% endif %}
+                                   rounded text-sm dark:text-gray-100">{{ num }}</button>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
+                <span class="px-2 text-gray-500 dark:text-gray-300">...</span>
+                <button onclick="navigatePage({{ page_obj.paginator.num_pages }})"
+                        class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded text-sm dark:text-gray-100">
+                    {{ page_obj.paginator.num_pages }}
+                </button>
+            {% endif %}
+
+            <button onclick="navigatePage('next')"
+                    class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded text-sm dark:text-gray-100"
+                    {% if not page_obj.has_next %}disabled{% endif %}>Next</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Pagination Handling
+    function getCurrentParams() {
+        const params = new URLSearchParams(window.location.search);
+        return {
+            page: parseInt(params.get('page')) || 1,
+            size: parseInt(params.get('page_size')) || 50
+        };
+    }
+
+    // Initialize page size from URL
+    window.addEventListener('load', () => {
+        const params = getCurrentParams();
+        document.getElementById('pageSize').value = params.size;
+    });
+
+    function navigatePage(action) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentSearch = document.getElementById('searchInput').value;
+        let page = parseInt(urlParams.get('page') || 1);
+
+        if (action === 'prev') {
+            page = Math.max(1, page - 1);
+        } else if (action === 'next') {
+            page = page + 1;
+        } else {
+            page = parseInt(action);
+        }
+
+        if (currentSearch) {
+            urlParams.set('q', currentSearch);
+        }
+
+        urlParams.set('page', page);
+        window.location.search = urlParams.toString();
+    }
+
+    function updatePageSize(size) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentSearch = document.getElementById('searchInput').value;
+
+        urlParams.set('page_size', size);
+        urlParams.set('page', 1); // Reset to first page
+
+        if (currentSearch) {
+            urlParams.set('q', currentSearch);
+        }
+        window.location.search = urlParams.toString();
+    }
+</script>

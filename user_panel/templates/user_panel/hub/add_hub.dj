@@ -1,0 +1,296 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+    Add Hub
+{% endblock title %}
+
+{% block css %}
+{% endblock css %}
+
+{% block body %}
+    <section class="max-w-6xl mx-auto px-4 py-8">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mb-6">Add a Hub</h2>
+
+        <form class="grid grid-cols-1 md:grid-cols-2 gap-6"
+              method="post"
+              {% if request.GET.id %}
+              action="{% url 'user_panel:edit-hub' %}">
+        {% else %}
+            action="{% url 'user_panel:add-hub' %}">
+        {% endif %}
+        {% csrf_token %}
+
+        <input type="hidden" name="hub_id" value="{{ hub.id }}" />
+
+        <!-- Hub Name -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                Hub Name <span class="text-red-500">*</span>
+            </label>
+            <input type="text"
+                   name="name"
+                   value="{{ hub.name }}"
+                   placeholder="Hub Name"
+                   min="5"
+                   max="20"
+                   required
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+        </div>
+
+        <!-- PIN Code -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                PIN Code <span class="text-red-500">*</span>
+            </label>
+            <input type="text"
+                   id="pin_code"
+                   name="pin_code"
+                   value="{{ hub.pin_code }}"
+                   placeholder="PIN Code"
+                   min="6"
+                   required
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+        </div>
+
+        <!-- Mobile Number -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                Mobile Number <span class="text-red-500">*</span>
+            </label>
+            <input type="tel"
+                   name="phone"
+                   value="{{ hub.phone }}"
+                   min="10"
+                   placeholder="Mobile Number"
+                   required
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+        </div>
+
+        <!-- Alternate Mobile Number -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Alternate Mobile Number</label>
+            <input type="tel"
+                   name="alt_phone"
+                   value="{{ hub.alt_phone }}"
+                   placeholder="Alternate Mobile Number"
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+        </div>
+
+        <!-- Address -->
+        <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                Address <span class="text-red-500">*</span>
+            </label>
+            <textarea name="address_line1"
+                      placeholder="Street address, P.O. box, company name, c/o"
+                      min="5"
+                      rows="2"
+                      required
+                      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition">{{ hub.address_line1 }}</textarea>
+        </div>
+
+        <!-- Address2 -->
+        {% comment %} <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Address 2</label>
+            <textarea name="address_line2" placeholder="Apartment, suite, unit, building, floor, etc." rows="2" class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition">{{ hub.address_line2 }}</textarea>
+        </div> {% endcomment %}
+
+        <!-- Contact Person Name -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                Contact Person Name <span class="text-red-500">*</span>
+            </label>
+            <input type="text"
+                   name="contact_person"
+                   min="10"
+                   value="{{ hub.contact_person }}"
+                   placeholder="Contact Person"
+                   required
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+        </div>
+
+        <!-- Email -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                Email <span class="text-red-500">*</span>
+            </label>
+            <input type="email"
+                   name="email"
+                   value="{{ hub.email }}"
+                   placeholder="name@example.com"
+                   required
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+        </div>
+
+        <!-- City -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                City <span class="text-red-500">*</span>
+            </label>
+            <input type="text"
+                   id="city"
+                   name="city"
+                   value="{{ hub.city }}"
+                   placeholder="City"
+                   required
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+        </div>
+
+        <!-- State -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                State <span class="text-red-500">*</span>
+            </label>
+            <input type="text"
+                   id="state"
+                   name="state"
+                   value="{{ hub.state }}"
+                   placeholder="State"
+                   required
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+        </div>
+
+        <!-- Country -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                Country <span class="text-red-500">*</span>
+            </label>
+            <input type="text"
+                   id="country"
+                   name="country"
+                   value="{{ hub.country }}"
+                   placeholder="Country"
+                   required
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+        </div>
+
+        <!-- GSTIN -->
+        {% comment %} <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                GSTIN <span class="text-red-500">*</span>
+            </label>
+            <input type="text" name="gstin" value="{{ hub.gstin }}" placeholder="GSTIN" required class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+        </div> {% endcomment %}
+
+        <!-- Submit Button -->
+        <div class="md:col-span-2 text-right mt-4">
+            <button type="submit"
+                    class="px-6 py-2 bg-primary text-white font-semibold rounded-xl shadow hover:bg-primary-dark transition">
+                Submit
+            </button>
+        </div>
+    </form>
+</section>
+{% endblock body %}
+
+{% block js %}
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.querySelector("form");
+            const submitBtn = form.querySelector("button[type='submit']");
+
+            // Get fields
+            const name = form.querySelector("input[name='name']");
+            const pin = form.querySelector("#pin_code");
+            const phone = form.querySelector("input[name='phone']");
+            const email = form.querySelector("input[name='email']");
+            const address = form.querySelector("textarea[name='address_line1']");
+            const contact = form.querySelector("input[name='contact_person']");
+
+            // Helper: show error message below input
+            const showError = (input, message) => {
+                let error = input.parentElement.querySelector(".error-msg");
+                if (!error) {
+                    error = document.createElement("p");
+                    error.className = "error-msg text-red-500 text-sm mt-1";
+                    input.parentElement.appendChild(error);
+                }
+                error.textContent = message;
+                input.classList.add("border-red-500", "focus:ring-red-500");
+            };
+
+            const clearError = (input) => {
+                let error = input.parentElement.querySelector(".error-msg");
+                if (error) error.remove();
+                input.classList.remove("border-red-500", "focus:ring-red-500");
+            };
+
+            // Validation logic for each field
+            const validate = () => {
+                let isValid = true;
+
+                clearError(name);
+                if (name.value.trim().length < 5) {
+                    showError(name, "Hub name must be at least 5 characters.");
+                    isValid = false;
+                }
+
+                clearError(pin);
+                if (!/^\d{6}$/.test(pin.value)) {
+                    showError(pin, "PIN Code must be 6 digits.");
+                    isValid = false;
+                }
+
+                clearError(phone);
+                if (!/^[6-9]\d{9}$/.test(phone.value)) {
+                    showError(phone, "Enter a valid 10-digit Indian mobile number.");
+                    isValid = false;
+                }
+
+                clearError(email);
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+                    showError(email, "Enter a valid email address.");
+                    isValid = false;
+                }
+
+                clearError(address);
+                if (address.value.trim().length < 5) {
+                    showError(address, "Address must be at least 5 characters.");
+                    isValid = false;
+                }
+
+                clearError(contact);
+                if (contact.value.trim().length < 3) {
+                    showError(contact, "Contact person name must be at least 3 characters.");
+                    isValid = false;
+                }
+
+                // Enable or disable the submit button based on validity
+                submitBtn.disabled = !isValid;
+                submitBtn.classList.toggle("opacity-50", !isValid);
+                return isValid;
+            };
+
+            // Validate in real time (on input)
+            form.querySelectorAll("input, textarea").forEach((input) => {
+                input.addEventListener("input", validate);
+            });
+
+            // Prevent submission if not valid
+            form.addEventListener("submit", (e) => {
+                if (!validate()) {
+                    e.preventDefault();
+                }
+            });
+
+            // Existing pin code autofill logic
+            pin.addEventListener("change", () => {
+                if (pin.value.length === 6) {
+                    fetch(`https://api.postalpincode.in/pincode/${pin.value}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data[0].Status === "Success") {
+                                document.querySelector('#city').value = data[0].PostOffice[0].District;
+                                document.querySelector('#state').value = data[0].PostOffice[0].State;
+                                document.querySelector('#country').value = data[0].PostOffice[0].Country;
+                            }
+                        })
+                        .catch(console.error);
+                }
+            });
+
+            // Initial validation check
+            validate();
+        });
+    </script>
+{% endblock js %}

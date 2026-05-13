@@ -1,0 +1,154 @@
+{% extends 'components/layouts/layout.dj' %}
+
+{% block title %}
+  Overview | Super Admin - Dashboard
+{% endblock %}
+
+{% load static %}
+
+{% block body %}
+  <div class="w-full">
+    <!-- Tabs -->
+    <div class="flex flex-wrap gap-2 mb-4">
+      <a href="{% url 'superadmin_panel:dashboard' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-blue-600 text-white dark:bg-blue-500">Overview</a>
+      <a href="{% url 'superadmin_panel:dashboard-client' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">Client</a>
+      <a href="{% url 'superadmin_panel:dashboard-courier-partner' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">Courier Partner</a>
+      <a href="{% url 'superadmin_panel:dashboard-courier-performance' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">Courier Performance</a>
+    </div>
+
+    <!-- Content Container -->
+    <div class="rounded-lg p-4 shadow bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100">
+      <div class="space-y-6">
+        <!-- Header -->
+        <div>
+          <h1 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">Dashboard Overview</h1>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Real-time shipment and order performance summary</p>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Total Orders -->
+          <div class="rounded-xl p-5 bg-white dark:bg-gray-900 shadow">
+            <p class="text-sm text-gray-500 dark:text-gray-400">Today So Far</p>
+            <h2 id="todaySoFar" class="text-3xl font-bold text-gray-800 dark:text-gray-100">N/A</h2>
+          </div>
+
+          <!-- Pending Pickup -->
+          <div class="rounded-xl p-5 bg-yellow-50 dark:bg-yellow-900/20 shadow">
+            <p class="text-sm text-yellow-700 dark:text-yellow-400">Yesterday</p>
+            <h2 id="yesterdayOrders" class="text-3xl font-bold text-yellow-800 dark:text-yellow-300">N/A</h2>
+          </div>
+
+          <!-- In Transit -->
+          <div class="rounded-xl p-5 bg-blue-50 dark:bg-blue-900/20 shadow">
+            <p class="text-sm text-blue-700 dark:text-blue-400">Last 7 Days</p>
+            <h2 id="last_7_days" class="text-3xl font-bold text-blue-800 dark:text-blue-300">N/A</h2>
+          </div>
+
+          <!-- last_30_days_orders -->
+          <div class="rounded-xl p-5 bg-green-50 dark:bg-green-900/20 shadow">
+            <p class="text-sm text-green-700 dark:text-green-400">Last 30 Days</p>
+            <h2 id="last_30_days_orders" class="text-3xl font-bold text-green-800 dark:text-green-300">N/A</h2>
+          </div>
+        </div>
+
+        <!-- Secondary Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- RTO -->
+          <div class="rounded-xl p-5 bg-red-50 dark:bg-red-900/20 shadow">
+            <p class="text-sm text-red-700 dark:text-red-400">This Month</p>
+            <h2 id="thisMonthOrders" class="text-2xl font-bold text-red-800 dark:text-red-300">N/A</h2>
+          </div>
+
+          <!-- NDR -->
+          <div class="rounded-xl p-5 bg-purple-50 dark:bg-purple-900/20 shadow">
+            <p class="text-sm text-purple-700 dark:text-purple-400">Prev Month</p>
+            <h2 id="prevMonthOrders" class="text-2xl font-bold text-purple-800 dark:text-purple-300">N/A</h2>
+          </div>
+
+          <!-- Cancelled -->
+          <div class="rounded-xl p-5 bg-gray-100 dark:bg-gray-800 shadow">
+            <p class="text-sm text-gray-600 dark:text-gray-400">This Year</p>
+            <h2 id="thisYearOrders" class="text-2xl font-bold text-gray-800 dark:text-gray-200">N/A</h2>
+          </div>
+        </div>
+
+        <!-- Quick Insights -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Courier Performance -->
+          <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Courier Performance</h3>
+            <div id="courierPerformance" class="space-y-3 text-sm"></div>
+          </div>
+
+          <!-- Alerts -->
+          <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Attention Required</h3>
+            <ul class="space-y-3 text-sm">
+              <li class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">High NDR Rate</span>
+                <span id="alert-high-ndr" class="text-red-600">+N/A%</span>
+              </li>
+              <li class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">Pickup Delays</span>
+                <span id="alert-pickup-delay" class="text-yellow-600">N/A</span>
+              </li>
+              <li class="flex justify-between">
+                <span class="text-gray-600 dark:text-gray-400">Courier Exceptions</span>
+                <span id="courier-exceptions" class="text-red-600">N/A</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      fetch(`${window.location.pathname}?data=true`)
+        .then((response) => response.json())
+        .then((data) => {
+          // --- KPI ---
+          document.getElementById('todaySoFar').innerText = data.todaySoFar
+          document.getElementById('yesterdayOrders').innerText = data.yesterdayOrders
+          document.getElementById('last_7_days').innerText = data.last_7_days
+          document.getElementById('last_30_days_orders').innerText = data.last_30_days_orders
+    
+          document.getElementById('thisMonthOrders').innerText = data.thisMonthOrders
+          document.getElementById('prevMonthOrders').innerText = data.prevMonthOrders
+          document.getElementById('thisYearOrders').innerText = data.thisYearOrders
+    
+          // --- Courier Performance (DYNAMIC) ---
+          const courierContainer = document.getElementById('courierPerformance')
+          courierContainer.innerHTML = ''
+    
+          Object.entries(data.courier_performance).forEach(([courier, percent]) => {
+            const row = document.createElement('div')
+            row.className = 'flex justify-between'
+    
+            row.innerHTML = `
+                        <span class="text-gray-600 dark:text-gray-400">
+                          ${courier.charAt(0).toUpperCase() + courier.slice(1)}
+                        </span>
+                        <span class="text-green-600 font-medium">
+                          ${percent}% Delivered
+                        </span>
+                      `
+    
+            courierContainer.appendChild(row)
+          })
+    
+          // --- Alerts ---
+          document.getElementById('alert-high-ndr').innerText = `${data.attention_required.high_ndr_rate}%`
+    
+          document.getElementById('alert-pickup-delay').innerText = data.attention_required.pickup_delays
+    
+          document.getElementById('courier-exceptions').innerText = data.attention_required.courier_exceptions
+        })
+        .catch((error) => console.error('Dashboard error:', error))
+    })
+  </script>
+{% endblock %}

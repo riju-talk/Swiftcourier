@@ -1,0 +1,82 @@
+<nav class="order-nav">
+    <div class="order-nav__container">
+        <ul class="order-nav__list flex flex-wrap md:flex-nowrap space-x-2 overflow-x-auto no-scrollbar py-2">
+            <li>
+                <a href="{% url 'user_panel:shipment' 'all_orders' %}"
+                   class="order-nav__link inline-block px-4 py-2 text-sm font-medium text-gray-600 dark:text-white bg-gray-100 dark:bg-white/10 rounded-lg hover:bg-blue-100 dark:hover:bg-white/20 hover:text-blue-600 dark:hover:text-blue-400 transition whitespace-nowrap">
+                    All Orders ({{ count.all_orders }})
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'user_panel:shipment' 'ready_to_ship' %}"
+                   class="order-nav__link inline-block px-4 py-2 text-sm font-medium text-gray-600 dark:text-white bg-gray-100 dark:bg-white/10 rounded-lg hover:bg-blue-100 dark:hover:bg-white/20 hover:text-blue-600 dark:hover:text-blue-400 transition whitespace-nowrap">
+                    Ready To Ship ({{ count.ready_to_ship }})
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'user_panel:shipment' 'processing' %}"
+                   class="order-nav__link inline-block px-4 py-2 text-sm font-medium text-gray-600 dark:text-white bg-gray-100 dark:bg-white/10 rounded-lg hover:bg-blue-100 dark:hover:bg-white/20 hover:text-blue-600 dark:hover:text-blue-400 transition whitespace-nowrap">
+                    Processing ({{ count.processing }})
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'user_panel:shipment' 'pending_pickup' %}"
+                   class="order-nav__link inline-block px-4 py-2 text-sm font-medium text-gray-600 dark:text-white bg-gray-100 dark:bg-white/10 rounded-lg hover:bg-blue-100 dark:hover:bg-white/20 hover:text-blue-600 dark:hover:text-blue-400 transition whitespace-nowrap">
+                    Pending Pickup ({{ count.pending_pickup }})
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'user_panel:shipment' 'in_transit' %}"
+                   class="order-nav__link inline-block px-4 py-2 text-sm font-medium text-gray-600 dark:text-white bg-gray-100 dark:bg-white/10 rounded-lg hover:bg-blue-100 dark:hover:bg-white/20 hover:text-blue-600 dark:hover:text-blue-400 transition whitespace-nowrap">
+                    In Transit ({{ count.in_transit }})
+                </a>
+            </li>
+            <li>
+                <!-- Corrected the 'out_for_delivery' typo to 'out_for_delivery' -->
+                <a href="{% url 'user_panel:shipment' 'out_for_delivery' %}"
+                   class="order-nav__link inline-block px-4 py-2 text-sm font-medium text-gray-600 dark:text-white bg-gray-100 dark:bg-white/10 rounded-lg hover:bg-blue-100 dark:hover:bg-white/20 hover:text-blue-600 dark:hover:text-blue-400 transition whitespace-nowrap">
+                    OFD ({{ count.out_for_delivery }})
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'user_panel:shipment' 'delivered' %}"
+                   class="order-nav__link inline-block px-4 py-2 text-sm font-medium text-gray-600 dark:text-white bg-gray-100 dark:bg-white/10 rounded-lg hover:bg-blue-100 dark:hover:bg-white/20 hover:text-blue-600 dark:hover:text-blue-400 transition whitespace-nowrap">
+                    Delivered ({{ count.delivered }})
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'user_panel:shipment' 'rto' %}"
+                   class="order-nav__link inline-block px-4 py-2 text-sm font-medium text-gray-600 dark:text-white bg-gray-100 dark:bg-white/10 rounded-lg hover:bg-blue-100 dark:hover:bg-white/20 hover:text-blue-600 dark:hover:text-blue-400 transition whitespace-nowrap">
+                    RTO/RTS ({{ count.rto }})
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'user_panel:shipment' 'cancelled' %}"
+                   class="order-nav__link inline-block px-4 py-2 text-sm font-medium text-gray-600 dark:text-white bg-gray-100 dark:bg-white/10 rounded-lg hover:bg-blue-100 dark:hover:bg-white/20 hover:text-blue-600 dark:hover:text-blue-400 transition whitespace-nowrap">
+                    Cancelled ({{ count.cancelled }})
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<script>
+    const links = document.querySelectorAll(".order-nav__link");
+    const currentPath = window.location.pathname;
+
+    links.forEach(link => {
+        if (link.getAttribute("href") === currentPath) {
+            // Add both light and dark mode active classes
+            link.classList.add(
+                "bg-green-200",
+                "dark:bg-green-900/30", // Adjusted for better dark mode visibility
+                "text-white-700",
+                "dark:text-white-400",
+                "font-semibold"
+            );
+            // Optional: Override hover states for active tab
+            link.classList.replace("hover:bg-blue-100", "hover:bg-green-200");
+            link.classList.replace("dark:hover:bg-blue-100", "dark:hover:bg-green-200");
+        }
+    });
+</script>

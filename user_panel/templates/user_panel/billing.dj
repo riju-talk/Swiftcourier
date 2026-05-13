@@ -1,0 +1,1213 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+    Billing
+{% endblock title %}
+
+{% load static %}
+
+{% block css %}
+{% endblock css %}
+
+{% block body %}
+    <div class="mb-5" x-data="{ tab: 'pricing' }">
+        <ul class="flex flex-wrap gap-2 mb-5">
+            <!-- Pricing Plan -->
+            <li>
+                <a href="javascript:;"
+                   class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
+                   :class="{ 'bg-white-light/90 dark:bg-dark/60 text-primary': tab === 'pricing' }"
+                   @click="tab = 'pricing'">
+                    <!-- Price Tag Icon -->
+                    <svg class="w-5 h-5 mr-2"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.5"
+                         viewBox="0 0 24 24">
+                        <path d="M7 7h.01M3 11l8.586-8.586a2 2 0 012.828 0l6.172 6.172a2 2 0 010 2.828L12 21l-9-9z" />
+                    </svg>
+                    Pricing Plan
+                </a>
+            </li>
+
+            <!-- COD Remittance -->
+            <li>
+                <a href="javascript:;"
+                   class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
+                   :class="{ 'bg-white-light/90 dark:bg-dark/60 text-primary': tab === 'cod' }"
+                   @click="tab = 'cod'">
+                    <!-- Money with arrows icon -->
+                    <svg class="w-5 h-5 mr-2"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.5"
+                         viewBox="0 0 24 24">
+                        <path d="M4 6h16M4 18h16M4 12h8M16 12l4-4m0 8l-4-4" />
+                    </svg>
+                    COD Remittance
+                </a>
+            </li>
+
+            <!-- Invoice -->
+            <li>
+                <a href="javascript:;"
+                   class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
+                   :class="{ 'bg-white-light/90 dark:bg-dark/60 text-primary': tab === 'invoice' }"
+                   @click="tab = 'invoice'">
+                    <!-- Receipt Icon -->
+                    <svg class="w-5 h-5 mr-2"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.5"
+                         viewBox="0 0 24 24">
+                        <path d="M9 14h6M9 10h6M4 4h16v16H4z" />
+                    </svg>
+                    Invoice
+                </a>
+            </li>
+
+            <!-- Wallet -->
+            <li>
+                <a href="javascript:;"
+                   class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
+                   :class="{ 'bg-white-light/90 dark:bg-dark/60 text-primary': tab === 'wallet' }"
+                   @click="tab = 'wallet'">
+                    <!-- Wallet Icon -->
+                    <svg class="w-5 h-5 mr-2"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.5"
+                         viewBox="0 0 24 24">
+                        <path d="M4 7h16v10H4z" />
+                        <path d="M16 12h2" />
+                    </svg>
+                    Wallet
+                </a>
+            </li>
+
+            <!-- All Recharges -->
+            <li>
+                <a href="javascript:;"
+                   class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
+                   :class="{ 'bg-white-light/90 dark:bg-dark/60 text-primary': tab === 'recharges' }"
+                   @click="tab = 'recharges'">
+                    <!-- Battery charging icon -->
+                    <svg class="w-5 h-5 mr-2"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.5"
+                         viewBox="0 0 24 24">
+                        <path d="M11 6h6v12h-6zM7 10h2v4H7z" />
+                    </svg>
+                    All Recharges
+                </a>
+            </li>
+
+            <!-- Credit Notes -->
+            <li>
+                <a href="javascript:;"
+                   class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
+                   :class="{ 'bg-white-light/90 dark:bg-dark/60 text-primary': tab === 'credits' }"
+                   @click="tab = 'credits'">
+                    <!-- Document with check icon -->
+                    <svg class="w-5 h-5 mr-2"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.5"
+                         viewBox="0 0 24 24">
+                        <path d="M9 12l2 2 4-4M5 4h14v16H5z" />
+                    </svg>
+                    Credit Notes
+                </a>
+            </li>
+
+            <!-- Weight Reconciliation -->
+            <li>
+                <a href="javascript:;"
+                   class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
+                   :class="{ 'bg-white-light/90 dark:bg-dark/60 text-primary': tab === 'weight' }"
+                   @click="tab = 'weight'">
+                    <!-- Scale icon -->
+                    <svg class="w-5 h-5 mr-2"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.5"
+                         viewBox="0 0 24 24">
+                        <path d="M12 3v2m-6 4h12M6 7l-3 7h6l-3-7zm12 0l3 7h-6l3-7zM12 12v7" />
+                    </svg>
+                    Weight Reconciliation
+                </a>
+            </li>
+        </ul>
+
+        <!-- Future Tab Content -->
+        <div class="text-sm bg-white-light/30 p-4 rounded-lg dark:bg-dark/30">
+            <template x-if="tab === 'pricing'">
+                <div></div>
+            </template>
+
+            <template x-if="tab === 'cod'">
+                <div x-data="codbasic">
+                    <div class="panel mt-6">
+                        <h5 class="font-semibold text-lg dark:text-white-light">COD Remittance</h5>
+                        <table id="cod" class="whitespace-nowrap table-hover">
+                            <!-- table will be populated by simple-datatables -->
+                        </table>
+                    </div>
+                </div>
+            </template>
+
+            <template x-if="tab === 'invoice'">
+                <div x-data="invoicebasic">
+                    <div class="panel mt-6">
+                        <h5 class="font-semibold text-lg dark:text-white-light">Invoice</h5>
+                        <table id="invoice" class="whitespace-nowrap table-hover">
+                            <!-- table will be populated by simple-datatables -->
+                        </table>
+                    </div>
+                </div>
+            </template>
+
+            <template x-if="tab === 'wallet'">
+                <div x-data="walletbasic">
+                    <div class="panel mt-6">
+                        <h5 class="font-semibold text-lg dark:text-white-light">Wallet</h5>
+                        <table id="wallet" class="whitespace-nowrap table-hover">
+                            <!-- table will be populated by simple-datatables -->
+                        </table>
+                    </div>
+                </div>
+            </template>
+
+            <template x-if="tab === 'recharges'">
+                <div x-data="rechargesbasic">
+                    <div class="panel mt-6">
+                        <h5 class="font-semibold text-lg dark:text-white-light">All Recharges</h5>
+                        <table id="recharges" class="whitespace-nowrap table-hover">
+                            <!-- table will be populated by simple-datatables -->
+                        </table>
+                    </div>
+                </div>
+            </template>
+
+            <template x-if="tab === 'credits'">
+                <div x-data="creditsbasic">
+                    <div class="panel mt-6">
+                        <h5 class="font-semibold text-lg dark:text-white-light">Credit Notes</h5>
+                        <table id="credits" class="whitespace-nowrap table-hover">
+                            <!-- table will be populated by simple-datatables -->
+                        </table>
+                    </div>
+                </div>
+            </template>
+
+            <template x-if="tab === 'weight'">
+                <div x-data="weightbasic">
+                    <div class="panel mt-6">
+                        <h5 class="font-semibold text-lg dark:text-white-light">Weight Reconciliation</h5>
+                        <table id="weight" class="whitespace-nowrap table-hover">
+                            <!-- table will be populated by simple-datatables -->
+                        </table>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+
+{% endblock body %}
+
+{% block js %}
+    <script defer src="{% static 'assets/js/apexcharts.js' %}"></script>
+    <script src="{% static 'assets/js/simple-datatables.js' %}"></script>
+    <script>
+        document.addEventListener("alpine:init", () => {
+            Alpine.data("weightbasic", () => ({
+                datatable: null,
+
+                init() {
+                    this.datatable = new simpleDatatables.DataTable('#weight', {
+                        data: {
+                            headings: [
+                                `<input type="checkbox" @click="toggleAll($event)" />`,
+                                "WEIGHT APPLIED DATE",
+                                "COURIER",
+                                "AWB NUMBER",
+                                "ENTERED WEIGHT",
+                                "APPLIED WEIGHT",
+                                "WT. CHARGES",
+                                "PRODUCT",
+                                "ACTION"
+                            ],
+                            data: [
+                                [
+                                    '', // checkbox
+                                    '2025-04-10', // WEIGHT APPLIED DATE
+                                    'Delhivery', // COURIER
+                                    'AWB12345678', // AWB NUMBER
+                                    '1.2 kg', // ENTERED WEIGHT
+                                    '1.5 kg', // APPLIED WEIGHT
+                                    '₹25.00', // WEIGHT CHARGES
+                                    'T-Shirt', // PRODUCT
+                                    `<button class="btn btn-sm btn-primary">View</button>` // ACTION
+                                ],
+                                [
+                                    '',
+                                    '2025-04-12',
+                                    'BlueDart',
+                                    'AWB98765432',
+                                    '0.8 kg',
+                                    '1.0 kg',
+                                    '₹20.00',
+                                    'Mug',
+                                    `<button class="btn btn-sm btn-primary">View</button>`
+                                ],
+                                [
+                                    '',
+                                    '2025-04-13',
+                                    'Ekart',
+                                    'AWB45678901',
+                                    '2.0 kg',
+                                    '2.1 kg',
+                                    '₹30.00',
+                                    'Hoodie',
+                                    `<button class="btn btn-sm btn-secondary">View</button>`
+                                ]
+                            ]
+                        },
+
+                        searchable: true,
+                        perPage: 10,
+                        perPageSelect: [10, 20, 30, 50, 100],
+                        columns: [{
+                                select: 0,
+                                sortable: false,
+                                render: (data, cell, row) => {
+                                    // per-row checkbox
+                                    return `<input type="checkbox" class="row-checkbox" />`;
+                                }
+                            }
+                            // All other columns will render as simple text by default
+                        ],
+                        firstLast: true,
+                        firstText: '<svg …>…</svg>',
+                        lastText: '<svg …>…</svg>',
+                        prevText: '<svg …>…</svg>',
+                        nextText: '<svg …>…</svg>',
+                        labels: {
+                            perPage: "{select}"
+                        },
+                        layout: {
+                            top: "{search}",
+                            bottom: "{info}{select}{pager}"
+                        }
+                    });
+
+                    // keep your chart hooks in case you add sparkline columns later
+                    this.datatable.on('datatable.sort', () => this.initChart());
+                    this.datatable.on('datatable.page', () => this.initChart());
+                    this.datatable.on('datatable.perpage', () => this.initChart());
+                    setTimeout(() => this.initChart(), 300);
+                },
+
+                // toggle all row checkboxes
+                toggleAll(event) {
+                    const checked = event.target.checked;
+                    document.querySelectorAll('.row-checkbox').forEach(chk => {
+                        chk.checked = checked;
+                    });
+                },
+
+                // chart init stub
+                initChart() {
+                    const ele = document.querySelectorAll('.progress-chart');
+                    ele.forEach((el, i) => {
+                        el.innerHTML = '';
+                        new ApexCharts(el, this.chart_options).render();
+                    });
+                },
+
+                get chart_options() {
+                    return {
+                        series: [{
+                            data: [21, 9, 36, 12, 44, 25, 59]
+                        }],
+                        chart: {
+                            type: 'line',
+                            height: 30,
+                            sparkline: {
+                                enabled: true
+                            }
+                        },
+                        stroke: {
+                            curve: 'smooth',
+                            width: 2
+                        },
+                        markers: {
+                            size: [4, 7],
+                            strokeWidth: 0
+                        },
+                        colors: [this.randomColor()],
+                        grid: {
+                            padding: {
+                                top: 5,
+                                bottom: 5
+                            }
+                        },
+                        tooltip: {
+                            x: {
+                                show: false
+                            },
+                            y: {
+                                title: {
+                                    formatter: () => ''
+                                }
+                            }
+                        }
+                    };
+                },
+
+                randomColor() {
+                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    return c[Math.floor(Math.random() * c.length)];
+                },
+
+                // (you can remove unused methods below if you like)
+                randomStatusColor() {
+                    /* … */
+                },
+                randomStatus() {
+                    /* … */
+                },
+                getRandomNumber() {
+                    /* … */
+                },
+                getCountry() {
+                    /* … */
+                }
+            }));
+
+            // credits tab
+            Alpine.data("creditsbasic", () => ({
+                datatable: null,
+
+                init() {
+                    this.datatable = new simpleDatatables.DataTable('#credits', {
+                        data: {
+                            headings: [
+                                `<input type="checkbox" @click="toggleAll($event)" />`,
+                                "CN NO.",
+                                "CN STATE",
+                                "CN DATE",
+                                "CN PERIOD",
+                                "CN AMOUNT",
+                                "ACTION"
+                            ],
+                            data: [
+                                [
+                                    '', // checkbox
+                                    'CN-1001', // CN NO.
+                                    'Generated', // CN STATE
+                                    '2025-04-10', // CN DATE
+                                    'Apr 2025 (01-15)', // CN PERIOD
+                                    '₹250.00', // CN AMOUNT
+                                    `<button class="btn btn-primary btn-sm">Download</button>` // ACTION
+                                ],
+                                [
+                                    '',
+                                    'CN-1002',
+                                    'Pending',
+                                    '2025-04-14',
+                                    'Apr 2025 (01-15)',
+                                    '₹180.00',
+                                    `<button class="btn btn-secondary btn-sm">Download</button>`
+                                ],
+                                [
+                                    '',
+                                    'CN-1003',
+                                    'Issued',
+                                    '2025-04-17',
+                                    'Apr 2025 (01-15)',
+                                    '₹310.00',
+                                    `<button class="btn btn-primary btn-sm">Download</button>`
+                                ]
+                            ]
+                        },
+
+                        searchable: true,
+                        perPage: 10,
+                        perPageSelect: [10, 20, 30, 50, 100],
+                        columns: [{
+                                select: 0,
+                                sortable: false,
+                                render: (data, cell, row) => {
+                                    // per-row checkbox
+                                    return `<input type="checkbox" class="row-checkbox" />`;
+                                }
+                            }
+                            // All other columns will render as simple text by default
+                        ],
+                        firstLast: true,
+                        firstText: '<svg …>…</svg>',
+                        lastText: '<svg …>…</svg>',
+                        prevText: '<svg …>…</svg>',
+                        nextText: '<svg …>…</svg>',
+                        labels: {
+                            perPage: "{select}"
+                        },
+                        layout: {
+                            top: "{search}",
+                            bottom: "{info}{select}{pager}"
+                        }
+                    });
+
+                    // keep your chart hooks in case you add sparkline columns later
+                    this.datatable.on('datatable.sort', () => this.initChart());
+                    this.datatable.on('datatable.page', () => this.initChart());
+                    this.datatable.on('datatable.perpage', () => this.initChart());
+                    setTimeout(() => this.initChart(), 300);
+                },
+
+                // toggle all row checkboxes
+                toggleAll(event) {
+                    const checked = event.target.checked;
+                    document.querySelectorAll('.row-checkbox').forEach(chk => {
+                        chk.checked = checked;
+                    });
+                },
+
+                // chart init stub
+                initChart() {
+                    const ele = document.querySelectorAll('.progress-chart');
+                    ele.forEach((el, i) => {
+                        el.innerHTML = '';
+                        new ApexCharts(el, this.chart_options).render();
+                    });
+                },
+
+                get chart_options() {
+                    return {
+                        series: [{
+                            data: [21, 9, 36, 12, 44, 25, 59]
+                        }],
+                        chart: {
+                            type: 'line',
+                            height: 30,
+                            sparkline: {
+                                enabled: true
+                            }
+                        },
+                        stroke: {
+                            curve: 'smooth',
+                            width: 2
+                        },
+                        markers: {
+                            size: [4, 7],
+                            strokeWidth: 0
+                        },
+                        colors: [this.randomColor()],
+                        grid: {
+                            padding: {
+                                top: 5,
+                                bottom: 5
+                            }
+                        },
+                        tooltip: {
+                            x: {
+                                show: false
+                            },
+                            y: {
+                                title: {
+                                    formatter: () => ''
+                                }
+                            }
+                        }
+                    };
+                },
+
+                randomColor() {
+                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    return c[Math.floor(Math.random() * c.length)];
+                },
+
+                // (you can remove unused methods below if you like)
+                randomStatusColor() {
+                    /* … */
+                },
+                randomStatus() {
+                    /* … */
+                },
+                getRandomNumber() {
+                    /* … */
+                },
+                getCountry() {
+                    /* … */
+                }
+            }));
+
+            // credits tab
+            Alpine.data("rechargesbasic", () => ({
+                datatable: null,
+
+                init() {
+                    this.datatable = new simpleDatatables.DataTable('#recharges', {
+                        data: {
+                            headings: [
+                                // “select all” checkbox in header
+                                `<input type="checkbox" @click="toggleAll($event)" />`,
+                                "CHANNEL",
+                                "ORDER ID",
+                                "DATE",
+                                "CUSTOMER",
+                            ],
+                            data: [
+                                // two demo rows only
+                                [
+                                    '', // checkbox cell (rendered via columns.render)
+                                    'Email', // CHANNEL
+                                    'ORD-00123', // ORDER ID
+                                    '2025-04-15', // DATE
+                                    'John Doe', // CUSTOMER
+                                ],
+                                [
+                                    '',
+                                    'Social',
+                                    'ORD-00124',
+                                    '2025-04-16',
+                                    'Jane Smith',
+                                ]
+                            ]
+                        },
+                        searchable: true,
+                        perPage: 10,
+                        perPageSelect: [10, 20, 30, 50, 100],
+                        columns: [{
+                                select: 0,
+                                sortable: false,
+                                render: (data, cell, row) => {
+                                    // per-row checkbox
+                                    return `<input type="checkbox" class="row-checkbox" />`;
+                                }
+                            }
+                            // All other columns will render as simple text by default
+                        ],
+                        firstLast: true,
+                        firstText: '<svg …>…</svg>',
+                        lastText: '<svg …>…</svg>',
+                        prevText: '<svg …>…</svg>',
+                        nextText: '<svg …>…</svg>',
+                        labels: {
+                            perPage: "{select}"
+                        },
+                        layout: {
+                            top: "{search}",
+                            bottom: "{info}{select}{pager}"
+                        }
+                    });
+
+                    // keep your chart hooks in case you add sparkline columns later
+                    this.datatable.on('datatable.sort', () => this.initChart());
+                    this.datatable.on('datatable.page', () => this.initChart());
+                    this.datatable.on('datatable.perpage', () => this.initChart());
+                    setTimeout(() => this.initChart(), 300);
+                },
+
+                // toggle all row checkboxes
+                toggleAll(event) {
+                    const checked = event.target.checked;
+                    document.querySelectorAll('.row-checkbox').forEach(chk => {
+                        chk.checked = checked;
+                    });
+                },
+
+                // chart init stub
+                initChart() {
+                    const ele = document.querySelectorAll('.progress-chart');
+                    ele.forEach((el, i) => {
+                        el.innerHTML = '';
+                        new ApexCharts(el, this.chart_options).render();
+                    });
+                },
+
+                get chart_options() {
+                    return {
+                        series: [{
+                            data: [21, 9, 36, 12, 44, 25, 59]
+                        }],
+                        chart: {
+                            type: 'line',
+                            height: 30,
+                            sparkline: {
+                                enabled: true
+                            }
+                        },
+                        stroke: {
+                            curve: 'smooth',
+                            width: 2
+                        },
+                        markers: {
+                            size: [4, 7],
+                            strokeWidth: 0
+                        },
+                        colors: [this.randomColor()],
+                        grid: {
+                            padding: {
+                                top: 5,
+                                bottom: 5
+                            }
+                        },
+                        tooltip: {
+                            x: {
+                                show: false
+                            },
+                            y: {
+                                title: {
+                                    formatter: () => ''
+                                }
+                            }
+                        }
+                    };
+                },
+
+                randomColor() {
+                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    return c[Math.floor(Math.random() * c.length)];
+                },
+
+                // (you can remove unused methods below if you like)
+                randomStatusColor() {
+                    /* … */
+                },
+                randomStatus() {
+                    /* … */
+                },
+                getRandomNumber() {
+                    /* … */
+                },
+                getCountry() {
+                    /* … */
+                }
+            }));
+
+            // credits tab
+            Alpine.data("invoicebasic", () => ({
+                datatable: null,
+
+                init() {
+                    this.datatable = new simpleDatatables.DataTable('#invoice', {
+                        data: {
+                            headings: [
+                                `<input type="checkbox" @click="toggleAll($event)" />`,
+                                "INVOICE NO",
+                                "INVOICE STATE",
+                                "INVOICE DATE",
+                                "INVOICE PERIOD",
+                                "INVOICE AMOUNT",
+                                "DOWNLOAD"
+                            ],
+                            data: [
+                                [
+                                    '', // checkbox cell
+                                    'INV-0001', // INVOICE NO
+                                    'Generated', // INVOICE STATE
+                                    '2025-04-01', // INVOICE DATE
+                                    'Mar 2025', // INVOICE PERIOD
+                                    '$500.00', // INVOICE AMOUNT
+                                    `<a href="#" class="text-blue-500">Download</a>` // DOWNLOAD
+                                ],
+                                [
+                                    '',
+                                    'INV-0002',
+                                    'Pending',
+                                    '2025-04-05',
+                                    'Mar 2025',
+                                    '$720.00',
+                                    `<a href="#" class="text-blue-500">Download</a>`
+                                ],
+                                [
+                                    '',
+                                    'INV-0003',
+                                    'Generated',
+                                    '2025-04-10',
+                                    'Apr 2025',
+                                    '$310.00',
+                                    `<a href="#" class="text-blue-500">Download</a>`
+                                ],
+                                [
+                                    '',
+                                    'INV-0004',
+                                    'Generated',
+                                    '2025-04-15',
+                                    'Apr 2025',
+                                    '$1,050.00',
+                                    `<a href="#" class="text-blue-500">Download</a>`
+                                ]
+                            ]
+                        },
+
+                        searchable: true,
+                        perPage: 10,
+                        perPageSelect: [10, 20, 30, 50, 100],
+                        columns: [{
+                                select: 0,
+                                sortable: false,
+                                render: (data, cell, row) => {
+                                    // per-row checkbox
+                                    return `<input type="checkbox" class="row-checkbox" />`;
+                                }
+                            }
+                            // All other columns will render as simple text by default
+                        ],
+                        firstLast: true,
+                        firstText: '<svg …>…</svg>',
+                        lastText: '<svg …>…</svg>',
+                        prevText: '<svg …>…</svg>',
+                        nextText: '<svg …>…</svg>',
+                        labels: {
+                            perPage: "{select}"
+                        },
+                        layout: {
+                            top: "{search}",
+                            bottom: "{info}{select}{pager}"
+                        }
+                    });
+
+                    // keep your chart hooks in case you add sparkline columns later
+                    this.datatable.on('datatable.sort', () => this.initChart());
+                    this.datatable.on('datatable.page', () => this.initChart());
+                    this.datatable.on('datatable.perpage', () => this.initChart());
+                    setTimeout(() => this.initChart(), 300);
+                },
+
+                // toggle all row checkboxes
+                toggleAll(event) {
+                    const checked = event.target.checked;
+                    document.querySelectorAll('.row-checkbox').forEach(chk => {
+                        chk.checked = checked;
+                    });
+                },
+
+                // chart init stub
+                initChart() {
+                    const ele = document.querySelectorAll('.progress-chart');
+                    ele.forEach((el, i) => {
+                        el.innerHTML = '';
+                        new ApexCharts(el, this.chart_options).render();
+                    });
+                },
+
+                get chart_options() {
+                    return {
+                        series: [{
+                            data: [21, 9, 36, 12, 44, 25, 59]
+                        }],
+                        chart: {
+                            type: 'line',
+                            height: 30,
+                            sparkline: {
+                                enabled: true
+                            }
+                        },
+                        stroke: {
+                            curve: 'smooth',
+                            width: 2
+                        },
+                        markers: {
+                            size: [4, 7],
+                            strokeWidth: 0
+                        },
+                        colors: [this.randomColor()],
+                        grid: {
+                            padding: {
+                                top: 5,
+                                bottom: 5
+                            }
+                        },
+                        tooltip: {
+                            x: {
+                                show: false
+                            },
+                            y: {
+                                title: {
+                                    formatter: () => ''
+                                }
+                            }
+                        }
+                    };
+                },
+
+                randomColor() {
+                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    return c[Math.floor(Math.random() * c.length)];
+                },
+
+                // (you can remove unused methods below if you like)
+                randomStatusColor() {
+                    /* … */
+                },
+                randomStatus() {
+                    /* … */
+                },
+                getRandomNumber() {
+                    /* … */
+                },
+                getCountry() {
+                    /* … */
+                }
+            }));
+
+            // credits tab
+            Alpine.data("codbasic", () => ({
+                datatable: null,
+
+                init() {
+                    this.datatable = new simpleDatatables.DataTable('#cod', {
+                        data: {
+                            headings: [
+                                // “select all” checkbox in header
+                                `<input type="checkbox" @click="toggleAll($event)" />`,
+                                "REMITTANCE ID",
+                                "COD AMOUNT",
+                                "DATE",
+                                "STATUS",
+                                "FREIGHT DEDUCTIONS",
+                                "REMITTANCE AMOUNT",
+                                "PAYMENT REF",
+                                "DOWNLOAD",
+                            ],
+                            data: [
+                                // two demo rows with COD Remittance data
+                                [
+                                    '', // checkbox cell (rendered via columns.render)
+                                    '0',
+                                    '$50.00', // COD AMOUNT
+                                    '2025-04-15', // DATE
+                                    'Pending', // STATUS
+                                    '$5.00', // FREIGHT DEDUCTIONS
+                                    '$45.00', // REMITTANCE AMOUNT
+                                    'TX101', // PAYMENT REF
+                                    `<a href="#" class="text-blue-500">Download</a>`, // DOWNLOAD
+                                ],
+                                [
+                                    '',
+                                    '1',
+                                    '$60.00',
+                                    '2025-04-16',
+                                    'Completed',
+                                    '$4.00',
+                                    '$56.00',
+                                    'TX102',
+                                    `<a href="#" class="text-blue-500">Download</a>`,
+                                ],
+                                [
+                                    '',
+                                    '2',
+                                    '$75.00',
+                                    '2025-04-17',
+                                    'Completed',
+                                    '$3.00',
+                                    '$72.00',
+                                    'TX103',
+                                    `<a href="#" class="text-blue-500">Download</a>`,
+                                ],
+                                [
+                                    '',
+                                    '3',
+                                    '$40.00',
+                                    '2025-04-18',
+                                    'Pending',
+                                    '$2.00',
+                                    '$38.00',
+                                    'TX104',
+                                    `<a href="#" class="text-blue-500">Download</a>`,
+                                ]
+                            ]
+                        },
+
+                        searchable: true,
+                        perPage: 10,
+                        perPageSelect: [10, 20, 30, 50, 100],
+                        columns: [{
+                                select: 0,
+                                sortable: false,
+                                render: (data, cell, row) => {
+                                    // per-row checkbox
+                                    return `<input type="checkbox" class="row-checkbox" />`;
+                                }
+                            }
+                            // All other columns will render as simple text by default
+                        ],
+                        firstLast: true,
+                        firstText: '<svg …>…</svg>',
+                        lastText: '<svg …>…</svg>',
+                        prevText: '<svg …>…</svg>',
+                        nextText: '<svg …>…</svg>',
+                        labels: {
+                            perPage: "{select}"
+                        },
+                        layout: {
+                            top: "{search}",
+                            bottom: "{info}{select}{pager}"
+                        }
+                    });
+
+                    // keep your chart hooks in case you add sparkline columns later
+                    this.datatable.on('datatable.sort', () => this.initChart());
+                    this.datatable.on('datatable.page', () => this.initChart());
+                    this.datatable.on('datatable.perpage', () => this.initChart());
+                    setTimeout(() => this.initChart(), 300);
+                },
+
+                // toggle all row checkboxes
+                toggleAll(event) {
+                    const checked = event.target.checked;
+                    document.querySelectorAll('.row-checkbox').forEach(chk => {
+                        chk.checked = checked;
+                    });
+                },
+
+                // chart init stub
+                initChart() {
+                    const ele = document.querySelectorAll('.progress-chart');
+                    ele.forEach((el, i) => {
+                        el.innerHTML = '';
+                        new ApexCharts(el, this.chart_options).render();
+                    });
+                },
+
+                get chart_options() {
+                    return {
+                        series: [{
+                            data: [21, 9, 36, 12, 44, 25, 59]
+                        }],
+                        chart: {
+                            type: 'line',
+                            height: 30,
+                            sparkline: {
+                                enabled: true
+                            }
+                        },
+                        stroke: {
+                            curve: 'smooth',
+                            width: 2
+                        },
+                        markers: {
+                            size: [4, 7],
+                            strokeWidth: 0
+                        },
+                        colors: [this.randomColor()],
+                        grid: {
+                            padding: {
+                                top: 5,
+                                bottom: 5
+                            }
+                        },
+                        tooltip: {
+                            x: {
+                                show: false
+                            },
+                            y: {
+                                title: {
+                                    formatter: () => ''
+                                }
+                            }
+                        }
+                    };
+                },
+
+                randomColor() {
+                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    return c[Math.floor(Math.random() * c.length)];
+                },
+
+                // (you can remove unused methods below if you like)
+                randomStatusColor() {
+                    /* … */
+                },
+                randomStatus() {
+                    /* … */
+                },
+                getRandomNumber() {
+                    /* … */
+                },
+                getCountry() {
+                    /* … */
+                }
+            }));
+
+            // credits tab
+            Alpine.data("walletbasic", () => ({
+                datatable: null,
+
+                init() {
+                    this.datatable = new simpleDatatables.DataTable('#wallet', {
+                        data: {
+                            headings: [
+                                `<input type="checkbox" @click="toggleAll($event)" />`,
+                                "DATE",
+                                "ID & Type",
+                                "Tracking Info",
+                                "Payment",
+                                "Entered Weight",
+                                "CREDIT(₹)",
+                                "DEBIT(₹)",
+                                "CLOSING BAL(₹)",
+                                "DESCRIPTION"
+                            ],
+                            data: [
+                                [
+                                    '', // checkbox
+                                    '2025-04-10', // DATE
+                                    'ORD-1001 / Prepaid', // ID & Type
+                                    'TRK123456789', // Tracking Info
+                                    'Paid', // Payment
+                                    '1.25 kg', // Entered Weight
+                                    '₹0.00', // CREDIT(₹)
+                                    '₹45.00', // DEBIT(₹)
+                                    '₹955.00', // CLOSING BAL(₹)
+                                    'Shipping charge deduction' // DESCRIPTION
+                                ],
+                                [
+                                    '',
+                                    '2025-04-12',
+                                    'ORD-1002 / COD',
+                                    'TRK987654321',
+                                    'Pending',
+                                    '1.80 kg',
+                                    '₹120.00',
+                                    '₹60.00',
+                                    '₹1,015.00',
+                                    'COD order payment received and shipping cost deducted'
+                                ],
+                                [
+                                    '',
+                                    '2025-04-14',
+                                    'ORD-1003 / Prepaid',
+                                    'TRK543216789',
+                                    'Paid',
+                                    '2.10 kg',
+                                    '₹0.00',
+                                    '₹75.00',
+                                    '₹940.00',
+                                    'High weight charge'
+                                ]
+                            ]
+                        },
+
+                        searchable: true,
+                        perPage: 10,
+                        perPageSelect: [10, 20, 30, 50, 100],
+                        columns: [{
+                                select: 0,
+                                sortable: false,
+                                render: (data, cell, row) => {
+                                    // per-row checkbox
+                                    return `<input type="checkbox" class="row-checkbox" />`;
+                                }
+                            }
+                            // All other columns will render as simple text by default
+                        ],
+                        firstLast: true,
+                        firstText: '<svg …>…</svg>',
+                        lastText: '<svg …>…</svg>',
+                        prevText: '<svg …>…</svg>',
+                        nextText: '<svg …>…</svg>',
+                        labels: {
+                            perPage: "{select}"
+                        },
+                        layout: {
+                            top: "{search}",
+                            bottom: "{info}{select}{pager}"
+                        }
+                    });
+
+                    // keep your chart hooks in case you add sparkline columns later
+                    this.datatable.on('datatable.sort', () => this.initChart());
+                    this.datatable.on('datatable.page', () => this.initChart());
+                    this.datatable.on('datatable.perpage', () => this.initChart());
+                    setTimeout(() => this.initChart(), 300);
+                },
+
+                // toggle all row checkboxes
+                toggleAll(event) {
+                    const checked = event.target.checked;
+                    document.querySelectorAll('.row-checkbox').forEach(chk => {
+                        chk.checked = checked;
+                    });
+                },
+
+                // chart init stub
+                initChart() {
+                    const ele = document.querySelectorAll('.progress-chart');
+                    ele.forEach((el, i) => {
+                        el.innerHTML = '';
+                        new ApexCharts(el, this.chart_options).render();
+                    });
+                },
+
+                get chart_options() {
+                    return {
+                        series: [{
+                            data: [21, 9, 36, 12, 44, 25, 59]
+                        }],
+                        chart: {
+                            type: 'line',
+                            height: 30,
+                            sparkline: {
+                                enabled: true
+                            }
+                        },
+                        stroke: {
+                            curve: 'smooth',
+                            width: 2
+                        },
+                        markers: {
+                            size: [4, 7],
+                            strokeWidth: 0
+                        },
+                        colors: [this.randomColor()],
+                        grid: {
+                            padding: {
+                                top: 5,
+                                bottom: 5
+                            }
+                        },
+                        tooltip: {
+                            x: {
+                                show: false
+                            },
+                            y: {
+                                title: {
+                                    formatter: () => ''
+                                }
+                            }
+                        }
+                    };
+                },
+
+                randomColor() {
+                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    return c[Math.floor(Math.random() * c.length)];
+                },
+
+                // (you can remove unused methods below if you like)
+                randomStatusColor() {
+                    /* … */
+                },
+                randomStatus() {
+                    /* … */
+                },
+                getRandomNumber() {
+                    /* … */
+                },
+                getCountry() {
+                    /* … */
+                }
+            }));
+        });
+    </script>
+
+
+
+
+{% endblock js %}

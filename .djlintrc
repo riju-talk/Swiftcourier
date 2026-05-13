@@ -1,0 +1,16 @@
+{
+    "blank_line_after_tag": "load,extends,include,endblock",
+    "blank_line_before_tag": "load,extends,include,block",
+    "format_attribute_template_tags": true,
+    "format_css": true,
+    "css": {
+        "indent_size": 4
+    },
+    "format_js": true,
+    "js": {
+        "indent_size": 4
+    },
+    "max_blank_lines": 10,
+    "profile": "django",
+    "ignore": "H021,H006,H025,H020,H008,H014,H030"
+}

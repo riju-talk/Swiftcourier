@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        var data = {
+            awb_numbers: {
+                45946711104261: {
+                    customer: {
+                        name: "Bhagyadhar Sardar N/a",
+                        address_line1: "Srikhanda,p.o.-panchpota, Chetana",
+                        address_line2: "Mess, Kolkata, Kolkata",
+                        city: "Kolkata",
+                        state: "West Bengal",
+                        country: "India",
+                        pincode: "700152",
+                        mobile_no: "7278744346",
+                        email: "test@test.com",
+                    },
+                    order_date: "2024-06-10 12:34:56",
+                    courier: "DHL",
+                    weight: 0.5,
+                    dimensions: [20,30,40],
+                    payment_method: "cod",
+                    cod_collectable_amount: 1500,
+                    total_price: 1500,
+                    products: [
+                        {
+                            name: "Product A",
+                            sku: "SKU12345",
+                            quantity: 2,
+                            price: 500
+                        },
+                        {
+                            name: "Product B",
+                            sku: "SKU67890",
+                            quantity: 1,
+                            price: 500
+                        },
+                        {
+                            name: "Product C",
+                            sku: "SKU11121",
+                            quantity: 3,
+                            price: 200
+                        }
+                    ]
+                },
+                389489324: {
+                    customer: {
+                        name: "Bittu Kumar",
+                        address_line1: "Srikhanda, Chetana,p.o.-panchpota",
+                        address_line2: "KolkataMess, Kolkata, ",
+                        city: "Kolkata",
+                        state: "West Bengal",
+                        country: "India",
+                        pincode: "328489",
+                        mobile_no: "21893482934",
+                        email: "test@test.com",
+                    },
+                    order_date: "2024-01-15 12:34:56",
+                    courier: "XB",
+                    weight: 1,
+                    dimensions: [20,30,40],
+                    payment_method: "prepaid",
+                    cod_collectable_amount: 1000,
+                    total_price: 1000,
+                    products: [
+                        {
+                            name: "Product A",
+                            sku: "SKU12345",
+                            quantity: 2,
+                            price: 500
+                        },
+                        {
+                            name: "Product B",
+                            sku: "SKU67890",
+                            quantity: 1,
+                            price: 500
+                        }
+                    ]
+                },
+            },
+            ats_label_urls: [
+                "https://example.com/label1.pdf",
+                "https://example.com/label2.pdf"
+            ],
+            conf: {
+                show_logo: true,
+                logo_url: "https://example.com/logo.png",
+                show_support_info: true,
+                support_email: "support@example.com",
+                support_phone: "+1234567890",
+                hide_customer_mobile: false,
+                hide_pickup_address: false,
+                hide_powered_by: true,
+                hide_product: false,
+                hide_total_amount: false,
+                hide_weight: true,
+                hide_dimensions: true,
+            },
+            url: "https://example.com/order_info/",
+        }
+    
+    </script>
+</body>
+</html>

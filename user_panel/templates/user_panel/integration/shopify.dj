@@ -1,0 +1,418 @@
+{% extends 'components/layouts/layout.dj' %}
+
+{% block title %}
+  Shopify Integration
+{% endblock %}
+
+{% load static %}
+
+{% block css %}
+<style>
+  /* Only structural / behavioural CSS that Tailwind can't handle inline */
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .connect-panel { display: none; animation: slideDown .22s ease; }
+  .connect-panel.visible { display: block; }
+
+  .store-panel { display: none; animation: fadeIn .18s ease; }
+  .store-panel.active { display: block; }
+
+  .btn-add-store { display: none; }
+  .btn-add-store.visible { display: inline-flex; }
+
+  .empty-state { display: none; }
+  .empty-state.visible { display: block; }
+
+  .tabs-bar { display: none; overflow-x: auto; scrollbar-width: none; }
+  .tabs-bar.visible { display: flex; }
+  .tabs-bar::-webkit-scrollbar { display: none; }
+
+  /* Blur overlay */
+  .stores-section.blurred { position: relative; pointer-events: none; user-select: none; }
+  .stores-section.blurred #storePanels,
+  .stores-section.blurred .tabs-bar { opacity: 0.4; filter: blur(3px); }
+
+  .blur-notice { display: none; position: absolute; inset: 0; z-index: 10; align-items: center; justify-content: center; pointer-events: none; }
+  .stores-section.blurred .blur-notice { display: flex; }
+
+  /* Tab active underline */
+  .tab-btn { border-bottom: 2px solid transparent; margin-bottom: -1.5px; }
+  .tab-btn.active { border-bottom-color: #22c55e; }
+
+  /* Options grid */
+  .options-grid { display: grid; grid-template-columns: 1fr auto 1fr; align-items: stretch; }
+  @media (max-width: 640px) {
+    .options-grid { grid-template-columns: 1fr; }
+    .or-divider { flex-direction: row !important; padding: 10px 0 !important; }
+    .or-line { width: auto !important; height: 1px; flex: 1; }
+  }
+
+  /* Metrics grid */
+  .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; margin-bottom: 20px; }
+  @media (max-width: 640px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .url-input.error { border-color: #f87171 !important; box-shadow: 0 0 0 3px rgba(248,113,113,.15) !important; }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto px-6 py-12 pb-20">
+
+  <!-- ── Page Header ── -->
+  <div class="flex items-center justify-between mb-1.5">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#96bf48;">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15.337 2.094c-.02-.106-.108-.16-.215-.16-.107 0-1.93.04-1.93.04s-1.283-1.25-1.41-1.377a.42.42 0 0 0-.24-.083v.002L10.5 22l6.5-1.404S15.357 2.2 15.337 2.094zM12.6.894l-.58 1.79a2.45 2.45 0 0 0-1.52-.53c-1.23 0-1.82.775-1.82 1.54 0 .846.663 1.4 1.27 1.895.644.518 1.215.98 1.215 1.7 0 .84-.672 1.39-1.574 1.39a3.3 3.3 0 0 1-1.74-.483l-.307 1.424s.637.36 1.658.36c1.698 0 2.93-1.004 2.93-2.555 0-.938-.598-1.543-1.184-2.01-.543-.432-1.03-.82-1.03-1.454 0-.488.334-.943 1.002-.943.376 0 .7.13.7.13L12.6.894z"/>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-50">Shopify Integration</h1>
+    </div>
+
+    <!-- Add another store (visible once ≥1 store connected) -->
+    <button id="btnAddStore"
+      class="btn-add-store items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white text-sm font-semibold rounded-lg transition-colors active:scale-95"
+      onclick="toggleConnectPanel()">
+      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Add Another Store
+    </button>
+  </div>
+  <p class="text-sm text-gray-500 dark:text-gray-400 mb-8 pl-14 leading-relaxed">
+    Connect your Shopify store to sync orders, products, and analytics in real time.
+  </p>
+
+  <!-- ── Connect Panel ── -->
+  <div id="connectPanel" class="connect-panel bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-7 mb-7 shadow-sm">
+    <div class="flex items-center justify-between mb-6">
+      <span class="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Connect a Store</span>
+      <button onclick="toggleConnectPanel()"
+        class="w-7 h-7 flex items-center justify-center rounded-md bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="options-grid">
+
+      <!-- Option 1: Enter URL -->
+      <div class="flex flex-col gap-3 p-5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-green-500 dark:hover:border-green-500 hover:-translate-y-0.5 transition-all duration-200">
+        <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-green-50 dark:bg-green-950 flex-shrink-0">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="text-sm font-bold text-gray-900 dark:text-gray-100">Enter Shop URL</div>
+          <div class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mt-0.5">Paste your myshopify URL and we'll install the app directly.</div>
+        </div>
+        <div class="flex gap-2 mt-0.5">
+          <input id="shopUrlInput" type="text" placeholder="yourstore.myshopify.com"
+            class="url-input flex-1 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-green-500 dark:focus:border-green-400 focus:ring-2 focus:ring-green-500/10 dark:focus:ring-green-400/10 transition-all" />
+          <button onclick="handleConnect()"
+            class="px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white text-xs font-semibold rounded-lg whitespace-nowrap transition-colors active:scale-95">
+            Connect
+          </button>
+        </div>
+      </div>
+
+      <!-- OR divider -->
+      <div class="or-divider flex flex-col items-center justify-center px-4 gap-2 flex-shrink-0">
+        <div class="or-line w-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
+        <span class="text-xs font-bold tracking-wider text-gray-400 dark:text-gray-600 bg-white dark:bg-gray-900 py-1">OR</span>
+        <div class="or-line w-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
+      </div>
+
+      <!-- Option 2: App Store -->
+      <div class="flex flex-col gap-3 p-5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-green-500 dark:hover:border-green-500 hover:-translate-y-0.5 transition-all duration-200">
+        <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-indigo-50 dark:bg-indigo-950 flex-shrink-0">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+        </div>
+        <div>
+          <div class="text-sm font-bold text-gray-900 dark:text-gray-100">Shopify App Store</div>
+          <div class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mt-0.5">Find our app on the official Shopify App Store and install it in one click.</div>
+        </div>
+        <a href="https://apps.shopify.com" target="_blank" rel="noopener"
+          class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg border-2 border-green-600 dark:border-green-500 text-green-600 dark:text-green-400 hover:bg-green-600 dark:hover:bg-green-500 hover:text-white dark:hover:text-white transition-all mt-0.5 w-fit active:scale-95">
+          Go to App Store
+          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+          </svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Empty State ── -->
+  <div id="emptyState" class="empty-state bg-white dark:bg-gray-900 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl py-16 px-8 text-center mb-7">
+    <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-green-50 dark:bg-green-950 flex items-center justify-center">
+      <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 0 1-8 0"/>
+      </svg>
+    </div>
+    <h2 class="text-base font-bold text-gray-900 dark:text-gray-100 mb-2">No stores connected yet</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">Connect your Shopify store to start syncing orders,<br>products, and real-time analytics.</p>
+    <button onclick="openConnectFromEmpty()"
+      class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white text-sm font-semibold rounded-xl transition-colors">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Connect a Store
+    </button>
+  </div>
+
+  <!-- ── Connected Stores ── -->
+  <div id="storesSection" class="stores-section blurred">
+
+    <!-- Blur notice overlay -->
+    <div class="blur-notice">
+      <div class="flex items-center gap-2.5 px-5 py-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl text-sm text-gray-500 dark:text-gray-400 font-medium">
+        <svg class="w-4 h-4 text-orange-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        Connect a store above to see live data
+      </div>
+    </div>
+
+    <!-- Tabs (rendered by JS, shown when >1 store) -->
+    <div id="tabsBar" class="tabs-bar items-center gap-1 border-b border-gray-200 dark:border-gray-700 mb-6"></div>
+
+    <!-- Store panels (rendered by JS) -->
+    <div id="storePanels"></div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block js %}
+
+{{ stores|json_script:"stores-data" }}
+<script>
+  // ── Replace with real Django context ──────────────────
+  // const STORES = {{ stores_json|safe }};
+  //
+  // Expected shape:
+  // [{ id, name, url, revenue, orders_today, products, aov,
+  //    orders: [{id, customer, date, amount, payment, status}] }]
+  // ──────────────────────────────────────────────────────
+  const STORES = JSON.parse(document.getElementById('stores-data').textContent);
+
+  let stores    = [...STORES];
+  let activeTab = 0;
+  let panelOpen = false;
+
+  /* ── Mock store data for demo ── */
+  function mockStore(url) {
+    const rev  = (Math.random()*40000+5000).toFixed(0);
+    const ord  = Math.floor(Math.random()*80+5);
+    const prod = Math.floor(Math.random()*300+50);
+    const aov  = (Math.random()*800+100).toFixed(0);
+    const name = url.replace('.myshopify.com','').replace(/[-_]/g,' ')
+                    .replace(/\b\w/g, c=>c.toUpperCase());
+    return {
+      id: Date.now(), name, url,
+      revenue: '$'+Number(rev).toLocaleString(),
+      orders_today: ord, products: prod,
+      aov: '$'+Number(aov).toLocaleString(),
+      orders: [
+        {id:'#'+(1000+ord), customer:'Priya Sharma', date:'Apr 27, 2026', amount:'$128.00', payment:'paid',     status:'fulfilled'},
+        {id:'#'+(999+ord),  customer:'Arjun Mehta',  date:'Apr 27, 2026', amount:'$74.50',  payment:'paid',     status:'pending'},
+        {id:'#'+(998+ord),  customer:'Sneha Iyer',   date:'Apr 26, 2026', amount:'$215.00', payment:'paid',     status:'fulfilled'},
+        {id:'#'+(997+ord),  customer:'Rohan Gupta',  date:'Apr 26, 2026', amount:'$49.99',  payment:'refunded', status:'refunded'},
+        {id:'#'+(996+ord),  customer:'Kavya Nair',   date:'Apr 25, 2026', amount:'$340.00', payment:'paid',     status:'fulfilled'},
+      ]
+    };
+  }
+
+  /* ── Tag classes ── */
+  const tagClass = {
+    paid:      'bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-400',
+    pending:   'bg-yellow-100 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-400',
+    fulfilled: 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400',
+    refunded:  'bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400',
+  };
+
+  /* ── Ghost panel (shown when blurred / no stores) ── */
+  function ghostPanel() {
+    const ghost = [
+      {id:'#1042',customer:'Priya Sharma', date:'Apr 27, 2026',amount:'$128.00',payment:'paid',    status:'fulfilled'},
+      {id:'#1041',customer:'Arjun Mehta',  date:'Apr 27, 2026',amount:'$74.50', payment:'paid',    status:'pending'},
+      {id:'#1040',customer:'Sneha Iyer',   date:'Apr 26, 2026',amount:'$215.00',payment:'paid',    status:'fulfilled'},
+      {id:'#1039',customer:'Rohan Gupta',  date:'Apr 26, 2026',amount:'$49.99', payment:'refunded',status:'refunded'},
+      {id:'#1038',customer:'Kavya Nair',   date:'Apr 25, 2026',amount:'$340.00',payment:'paid',    status:'fulfilled'},
+    ];
+    return storePanel({
+      name:'Your Store Name', url:'yourstore.myshopify.com',
+      revenue:'$24,830', orders_today:38, products:214, aov:'$653',
+      orders: ghost
+    }, true);
+  }
+
+  /* ── Reusable panel HTML ── */
+  function storePanel(s, isGhost=false) {
+    const pillClass = isGhost
+      ? 'bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400'
+      : 'bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-400';
+    const dotClass  = isGhost ? 'bg-red-400' : 'bg-green-500';
+    const pillLabel = isGhost ? 'Not Connected' : 'Connected';
+
+    return `
+      <div class="store-panel active">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div class="text-base font-bold text-gray-900 dark:text-gray-100">${esc(s.name)}</div>
+            <div class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">${esc(s.url)}</div>
+          </div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${pillClass}">
+            <span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>${pillLabel}
+          </span>
+        </div>
+
+        <div class="metrics-grid">
+          ${[
+            {label:'Total Revenue',    value:s.revenue,       change:'▲ 12.4% this month', up:true},
+            {label:'Orders Today',     value:s.orders_today,  change:'▲ 5 vs yesterday',   up:true},
+            {label:'Products Synced',  value:s.products,      change:'▲ 3 new',             up:true},
+            {label:'Avg. Order Value', value:s.aov,           change:'▼ 2.1% this week',    up:false},
+          ].map(t=>`
+            <div class="flex flex-col gap-1 p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
+              <div class="text-xs text-gray-400 dark:text-gray-500 font-medium">${t.label}</div>
+              <div class="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-gray-100">${t.value}</div>
+              <div class="text-xs font-semibold ${t.up ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}">${t.change}</div>
+            </div>`).join('')}
+        </div>
+
+        <div class="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+          <table class="w-full text-sm border-collapse">
+            <thead>
+              <tr class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                ${['Order','Customer','Date','Amount','Payment','Status'].map(h=>
+                  `<th class="px-4 py-2.5 text-left text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">${h}</th>`
+                ).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${s.orders.map(o=>`
+                <tr class="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors last:border-0">
+                  <td class="px-4 py-3 font-semibold text-green-600 dark:text-green-400">${esc(o.id)}</td>
+                  <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${esc(o.customer)}</td>
+                  <td class="px-4 py-3 text-gray-500 dark:text-gray-400">${esc(o.date)}</td>
+                  <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${esc(o.amount)}</td>
+                  <td class="px-4 py-3"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${tagClass[o.payment]||''}">${cap(o.payment)}</span></td>
+                  <td class="px-4 py-3"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${tagClass[o.status]||''}">${cap(o.status)}</span></td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+
+  /* ── Render ── */
+  function render() {
+    const empty   = document.getElementById('emptyState');
+    const section = document.getElementById('storesSection');
+    const btnAdd  = document.getElementById('btnAddStore');
+    const tabsBar = document.getElementById('tabsBar');
+    const panels  = document.getElementById('storePanels');
+
+    const hasStores = stores.length > 0;
+    empty.classList.toggle('visible', !hasStores);
+    section.classList.toggle('blurred', !hasStores);
+    btnAdd.classList.toggle('visible', hasStores);
+
+    if (!hasStores) {
+      tabsBar.classList.remove('visible');
+      tabsBar.innerHTML = '';
+      panels.innerHTML = ghostPanel();
+      return;
+    }
+
+    // Tabs — only when >1 store
+    const multi = stores.length > 1;
+    tabsBar.classList.toggle('visible', multi);
+    tabsBar.innerHTML = multi ? stores.map((s,i)=>`
+      <button onclick="switchTab(${i})"
+        class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-0 bg-transparent cursor-pointer
+               ${i===activeTab
+                 ? 'text-green-600 dark:text-green-400 font-semibold'
+                 : 'text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}">
+        <span class="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></span>
+        ${esc(s.name)}
+      </button>`).join('') : '';
+
+    panels.innerHTML = stores.map((s,i)=>`
+      <div class="store-panel ${i===activeTab?'active':''}" id="panel-${i}">
+        ${storePanel(s)}
+      </div>`).join('');
+  }
+
+  /* ── Switch tab ── */
+  function switchTab(idx) { activeTab = idx; render(); }
+
+  /* ── Toggle connect panel ── */
+  function toggleConnectPanel() {
+    panelOpen = !panelOpen;
+    document.getElementById('connectPanel').classList.toggle('visible', panelOpen);
+    if (panelOpen) setTimeout(()=>document.getElementById('shopUrlInput').focus(), 60);
+  }
+
+  function openConnectFromEmpty() { if (!panelOpen) toggleConnectPanel(); }
+
+  /* ── Handle connect ── */
+  function handleConnect() {
+    const input = document.getElementById('shopUrlInput');
+    let url = input.value.trim().toLowerCase()
+                   .replace(/^https?:\/\//,'')
+                   .replace(/\/+$/,'');
+
+    if (!url) { 
+        shake(input); 
+        return; 
+    }
+
+    if (stores.find(s => s.url === url)) {
+        input.classList.add('error');
+        const prev = input.placeholder;
+        input.value = '';
+        input.placeholder = 'Already connected!';
+        setTimeout(() => {
+            input.placeholder = prev;
+            input.classList.remove('error');
+        }, 2000);
+        return;
+    } 
+
+    // 🔥 Redirect to backend endpoint with query param
+    const endpoint = `{% url 'shopify:install' %}?shop=${encodeURIComponent(url)}`;
+    window.location.href = endpoint;
+  }
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    document.getElementById('shopUrlInput').addEventListener('keydown', e=>{ if(e.key==='Enter') handleConnect(); });
+    render();
+  });
+</script>
+{% endblock %}

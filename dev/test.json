@@ -1,0 +1,486 @@
+{
+  "id": 7069451616536,
+  "admin_graphql_api_id": "gid://shopify/Order/7069451616536",
+  "app_id": 580111,
+  "browser_ip": "2405:201:4027:514d:3900:61a9:9b06:b7b2",
+  "buyer_accepts_marketing": false,
+  "cancel_reason": null,
+  "cancelled_at": null,
+  "cart_token": "hWNBXn5lNV2LhESe5kBRN59e",
+  "checkout_token": "b73bbb55dc512f2c22b954f73b448c97",
+  "client_details": {
+    "accept_language": "en-IN",
+    "browser_height": null,
+    "browser_ip": "2405:201:4027:514d:3900:61a9:9b06:b7b2",
+    "browser_width": null,
+    "session_hash": null,
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36"
+  },
+  "closed_at": null,
+  "company": null,
+  "confirmation_number": "WIHQ8W4ZQ",
+  "confirmed": true,
+  "contact_email": "user@user.com",
+  "created_at": "2026-04-28T17:01:52+05:30",
+  "currency": "INR",
+  "current_shipping_price_set": {
+    "shop_money": {
+      "amount": "379.00",
+      "currency_code": "INR"
+    },
+    "presentment_money": {
+      "amount": "379.00",
+      "currency_code": "INR"
+    }
+  },
+  "current_subtotal_price": "11295.00",
+  "current_subtotal_price_set": {
+    "shop_money": {
+      "amount": "11295.00",
+      "currency_code": "INR"
+    },
+    "presentment_money": {
+      "amount": "11295.00",
+      "currency_code": "INR"
+    }
+  },
+  "current_total_additional_fees_set": null,
+  "current_total_discounts": "0.00",
+  "current_total_discounts_set": {
+    "shop_money": {
+      "amount": "0.00",
+      "currency_code": "INR"
+    },
+    "presentment_money": {
+      "amount": "0.00",
+      "currency_code": "INR"
+    }
+  },
+  "current_total_duties_set": null,
+  "current_total_price": "13707.10",
+  "current_total_price_set": {
+    "shop_money": {
+      "amount": "13707.10",
+      "currency_code": "INR"
+    },
+    "presentment_money": {
+      "amount": "13707.10",
+      "currency_code": "INR"
+    }
+  },
+  "current_total_tax": "2033.10",
+  "current_total_tax_set": {
+    "shop_money": {
+      "amount": "2033.10",
+      "currency_code": "INR"
+    },
+    "presentment_money": {
+      "amount": "2033.10",
+      "currency_code": "INR"
+    }
+  },
+  "customer_locale": "en-IN",
+  "device_id": null,
+  "discount_codes": [],
+  "duties_included": false,
+  "email": "user@user.com",
+  "estimated_taxes": false,
+  "financial_status": "pending",
+  "fulfillment_status": null,
+  "landing_site": "/",
+  "landing_site_ref": null,
+  "location_id": null,
+  "merchant_business_entity_id": "31747211544",
+  "merchant_of_record_app_id": null,
+  "name": "#1010",
+  "note": null,
+  "note_attributes": [],
+  "number": 10,
+  "order_number": 1010,
+  "order_status_url": "https://xhbt3y-ut.myshopify.com/98210742552/orders/747ed681be931648c28cb02ff2b0210e/authenticate?key=b69940f46ff5cb5ba123d3b3a1411f9a",
+  "original_total_additional_fees_set": null,
+  "original_total_duties_set": null,
+  "payment_gateway_names": [
+    "Cash on Delivery (COD)"
+  ],
+  "phone": null,
+  "po_number": null,
+  "presentment_currency": "INR",
+  "processed_at": "2026-04-28T17:01:51+05:30",
+  "reference": null,
+  "referring_site": "https://admin.shopify.com/",
+  "source_identifier": null,
+  "source_name": "web",
+  "source_url": null,
+  "subtotal_price": "11295.00",
+  "subtotal_price_set": {
+    "shop_money": {
+      "amount": "11295.00",
+      "currency_code": "INR"
+    },
+    "presentment_money": {
+      "amount": "11295.00",
+      "currency_code": "INR"
+    }
+  },
+  "tags": "",
+  "tax_exempt": false,
+  "tax_lines": [
+    {
+      "price": "2033.10",
+      "rate": 0.18,
+      "title": "IGST",
+      "price_set": {
+        "shop_money": {
+          "amount": "2033.10",
+          "currency_code": "INR"
+        },
+        "presentment_money": {
+          "amount": "2033.10",
+          "currency_code": "INR"
+        }
+      },
+      "channel_liable": false
+    }
+  ],
+  "taxes_included": false,
+  "test": false,
+  "token": "747ed681be931648c28cb02ff2b0210e",
+  "total_cash_rounding_payment_adjustment_set": {
+    "shop_money": {
+      "amount": "0.00",
+      "currency_code": "INR"
+    },
+    "presentment_money": {
+      "amount": "0.00",
+      "currency_code": "INR"
+    }
+  },
+  "total_cash_rounding_refund_adjustment_set": {
+    "shop_money": {
+      "amount": "0.00",
+      "currency_code": "INR"
+    },
+    "presentment_money": {
+      "amount": "0.00",
+      "currency_code": "INR"
+    }
+  },
+  "total_discounts": "0.00",
+  "total_discounts_set": {
+    "shop_money": {
+      "amount": "0.00",
+      "currency_code": "INR"
+    },
+    "presentment_money": {
+      "amount": "0.00",
+      "currency_code": "INR"
+    }
+  },
+  "total_line_items_price": "11295.00",
+  "total_line_items_price_set": {
+    "shop_money": {
+      "amount": "11295.00",
+      "currency_code": "INR"
+    },
+    "presentment_money": {
+      "amount": "11295.00",
+      "currency_code": "INR"
+    }
+  },
+  "total_outstanding": "13707.10",
+  "total_price": "13707.10",
+  "total_price_set": {
+    "shop_money": {
+      "amount": "13707.10",
+      "currency_code": "INR"
+    },
+    "presentment_money": {
+      "amount": "13707.10",
+      "currency_code": "INR"
+    }
+  },
+  "total_shipping_price_set": {
+    "shop_money": {
+      "amount": "379.00",
+      "currency_code": "INR"
+    },
+    "presentment_money": {
+      "amount": "379.00",
+      "currency_code": "INR"
+    }
+  },
+  "total_tax": "2033.10",
+  "total_tax_set": {
+    "shop_money": {
+      "amount": "2033.10",
+      "currency_code": "INR"
+    },
+    "presentment_money": {
+      "amount": "2033.10",
+      "currency_code": "INR"
+    }
+  },
+  "total_tip_received": "0.00",
+  "total_weight": 1205,
+  "updated_at": "2026-04-28T17:01:54+05:30",
+  "user_id": null,
+  "billing_address": {
+    "first_name": "Divya",
+    "address1": "dfsdf sfddf",
+    "phone": null,
+    "city": "North West Delhi",
+    "zip": "110083",
+    "province": "Delhi",
+    "country": "India",
+    "last_name": "Patel",
+    "address2": "Govindrtana green City street no:3, 80 feet road mavdi",
+    "company": null,
+    "latitude": 28.6925257,
+    "longitude": 77.0884449,
+    "name": "Divya Patel",
+    "country_code": "IN",
+    "province_code": "DL"
+  },
+  "customer": {
+    "id": 9821143597336,
+    "created_at": "2026-04-28T16:29:09+05:30",
+    "updated_at": "2026-04-28T17:01:53+05:30",
+    "first_name": "Divya",
+    "last_name": "Patel",
+    "state": "disabled",
+    "note": null,
+    "verified_email": true,
+    "multipass_identifier": null,
+    "tax_exempt": false,
+    "email": "user@user.com",
+    "phone": null,
+    "currency": "INR",
+    "tax_exemptions": [],
+    "admin_graphql_api_id": "gid://shopify/Customer/9821143597336",
+    "default_address": {
+      "id": 11571403227416,
+      "customer_id": 9821143597336,
+      "first_name": "Divya",
+      "last_name": "Patel",
+      "company": null,
+      "address1": "dfsdf sfddf",
+      "address2": "Govindrtana green City street no:3, 80 feet road mavdi",
+      "city": "North West Delhi",
+      "province": "Delhi",
+      "country": "India",
+      "zip": "110083",
+      "phone": null,
+      "name": "Divya Patel",
+      "province_code": "DL",
+      "country_code": "IN",
+      "country_name": "India",
+      "default": true
+    }
+  },
+  "discount_applications": [],
+  "fulfillments": [],
+  "line_items": [
+    {
+      "id": 16874836492568,
+      "admin_graphql_api_id": "gid://shopify/LineItem/16874836492568",
+      "attributed_staffs": [],
+      "current_quantity": 2,
+      "fulfillable_quantity": 2,
+      "fulfillment_service": "manual",
+      "fulfillment_status": null,
+      "gift_card": false,
+      "grams": 250,
+      "name": "ATHEN - 40",
+      "price": "2799.00",
+      "price_set": {
+        "shop_money": {
+          "amount": "2799.00",
+          "currency_code": "INR"
+        },
+        "presentment_money": {
+          "amount": "2799.00",
+          "currency_code": "INR"
+        }
+      },
+      "product_exists": true,
+      "product_id": 10248685584664,
+      "properties": [],
+      "quantity": 2,
+      "requires_shipping": true,
+      "sales_line_item_group_id": null,
+      "sku": "CAR-ATHEN-BG-40",
+      "taxable": true,
+      "title": "ATHEN",
+      "total_discount": "0.00",
+      "total_discount_set": {
+        "shop_money": {
+          "amount": "0.00",
+          "currency_code": "INR"
+        },
+        "presentment_money": {
+          "amount": "0.00",
+          "currency_code": "INR"
+        }
+      },
+      "variant_id": 51985240981784,
+      "variant_inventory_management": null,
+      "variant_title": "40",
+      "vendor": "Beige Solid Straight Fit Cargo Trousers with Flap Pockets",
+      "tax_lines": [
+        {
+          "channel_liable": false,
+          "price": "1007.64",
+          "price_set": {
+            "shop_money": {
+              "amount": "1007.64",
+              "currency_code": "INR"
+            },
+            "presentment_money": {
+              "amount": "1007.64",
+              "currency_code": "INR"
+            }
+          },
+          "rate": 0.18,
+          "title": "IGST"
+        }
+      ],
+      "duties": [],
+      "discount_allocations": []
+    },
+    {
+      "id": 16874836525336,
+      "admin_graphql_api_id": "gid://shopify/LineItem/16874836525336",
+      "attributed_staffs": [],
+      "current_quantity": 3,
+      "fulfillable_quantity": 3,
+      "fulfillment_service": "manual",
+      "fulfillment_status": null,
+      "gift_card": false,
+      "grams": 235,
+      "name": "ARLAN-GY - L",
+      "price": "1899.00",
+      "price_set": {
+        "shop_money": {
+          "amount": "1899.00",
+          "currency_code": "INR"
+        },
+        "presentment_money": {
+          "amount": "1899.00",
+          "currency_code": "INR"
+        }
+      },
+      "product_exists": true,
+      "product_id": 10248687354136,
+      "properties": [],
+      "quantity": 3,
+      "requires_shipping": true,
+      "sales_line_item_group_id": null,
+      "sku": "POL-ARLAN-GY-L",
+      "taxable": true,
+      "title": "ARLAN-GY",
+      "total_discount": "0.00",
+      "total_discount_set": {
+        "shop_money": {
+          "amount": "0.00",
+          "currency_code": "INR"
+        },
+        "presentment_money": {
+          "amount": "0.00",
+          "currency_code": "INR"
+        }
+      },
+      "variant_id": 51985249337624,
+      "variant_inventory_management": null,
+      "variant_title": "L",
+      "vendor": "Grey Regular Fit Waffle Knit Polo with Half-Zip Placket",
+      "tax_lines": [
+        {
+          "channel_liable": false,
+          "price": "1025.46",
+          "price_set": {
+            "shop_money": {
+              "amount": "1025.46",
+              "currency_code": "INR"
+            },
+            "presentment_money": {
+              "amount": "1025.46",
+              "currency_code": "INR"
+            }
+          },
+          "rate": 0.18,
+          "title": "IGST"
+        }
+      ],
+      "duties": [],
+      "discount_allocations": []
+    }
+  ],
+  "payment_terms": null,
+  "refunds": [],
+  "shipping_address": {
+    "first_name": "Divya",
+    "address1": "dfsdf sfddf",
+    "phone": null,
+    "city": "North West Delhi",
+    "zip": "110083",
+    "province": "Delhi",
+    "country": "India",
+    "last_name": "Patel",
+    "address2": "Govindrtana green City street no:3, 80 feet road mavdi",
+    "company": null,
+    "latitude": 28.6925257,
+    "longitude": 77.0884449,
+    "name": "Divya Patel",
+    "country_code": "IN",
+    "province_code": "DL"
+  },
+  "shipping_lines": [
+    {
+      "id": 5527357030680,
+      "carrier_identifier": null,
+      "code": "मानक",
+      "current_discounted_price_set": {
+        "shop_money": {
+          "amount": "379.00",
+          "currency_code": "INR"
+        },
+        "presentment_money": {
+          "amount": "379.00",
+          "currency_code": "INR"
+        }
+      },
+      "discounted_price": "379.00",
+      "discounted_price_set": {
+        "shop_money": {
+          "amount": "379.00",
+          "currency_code": "INR"
+        },
+        "presentment_money": {
+          "amount": "379.00",
+          "currency_code": "INR"
+        }
+      },
+      "is_removed": false,
+      "phone": null,
+      "price": "379.00",
+      "price_set": {
+        "shop_money": {
+          "amount": "379.00",
+          "currency_code": "INR"
+        },
+        "presentment_money": {
+          "amount": "379.00",
+          "currency_code": "INR"
+        }
+      },
+      "requested_fulfillment_service_id": null,
+      "source": "shopify",
+      "title": "मानक",
+      "tax_lines": [],
+      "discount_allocations": []
+    }
+  ],
+  "returns": [],
+  "line_item_groups": []
+}

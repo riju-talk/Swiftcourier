@@ -1,0 +1,249 @@
+{% load dict_filters %}
+
+<div class="overflow-x-auto bg-white dark:bg-gray-800 shadow rounded-lg mt-4">
+    <table class="min-w-full text-xs text-left text-gray-700 dark:text-gray-300">
+        <thead class="bg-gray-50 dark:bg-gray-700 uppercase">
+            <tr>
+                {% if request.user.role != "user" %}
+                    <th class="px-4 py-2">
+                        <input type="checkbox"
+                               id="select-all"
+                               class="form-checkbox dark:text-gray-300" />
+                    </th>
+                {% endif %}
+                <th class="px-4 py-2">Icon</th>
+                <th class="px-4 py-2">Courier</th>
+                <th class="px-4 py-2">Mode</th>
+                <th class="px-4 py-2 text-center">
+                    Zone A
+                    <br>
+                    <span class="text-[9px] font-normal">Within City</span>
+                    <br>
+                    Forward | RTO
+                </th>
+                <th class="px-4 py-2 text-center">
+                    Zone B
+                    <br>
+                    <span class="text-[9px] font-normal">Within State</span>
+                    <br>
+                    Forward | RTO
+                </th>
+                <th class="px-4 py-2 text-center">
+                    Zone C
+                    <br>
+                    <span class="text-[9px] font-normal">Metro to Metro</span>
+                    <br>
+                    Forward | RTO
+                </th>
+                <th class="px-4 py-2 text-center">
+                    Zone D
+                    <br>
+                    <span class="text-[9px] font-normal">Rest of India</span>
+                    <br>
+                    Forward | RTO
+                </th>
+                <th class="px-4 py-2 text-center">
+                    Zone E
+                    <br>
+                    <span class="text-[9px] font-normal">Special</span>
+                    <br>
+                    Forward | RTO
+                </th>
+                <th class="px-4 py-2 text-center">COD charges | %</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+            {% for rate_card in rate_cards %}
+                {% for mode, mode_dict in rate_card.data.items %}
+                    {% for weight, addl_weight_dict in mode_dict.items %}
+                        {% for addl_weight, zone_dict in addl_weight_dict.items %}
+                            {% if not request.GET.mode or request.GET.mode|lower == mode|lower %}
+                                <tr class="bg-white dark:bg-gray-800">
+                                    {% if request.user.role != "user" %}
+                                        <!-- Checkbox -->
+                                        <td class="px-4 py-2 align-top">
+                                            <input type="checkbox"
+                                                   name="selected_rate_cards"
+                                                   value="{{ rate_card.id }}_{{ mode }}_{{ weight }}_{{ addl_weight }}"
+                                                   class="select-item form-checkbox dark:text-gray-300" />
+                                        </td>
+                                    {% endif %}
+
+                                    <td class="px-4 py-2 align-top text-gray-900 dark:text-gray-100">
+                                        <img src="{{ rate_card.courier.icon.url }}"
+                                             alt="{{ rate_card.courier.name }} Icon"
+                                             class="h-6 w-6 object-contain">
+                                    </td>
+
+
+                                    <!-- Courier & Weights -->
+                                    <td class="px-4 py-2 align-top">
+                                        <div class="flex items-baseline space-x-1">
+                                            <span class="font-semibold text-gray-900 dark:text-gray-100">{{ rate_card.courier.name }}</span>
+                                            <span class="text-[10px] text-gray-500 dark:text-gray-400">(Min Wt. - {{ weight }} kg)</span>
+                                        </div>
+                                        <div class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">Additional - {{ addl_weight }} kg</div>
+                                    </td>
+
+                                    <!-- Mode -->
+                                    <td class="px-4 py-2 align-top text-gray-900 dark:text-gray-100">
+                                        {% if mode|lower == "surface" %}
+                                            <svg width="20px"
+                                                 height="20px"
+                                                 viewBox="0 0 16 16"
+                                                 fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M11 2H0V13H2C2 14.1046 2.89543 15 4 15C5.10457 15 6 14.1046 6 13H10C10 14.1046 10.8954 15 12 15C13.1046 15 14 14.1046 14 13H16V8C16 6.34315 14.6569 5 13 5H11V2ZM11 7V9H14V7H11Z" fill="currentColor" />
+                                            </svg>
+                                        {% elif mode|lower == "air" %}
+                                            <svg width="20px"
+                                                 height="20px"
+                                                 viewBox="-1 -1 34 34"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+                                                <path d="M31.207,0.82 C29.961,-0.43 27.771,-0.137 26.518,1.119 L20.141,7.481 L8.313,3.061 C7.18,2.768 6.039,2.389 4.634,3.798 C3.917,4.516 2.427,6.01 4.634,8.221 L12.744,14.861 L7.467,20.127 L2.543,18.896 C1.813,18.708 1.321,18.855 0.946,19.269 C0.757,19.505 -0.614,20.521 0.342,21.479 L6.067,25.933 L10.521,31.658 C11.213,32.352 11.856,31.919 12.735,31.084 C13.292,30.526 13.172,30.239 13.004,29.426 L11.892,24.536 L17.133,19.277 L23.763,27.389 C25.969,29.6 27.46,28.105 28.177,27.389 C29.583,25.979 29.205,24.837 28.912,23.702 L24.529,11.854 L30.88,5.481 C32.133,4.226 32.454,2.069 31.207,0.82" />
+                                                </g>
+                                            </svg>
+                                        {% elif mode|lower == "ship" %}
+                                            <svg height="20px"
+                                                 width="20px"
+                                                 viewBox="0 0 512 512"
+                                                 xmlns="http://www.w3.org/2000/svg"
+                                                 fill="currentColor"
+                                                 stroke="currentColor"
+                                                 transform="matrix(-1, 0, 0, 1, 0, 0)">
+
+                                                <g>
+                                                <path d="M458.095,216.874h-33.519l-15.774-47.32h-41.405h-65.62h-74.37l11.83-41.406h-13.802l-27.604,41.406h-41.406 l-62.008,94.641h374.028L458.095,216.874z M193.888,232.247h-23.66v-23.66h23.66V232.247z M251.067,232.247h-23.66v-23.66h23.66 V232.247z M308.246,232.247h-23.66v-23.66h23.66V232.247z M359.51,232.247h-23.66v-23.66h23.66V232.247z" />
+
+                                                <polygon points="367.397,99.358 314.161,99.358 309.871,119.861 367.397,119.861" />
+                                                <polygon points="367.397,131.691 307.391,131.691 301.777,158.509 367.397,158.509" />
+
+                                                <path d="M77.866,360.608l3.074-1.849c3.974-2.334,9.273-5.252,15.935-7.672c9.335-3.419,19.778-5.167,30.977-5.167 c12.785,0,24.284,2.164,34.566,6.447c6.847,2.842,12.124,6.046,15.974,8.394l2.511,1.51c1.994,1.171,3.196,1.779,4.228,2.157 c0.801,0.284,2.465,0.886,6.917,0.893c4.682-0.015,6.323-0.686,7.409-1.124c1.417-0.578,3.62-1.91,6.408-3.589l3.073-1.849 c3.974-2.334,9.274-5.252,15.935-7.672c9.335-3.419,19.778-5.167,30.977-5.167c12.777,0,24.269,2.164,34.559,6.439 c6.832,2.842,12.092,6.038,15.935,8.38l2.541,1.524c2.018,1.186,3.212,1.795,4.244,2.172c0.778,0.278,2.45,0.879,6.909,0.886 c4.675-0.015,6.316-0.686,7.402-1.124c1.417-0.578,3.62-1.91,6.408-3.589l3.073-1.849c3.974-2.334,9.273-5.252,15.935-7.672 c9.334-3.419,19.778-5.167,30.978-5.167c12.785,0,24.276,2.164,34.566,6.439c6.839,2.842,12.107,6.046,15.95,8.38l2.534,1.524 c2.01,1.179,3.204,1.787,4.252,2.172c0.778,0.278,2.449,0.879,6.916,0.886c4.675-0.015,6.316-0.686,7.402-1.124 c1.425-0.578,3.612-1.903,6.385-3.574l3.096-1.864c2.156-1.264,4.744-2.704,7.686-4.144l17.021-68.347h-21.196H94.418H22.351 l51.44,76.726C74.963,362.34,76.287,361.555,77.866,360.608z" />
+
+                                                <path d="M488.957,373.323c-4.714,1.71-8.619,3.828-11.938,5.776c-5.007,2.973-8.664,5.391-12.693,7.032 c-4.036,1.632-8.641,2.818-16.328,2.849c-6.824-0.015-11.245-0.986-14.965-2.318c-2.788-1.017-5.261-2.311-8.033-3.944 c-4.136-2.403-8.988-5.73-15.681-8.51c-6.693-2.781-15.019-4.66-25.34-4.629c-9.173-0.016-16.759,1.44-23.044,3.743 ... (same long path continues unchanged) ... v-23.66C502.82,369.564,495.241,371.02,488.957,373.323z" />
+                                                </g>
+                                            </svg>
+                                        {% else %}
+                                            <span class="text-gray-500 dark:text-gray-400">{{ mode|capfirst }}</span>
+                                        {% endif %}
+                                    </td>
+
+                                    {# Zone A #}
+                                    <td class="px-4 py-2 text-center align-top">
+                                        {% with zone_dict|get_item:"within_city" as cz %}
+                                            <span class="text-gray-900 dark:text-gray-100">
+                                                ₹ {{ cz|get_item:"forward"|get_item:"base"|floatformat:2 }} |
+                                                ₹ {{ cz|get_item:"rto"|get_item:"base"|floatformat:2 }}
+                                            </span>
+                                            <br>
+                                            <span class="text-[10px] text-gray-500 dark:text-gray-400">
+                                                +{{ cz|get_item:"forward"|get_item:"additional"|floatformat:2 }} |
+                                                +{{ cz|get_item:"rto"|get_item:"additional"|floatformat:2 }}
+                                            </span>
+                                        {% endwith %}
+                                    </td>
+
+                                    {# Zone B #}
+                                    <td class="px-4 py-2 text-center align-top">
+                                        {% with zone_dict|get_item:"within_state" as cz %}
+                                            <span class="text-gray-900 dark:text-gray-100">
+                                                ₹ {{ cz|get_item:"forward"|get_item:"base"|floatformat:2 }} |
+                                                ₹ {{ cz|get_item:"rto"|get_item:"base"|floatformat:2 }}
+                                            </span>
+                                            <br>
+                                            <span class="text-[10px] text-gray-500 dark:text-gray-400">
+                                                +{{ cz|get_item:"forward"|get_item:"additional"|floatformat:2 }} |
+                                                +{{ cz|get_item:"rto"|get_item:"additional"|floatformat:2 }}
+                                            </span>
+                                        {% endwith %}
+                                    </td>
+
+                                    {# Zone C #}
+                                    <td class="px-4 py-2 text-center align-top">
+                                        {% with zone_dict|get_item:"metro_to_metro" as cz %}
+                                            <span class="text-gray-900 dark:text-gray-100">
+                                                ₹ {{ cz|get_item:"forward"|get_item:"base"|floatformat:2 }} |
+                                                ₹ {{ cz|get_item:"rto"|get_item:"base"|floatformat:2 }}
+                                            </span>
+                                            <br>
+                                            <span class="text-[10px] text-gray-500 dark:text-gray-400">
+                                                +{{ cz|get_item:"forward"|get_item:"additional"|floatformat:2 }} |
+                                                +{{ cz|get_item:"rto"|get_item:"additional"|floatformat:2 }}
+                                            </span>
+                                        {% endwith %}
+                                    </td>
+
+                                    {# Zone D #}
+                                    <td class="px-4 py-2 text-center align-top">
+                                        {% with zone_dict|get_item:"rest_of_india" as cz %}
+                                            <span class="text-gray-900 dark:text-gray-100">
+                                                ₹ {{ cz|get_item:"forward"|get_item:"base"|floatformat:2 }} |
+                                                ₹ {{ cz|get_item:"rto"|get_item:"base"|floatformat:2 }}
+                                            </span>
+                                            <br>
+                                            <span class="text-[10px] text-gray-500 dark:text-gray-400">
+                                                +{{ cz|get_item:"forward"|get_item:"additional"|floatformat:2 }} |
+                                                +{{ cz|get_item:"rto"|get_item:"additional"|floatformat:2 }}
+                                            </span>
+                                        {% endwith %}
+                                    </td>
+
+                                    {# Zone E #}
+                                    <td class="px-4 py-2 text-center align-top">
+                                        {% with zone_dict|get_item:"ne_jk" as cz %}
+                                            <span class="text-gray-900 dark:text-gray-100">
+                                                ₹ {{ cz|get_item:"forward"|get_item:"base"|floatformat:2 }} |
+                                                ₹ {{ cz|get_item:"rto"|get_item:"base"|floatformat:2 }}
+                                            </span>
+                                            <br>
+                                            <span class="text-[10px] text-gray-500 dark:text-gray-400">
+                                                +{{ cz|get_item:"forward"|get_item:"additional"|floatformat:2 }} |
+                                                +{{ cz|get_item:"rto"|get_item:"additional"|floatformat:2 }}
+                                            </span>
+                                        {% endwith %}
+                                    </td>
+
+                                    <!-- Static COD column -->
+                                    <td class="px-4 py-2 text-center align-top">
+                                        {% with zone_dict|get_item:"ne_jk" as cz %}
+                                            <span class="text-gray-900 dark:text-gray-100">₹ {{ cz|get_item:"forward"|get_item:"cod_charges"|floatformat:2 }} | {{ cz|get_item:"forward"|get_item:"cod_percentage"|floatformat:2 }}%</span>
+                                        {% endwith %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endfor %}
+            {% empty %}
+                <tr>
+                    <td colspan="9" class="py-6 text-center text-gray-500 dark:text-gray-400">No rate cards found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const selectAll = document.getElementById('select-all');
+        const items = document.querySelectorAll('.select-item');
+        const deleteBtn = document.getElementById('delete-selected');
+
+        function updateDeleteBtn() {
+            deleteBtn.disabled = ![...items].some(i => i.checked);
+        }
+
+        selectAll.addEventListener('change', () => {
+            items.forEach(i => i.checked = selectAll.checked);
+            updateDeleteBtn();
+        });
+
+        items.forEach(i => i.addEventListener('change', () => {
+            if (!i.checked) selectAll.checked = false;
+            else if ([...items].every(i => i.checked)) selectAll.checked = true;
+            updateDeleteBtn();
+        }));
+    });
+</script>

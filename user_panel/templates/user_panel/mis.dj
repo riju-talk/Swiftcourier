@@ -1,0 +1,883 @@
+{% extends 'components/layouts/layout.dj' %}
+
+{% block title %}
+  Sales Analytics — Reports & Exports
+{% endblock %}
+
+{% load static %}
+
+{% block css %}
+  <script src="https://d3js.org/d3.v7.min.js?v=2"></script>
+  <style>
+      :root {
+        color-scheme: light dark;
+      }
+      
+      /* Modal Overlay */
+      .modal-overlay {
+        display: none !important;
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        align-items: center;;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(2px);
+        padding: 1rem;
+        overflow-y: auto;
+      }
+      .modal-overlay.active {
+        display: flex !important;
+      }
+      .modal-overlay > div {
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(8px);
+      }
+      
+      @media (prefers-color-scheme: dark) {
+        .modal-overlay > div {
+          background: rgba(30, 41, 59, 0.97);
+        }
+      }
+      
+      /* Calendar Styles */
+      .calendar {
+        width: 100%;
+        min-width: 240px;
+        max-width: 280px;
+      }
+      
+      @media (max-width: 640px) {
+        .calendar {
+          min-width: 200px;
+          max-width: 100%;
+        }
+      }
+      .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 12px;
+        border-bottom: 1px solid #e5e7eb;
+        background-color: #ffffff;
+        color: #1f2937;
+      }
+      .calendar-header select {
+        background: transparent;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        padding: 2px 4px;
+        font-size: 10px;
+        font-weight: bold;
+        color: inherit;
+        cursor: pointer;
+      }
+      .calendar-header select:focus {
+        outline: none;
+        border-color: #3b82f6;
+      }
+      @media (prefers-color-scheme: dark) {
+        .calendar-header {
+          border-bottom-color: #475569;
+          background-color: #1e293b;
+          color: #f1f5f9;
+        }
+      }
+      .calendar-header button {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        padding: 4px 6px;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+        color: inherit;
+      }
+      .calendar-header button:hover {
+        background-color: #f3f4f6;
+      }
+      @media (prefers-color-scheme: dark) {
+        .calendar-header button:hover {
+          background-color: #334155;
+        }
+      }
+      .calendar-body {
+        padding: 10px 12px;
+        background-color: #ffffff;
+        color: #1f2937;
+      }
+      @media (prefers-color-scheme: dark) {
+        .calendar-body {
+          background-color: #1e293b;
+          color: #f1f5f9;
+        }
+      }
+      .calendar-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+        margin-bottom: 8px;
+      }
+      .day-header {
+        text-align: center;
+        font-weight: 600;
+        color: #6b7280;
+        font-size: 10px;
+        padding: 6px 0;
+        text-transform: uppercase;
+      }
+      @media (prefers-color-scheme: dark) {
+        .day-header {
+          color: #94a3b8;
+        }
+      }
+      .day {
+        text-align: center;
+        padding: 6px 2px;
+        cursor: pointer;
+        border-radius: 3px;
+        font-size: 12px;
+        transition: all 0.2s;
+        color: inherit;
+      }
+      .day:hover:not(.other-month) {
+        background-color: #e5e7eb;
+      }
+      @media (prefers-color-scheme: dark) {
+        .day:hover:not(.other-month) {
+          background-color: #334155;
+        }
+      }
+      .day.other-month {
+        color: #d1d5db;
+        cursor: default;
+      }
+      @media (prefers-color-scheme: dark) {
+        .day.other-month {
+          color: #64748b;
+        }
+      }
+      .day.selected {
+        background-color: #3b82f6;
+        color: white;
+        font-weight: 600;
+      }
+      .day.in-range {
+        background-color: #dbeafe;
+        color: #0284c7;
+      }
+      @media (prefers-color-scheme: dark) {
+        .day.in-range {
+          background-color: #1e3a5f;
+          color: #7dd3fc;
+        }
+      }
+    </style>
+{% endblock %}
+
+{% block body %}
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded z-50">Skip to main content</a>
+  <a href="#navigation" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-32 bg-blue-600 text-white px-4 py-2 rounded z-50">Skip to navigation</a>
+
+  <div class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700">
+    <nav id="navigation" role="tablist" aria-label="Report sections" class="flex items-center border-b border-gray-200 dark:border-slate-700 px-0 text-sm overflow-x-auto">
+      <button class="tab-btn px-4 py-4 text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-400 transition-colors text-sm font-medium whitespace-nowrap" data-heading="&#9635 Reports - Daily Order Summary" onclick="showTab('daily-summary', this)" role="tab" aria-selected="false" aria-controls="daily-summary" id="daily-summary-tab">Daily Summary</button>
+
+      <button class="tab-btn px-4 py-4 text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-400 transition-colors text-sm font-medium whitespace-nowrap" data-heading="&#9635 Reports - Top NDR Reasons" onclick="showTab('top-ndr-reasons',this)" role="tab" aria-selected="false" aria-controls="top-ndr-reasons" id="top-ndr-reasons-tab">Top NDR Reasons</button>
+
+      <button class="tab-btn px-4 py-4 text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-400 transition-colors text-sm font-medium whitespace-nowrap" data-heading="&#9635 Reports - Product Wise Report" onclick="showTab('product-wise-summary', this)" role="tab" aria-selected="false" aria-controls="product-wise-summary" id="product-wise-summary-tab">Product Wise Summary</button>
+
+      <button class="tab-btn px-4 py-4 text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-400 transition-colors text-sm font-medium whitespace-nowrap" data-heading="&#9635 Reports - Courier Wise Summary" onclick="showTab('courier-wise-summary', this)" role="tab" aria-selected="false" aria-controls="courier-wise-summary" id="courier-wise-summary-tab">Courier Wise Summary</button>
+    </nav>
+
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700">
+      <div class="px-6 py-5 grid grid-cols-1 md:grid-cols-5 gap-4 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700">
+        <div class="col-span-1">
+          <label class="block text-gray-700 dark:text-white text-xs font-semibold uppercase tracking-wide mb-2">Date Range</label>
+          <input type="text" id="dateRangeInput" value="09/01/2022 - 01/22/2026" class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 cursor-pointer bg-white dark:bg-slate-600 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" readonly />
+        </div>
+
+        <div class="col-span-1">
+          <label class="block text-gray-700 dark:text-white text-xs font-semibold uppercase tracking-wide mb-2">Method</label>
+          <select class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            <option value="all">All</option>
+            <option value="prepaid">Prepaid</option>
+            <option value="cod">COD</option>
+          </select>
+        </div>
+
+        <div class="col-span-1">
+          <label class="block text-gray-700 dark:text-white text-xs font-semibold uppercase tracking-wide mb-2">Courier</label>
+          <select class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+            <option value="all">All</option>
+            {% for id, courier in couriers_available.items %}
+              <option value="{{ id }}">{{ courier }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="md:col-span-2 flex items-end gap-3 justify-end">
+          <button id="applyFilters" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-md text-sm transition-colors">Apply</button>
+          <button id="clearFilters" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md text-sm transition-colors">Clear</button>
+          <button id="bulkExport" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-medium rounded-md text-sm transition-colors">Bulk Export</button>
+        </div>
+      </div>
+
+      <!-- Date Range Picker Modal -->
+      <div id="dateModal" class="modal-overlay">
+        <div class="rounded-lg shadow-2xl p-4 sm:p-6 w-full max-w-sm sm:max-w-2xl bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700">
+          <div class="flex justify-between items-center mb-5 pb-4 border-b border-gray-200 dark:border-slate-700">
+            <h2 class="text-lg font-bold text-gray-900 dark:text-white">Select Date Range</h2>
+            <button id="closeModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-2xl leading-none">&times;</button>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
+            <!-- Filter Buttons (Left Side) -->
+            <div class="flex sm:flex-col gap-2 overflow-x-auto sm:overflow-visible min-w-max sm:min-w-fit">
+              <p class="text-xs font-bold text-gray-700 dark:text-white uppercase tracking-wider mb-2 sm:block hidden">Quick Select</p>
+              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all flex-shrink-0" data-range="today">Today</button>
+              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all flex-shrink-0" data-range="yesterday">Yesterday</button>
+              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all flex-shrink-0" data-range="last7">Last 7 days</button>
+              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all flex-shrink-0" data-range="last30">Last 30 days</button>
+            </div>
+
+            <!-- Calendars (Right Side) -->
+            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto justify-center sm:justify-start overflow-x-auto">
+              <div class="calendar bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md shadow-sm">
+                <div class="calendar-header">
+                  <button id="prevYear" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs">◄◄</button>
+                  <button id="prevMonth" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">&lt;</button>
+                  <span id="currentMonth" class="font-bold text-xs text-gray-900 dark:text-white"></span>
+                  <button id="nextMonth" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">&gt;</button>
+                  <button id="nextYear" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs">►►</button>
+                </div>
+                <div class="calendar-body">
+                  <div class="calendar-days" id="calendarDays"></div>
+                </div>
+              </div>
+
+              <div class="calendar bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md shadow-sm">
+                <div class="calendar-header">
+                  <button id="prevYear2" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs">◄◄</button>
+                  <button id="prevMonth2" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">&lt;</button>
+                  <span id="currentMonth2" class="font-bold text-xs text-gray-900 dark:text-white"></span>
+                  <button id="nextMonth2" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">&gt;</button>
+                  <button id="nextYear2" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs">►►</button>
+                </div>
+                <div class="calendar-body">
+                  <div class="calendar-days" id="calendarDays2"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-3 justify-end mt-6 pt-4 border-t border-gray-200 dark:border-slate-700">
+            <button id="resetDateRange" class="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 font-medium text-sm transition-colors">Reset</button>
+            <button id="cancelModal" class="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 font-medium text-sm transition-colors">Cancel</button>
+            <button id="applyDateRange" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md text-sm transition-colors">Apply</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="px-6 py-6">
+        <div id="top-ndr-reasons" class="tab-content hidden">
+          <div class="overflow-x-auto border rounded">
+            <table class="min-w-full text-sm text-left">
+              <thead class="bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-gray-200 uppercase text-xs">
+                <tr>
+                  <th class="px-4 py-3">Reason</th>
+                  <th class="px-4 py-3">Shipment Picked</th>
+                  <th class="px-4 py-3">In Transit</th>
+                  <th class="px-4 py-3">Exception</th>
+                  <th class="px-4 py-3">Delivered</th>
+                  <th class="px-4 py-3">RTO In-Transit</th>
+                  <th class="px-4 py-3">RTO Delivered</th>
+                </tr>
+              </thead>
+
+              <tbody class="divide-y dark:divide-slate-600">
+                {% for item in top_ndr_reason %}
+                  <tr class="bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.0 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.1 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.2 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.3 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.4 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.5 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.6 }}</td>
+                  </tr>
+                {% empty %}
+                  <tr class="bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100 text-center" colspan="7">No Data Available</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="daily-summary" class="tab-content hidden">
+          <div class="overflow-x-auto border rounded">
+            <table class="min-w-full text-sm text-left">
+              <thead class="bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-gray-200 uppercase text-xs">
+                <tr>
+                  <th class="px-4 py-3">Date</th>
+                  <th class="px-4 py-3">Total Orders</th>
+                  <th class="px-4 py-3">Pending Pickup</th>
+                  <th class="px-4 py-3">In Transit</th>
+                  <th class="px-4 py-3">Out For Delivery</th>
+                  <th class="px-4 py-3">Delivered</th>
+                  <th class="px-4 py-3">Exception</th>
+                  <th class="px-4 py-3">RTO</th>
+                  <th class="px-4 py-3">RTO Delivered</th>
+                </tr>
+              </thead>
+
+              <tbody class="divide-y dark:divide-slate-600">
+                {% for date, value in daily_summary.items %}
+                  <tr class="bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ date }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ value.0 }}</td>
+                    {% for status, value in value.1.items %}
+                      <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ value.current }} ({{ value.percentage }}%)</td>
+                    {% endfor %}
+                  </tr>
+                {% empty %}
+                  <tr class="bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100 text-center" colspan="7">No Data Available</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Product wise Summary -->
+        <div id="product-wise-summary" class="tab-content hidden">
+          <div class="overflow-x-auto border rounded">
+            <table class="min-w-full text-sm text-left">
+              <thead class="bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-gray-200 uppercase text-xs">
+                <tr>
+                  <th class="px-4 py-3">Product</th>
+                  <th class="px-4 py-3">Pending Pickup</th>
+                  <th class="px-4 py-3">In Transit</th>
+                  <th class="px-4 py-3">Exception</th>
+                  <th class="px-4 py-3">Delivered</th>
+                  <th class="px-4 py-3">RTO In-Transit</th>
+                  <th class="px-4 py-3">RTO Delivered</th>
+                </tr>
+              </thead>
+
+              <tbody class="divide-y dark:divide-slate-600">
+                {% for item in product_wise_summary %}
+                  <tr class="bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.0 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.1 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.2 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.3 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.4 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.5 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.6 }}</td>
+                  </tr>
+                {% empty %}
+                  <tr class="bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100 text-center" colspan="7">No Data Available</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="courier-wise-summary" class="tab-content hidden">
+          <div class="overflow-x-auto border rounded">
+            <table class="min-w-full text-sm text-left">
+              <thead class="bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-gray-200 uppercase text-xs">
+                <tr>
+                  <th class="px-4 py-3">Courier Name</th>
+                  <th class="px-4 py-3">Total shipped</th>
+                  <th class="px-4 py-3">Booked</th>
+                  <th class="px-4 py-3">Pending Pickup</th>
+                  <th class="px-4 py-3">In Transit</th>
+                  <th class="px-4 py-3">Delivered</th>
+                  <th class="px-4 py-3">RTO</th>
+                </tr>
+              </thead>
+
+              <tbody class="divide-y dark:divide-slate-600">
+                {% for item in courier_wise_summary %}
+                  <tr class="bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.0 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.1 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.2 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.3 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.4 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.5 }}</td>
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">{{ item.6 }}</td>
+                  </tr>
+                {% empty %}
+                  <tr class="bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700">
+                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100 text-center" colspan="7">No Data Available</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script>
+    function showTab(tabId, btn) {
+      const contents = document.querySelectorAll(".tab-content");
+      const tabs = document.querySelectorAll(".tab-btn");
+
+      // 1. Hide all tab contents
+      contents.forEach(div => div.classList.add("hidden"));
+
+      // 2. Show selected tab content
+      document.getElementById(tabId).classList.remove("hidden");
+
+      // 3. Reset all tabs to inactive state
+      tabs.forEach(t => {
+        t.classList.remove("text-blue-600", "dark:text-blue-400", "border-blue-600");
+        t.classList.add("text-gray-600", "dark:text-gray-200", "border-transparent");
+      });
+
+      // 4. Activate clicked tab
+      btn.classList.add("text-blue-600", "dark:text-blue-400", "border-blue-600");
+      btn.classList.remove("text-gray-600", "dark:text-gray-200", "border-transparent");
+
+      // 5. Update the page heading based on the selected tab
+      const heading = btn.getAttribute('data-heading');
+      if (heading) {
+        document.getElementById('pageHeading').innerHTML = heading;
+      }
+    }
+
+    // Date Range Picker Logic
+    let startDate = null;
+    let endDate = null;
+    let currentMonth1 = new Date();
+    let currentMonth2 = new Date(new Date().setMonth(new Date().getMonth() + 1));
+
+    const dateInput = document.getElementById('dateRangeInput');
+    const modal = document.getElementById('dateModal');
+    const closeModalBtn = document.getElementById('closeModal');
+    const cancelModalBtn = document.getElementById('cancelModal');
+    const applyDateRangeBtn = document.getElementById('applyDateRange');
+
+    // Open modal on input click
+    dateInput.addEventListener('click', () => {
+      modal.classList.add('active');
+      renderCalendars();
+    });
+
+    // Close modal
+    closeModalBtn.addEventListener('click', () => modal.classList.remove('active'));
+    cancelModalBtn.addEventListener('click', () => modal.classList.remove('active'));
+
+    // Navigation buttons
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      currentMonth1.setMonth(currentMonth1.getMonth() - 1);
+      renderCalendars();
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      currentMonth1.setMonth(currentMonth1.getMonth() + 1);
+      renderCalendars();
+    });
+
+    document.getElementById('prevYear').addEventListener('click', () => {
+      currentMonth1.setFullYear(currentMonth1.getFullYear() - 1);
+      renderCalendars();
+    });
+
+    document.getElementById('nextYear').addEventListener('click', () => {
+      currentMonth1.setFullYear(currentMonth1.getFullYear() + 1);
+      renderCalendars();
+    });
+
+    document.getElementById('prevMonth2').addEventListener('click', () => {
+      currentMonth2.setMonth(currentMonth2.getMonth() - 1);
+      renderCalendars();
+    });
+
+    document.getElementById('nextMonth2').addEventListener('click', () => {
+      currentMonth2.setMonth(currentMonth2.getMonth() + 1);
+      renderCalendars();
+    });
+
+    document.getElementById('prevYear2').addEventListener('click', () => {
+      currentMonth2.setFullYear(currentMonth2.getFullYear() - 1);
+      renderCalendars();
+    });
+
+    document.getElementById('nextYear2').addEventListener('click', () => {
+      currentMonth2.setFullYear(currentMonth2.getFullYear() + 1);
+      renderCalendars();
+    });
+
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        let start, end;
+        switch(btn.dataset.range) {
+          case 'today':
+            start = new Date(today);
+            end = new Date(today);
+            break;
+          case 'yesterday':
+            start = new Date(today);
+            start.setDate(today.getDate() - 1);
+            end = new Date(start);
+            break;
+          case 'last7':
+            end = new Date(today);
+            start = new Date(today);
+            start.setDate(today.getDate() - 6);
+            break;
+          case 'last30':
+            end = new Date(today);
+            start = new Date(today);
+            start.setDate(today.getDate() - 29);
+            break;
+          case 'thisMonth':
+            start = new Date(today.getFullYear(), today.getMonth(), 1);
+            end = new Date(today);
+            break;
+          case 'lastMonth':
+            start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            end = new Date(today.getFullYear(), today.getMonth(), 0);
+            break;
+          case 'thisYear':
+            start = new Date(today.getFullYear(), 0, 1);
+            end = new Date(today);
+            break;
+          case 'lastYear':
+            start = new Date(today.getFullYear() - 1, 0, 1);
+            end = new Date(today.getFullYear() - 1, 11, 31);
+            break;
+        }
+        startDate = start;
+        endDate = end;
+        currentMonth1 = new Date(start);
+        currentMonth2 = new Date(start);
+        currentMonth2.setMonth(currentMonth2.getMonth() + 1);
+        renderCalendars();
+      });
+    });
+
+    // Apply date range
+    applyDateRangeBtn.addEventListener('click', () => {
+      if (startDate && endDate) {
+        const formatDate = (date) => {
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const year = date.getFullYear();
+          return `${month}/${day}/${year}`;
+        };
+        dateInput.value = `${formatDate(startDate)} - ${formatDate(endDate)}`;
+        modal.classList.remove('active');
+      }
+    });
+
+    // Reset date range
+    document.getElementById('resetDateRange').addEventListener('click', () => {
+      startDate = null;
+      endDate = null;
+      const today = new Date();
+      currentMonth1 = new Date(today);
+      currentMonth2 = new Date(today);
+      currentMonth2.setMonth(currentMonth2.getMonth() + 1);
+      renderCalendars();
+    });
+
+    function renderCalendars() {
+      renderCalendar('calendarDays', 'currentMonth', currentMonth1);
+      renderCalendar('calendarDays2', 'currentMonth2', currentMonth2);
+    }
+
+    function renderCalendar(containerId, monthLabelId, month) {
+      const container = document.getElementById(containerId);
+      const monthLabel = document.getElementById(monthLabelId);
+      
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+      
+      monthLabel.textContent = `${monthNames[month.getMonth()]} ${month.getFullYear()}`;
+      
+      container.innerHTML = '';
+      
+      // Day headers
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      dayNames.forEach(day => {
+        const dayEl = document.createElement('div');
+        dayEl.className = 'day-header';
+        dayEl.textContent = day;
+        container.appendChild(dayEl);
+      });
+      
+      // Get first day of month and number of days
+      const firstDay = new Date(month.getFullYear(), month.getMonth(), 1).getDay();
+      const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
+      const daysInPrevMonth = new Date(month.getFullYear(), month.getMonth(), 0).getDate();
+      
+      // Previous month days
+      for (let i = firstDay - 1; i >= 0; i--) {
+        const dayEl = document.createElement('div');
+        dayEl.className = 'day other-month';
+        dayEl.textContent = daysInPrevMonth - i;
+        container.appendChild(dayEl);
+      }
+      
+      // Current month days
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayEl = document.createElement('div');
+        const currentDate = new Date(month.getFullYear(), month.getMonth(), day);
+        dayEl.className = 'day';
+        dayEl.textContent = day;
+        
+        // Check if date is before start date when start date is selected
+        const isBeforeStartDate = startDate && currentDate < startDate && !endDate;
+        
+        // Check if date is selected or in range
+        if (startDate && endDate) {
+          if (currentDate.toDateString() === startDate.toDateString() || 
+              currentDate.toDateString() === endDate.toDateString()) {
+            dayEl.classList.add('selected');
+          } else if (currentDate > startDate && currentDate < endDate) {
+            dayEl.classList.add('in-range');
+          }
+        } else if (startDate && currentDate.toDateString() === startDate.toDateString()) {
+          dayEl.classList.add('selected');
+        }
+        
+        // Disable dates before start date
+        if (isBeforeStartDate) {
+          dayEl.classList.add('other-month');
+          dayEl.style.cursor = 'not-allowed';
+          dayEl.style.opacity = '0.5';
+        } else {
+          dayEl.addEventListener('click', () => {
+            if (!startDate || (startDate && endDate)) {
+              startDate = currentDate;
+              endDate = null;
+            } else if (currentDate < startDate) {
+              // Don't allow selecting date before start date
+              return;
+            } else {
+              endDate = currentDate;
+            }
+            renderCalendars();
+          });
+        }
+        
+        container.appendChild(dayEl);
+      }
+      
+      // Next month days
+      const totalCells = container.children.length - 7; // Subtract day headers
+      const remainingCells = 42 - totalCells;
+      for (let day = 1; day <= remainingCells; day++) {
+        const dayEl = document.createElement('div');
+        dayEl.className = 'day other-month';
+        dayEl.textContent = day;
+        container.appendChild(dayEl);
+      }
+    }
+
+    // Initialize calendars on page load
+    renderCalendars();
+
+    // Function to get URL parameters
+    function getUrlParams() {
+      const params = {};
+      const urlParams = new URLSearchParams(window.location.search);
+      for (const [key, value] of urlParams) {
+        params[key] = value;
+      }
+      return params;
+    }
+
+    // Function to set filters from URL parameters on page load
+    function setFiltersFromUrl() {
+      const params = getUrlParams();
+      const dateRangeInput = document.getElementById('dateRangeInput');
+      const methodSelect = document.querySelectorAll('.px-6.py-5 select')[0];
+      const courierSelect = document.querySelectorAll('.px-6.py-5 select')[1];
+
+      if (params.date_from && params.date_to) {
+        dateRangeInput.value = `${params.date_from} - ${params.date_to}`;
+      }
+      if (params.method) {
+        methodSelect.value = params.method;
+      }
+      if (params.courier) {
+        courierSelect.value = params.courier;
+      }
+    }
+
+    // Call setFiltersFromUrl on page load
+    setFiltersFromUrl();
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('active');
+      }
+    });
+
+    // Apply Filters button - updates URL with query parameters
+    document.getElementById('applyFilters').addEventListener('click', () => {
+      const dateRange = document.getElementById('dateRangeInput').value;
+      const method = document.querySelectorAll('.px-6.py-5 select')[0].value || '';
+      const courier = document.querySelectorAll('.px-6.py-5 select')[1].value || '';
+
+      if (dateRange) {
+        const [dateFrom, dateTo] = dateRange.split(' - ');
+        const params = new URLSearchParams();
+        if (dateFrom) params.set('date_from', dateFrom.trim());
+        if (dateTo) params.set('date_to', dateTo.trim());
+        if (method) params.set('method', method);
+        if (courier) params.set('courier', courier);
+
+        const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+        window.location.href = newUrl;
+      } else {
+        alert('Please select a date range first.');
+      }
+    });
+
+    // Clear Filters button - resets to default
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      document.getElementById('dateRangeInput').value = '09/01/2022 - 01/30/2026';
+      const selects = document.querySelectorAll('.px-6.py-5 select');
+      selects.forEach(select => select.value = 'All');
+      startDate = null;
+      endDate = null;
+      renderCalendars();
+      alert('Filters cleared! All data displayed.');
+    });
+
+    // Bulk Export button - exports data
+    document.getElementById('bulkExport').addEventListener('click', () => {
+      const dateRange = document.getElementById('dateRangeInput').value;
+      const method = document.querySelectorAll('.px-6.py-5 select')[0].value || 'All';
+      const courier = document.querySelectorAll('.px-6.py-5 select')[1].value || 'All';
+      
+      alert('Exporting data...\n\nDate Range: ' + dateRange + '\nMethod: ' + method + '\nCourier: ' + courier + '\n\nFile will be downloaded as export.csv');
+    });
+
+    // D3.js Bar Chart for Geographical Distribution (Alternative to Sunburst)
+    document.addEventListener('DOMContentLoaded', function() {
+      const data = [
+        { region: "North India", shipments: 1125, rate: 90 },
+        { region: "South India", shipments: 990, rate: 90 },
+        { region: "West India", shipments: 882, rate: 90 },
+        { region: "East India", shipments: 765, rate: 90 }
+      ];
+
+      const margin = { top: 20, right: 30, bottom: 60, left: 60 };
+      const width = 500 - margin.left - margin.right;
+      const height = 300 - margin.top - margin.bottom;
+
+      const svg = d3.select("#distributionChart")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      // Scales
+      const x = d3.scaleBand()
+        .domain(data.map(d => d.region))
+        .range([0, width])
+        .padding(0.1);
+
+      const y = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.shipments)])
+        .nice()
+        .range([height, 0]);
+
+      // Bars
+      svg.selectAll(".bar")
+        .data(data)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", d => x(d.region))
+        .attr("y", d => y(d.shipments))
+        .attr("width", x.bandwidth())
+        .attr("height", d => height - y(d.shipments))
+        .attr("rx", 8)
+        .attr("ry", 8)
+        .attr("fill", (d, i) => {
+          const colors = ["rgba(16, 185, 129, 0.5)", "rgba(59, 130, 246, 0.5)", "rgba(139, 92, 246, 0.5)", "rgba(245, 158, 11, 0.5)", "rgba(236, 72, 153, 0.5)"];
+          return colors[i % colors.length];
+        })
+        .style("filter", "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))")
+        .on("mouseover", function(event, d) {
+          d3.select(this).style("filter", "drop-shadow(0 6px 8px rgba(0, 0, 0, 0.15))");
+          const tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("position", "absolute")
+            .style("background", "rgba(0, 0, 0, 0.8)")
+            .style("color", "#fff")
+            .style("padding", "8px")
+            .style("border-radius", "4px")
+            .style("pointer-events", "none")
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 10) + "px")
+            .html(`${d.region}<br/>Shipments: ${d.shipments}<br/>Rate: ${d.rate}%`);
+        })
+        .on("mouseout", function() {
+          d3.select(this).style("filter", "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))");
+          d3.selectAll(".tooltip").remove();
+        });
+
+      // Axes
+      svg.append("g")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .style("text-anchor", "middle");
+
+      svg.append("g")
+        .call(d3.axisLeft(y));
+
+      // Labels
+      svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Delivered Shipments");
+
+      svg.append("text")
+        .attr("transform", `translate(${width/2}, ${height + margin.bottom - 5})`)
+        .style("text-anchor", "middle")
+        .text("Regions");
+    });
+
+    // Set default tab to Daily Summary on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const defaultTabBtn = document.getElementById('daily-summary-tab');
+      if (defaultTabBtn) {
+        showTab('daily-summary', defaultTabBtn);
+      }
+    });
+
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', setupPageHeadingVisibility);
+  </script>
+{% endblock %}

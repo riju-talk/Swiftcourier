@@ -1,0 +1,726 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+    KYC
+{% endblock title %}
+
+{% load static %}
+
+{% block css %}
+    {# You can add additional CSS here if needed #}
+    <style>
+        /* subtle animation & transition for invalid highlight */
+        .field-invalid {
+            animation: flash 1s ease-in-out;
+        }
+
+        @keyframes flash {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.0);
+            }
+
+            40% {
+                box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.12);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.0);
+            }
+        }
+
+        /* Small helper to visually show file preview box */
+        .file-preview {
+            display: flex;
+            gap: .6rem;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.03);
+            padding: .5rem .75rem;
+            border-radius: .75rem;
+        }
+    </style>
+{% endblock css %}
+
+{% block body %}
+    <div class="mb-5">
+        <div id="kyc-tabs"
+             class="bg-white-light/30 p-4 rounded-lg dark:bg-dark/30 text-sm">
+            <!-- Tab Buttons -->
+            <ul id="tab-list" class="flex flex-wrap gap-2 mb-5">
+                <li>
+                    <button type="button"
+                            data-tab="kyc"
+                            class="tab-btn flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60">
+                        <svg class="w-5 h-5 mr-2"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.5"
+                             viewBox="0 0 24 24">
+                            <path d="M3 5h18M3 19h18M3 5v14M21 5v14M9 9h6M9 13h6" />
+                        </svg>
+                        KYC Details
+                    </button>
+                </li>
+                <li>
+                    <button type="button"
+                            data-tab="finance"
+                            class="tab-btn flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60">
+                        <svg class="w-5 h-5 mr-2"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.5"
+                             viewBox="0 0 24 24">
+                            <path d="M12 1L3 5v2h18V5l-9-4zM3 10h18M4 10v10M8 10v10M16 10v10M20 10v10" />
+                        </svg>
+                        Financial Details
+                    </button>
+                </li>
+                <li>
+                    <button type="button"
+                            data-tab="other"
+                            class="tab-btn flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60">
+                        <svg class="w-5 h-5 mr-2"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.5"
+                             viewBox="0 0 24 24">
+                            <path d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" />
+                            <path d="M14 2v6h6" />
+                        </svg>
+                        Other
+                    </button>
+                </li>
+            </ul>
+
+            <form id="kyc-form"
+                  action="{% url 'user_panel:kyc' %}"
+                  method="post"
+                  enctype="multipart/form-data"
+                  novalidate>
+                {% csrf_token %}
+
+                <!-- KYC Tab Content -->
+                <section data-panel="kyc" class="tab-panel">
+                    <h4 class="text-xl font-semibold mb-6">KYC Information</h4>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                Name <span class="text-red-500">*</span>
+                            </label>
+                            <input required
+                                   name="name"
+                                   id="name"
+                                   type="text"
+                                   placeholder="Enter Name"
+                                   value="{{ request.user.full_name|default:"" }}"
+                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                Company Name <span class="text-red-500">*</span>
+                            </label>
+                            <input required
+                                   name="company_name"
+                                   type="text"
+                                   placeholder="Enter Company Name"
+                                   value="{{ request.user.company_name|default:"" }}"
+                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                Phone Number <span class="text-red-500">*</span>
+                            </label>
+                            <input required
+                                   name="phone_number"
+                                   id="phone_number"
+                                   type="tel"
+                                   pattern="^\d{10}$"
+                                   inputmode="numeric"
+                                   placeholder="XXXXXXXXXX"
+                                   value="{{ request.user.contact_no|default:"" }}"
+                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                Email <span class="text-red-500">*</span>
+                            </label>
+                            <input required
+                                   name="email"
+                                   type="email"
+                                   placeholder="Enter Email"
+                                   value="{{ request.user.email|default:"" }}"
+                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                            Full Address (As on Aadhar Card / GST) <span class="text-red-500">*</span>
+                        </label>
+                        <textarea required
+                                  name="full_address"
+                                  rows="3"
+                                  placeholder="Street Address, City, State/Province, Zip/Postal Code"
+                                  class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition">{{ request.user.address|default:"" }}</textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                Pin Code <span class="text-red-500">*</span>
+                            </label>
+                            <input required
+                                   name="pin_code"
+                                   type="text"
+                                   inputmode="numeric"
+                                   pattern="^\d{6}$"
+                                   minlength="6"
+                                   maxlength="6"
+                                   placeholder="Enter 6-digit Pin Code"
+                                   title="Enter a valid 6-digit Pin Code"
+                                   value="{{ request.user.pin_code|default:"" }}"
+                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                City <span class="text-red-500">*</span>
+                            </label>
+                            <input required
+                                   name="city"
+                                   type="text"
+                                   placeholder="Enter City"
+                                   value="{{ request.user.city|default:"" }}"
+                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                State <span class="text-red-500">*</span>
+                            </label>
+                            <input required
+                                   name="state"
+                                   type="text"
+                                   placeholder="Enter State"
+                                   value="{{ request.user.state|default:"" }}"
+                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                Country <span class="text-red-500">*</span>
+                            </label>
+                            <input required
+                                   name="country"
+                                   type="text"
+                                   placeholder="Enter Country"
+                                   value="{{ request.user.country|default:"" }}"
+                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">GST Number</label>
+                        <input name="gst_number"
+                               type="text"
+                               placeholder="22AAAAA0000A1Z5"
+                               value="{{ request.user.gstin|default:"" }}"
+                               class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                    </div>
+
+                    <!-- Aadhaar (show preview if exists) -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                            Aadhaar Card <span class="text-gray-400 text-sm">(Required if GST Certificate not uploaded)</span>
+                        </label>
+
+                        {% if request.user.aadhaar_card %}
+                            <div id="aadhaar-preview" class="file-preview mb-2">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200"
+                                         viewBox="0 0 24 24"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+
+                                        <g id="SVGRepo_bgCarrier" stroke-width="0">
+                                        </g>
+                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+                                        </g>
+
+                                        <g id="SVGRepo_iconCarrier">
+                                        <path d="M22 13V12C22 8.22876 22 6.34315 20.8284 5.17157C19.6569 4 17.7712 4 14 4H10C6.22876 4 4.34315 4 3.17157 5.17157C2 6.34315 2 8.22876 2 12C2 15.7712 2 17.6569 3.17157 18.8284C4.34315 20 6.22876 20 10 20H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+
+                                        <path opacity="0.4" d="M10 16H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+
+                                        <path opacity="0.4" d="M2 10L22 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+
+                                        <circle cx="18" cy="17" r="3" stroke="currentColor" stroke-width="1.5" />
+
+                                        <path d="M20.5 19.5L21.5 20.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                        </g>
+                                    </svg>
+
+                                    <div>
+                                        <div class="text-sm font-medium">{{ request.user.aadhaar_card.name }}</div>
+                                        <a href="{{ request.user.aadhaar_card.url }}"
+                                           target="_blank"
+                                           class="text-xs underline">View</a>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button type="button"
+                                            class="replace-btn inline-flex items-center px-3 py-1 rounded-md border text-sm">
+                                        Replace
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="hidden" id="aadhaar-input-wrap">
+                                <input type="file"
+                                       name="aadhaar_card"
+                                       id="aadhaar_card"
+                                       accept="application/pdf,image/*"
+                                       class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                            </div>
+                        {% else %}
+                            <input type="file"
+                                   name="aadhaar_card"
+                                   id="aadhaar_card"
+                                   accept="application/pdf,image/*"
+                                   class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                        {% endif %}
+                    </div>
+
+                    <!-- GST Certificate -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                            GST Certificate <span class="text-gray-400 text-sm">(Required if Aadhaar not uploaded)</span>
+                        </label>
+
+                        {% if request.user.gst_certificate %}
+                            <div id="gst-preview" class="file-preview mb-2">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200"
+                                         viewBox="0 0 24 24"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+
+                                        <g id="SVGRepo_bgCarrier" stroke-width="0">
+                                        </g>
+                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+                                        </g>
+
+                                        <g id="SVGRepo_iconCarrier">
+                                        <path d="M22 13V12C22 8.22876 22 6.34315 20.8284 5.17157C19.6569 4 17.7712 4 14 4H10C6.22876 4 4.34315 4 3.17157 5.17157C2 6.34315 2 8.22876 2 12C2 15.7712 2 17.6569 3.17157 18.8284C4.34315 20 6.22876 20 10 20H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+
+                                        <path opacity="0.4" d="M10 16H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+
+                                        <path opacity="0.4" d="M2 10L22 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+
+                                        <circle cx="18" cy="17" r="3" stroke="currentColor" stroke-width="1.5" />
+
+                                        <path d="M20.5 19.5L21.5 20.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                        </g>
+                                    </svg>
+
+                                    <div>
+                                        <div class="text-sm font-medium">{{ request.user.gst_certificate.name }}</div>
+                                        <a href="{{ request.user.gst_certificate.url }}"
+                                           target="_blank"
+                                           class="text-xs underline">View</a>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button type="button"
+                                            class="replace-btn inline-flex items-center px-3 py-1 rounded-md border text-sm">
+                                        Replace
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="hidden" id="gst-input-wrap">
+                                <input type="file"
+                                       name="gst_certificate"
+                                       id="gst_certificate"
+                                       accept="application/pdf,image/*"
+                                       class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                            </div>
+                        {% else %}
+                            <input type="file"
+                                   name="gst_certificate"
+                                   id="gst_certificate"
+                                   accept="application/pdf,image/*"
+                                   class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                        {% endif %}
+                    </div>
+
+                    <!-- PAN Card (required) -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                            PAN Card <span class="text-red-500">*</span>
+                        </label>
+
+                        {% if request.user.pan_card %}
+                            <div id="pan-preview" class="file-preview mb-2">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200"
+                                         viewBox="0 0 24 24"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+
+                                        <g id="SVGRepo_bgCarrier" stroke-width="0">
+                                        </g>
+                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+                                        </g>
+
+                                        <g id="SVGRepo_iconCarrier">
+                                        <path d="M22 13V12C22 8.22876 22 6.34315 20.8284 5.17157C19.6569 4 17.7712 4 14 4H10C6.22876 4 4.34315 4 3.17157 5.17157C2 6.34315 2 8.22876 2 12C2 15.7712 2 17.6569 3.17157 18.8284C4.34315 20 6.22876 20 10 20H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+
+                                        <path opacity="0.4" d="M10 16H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+
+                                        <path opacity="0.4" d="M2 10L22 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+
+                                        <circle cx="18" cy="17" r="3" stroke="currentColor" stroke-width="1.5" />
+
+                                        <path d="M20.5 19.5L21.5 20.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                        </g>
+                                    </svg>
+
+                                    <div>
+                                        <div class="text-sm font-medium">{{ request.user.pan_card.name }}</div>
+                                        <a href="{{ request.user.pan_card.url }}"
+                                           target="_blank"
+                                           class="text-xs underline">View</a>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button type="button"
+                                            class="replace-btn inline-flex items-center px-3 py-1 rounded-md border text-sm">
+                                        Replace
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="hidden" id="pan-input-wrap">
+                                <input type="file"
+                                       name="pan_card"
+                                       id="pan_card"
+                                       accept="application/pdf,image/*"
+                                       required
+                                       class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                            </div>
+                        {% else %}
+                            <input type="file"
+                                   name="pan_card"
+                                   id="pan_card"
+                                   accept="application/pdf,image/*"
+                                   required
+                                   class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                        {% endif %}
+                    </div>
+
+                </section>
+
+                <!-- Finance Tab -->
+                <section data-panel="finance" class="tab-panel hidden">
+                    <h4 class="text-xl font-semibold mb-6">Financial Info</h4>
+
+                    <div class="grid gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                                Bank Name <span class="text-red-500">*</span>
+                            </label>
+                            <input name="bank_name"
+                                   type="text"
+                                   required
+                                   placeholder="Enter Bank Name"
+                                   value="{{ request.user.bank_name|default:"" }}"
+                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                                Account Number <span class="text-red-500">*</span>
+                            </label>
+                            <input name="bank_account_number"
+                                   type="text"
+                                   required
+                                   placeholder="Your account number"
+                                   value="{{ request.user.bank_account_number|default:"" }}"
+                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                                IFSC <span class="text-red-500">*</span>
+                            </label>
+                            <input name="bank_account_ifsc"
+                                   type="text"
+                                   required
+                                   placeholder="Please enter IFSC"
+                                   value="{{ request.user.bank_account_ifsc|default:"" }}"
+                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                                Account Type <span class="text-red-500">*</span>
+                            </label>
+                            <select name="bank_account_type"
+                                    required
+                                    class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition">
+                                <option value=""
+                                        disabled
+                                        {% if not request.user.bank_account_type %}selected{% endif %}>Select account type</option>
+                                <option value="saving"
+                                        {% if request.user.bank_account_type == "saving" %}selected{% endif %}>Saving</option>
+                                <option value="current"
+                                        {% if request.user.bank_account_type == "current" %}selected{% endif %}>Current</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                                Upload Cheque <span class="text-red-500">*</span>
+                            </label>
+                            {% if request.user.cancel_cheque %}
+                                <div id="cheque-preview" class="file-preview mb-2">
+                                    <div class="flex items-center gap-3">
+                                        <svg class="w-6 h-6 text-gray-700 dark:text-gray-200"
+                                             viewBox="0 0 24 24"
+                                             fill="none"
+                                             xmlns="http://www.w3.org/2000/svg">
+
+                                            <g id="SVGRepo_bgCarrier" stroke-width="0">
+                                            </g>
+                                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+                                            </g>
+
+                                            <g id="SVGRepo_iconCarrier">
+                                            <path d="M22 13V12C22 8.22876 22 6.34315 20.8284 5.17157C19.6569 4 17.7712 4 14 4H10C6.22876 4 4.34315 4 3.17157 5.17157C2 6.34315 2 8.22876 2 12C2 15.7712 2 17.6569 3.17157 18.8284C4.34315 20 6.22876 20 10 20H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+
+                                            <path opacity="0.4" d="M10 16H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+
+                                            <path opacity="0.4" d="M2 10L22 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+
+                                            <circle cx="18" cy="17" r="3" stroke="currentColor" stroke-width="1.5" />
+
+                                            <path d="M20.5 19.5L21.5 20.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                            </g>
+                                        </svg>
+
+                                        <div>
+                                            <div class="text-sm font-medium">{{ request.user.cancel_cheque.name }}</div>
+                                            <a href="{{ request.user.cancel_cheque.url }}"
+                                               target="_blank"
+                                               class="text-xs underline">View</a>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button type="button"
+                                                class="replace-btn inline-flex items-center px-3 py-1 rounded-md border text-sm">
+                                            Replace
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="hidden" id="cheque-input-wrap">
+                                    <input type="file"
+                                           name="cheque"
+                                           accept="application/pdf,image/*"
+                                           class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+                            {% else %}
+                                <input type="file"
+                                       name="cheque"
+                                       accept="application/pdf,image/*"
+                                       class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Other Tab -->
+                <section data-panel="other" class="tab-panel hidden">
+                    <h4 class="text-xl font-semibold mb-6">Merchant Agreement</h4>
+
+                    <div class="mb-4 border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden h-64">
+                        <iframe src="{% static 'pdf/agreement.pdf' %}" class="w-full h-full"></iframe>
+                    </div>
+
+                    <div class="flex items-center space-x-2 mb-6">
+                        <input type="checkbox"
+                               id="agree_terms"
+                               name="agree_terms"
+                               class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                               {% if request.user.is_agreement_accepted %}checked{% endif %} />
+                        <label for="agree_terms" class="text-sm text-gray-700 dark:text-gray-200">
+                            I have read and agree to the Terms & Conditions
+                        </label>
+                    </div>
+                </section>
+
+                <!-- Save Button (global) -->
+                <div class="text-right mt-4">
+                    <button id="save-btn"
+                            type="submit"
+                            class="px-6 py-2 bg-primary text-white font-semibold rounded-xl shadow hover:bg-primary-dark transition">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock body %}
+
+{% block js %}
+    <script>
+        (function() {
+
+            const tabList = document.getElementById('tab-list');
+            const tabButtons = Array.from(tabList.querySelectorAll('.tab-btn'));
+            const panels = Array.from(document.querySelectorAll('.tab-panel'));
+            const form = document.getElementById('kyc-form');
+
+            /* ---------------------------------------------------------------
+               1) DISABLE REQUIRED FOR FILE INPUTS THAT ALREADY HAVE A PREVIEW
+            --------------------------------------------------------------- */
+            document.querySelectorAll('.file-preview').forEach(preview => {
+                if (!preview.classList.contains('hidden')) {
+                    const id = preview.id.replace('-preview', '');
+                    const input = document.querySelector(`#${id}-input-wrap input[type="file"]`);
+                    if (input) {
+                        input.required = false; // ❗ important fix
+                        input.dataset.ignoreValidation = "1"; // mark this input to bypass validation
+                    }
+                }
+            });
+
+            /* ---------------------------------------------------------------
+               2) BASIC TAB HANDLING
+            --------------------------------------------------------------- */
+            function panelOfElement(el) {
+                return el.closest('[data-panel]')?.getAttribute('data-panel') || null;
+            }
+
+            function activateTab(name) {
+                tabButtons.forEach(btn => {
+                    const active = btn.getAttribute('data-tab') === name;
+                    btn.classList.toggle('bg-white-light/90', active);
+                    btn.classList.toggle('dark:bg-dark/60', active);
+                    btn.classList.toggle('text-primary', active);
+                });
+
+                panels.forEach(panel => {
+                    const show = panel.getAttribute('data-panel') === name;
+                    panel.classList.toggle('hidden', !show);
+                });
+
+                history.replaceState(null, '', '#' + name);
+            }
+
+            const hash = (location.hash ?? "").replace("#", "");
+            activateTab(['kyc', 'finance', 'other'].includes(hash) ? hash : 'kyc');
+
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    activateTab(btn.getAttribute('data-tab'));
+                });
+            });
+
+            /* ---------------------------------------------------------------
+               3) REPLACE BUTTON HANDLER
+            --------------------------------------------------------------- */
+            document.querySelectorAll('.replace-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const preview = e.target.closest('.file-preview');
+                    if (!preview) return;
+
+                    const previewId = preview.id; // e.g. aadhaar-preview
+                    const inputWrap = document.getElementById(previewId.replace('-preview', '-input-wrap'));
+
+                    if (inputWrap) {
+                        preview.classList.add('hidden');
+                        inputWrap.classList.remove('hidden');
+
+                        const input = inputWrap.querySelector('input[type="file"]');
+                        if (input) {
+                            input.required = true; // user needs to upload new file
+                            input.dataset.ignoreValidation = ""; // re-enable validation
+                            input.focus();
+                        }
+                    }
+                });
+            });
+
+            /* ---------------------------------------------------------------
+               4) FORM VALIDATION ACROSS TABS
+            --------------------------------------------------------------- */
+            function findFirstInvalid(formEl) {
+                const elements = Array.from(formEl.querySelectorAll('input,select,textarea'));
+
+                for (const el of elements) {
+                    if (el.disabled) continue;
+
+                    // skip file inputs with existing preview
+                    if (el.dataset.ignoreValidation === "1") continue;
+
+                    if (el.willValidate && !el.checkValidity()) {
+                        return el;
+                    }
+                }
+                return null;
+            }
+
+            function highlightInvalid(el) {
+                el.classList.add('ring-2', 'ring-red-500');
+                setTimeout(() => {
+                    el.classList.remove('ring-2', 'ring-red-500');
+                }, 3000);
+            }
+
+            form.addEventListener('submit', function(e) {
+                const firstInvalid = findFirstInvalid(form);
+                if (firstInvalid) {
+                    e.preventDefault();
+
+                    const panelName = panelOfElement(firstInvalid) || 'kyc';
+                    activateTab(panelName);
+
+                    firstInvalid.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+
+                    setTimeout(() => {
+                        firstInvalid.focus();
+                        highlightInvalid(firstInvalid);
+                    }, 220);
+
+                    return false;
+                }
+
+                const agree = form.querySelector('#agree_terms');
+                if (agree && !agree.checked) {
+                    e.preventDefault();
+                    activateTab('other');
+                    setTimeout(() => {
+                        agree.focus();
+                        highlightInvalid(agree);
+                    }, 250);
+                    return false;
+                }
+            });
+
+            /* UX: Remove error ring when user types */
+            form.addEventListener('input', ev => {
+                ev.target.classList.remove('ring-2', 'ring-red-500');
+            });
+
+        })();
+    </script>
+{% endblock js %}

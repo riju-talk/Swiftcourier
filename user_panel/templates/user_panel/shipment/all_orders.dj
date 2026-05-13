@@ -1,0 +1,409 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% load static %}
+
+{% block title %}
+    {{ status_display }}
+{% endblock title %}
+
+
+{% block css %}
+    <style>
+        /* Optimized tooltip styling */
+        .tooltip {
+            min-width: 120px;
+            pointer-events: none;
+            transform-origin: top center;
+            will-change: transform, opacity;
+        }
+
+        /* Dark mode compatibility */
+        .dark .tooltip {
+            background-color: #374151;
+            color: #f9fafb;
+        }
+    </style>
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .date-transition {
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
+
+    <style>
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            @apply bg-gray-100 dark:bg-gray-700;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            @apply bg-gray-400 dark:bg-gray-500;
+        }
+    </style>
+
+{% endblock css %}
+
+
+{% block body %}
+    {% include "user_panel/components/common/shipment_navbar.dj" %}
+
+    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+        <!-- Header Section -->
+        <div class="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b dark:border-gray-700 gap-4">
+            <!-- Left: Title + Search -->
+            <div class="flex items-center gap-4 w-full sm:w-auto">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">{{ status_display }}</h2>
+                <input type="text"
+                       id="searchInput"
+                       name="q"
+                       placeholder="Search Order"
+                       value="{{ request.GET.q }}"
+                       onenter="handleSearch(this.value)"
+                       class="w-48 px-3 py-1.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400">
+            </div>
+
+            <!-- Right: Buttons -->
+            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <div id="actionButtons" class="hidden">
+                    {% comment %} <button onclick="openModal()" class="px-3 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white text-sm">
+                        Ship
+                    </button> {% endcomment %}
+                </div>
+                <button id="filterToggleBtn"
+                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-sm"
+                        title="Filter Orders">
+                    <!-- Original filter icon -->
+                    <svg class="w-5 h-5 text-indigo-600"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 019 17v-3.586L3.293 6.707A1 1 0 013 6V4z" />
+                    </svg>
+                    <span id="filterToggleText" class="text-indigo-600 font-semibold">Filter</span>
+                </button>
+                <button class="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm"
+                        id="exportOrderButton">Export</button>
+            </div>
+        </div>
+
+        {% include "components/common/user_panel_filter.dj" %}
+
+        <!-- Table -->
+        <div class="overflow-y-auto max-h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg">
+            <table class="w-full">
+                <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
+                    <tr>
+                        <th class="px-2 py-1 text-left align-middle">
+                            <div class="flex items-center">
+                                <input type="checkbox"
+                                       id="selectAll"
+                                       class="w-4 h-4 rounded border-gray-300 dark:bg-gray-600 dark:border-gray-500">
+                            </div>
+                        </th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">CHANNEL</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">ORDER ID</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">ORDER NUMBER</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">DATE</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">CUSTOMER</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">PRODUCTS</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">QTY</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">AMT</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">WT</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">AWB</th>
+                        <th class="px-2 py-1 text-right text-xs font-normal text-gray-600 dark:text-gray-300">STATUS</th>
+
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    <!-- Sample Data -->
+                    {% for order in page_obj %}
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <td class="px-2 py-1">
+                                <input type="checkbox"
+                                       value="{{ order.id }}"
+                                       class="ship-order-ids row-checkbox rounded border-gray-300 dark:bg-gray-600">
+                            </td>
+                            <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">{{ order.get_channel_display }}</td>
+                            <td class="px-1 py-0.5 text-xs text-center font-medium text-gray-900 dark:text-gray-100">IS{{ order.id }}</td>
+                            <td class="px-1 py-0.5 text-xs text-center font-medium text-blue-600 hover:underline dark:text-blue-400">
+                                <a href="{% url 'user_panel:order-details' id=order.id %}">{{ order.order_number }}</a>
+                            </td>
+                            <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">
+                                <p>{{ order.created_at|date:"M d, Y" }}</p>
+                                <p>
+                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                        {{ order.placed_at|date:"h:i A" }}
+                                    </span>
+                                </p>
+                            </td>
+                            <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">
+                                <div class="group relative inline-block w-full">
+                                    <span class="truncate max-w-[100px] inline-block rounded-md px-1 py-0.5">
+                                        <p>{{ order.shipping_address.name|truncatechars:15 }}</p>
+                                        <p>
+                                            <span class="ml-1 text-[10px] px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                                {{ order.shipping_address.phone|default:"No phone" }}
+                                            </span>
+                                        </p>
+                                    </span>
+                                    <span class="tooltip rounded-md shadow-lg px-2 py-1 bg-gray-800 text-white text-xs absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-50 whitespace-normal max-w-xs text-left">
+                                        <div>{{ order.shipping_address.get_full_address|default:"No address" }}</div>
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">
+                                <div class="group relative inline-block w-full">
+                                    <span class="truncate max-w-[120px] inline-block rounded-md px-1 py-0.5">
+                                        {{ order.items.first.product.name|truncatechars:20 }}
+                                    </span>
+                                    <span class="tooltip rounded-md shadow-lg px-2 py-1 bg-gray-800 text-white text-xs absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-50 max-w-xs">
+                                        {{ order.items.first.product.name }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">{{ order.items.first.quantity }}</td>
+                            <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">
+                                ₹ {{ order.total_amount|floatformat:0 }}
+                                <p>
+                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                        {{ order.payment.method|upper }}
+                                    </span>
+                                </p>
+                            </td>
+                            <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">
+                                {{ order.shipment.package_weight_kg }}kg
+                                <p>
+                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                        {{ order.shipment.package_length_cm }}x{{ order.shipment.package_width_cm }}x{{ order.shipment.package_height_cm }}cm
+                                    </span>
+                                </p>
+                            </td>
+                            <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">
+                                {{ order.awb_number|default:"-" }}
+                            </td>
+                            <td class="px-1 py-0.5 text-right">
+                                <span class="px-1 py-0.5 text-[9px] font-medium rounded bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+
+                    {% empty %}
+                        <tr>
+                            <td colspan="11"
+                                class="text-center py-4 text-gray-500 dark:text-gray-400">
+                                <div class="flex justify-center items-center h-full">
+                                    <svg class="w-5 h-5 mr-2"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                        </path>
+                                    </svg>
+                                    No data found
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination -->
+        {% include 'components/common/pagination.dj' %}
+    </div>
+
+    <!-- Modal -->
+    <div id="shipModal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-96 p-6 mx-4 transform -translate-y-1/2 -translate-x-1/2 top-1/2 left-1/2 fixed">
+            <h2 class="text-lg font-bold mb-4 dark:text-gray-100">Ship Selected Orders</h2>
+            <form id="shipForm"
+                action="{% url 'order_manager:ship-order' %}"
+                method="post">
+                {% csrf_token %}
+                <input type="hidden" name="order_ids" value="">
+                <label class="block mb-2 text-sm text-gray-700 dark:text-gray-300">Courier Partner</label>
+                <select name="courier"
+                        class="w-full mb-4 px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                    <option disabled>Select Courier</option>
+                    <option>Xpressbees</option>
+                    <option>Delhivery</option>
+                    <option>Bluedart</option>
+                </select>
+                <div class="flex justify-end gap-2">
+                    <button type="button"
+                            onclick="closeModal()"
+                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded dark:text-gray-100">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            onclick="shipSelectedOrders()"
+                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock body %}
+
+
+
+{% block js %}
+    <script defer src="{% static 'assets/js/apexcharts.js' %}"></script>
+    <script src="{% static 'assets/js/simple-datatables.js' %}"></script>
+
+    <script>
+        // Action Menu Handling
+        document.querySelectorAll('.action-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const menu = button.nextElementSibling;
+                const isOpen = !menu.classList.contains('hidden');
+
+                // Close all other menus
+                document.querySelectorAll('.action-menu').forEach(m => m.classList.add('hidden'));
+
+                // Toggle current menu
+                menu.classList.toggle('hidden', isOpen);
+            });
+        });
+
+        // Close menus when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.action-btn')) {
+                document.querySelectorAll('.action-menu').forEach(menu => {
+                    menu.classList.add('hidden');
+                });
+            }
+        });
+
+        // Checkbox Handling
+        function updateActionButtons() {
+            const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+            document.getElementById('actionButtons').classList.toggle('hidden', checkedCount === 0);
+        }
+
+        document.getElementById('selectAll').addEventListener('change', (e) => {
+            document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+                checkbox.checked = e.target.checked;
+            });
+            updateActionButtons();
+        });
+
+        document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', updateActionButtons);
+        });
+
+        // Modal Handling
+        function openModal() {
+            document.getElementById('shipModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('shipModal').classList.add('hidden');
+        }
+
+        // Pagination Handling
+        function getCurrentParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                page: parseInt(params.get('page')) || 1,
+                size: parseInt(params.get('page_size')) || 10
+            };
+        }
+
+        // Initialize page size from URL
+        window.addEventListener('load', () => {
+            const params = getCurrentParams();
+            document.getElementById('pageSize').value = params.size;
+        });
+
+        function navigatePage(action) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentSearch = document.getElementById('searchInput').value;
+            let page = parseInt(urlParams.get('page') || 1);
+
+            if (action === 'prev') {
+                page = Math.max(1, page - 1);
+            } else if (action === 'next') {
+                page = page + 1;
+            } else {
+                page = parseInt(action);
+            }
+
+            if (currentSearch) {
+                urlParams.set('q', currentSearch);
+            }
+
+            urlParams.set('page', page);
+            window.location.search = urlParams.toString();
+        }
+
+        function updatePageSize(size) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentSearch = document.getElementById('searchInput').value;
+
+            urlParams.set('page_size', size);
+            urlParams.set('page', 1); // Reset to first page
+
+            if (currentSearch) {
+                urlParams.set('q', currentSearch);
+            }
+            window.location.search = urlParams.toString();
+        }
+
+        // Add debounce to prevent too many requests
+        function handleSearch(value) {
+            updateSearchParams(value);
+        }
+
+        function updateSearchParams(searchTerm) {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            if (searchTerm.trim()) {
+                urlParams.set('q', searchTerm);
+            } else {
+                urlParams.delete('q');
+            }
+
+            // Reset to first page when searching
+            urlParams.set('page', 1);
+            window.location.search = urlParams.toString();
+        }
+
+        document.getElementById('searchInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                updateSearchParams(e.target.value);
+            }
+        });
+
+        const shipSelectedOrders = () => {
+            // Get all checked checkboxes with class 'ship-order-ids'
+            const selectedCheckboxes = document.querySelectorAll('.ship-order-ids:checked');
+
+            // Extract values (order IDs) from the checked checkboxes
+            const orderIds = Array.from(selectedCheckboxes).map(checkbox => checkbox.value);
+
+            // Find the hidden input inside the form
+            const hiddenInput = document.querySelector('#shipForm input[name="order_ids"]');
+
+            // Set the value of the hidden input to comma-separated order IDs
+            hiddenInput.value = orderIds.join(',');
+
+            // Submit the form programmatically
+            document.getElementById('shipForm').submit();
+        };
+    </script>
+{% endblock js %}

@@ -1,0 +1,357 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% load static %}
+
+{% block title %}
+    All Users
+{% endblock title %}
+
+
+{% block css %}
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .date-transition {
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            @apply bg-gray-100 dark:bg-gray-700;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            @apply bg-gray-400 dark:bg-gray-500;
+        }
+    </style>
+    <style>
+        /* Optimized tooltip styling */
+        .tooltip {
+            min-width: 120px;
+            pointer-events: none;
+            transform-origin: top center;
+            will-change: transform, opacity;
+        }
+
+        /* Dark mode compatibility */
+        .dark .tooltip {
+            background-color: #374151;
+            color: #f9fafb;
+        }
+    </style>
+{% endblock css %}
+
+
+{% block body %}
+
+    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+
+        <!-- Header Section -->
+        <div class="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b dark:border-gray-700 gap-4">
+            <!-- Left: Title + Search -->
+            <div class="flex items-center gap-4 w-full sm:w-auto">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">All Users</h2>
+                <input type="text"
+                       id="searchInput"
+                       name="q"
+                       placeholder="Search Users"
+                       value="{{ request.GET.q }}"
+                       onenter="handleSearch(this.value)"
+                       class="w-48 px-3 py-1.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400">
+            </div>
+
+            <!-- Right: Buttons -->
+            <div class="flex items-center gap-2 w-full sm:w-auto justify-end"></div>
+        </div>
+
+        <!-- Client Table Section -->
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">S No</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">EMAIL ID</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">MOBILE NO</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">IDIOTSHIP CODE</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">STATUS</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">CREATED ON</th>
+                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">UPDATED ON</th>
+                        <th class="px-2 py-1 text-right text-xs font-normal text-gray-600 dark:text-gray-300">ACTION</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    {% for client in clients %}
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <td class="px-2 py-1 text-xs text-left text-gray-700 dark:text-gray-300">{{ forloop.counter }}</td>
+                            <td class="px-2 py-1 text-xs text-center text-gray-700 dark:text-gray-300">
+                                <a href="{% url 'superadmin_panel:user-details' client.id %}" target="_blank">{{ client.email }}</a>
+                            </td>
+                            <td class="px-2 py-1 text-xs text-center text-gray-700 dark:text-gray-300">{{ client.contact_no }}</td>
+                            <td class="px-2 py-1 text-xs text-center text-gray-700 dark:text-gray-300">CL{{ client.shipzee_code }}</td>
+                            <td class="px-2 py-1 text-xs text-center">
+                                <div class="flex items-center justify-center space-x-1">
+                                    <form action="{% url 'superadmin_panel:change_client_status' client.id %}"
+                                          method="post">
+                                        {% csrf_token %}
+                                        {% if client.is_active %}
+                                            <button type="submit"
+                                                    class="px-2 py-0.5 bg-red-500 hover:bg-red-600 text-white rounded text-xs transition">
+                                                Deactivate
+                                            </button>
+                                        {% else %}
+                                            <button type="submit"
+                                                    class="px-2 py-0.5 bg-green-500 hover:bg-green-600 text-white rounded text-xs transition">
+                                                Activate
+                                            </button>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </td>
+
+                            <td class="px-2 py-1 text-xs text-center text-gray-700 dark:text-gray-300">{{ client.created_at|date:"d M Y, h:i A" }}</td>
+                            <td class="px-2 py-1 text-xs text-center text-gray-700 dark:text-gray-300">{{ client.updated_at|date:"d M Y, h:i A" }}</td>
+                            <td class="px-2 py-1 text-right">
+                                <a href="{% url 'superadmin_panel:user-details' client.id %}"
+                                   class="inline-block px-2 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700 transition">
+                                    View Details
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7"
+                                class="px-2 py-2 text-center text-xs text-gray-500 dark:text-gray-400">
+                                No clients found.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+
+        <!-- Pagination -->
+        <div class="p-4 border-t dark:border-gray-700">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-4">
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Show:</span>
+                    <select id="pageSize"
+                            onchange="updatePageSize(this.value)"
+                            class="px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                        <option value="10" {% if page_size == 10 %}selected{% endif %}>10</option>
+                        <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
+                        <option value="100" {% if page_size == 100 %}selected{% endif %}>100</option>
+                        <option value="200" {% if page_size == 200 %}selected{% endif %}>200</option>
+                        <option value="500" {% if page_size == 500 %}selected{% endif %}>500</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-1 flex-wrap">
+                    <button onclick="navigatePage('prev')"
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded text-sm dark:text-gray-100"
+                            {% if not page_obj.has_previous %}disabled{% endif %}>Previous</button>
+
+                    {% if page_obj.number > 3 %}
+                        <button onclick="navigatePage(1)"
+                                class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded text-sm dark:text-gray-100">
+                            1
+                        </button>
+                        <span class="px-2 text-gray-500 dark:text-gray-300">...</span>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+                            <button onclick="navigatePage({{ num }})"
+                                    class="px-3 py-1
+                                           {% if num == page_obj.number %}
+                                               bg-blue-100 text-blue-600
+                                           {% else %}
+                                               bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600
+                                           {% endif %}
+                                           rounded text-sm dark:text-gray-100">{{ num }}</button>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
+                        <span class="px-2 text-gray-500 dark:text-gray-300">...</span>
+                        <button onclick="navigatePage({{ page_obj.paginator.num_pages }})"
+                                class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded text-sm dark:text-gray-100">
+                            {{ page_obj.paginator.num_pages }}
+                        </button>
+                    {% endif %}
+
+                    <button onclick="navigatePage('next')"
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded text-sm dark:text-gray-100"
+                            {% if not page_obj.has_next %}disabled{% endif %}>Next</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock body %}
+
+
+
+{% block js %}
+    <script defer src="{% static 'assets/js/apexcharts.js' %}"></script>
+    <script src="{% static 'assets/js/simple-datatables.js' %}"></script>
+
+
+
+    <script>
+        // Action Menu Handling
+        document.querySelectorAll('.action-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const menu = button.nextElementSibling;
+                const isOpen = !menu.classList.contains('hidden');
+
+                // Close all other menus
+                document.querySelectorAll('.action-menu').forEach(m => m.classList.add('hidden'));
+
+                // Toggle current menu
+                menu.classList.toggle('hidden', isOpen);
+            });
+        });
+
+        // Close menus when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.action-btn')) {
+                document.querySelectorAll('.action-menu').forEach(menu => {
+                    menu.classList.add('hidden');
+                });
+            }
+        });
+
+        // Checkbox Handling
+        function updateActionButtons() {
+            const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+            document.getElementById('actionButtons').classList.toggle('hidden', checkedCount === 0);
+            document.getElementById('cancelActionButtons').classList.toggle('hidden', checkedCount === 0);
+        }
+
+        document.getElementById('selectAll').addEventListener('change', (e) => {
+            document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+                checkbox.checked = e.target.checked;
+            });
+            updateActionButtons();
+        });
+
+        document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', updateActionButtons);
+        });
+
+        // Modal Handling
+        function openModal() {
+            document.getElementById('shipModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('shipModal').classList.add('hidden');
+        }
+
+        // Pagination Handling
+        function getCurrentParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                page: parseInt(params.get('page')) || 1,
+                size: parseInt(params.get('page_size')) || 10
+            };
+        }
+
+        // Initialize page size from URL
+        window.addEventListener('load', () => {
+            const params = getCurrentParams();
+            document.getElementById('pageSize').value = params.size;
+        });
+
+        function navigatePage(action) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentSearch = document.getElementById('searchInput').value;
+            let page = parseInt(urlParams.get('page') || 1);
+
+            if (action === 'prev') {
+                page = Math.max(1, page - 1);
+            } else if (action === 'next') {
+                page = page + 1;
+            } else {
+                page = parseInt(action);
+            }
+
+            if (currentSearch) {
+                urlParams.set('q', currentSearch);
+            }
+
+            urlParams.set('page', page);
+            window.location.search = urlParams.toString();
+        }
+
+        function updatePageSize(size) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentSearch = document.getElementById('searchInput').value;
+
+            urlParams.set('page_size', size);
+            urlParams.set('page', 1); // Reset to first page
+
+            if (currentSearch) {
+                urlParams.set('q', currentSearch);
+            }
+            window.location.search = urlParams.toString();
+        }
+
+        // Add debounce to prevent too many requests
+        function handleSearch(value) {
+            updateSearchParams(value);
+        }
+
+        function updateSearchParams(searchTerm) {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            if (searchTerm.trim()) {
+                urlParams.set('q', searchTerm);
+            } else {
+                urlParams.delete('q');
+            }
+
+            // Reset to first page when searching
+            urlParams.set('page', 1);
+            window.location.search = urlParams.toString();
+        }
+
+        document.getElementById('searchInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                updateSearchParams(e.target.value);
+            }
+        });
+
+        const shipSelectedOrders = () => {
+            // Get all checked checkboxes with class 'ship-order-ids'
+            const selectedCheckboxes = document.querySelectorAll('.ship-order-ids:checked');
+
+            // Extract values (order IDs) from the checked checkboxes
+            const orderIds = Array.from(selectedCheckboxes).map(checkbox => checkbox.value);
+
+            // Find the hidden input inside the form
+            const hiddenInput = document.querySelector('#shipForm input[name="order_ids"]');
+
+            // Set the value of the hidden input to comma-separated order IDs
+            hiddenInput.value = orderIds.join(',');
+
+            // Submit the form programmatically
+            document.getElementById('shipForm').submit();
+        };
+    </script>
+
+{% endblock js %}

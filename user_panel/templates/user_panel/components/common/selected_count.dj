@@ -1,0 +1,52 @@
+<div id="selectedCountBox"
+     class="hidden mt-3 px-3 py-2 bg-blue-100 text-blue-800 rounded shadow text-sm font-medium">
+    Selected Rows: <span id="selectedCount">0</span>
+</div>
+
+<script>
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.row-checkbox');
+    const selectedCountBox = document.getElementById('selectedCountBox');
+    const selectedCount = document.getElementById('selectedCount');
+
+    function updateActionButtons() {
+        const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+
+        // Toggle action buttons (your existing code)
+        document.getElementById('actionButtons').classList.toggle('hidden', checkedCount === 0);
+        document.getElementById('cancelActionButtons').classList.toggle('hidden', checkedCount === 0);
+
+        // Update count box
+        selectedCount.textContent = checkedCount;
+        selectedCountBox.classList.toggle('hidden', checkedCount === 0);
+    }
+
+    // Handle "Select All"
+    selectAll.addEventListener('change', (e) => {
+        checkboxes.forEach(cb => cb.checked = e.target.checked);
+        updateActionButtons();
+    });
+
+    // Handle individual checkboxes
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+            if (!cb.checked) {
+                selectAll.checked = false;
+            } else if (document.querySelectorAll('.row-checkbox:checked').length === checkboxes.length) {
+                selectAll.checked = true;
+            }
+            updateActionButtons();
+        });
+    });
+
+    document.getElementById('selectAll').addEventListener('change', (e) => {
+        document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+            checkbox.checked = e.target.checked;
+        });
+        updateActionButtons();
+    });
+
+    document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updateActionButtons);
+    });
+</script>

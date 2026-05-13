@@ -1,0 +1,456 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+    NDR
+{% endblock title %}
+
+{% load static %}
+
+{% block css %}
+    <style>
+        /* Tighter padding on all cells */
+        #myTable th,
+        #myTable td {
+            padding: 0.25rem 0.5rem;
+            /* 4px top/bottom, 8px left/right */
+        }
+    </style>
+{% endblock css %}
+
+{% block body %}
+    <div x-data="basic">
+        <div class="panel mt-6">
+            <h5 class="font-semibold text-lg dark:text-white-light">Weight Discrepancies</h5>
+
+
+
+            <!-- Filter Toggle Icon with Label -->
+            <div class="flex justify-end mb-6">
+                <button id="filterToggleBtn"
+                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-sm"
+                        title="Filter Orders">
+                    <svg class="w-5 h-5 text-indigo-600"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 019 17v-3.586L3.293 6.707A1 1 0 013 6V4z" />
+                    </svg>
+                    <span id="filterToggleText" class="text-indigo-600 font-semibold">Filter</span>
+                </button>
+            </div>
+
+            <!-- Collapsible Filter Section -->
+            <form id="filterForm" action="#" method="get">
+                <input type="hidden" name="status" value="{{ request.GET.status }}" />
+                <div id="filterSection"
+                     class="hidden mb-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                        <!-- Date Range -->
+                        <div>
+                            <label for="filter-date-range"
+                                   class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                Date Range
+                            </label>
+                            <select name="date_range"
+                                    id="filter-date-range"
+                                    class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                <option value="today">Today</option>
+                                <option value="7days">Last 7 Days</option>
+                                <option value="thismonth">This Month</option>
+                                <option value="lastmonth">Last Month</option>
+                                <option value="custom">Custom Date</option>
+                            </select>
+                            <!-- Custom Date Inputs -->
+                            <div id="customDateInputs" class="hidden mt-3 space-y-2">
+                                <input type="date"
+                                       name="start_date"
+                                       id="filter-start-date"
+                                       class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none" />
+                                <input type="date"
+                                       name="end_date"
+                                       id="filter-end-date"
+                                       class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none" />
+                            </div>
+                        </div>
+
+                        <!-- Order ID(s) -->
+                        {% comment %} <div>
+                            <label for="order-ids" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                Order ID(s)
+                            </label>
+                            <input type="text" id="order-ids" name="order_ids" placeholder="ORD-00123, ORD-00124" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                        </div> {% endcomment %}
+
+                        <!-- AWB No(s) -->
+                        <div>
+                            <label for="awb-nos"
+                                   class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                AWB No(s)
+                            </label>
+                            <input type="text"
+                                   id="awb-nos"
+                                   name="awb_nos"
+                                   placeholder="AWB12345, AWB12346"
+                                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                        </div>
+
+                        <!-- Method -->
+                        {% comment %} <div>
+                            <label for="method" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                Method
+                            </label>
+                            <select id="method" name="method" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                <option value="prepaid">Prepaid</option>
+                                <option value="cod">COD</option>
+                            </select>
+                        </div> {% endcomment %}
+
+                        <!-- Attempts -->
+                        {% comment %} <div>
+                            <label for="attempts" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                Attempts
+                            </label>
+                            <select id="attempts" name="attempts" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                <option value="1">Attempt 1</option>
+                                <option value="2">Attempt 2</option>
+                                <option value="3">Attempt 3</option>
+                            </select>
+                        </div> {% endcomment %}
+
+                        <!-- Channel -->
+                        {% comment %} <div class="md:col-span-2">
+                            <label for="channel" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                Channel
+                            </label>
+                            <select id="channel" name="channel" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                <option value="email">Email</option>
+                                <option value="social">Social</option>
+                                <option value="website">Website</option>
+                                <!-- Add more options as needed -->
+                            </select>
+                        </div> {% endcomment %}
+
+                        <!-- Product Name -->
+                        <div>
+                            <label for="product-name"
+                                   class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                Product Name
+                            </label>
+                            <input type="text"
+                                   id="product-name"
+                                   name="product_name"
+                                   placeholder="Example: T-Shirt, Mug"
+                                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
+                        </div>
+
+                        <!-- Courier -->
+                        <div>
+                            <label for="courier"
+                                   class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                Courier
+                            </label>
+                            <select id="courier"
+                                    name="courier"
+                                    class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500">
+                                <option value="">Select Courier</option>
+                                <option value="delhivery">Delhivery</option>
+                                <option value="ekart">Ekart</option>
+                                <option value="xpressbees">XpressBees</option>
+                                <option value="bluedart">Blue Dart</option>
+                                <option value="ecom">Ecom Express</option>
+                                <!-- Add more couriers as needed -->
+                            </select>
+                        </div>
+
+                    </div>
+                    <!-- Submit & Cancel Buttons -->
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button"
+                                id="filterCancelBtn"
+                                class="px-5 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-200">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                                id="filterSubmitBtn"
+                                class="px-5 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transform hover:scale-105 transition-transform duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-green-300">
+                            Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <!-- Alpine.js for interactivity -->
+
+
+            <div x-data="{ activeTab: (new URLSearchParams(window.location.search)).get('status') || 'action-required', navigate(status) { this.activeTab = status; window.location.href = `?status=${status}`; } }"
+                 class="w-full">
+                <ul class="flex border-b border-gray-200 dark:border-gray-700">
+                    <template x-for="(tab, index) in [ { id: 'all', label: 'All' }, { id: 'action-required', label: 'Action Required' }, { id: 'accepted', label: 'Accepted' }, { id: 'open-disputes', label: 'Open Disputes' }, { id: 'closed-disputes', label: 'Closed Disputes' } ]"
+                              :key="index">
+                        <li class="mr-4">
+                            <a href="#"
+                               @click.prevent="navigate(tab.id)"
+                               :class="activeTab === tab.id ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'"
+                               class="inline-block py-3 px-4 font-medium text-sm relative transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-t-lg before:absolute before:bottom-0 before:left-0 before:w-full before:h-0.5 before:transition-all before:duration-300"
+                               :style="activeTab === tab.id ? 'border-bottom: 2px solid;' : 'border-bottom-color: transparent;'">
+                                <span x-text="tab.label"></span>
+                                <span :class="activeTab === tab.id ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                                      class="ml-2 py-1 px-2 rounded-full text-xs">
+                                    <span x-text="tab.label.match(/\\(\\d+\\)/)[0]"></span>
+                                </span>
+                            </a>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+
+            <!-- Modal -->
+            {% comment %} <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div @click.away="closeModal" class="bg-white dark:bg-gray-800 p-4 rounded shadow w-full max-w-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold">NDR Submit Form</h2>
+                        <button @click="closeModal" class="text-gray-500 hover:text-gray-800 text-lg">&times;</button>
+                    </div>
+
+                    <form @submit.prevent="submitNDR">
+                        <div class="mb-3">
+                            <label class="block mb-1">Order ID:</label>
+                            <input type="text" x-model="modalData.orderId" class="w-full px-3 py-2 border rounded" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block mb-1">Choose Action:</label>
+                            <select class="w-full px-3 py-2 border rounded" required>
+                                <option value="">-- Select Action --</option>
+                                <option>RTO</option>
+                                <option>Re-Attempt</option>
+                                <option>Hold For 48Hrs</option>
+                                <option>Update Address</option>
+                                <option>Update Phone Number</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block mb-1">Re-Attempt Date:</label>
+                            <input type="datetime-local" class="w-full px-3 py-2 border rounded">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="block mb-1">Remark:</label>
+                            <textarea class="w-full px-3 py-2 border rounded" rows="2"></textarea>
+                                        </div>
+
+                                        <div class="text-right">
+                                    <button type="submit"
+                                            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Submit</button>
+                        </div>
+                    </form>
+                </div>
+</div> {% endcomment %}
+
+<!-- Hide any residual overflow -->
+<div class="overflow-x-hidden">
+    <table id="myTable"
+           class="min-w-full table-auto text-s md:text-s whitespace-nowrap">
+        <!-- Populated by simple-datatables -->
+    </table>
+</div>
+</div>
+</div>
+{% endblock body %}
+
+{% block js %}
+    <script defer src="{% static 'assets/js/apexcharts.js' %}"></script>
+    <script src="{% static 'assets/js/simple-datatables.js' %}"></script>
+
+    <script>
+        document.addEventListener("alpine:init", () => {
+            Alpine.data("basic", () => ({
+                datatable: null,
+
+                modalData: null,
+                showModal: false,
+
+                init() {
+                    this.datatable = new simpleDatatables.DataTable('#myTable', {
+                        data: {
+                            headings: [
+                                `<input type="checkbox" @click="toggleAll($event)" />`,
+                                "CHANNEL",
+                                "ORDER ID",
+                                "DATE",
+                                "CUSTOMER",
+                                "AWBNO.",
+                                "PRODUCT",
+                                "WT",
+                                "APPLIED WT.",
+                                "WT. CHARGE",
+                                "STATUS"
+                            ],
+                            data: [
+                                /*[
+                                    '', 'Email', 'ORD-10001', '2025-04-01',
+                                    'Alice Johnson', 'AWB123456789', 'T-Shirt', '0.5kg', '1kg', '$30.00', 'Delivered'
+                                ],
+                                [
+                                    '', 'Website', 'ORD-10002', '2025-04-02',
+                                    'Bob Smith', 'AWB987654321', 'Mug', '0.4kg', '0.5kg', '$25.00', 'In Transit'
+                                ],
+                                [
+                                    '', 'Social', 'ORD-10003', '2025-04-03',
+                                    'Charlie Brown', 'AWB567890123', 'Notebook', '0.3kg', '0.3kg', '$15.00', 'Pending'
+                                ]*/
+                            ]
+                        },
+                        searchable: false,
+                        perPage: 10,
+                        perPageSelect: [10, 20, 30, 50, 100],
+                        columns: [{
+                            select: 0,
+                            sortable: false,
+                            className: 'px-2 py-1',
+                            render: (data, cell, row) =>
+                                `<input type="checkbox" class="row-checkbox" />`
+                        }],
+                        firstLast: true,
+                        firstText: '<svg>…</svg>',
+                        lastText: '<svg>…</svg>',
+                        prevText: '<svg>…</svg>',
+                        nextText: '<svg>…</svg>',
+                        labels: {
+                            perPage: "{select}"
+                        },
+                        layout: {
+                            top: "{search}",
+                            bottom: "{info}{select}{pager}"
+                        }
+                    });
+
+                    this.datatable.on('datatable.sort', () => this.initChart());
+                    this.datatable.on('datatable.page', () => this.initChart());
+                    this.datatable.on('datatable.perpage', () => this.initChart());
+                    setTimeout(() => this.initChart(), 300);
+
+                    // ✅ Delegated click event for dynamically added buttons
+                    document.querySelector('#myTable').addEventListener('click', (e) => {
+                        if (e.target.classList.contains('action-btn')) {
+                            const button = e.target;
+                            this.modalData = {
+                                orderId: button.getAttribute('data-order-id'),
+                                date: button.getAttribute('data-date'),
+                                customer: button.getAttribute('data-customer')
+                            };
+                            this.showModal = true;
+                        }
+                    });
+                },
+
+                toggleAll(event) {
+                    const checked = event.target.checked;
+                    document.querySelectorAll('.row-checkbox')
+                        .forEach(chk => chk.checked = checked);
+                },
+
+                initChart() {
+                    document.querySelectorAll('.progress-chart').forEach(el => {
+                        el.innerHTML = '';
+                        new ApexCharts(el, this.chart_options).render();
+                    });
+                },
+
+                get chart_options() {
+                    return {
+                        series: [{
+                            data: [21, 9, 36, 12, 44, 25, 59]
+                        }],
+                        chart: {
+                            type: 'line',
+                            height: 30,
+                            sparkline: {
+                                enabled: true
+                            }
+                        },
+                        stroke: {
+                            curve: 'smooth',
+                            width: 2
+                        },
+                        markers: {
+                            size: [4, 7],
+                            strokeWidth: 0
+                        },
+                        colors: [this.randomColor()],
+                        grid: {
+                            padding: {
+                                top: 5,
+                                bottom: 5
+                            }
+                        },
+                        tooltip: {
+                            x: {
+                                show: false
+                            },
+                            y: {
+                                title: {
+                                    formatter: () => ''
+                                }
+                            }
+                        }
+                    };
+                },
+
+                randomColor() {
+                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    return c[Math.floor(Math.random() * c.length)];
+                },
+
+                closeModal() {
+                    this.showModal = false;
+                    this.modalData = null;
+                },
+
+                submitNDR() {
+                    console.log('Submitted:', this.modalData);
+                    this.closeModal();
+                }
+            }));
+        });
+    </script>
+
+
+    <!-- JavaScript: Toggle, Date Logic & Buttons -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const filterToggleBtn = document.getElementById("filterToggleBtn");
+            const filterSection = document.getElementById("filterSection");
+            const filterDateRange = document.getElementById("filter-date-range");
+            const customDateInputs = document.getElementById("customDateInputs");
+            const filterCancelBtn = document.getElementById("filterCancelBtn");
+            const filterForm = document.getElementById("filterForm");
+
+            // Toggle filter section
+            filterToggleBtn.addEventListener("click", () => {
+                filterSection.classList.toggle("hidden");
+            });
+
+            // Show/hide custom date inputs
+            filterDateRange.addEventListener("change", (e) => {
+                if (e.target.value === 'custom') {
+                    customDateInputs.classList.remove('hidden');
+                } else {
+                    customDateInputs.classList.add('hidden');
+                }
+            });
+
+            // Cancel: clear all fields
+            filterCancelBtn.addEventListener("click", () => {
+                filterForm.reset();
+                customDateInputs.classList.add('hidden');
+            });
+
+            // Submit: default form GET submission to action endpoint
+        });
+    </script>
+
+
+{% endblock js %}

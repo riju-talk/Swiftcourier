@@ -1,0 +1,388 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Shipping Label</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" />
+
+    <style>
+      /* PAGE CONTROL - REQUIRED FOR MULTI PAGES */
+      @page {
+        size: 100mm 150mm;
+        margin: 0;
+      }
+      
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #f0f0f0;
+      }
+      
+      /* Each label page */
+      .label-page {
+        width: 100mm;
+        height: 150mm;
+        overflow: hidden;
+        page-break-after: always;
+        background: white;
+      }
+      
+      .label-page:last-child {
+        page-break-after: auto;
+      }
+      
+      /* Your original styling restored INSIDE label-content */
+      .label-content {
+        width: 100%;
+        height: 150mm;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        overflow: hidden;
+        box-sizing: border-box;
+        font-family: 'Roboto', Arial, sans-serif;
+      }
+      
+      /* Reset everything inside */
+      .label-content * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-size: 8px !important;
+        line-height: 1.2;
+      }
+      
+      /* --- BEGIN RESTORED ORIGINAL CSS --- */
+      
+      .ship-to-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 4px;
+        padding-bottom: 3px;
+        border-bottom: 1px dashed #ddd;
+      }
+      
+      .address-block {
+        flex: 1;
+        text-align: left;
+      }
+      
+      .section-title {
+        font-weight: bold;
+        margin-bottom: 2px;
+        color: #1565c0;
+        font-size: 8px !important;
+        text-transform: uppercase;
+        letter-spacing: 0.2px;
+        border-bottom: 1px solid #e3f2fd;
+        padding-bottom: 1px;
+      }
+      
+      .address-block .name {
+        font-weight: 700;
+        font-size: 9px !important;
+        color: #0d47a1;
+        margin-bottom: 1px;
+      }
+      
+      .address-block div {
+        margin-bottom: 1px;
+        color: #37474f;
+      }
+      
+      .company-logo {
+        height: 25px;
+        margin-bottom: 3px;
+      }
+      
+      .order-id {
+        font-weight: bold;
+        color: #1565c0;
+        background: #e3f2fd;
+        padding: 2px 4px;
+        border-radius: 2px;
+      }
+      
+      .details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 4px;
+        margin: 4px 0;
+      }
+      
+      .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 1px 0;
+        border-bottom: 1px dotted #ccc;
+      }
+      
+      .detail-label {
+        font-weight: bold;
+        min-width: 45px;
+        color: #1565c0;
+      }
+      
+      .courier-info {
+        display: flex;
+        justify-content: space-between;
+        background: #e3f2fd;
+        padding: 3px;
+        border-radius: 2px;
+        margin: 4px 0;
+        border: 1px solid #90caf9;
+      }
+      
+      .barcode {
+        text-align: center;
+        margin: 4px 0;
+        padding: 3px;
+      }
+      
+      .barcode-img {
+        height: 45px;
+        max-width: 95%;
+        display: block;
+        margin: 2px auto;
+      }
+      
+      .payment-info {
+        display: flex;
+        justify-content: space-between;
+        background: #fff8e1;
+        padding: 3px;
+        border-radius: 2px;
+        margin: 4px 0;
+        font-weight: bold;
+        border: 1px solid #ffd54f;
+      }
+      
+      .product-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 4px 0;
+        font-size: 7px !important;
+      }
+      
+      .product-table th {
+        background: #1565c0;
+        color: white;
+        text-align: left;
+        padding: 3px;
+      }
+      
+      .product-table td {
+        padding: 2px;
+        border-bottom: 1px solid #ddd;
+      }
+      
+      .product-table tr:nth-child(even) {
+        background-color: #f5f5f5;
+      }
+      
+      .total-row {
+        font-weight: bold;
+        background: #c8e6c9 !important;
+      }
+      
+      .address-row {
+        display: flex;
+        gap: 5px;
+        margin-top: 4px;
+      }
+      
+      .address-col {
+        flex: 1;
+        padding: 4px;
+        background: #e3f2fd;
+        border-radius: 2px;
+        border: 1px solid #90caf9;
+      }
+      
+      .address-col h3 {
+        font-size: 8px !important;
+        margin-bottom: 2px;
+        color: #1565c0;
+        border-bottom: 1px solid #bbdefb;
+        padding-bottom: 1px;
+      }
+      
+      .footer-note {
+        font-size: 6px !important;
+        color: #546e7a;
+        line-height: 1.2;
+        padding: 4px;
+        background: #f5f5f5;
+        border-radius: 2px;
+        margin-top: 4px;
+        border: 1px solid #ddd;
+      }
+      
+      .powered-by {
+        text-align: center;
+        margin-top: 4px;
+        padding-top: 3px;
+        border-top: 1px dashed #bbdefb;
+        font-weight: bold;
+        color: #1976d2;
+        font-size: 7px !important;
+      }
+      
+      /* --- END RESTORED CSS --- */
+    </style>
+  </head>
+
+  <body>
+    <div class="label-page">
+      <div class="label-content">
+        <!-- your original HTML inside here, unchanged -->
+
+        <div class="ship-to-container">
+          <div class="address-block">
+            <div>
+              <div class="name">{{ order.shipping_address.name }}</div>
+              <div class="address-line">{{ order.shipping_address.line1 }}</div>
+              {% if order.shipping_address.line2 %}
+                <div class="address-line">{{ order.shipping_address.line2 }}</div>
+              {% endif %}
+              <div class="address-line">{{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.pin_code }}</div>
+              {% if order.user.label_setting.show_customer_mobile %}
+                <div class="address-line">Mob: {{ order.shipping_address.phone }}</div>
+              {% endif %}
+              {% if order.shipping_address.alt_phone %}
+                <div class="address-line">Alt. Mob: {{ order.shipping_address.alt_phone }}</div>
+              {% endif %}
+              {% if order.shipping_address.email %}
+                <div class="address-line">Email: {{ order.shipping_address.email }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          {% if order.user.label_setting.show_logo and order.user.label_setting.logo %}
+            <div class="logo-container">
+              <img src="{{ order.user.label_setting.logo.url }}" class="company-logo" />
+              <div class="order-id">ORDER: {{ order.order_number }}</div>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="details-grid">
+          <div class="detail-item">
+            <span class="detail-label">Dimensions:</span>
+            <span>{{ order.shipment.package_length_cm }}×{{ order.shipment.package_width_cm }}×{{ order.shipment.package_height_cm }} cm</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Weight:</span>
+            <span>{{ order.shipment.package_weight_kg }} kg</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Date:</span>
+            <span>{{ order.order_date|date:'d/m/Y' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Order ID:</span>
+            <span>{{ order.order_number }}</span>
+          </div>
+        </div>
+
+        <div class="courier-info">
+          <div>
+            <div class="section-title">COURIER</div>
+            <div>{{ order.logistic_partner.name }}</div>
+          </div>
+          <div>
+            <div class="section-title">AWB NUMBER</div>
+            <div>{{ order.awb_number }}</div>
+          </div>
+          {% if order.route_code %}
+            <div>
+              <div class="section-title">ROUTE CODE</div>
+              <div>{{ order.route_code }}</div>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="barcode">
+          <div>SCAN TO TRACK SHIPMENT</div>
+          <img src="{{ order.barcode.url }}" alt="Barcode" class="barcode-img" />
+        </div>
+
+        <div class="payment-info">
+          <div>PAYMENT: {{ order.payment.get_method_display }}</div>
+          {% if order.payment.method == 'cod' %}
+            <div>Rs {{ order.total_amount }}</div>
+          {% endif %}
+        </div>
+
+        <table class="product-table">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Amt</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order_item in order.items.all %}
+              <tr>
+                <td>{{ order_item.sku_code }}</td>
+                <td>{{ order_item.product.name }}</td>
+                <td>{{ order_item.quantity }}</td>
+                <td>{{ order_item.total_price }}</td>
+              </tr>
+            {% endfor %}
+            <tr class="total-row">
+              <td colspan="1">Discount</td>
+              <td>{{ order.payment.discount }}</td>
+              <td colspan="1">Total</td>
+              <td>{{ order.total_amount }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        {% if order.user.label_setting.show_pickup_address %}
+          <div class="address-row">
+            <div class="address-col">
+              <h3>PICKUP ADDRESS:</h3>
+              <div>{{ order.hub.name }}</div>
+              <div>{{ order.hub.address_line1 }}</div>
+              <div>{{ order.hub.city }}, {{ order.hub.state }}</div>
+              <div>Mob: {{ order.hub.phone }}</div>
+            </div>
+
+            <div class="address-col">
+              <h3>RETURN ADDRESS:</h3>
+              <div>{{ order.hub.name }}</div>
+              <div>{{ order.hub.address_line1 }}</div>
+              <div>{{ order.hub.city }}, {{ order.hub.state }}</div>
+              <div>Mob: {{ order.hub.phone }}</div>
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="footer-note">
+          {% if order.user.label_setting.show_support_info %}
+            <p>
+              <strong>Support:</strong>
+              {{ order.user.label_setting.support_phone }} |
+              {{ order.user.label_setting.support_email }}
+            </p>
+          {% endif %}
+          <p>This is a computer-generated shipping label. No signature is required. All disputes are subject to the jurisdiction of Delhi courts. Returns must comply with our store policy.</p>
+        </div>
+
+        <div class="powered-by">
+          {% if order.user.label_setting.show_powered_by %}
+            <span>Powered by IdiotShip</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,218 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% load static %}
+
+{% load humanize %}
+
+{% block title %}
+    Shipping Charges
+{% endblock title %}
+
+
+{% block css %}
+    <style>
+        .page-container {
+            width: 100%;
+            padding: 16px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            background-color: var(--bg-color, #ffffff);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            table-layout: auto;
+            /* auto ensures responsive equal spacing */
+        }
+
+        thead {
+            background-color: var(--thead-bg, #f9fafb);
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color, #e5e7eb);
+            white-space: nowrap;
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--th-color, #374151);
+        }
+
+        td {
+            color: var(--td-color, #111827);
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .header-actions h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--header-color, #111827);
+        }
+
+        .header-actions input {
+            border: 1px solid var(--border-color, #d1d5db);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 14px;
+        }
+
+        .header-actions button {
+            background: #2563eb;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted, #6b7280);
+        }
+
+        /* Sticky header */
+        .table-wrapper thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        /* Dark theme */
+        body.dark-theme {
+            --bg-color: #111827;
+            --thead-bg: #1f2937;
+            --border-color: #374151;
+            --th-color: #e5e7eb;
+            --td-color: #d1d5db;
+            --header-color: #f9fafb;
+            --text-muted: #9ca3af;
+        }
+    </style>
+{% endblock css %}
+
+
+{% block body %}
+    <div class="page-container">
+        <!-- Header -->
+        <div class="header-actions">
+            <h2>Shipping Charges</h2>
+            <div class="flex gap-2">
+                <input type="text" placeholder="Search Order" id="searchOrder" />
+                <button id="exportOrderButton">Export</button>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrapper">
+            <table id="ordersTable">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Order ID</th>
+                        <th>Idiotship ID</th>
+                        <th>Date</th>
+                        <th>AWB</th>
+                        <th>Courier</th>
+                        <th>Status</th>
+                        <th>Freight charges</th>
+                        <th>RTO charges</th>
+                        <th>GST Amount</th>
+                        <th>Total Freight</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if orders_with_freight %}
+                        {% for item in orders_with_freight %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ item.order.order_number }}</td>
+                                <td>{{ item.order.get_order_id }}</td>
+                                <td>{{ item.order.placed_at|date:"d M Y" }}</td>
+                                <td>{{ item.order.awb_number }}</td>
+                                <td>
+                                    {% if item.order.logistic_partner %}
+                                        {{ item.order.logistic_partner.name }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.order.get_status_display }}</td>
+                                <td>{{ item.freight|floatformat:2 }}</td>
+                                <td>{{ item.rto_charges|default:"-" }}</td>
+                                <td>{{ item.freight_gst|floatformat:2 }}</td>
+                                <td>{{ item.total_freight|floatformat:2 }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="10" class="no-orders">No orders found.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Simple search functionality
+        document.getElementById('searchOrder').addEventListener('keyup', function() {
+            const searchText = this.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const orderId = row.cells[1]?.textContent.toLowerCase();
+                const awb = row.cells[4]?.textContent.toLowerCase();
+                if (orderId?.includes(searchText) || awb?.includes(searchText)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    <script>
+        document.getElementById("exportOrderButton").addEventListener("click", function() {
+            let table = document.getElementById("ordersTable");
+            let rows = table.querySelectorAll("tr");
+            let csv = [];
+
+            rows.forEach(row => {
+                let cols = row.querySelectorAll("th, td");
+                let rowData = [];
+                cols.forEach(col => {
+                    // escape double quotes inside text
+                    let data = col.innerText.replace(/"/g, '""');
+                    rowData.push('"' + data + '"');
+                });
+                csv.push(rowData.join(","));
+            });
+
+            // create downloadable CSV file
+            let csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
+            let link = document.createElement("a");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", "orders_export.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    </script>
+{% endblock body %}

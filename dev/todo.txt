@@ -1,0 +1,22 @@
+How many orders per day/minute do you handle at peak?
+What’s your peak concurrency for background jobs?
+What’s your average processing time per order?
+Is your system monolithic or microservices?
+How do you separate order ingestion, processing, and courier API calls?
+Do you use async views in Django or keep everything in Celery?
+How do you structure Celery queues? (single vs multiple queues)
+What’s your worker concurrency setup?
+How do you prevent long-running tasks from blocking others?
+Do you batch tasks or process one order per task?
+Horizontal scaling (more workers) or vertical (bigger machines)?
+Do you auto-scale workers? Based on what metric (CPU, queue length)?
+What database are you using?
+How do you handle high write loads?
+Do you use read replicas?
+How do you avoid DB locking when many orders are processed?
+How do you handle slow or failing courier APIs?
+Do you rate-limit requests?
+What happens if a worker crashes mid-task?
+How do you ensure no orders are lost or duplicated?
+What’s your full stack? (infra, orchestration, cloud provider)
+Are you using Docker/Kubernetes?

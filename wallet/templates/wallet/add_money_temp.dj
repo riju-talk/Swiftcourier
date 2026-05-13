@@ -1,0 +1,27 @@
+{% extends 'components/layouts/layout.dj' %}
+
+{% block title %}
+  Add Money - Wallet
+{% endblock %}
+
+{% load static %}
+
+{% block css %}
+  <style>
+    .qr-image {
+      height: 90vh; /* 90% of viewport height */
+      width: auto; /* keep aspect ratio */
+      display: block;
+      margin: 0 auto; /* center horizontally */
+      object-fit: contain; /* prevent distortion */
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+  <image src="{% static 'images/shipzee_upi_qr_codejpeg.png' %}" alt="IdiotShip UPI QR Code" class="qr-image" />
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+    Add Money - Wallet
+{% endblock title %}
+
+{% load static %}
+
+{% block css %}
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+{% endblock css %}
+
+{% block body %}
+    <!-- Center Wrapper -->
+    <div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 transition-colors">
+
+        <!-- Add Money Box -->
+        <div x-data="{ amount: '' }"
+             class="w-full max-w-md p-8 space-y-6 rounded-3xl shadow-xl bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700 transition-colors">
+
+                <!-- Header -->
+                <div class="text-center">
+                    <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Add Money</h1>
+                    <p class="mt-1 text-gray-500 dark:text-gray-400">Select or enter the amount you want to add</p>
+                </div>
+
+                <!-- Amount Input -->
+                <div class="space-y-1">
+                    <label for="amount"
+                           class="block text-sm font-medium text-gray-700 dark:text-gray-300">Amount (₹)</label>
+                    <input id="amount"
+                           type="number"
+                           x-model.number="amount"
+                           placeholder="e.g. 1500"
+                           class="w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white transition-colors" />
+                </div>
+
+                <!-- Preset Buttons -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <template x-for="preset in [500,1000,2000,5000]" :key="preset">
+                        <button type="button"
+                                @click="amount = preset"
+                                :class="amount === preset ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-gray-200 text-gray-800 border-gray-300 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white'"
+                                class="border rounded-xl py-2 font-semibold transition-colors">
+                            ₹<span x-text="preset"></span>
+                        </button>
+                    </template>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="button"
+                        id="rzp-button"
+                        :disabled="!amount"
+                        class="w-full py-3 rounded-xl font-bold text-lg text-white bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-4 focus:outline-none focus:ring-blue-400 transition-all">
+                    Add ₹<span x-text="amount || ''"></span>
+                </button>
+        </div>
+    </div>
+{% endblock body %}
+
+{% block js %}
+<script>
+    document.getElementById('rzp-button').onclick = function(e) {
+        var amount = document.getElementById('amount').value;
+        if (!amount) {
+            alert("Please enter an amount!");
+            return;
+        }
+
+        // Step 1: Create an order
+        fetch(`/wallet/create-razorpay-transaction/?amount=${amount}`, { method: 'GET' })
+            .then(response => response.json())
+            .then(order => {
+                // Step 2: Configure Razorpay options
+                const options = {
+                    "key": "{{ key_id }}", // Razorpay key ID from backend
+                    "amount": order.amount, // Order amount in paise
+                    "currency": "INR",
+                    "name": "IdiotShip",
+                    "image": "https://app.idiotship.tech/static/images/logo.png",
+                    "description": "Payment for order #" + order.order_id,
+                    "prefill": {
+                        "name": "{{ request.user.get_full_name }}",
+                        "email": "{{ request.user.email }}",
+                        "contact": "{{ request.user.contact_no }}"
+                    },
+                    "order_id": order.order_id, // Pass order_id from backend
+                    "callback_url": "{{ callback_url }}", // Callback URL from backend
+                    "notes": {
+                        "transaction_id": order.extra_info.transaction_id // Pass transaction ID for reference
+                    }
+                };
+
+                // Step 3: Open Razorpay Checkout
+                const rzp = new Razorpay(options);
+                rzp.open();
+            })
+            .catch(err => alert("Error creating order! Error: " + err));
+        };
+    </script>
+{% endblock js %}

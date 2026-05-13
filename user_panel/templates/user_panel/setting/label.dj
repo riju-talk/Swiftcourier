@@ -1,0 +1,843 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+    Label Settings
+{% endblock title %}
+
+{% load static %}
+
+{% block css %}
+    <style></style>
+{% endblock css %}
+
+{% block body %}
+
+
+    <div x-data="{ tab: 'global' }" class="w-full space-y-6 px-4 py-6">
+        <!-- Tabs -->
+        <div class="flex border-b border-gray-300 dark:border-gray-700">
+            <button @click="tab = 'global'"
+                    :class="tab === 'global' ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'"
+                    class="px-4 py-2 font-semibold transition-colors">Global Label Setting</button>
+            <button @click="tab = 'label'"
+                    :class="tab === 'label' ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'"
+                    class="px-4 py-2 font-semibold transition-colors">Label Setting</button>
+        </div>
+
+        <!-- Global Label Setting Tab -->
+        <div x-show="tab === 'global'" x-transition class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Left Section (Global) -->
+                <div class="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+                    <!-- CRM Panel -->
+                    <div class="w-full max-w-2xl bg-white dark:bg-gray-900 p-6 rounded-xl shadow-xl space-y-4 transition-colors duration-300">
+                        <form id="preferencesForm"
+                              method="post"
+                              action="{% url 'account:save_label_setting' %}"
+                              enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <!-- Show Logo on Label -->
+                            <div class="flex items-start gap-4">
+                                <label class="relative cursor-pointer flex items-start gap-3">
+                                    <input type="checkbox"
+                                           id="showLogoCheckbox"
+                                           name="show_logo"
+                                           class="sr-only peer"
+                                           {% if label_setting.show_logo %}checked{% endif %}>
+                                    <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                        <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             stroke-width="3"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <p class="text-sm font-medium text-gray-900 dark:text-white">Show Logo on Label</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            Enable branding with your custom
+                                            logo.
+                                        </p>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- Upload Field -->
+                            <div id="logoUploadWrapper" class="hidden ml-8">
+                                <label class="block mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
+                                    Upload
+                                    Logo
+                                </label>
+                                <input type="file"
+                                       accept="image/*"
+                                       id="logoUploader"
+                                       name="logo"
+                                       class="block w-full text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600" />
+                            </div>
+
+                            <!-- Settings Checkboxes -->
+                            <div class="space-y-4">
+                                <!-- Checkbox Items -->
+                                <div class="flex items-start gap-4">
+                                    <label class="relative cursor-pointer flex items-start gap-3">
+                                        <input type="checkbox"
+                                               {% if label_setting.show_support_info %}checked{% endif %}
+                                               id="showSupportInfo"
+                                               name="show_support_info"
+                                               class="sr-only peer">
+                                        <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                            <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 stroke-width="3"
+                                                 viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white">Show Support Info</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                Display support contact
+                                                information on label.
+                                            </p>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div id="supportInfoFields" class="hidden ml-8 space-y-4">
+                                    <div>
+                                        <label class="block mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
+                                            Support
+                                            Email
+                                        </label>
+                                        <input type="email"
+                                               id="supportEmail"
+                                               name="support_email"
+                                               class="block w-full text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                                    </div>
+                                    <div>
+                                        <label class="block mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
+                                            Support
+                                            Mobile
+                                        </label>
+                                        <input type="tel"
+                                               id="supportMobile"
+                                               name="support_mobile"
+                                               class="block w-full text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-4">
+                                    <label class="relative cursor-pointer flex items-start gap-3">
+                                        <input type="checkbox"
+                                               {% if not label_setting.show_customer_mobile %}checked{% endif %}
+                                               id="hideCustomerMobile"
+                                               name="hide_customer_mobile"
+                                               class="sr-only peer">
+                                        <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                            <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 stroke-width="3"
+                                                 viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                                Hide Customer
+                                                Mobile
+                                            </p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                Avoid showing customer's
+                                                phone number.
+                                            </p>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="flex items-start gap-4">
+                                    <label class="relative cursor-pointer flex items-start gap-3">
+                                        <input type="checkbox"
+                                               {% if not label_setting.show_pickup_address %}checked{% endif %}
+                                               id="hidePicupReturnAddress"
+                                               name="hide_pickup_address"
+                                               class="sr-only peer">
+                                        <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                            <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 stroke-width="3"
+                                                 viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white">Hide Pickup Address</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                Remove sender's address from
+                                                printout.
+                                            </p>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="flex items-start gap-4">
+                                    <label class="relative cursor-pointer flex items-start gap-3">
+                                        <input type="checkbox"
+                                               {% if not label_setting.show_discount %}checked{% endif %}
+                                               id="hideDiscount"
+                                               name="hide_discount"
+                                               class="sr-only peer">
+                                        <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                            <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 stroke-width="3"
+                                                 viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white">Hide Discount Column</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                Remove Discount Column from product table.
+                                            </p>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <div class="flex items-start gap-4">
+                                    <label class="relative cursor-pointer flex items-start gap-3">
+                                        <input type="checkbox"
+                                               {% if not label_setting.show_powered_by %}checked{% endif %}
+                                               id="hidePoweredBy"
+                                               name="hide_powered_by"
+                                               class="sr-only peer">
+                                        <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                            <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 stroke-width="3"
+                                                 viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white">Hide Powered By</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                Remove Powered By text and Image
+                                            </p>
+                                        </div>
+                                        
+                                    </label>
+                                </div>
+
+                                <div class="flex items-start gap-4">
+                                    <label class="relative cursor-pointer flex items-start gap-3">
+                                        <input type="checkbox"
+                                               {% if not label_setting.show_product %}checked{% endif %}
+                                               id="hideProduct"
+                                               name="hide_product"
+                                               class="sr-only peer">
+                                        <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                            <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 stroke-width="3"
+                                                 viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white">Hide Product</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                Conceal product details for
+                                                privacy.
+                                            </p>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <!-- Nested Checkboxes -->
+                                <div class="space-y-4 ml-6">
+                                    <div class="flex items-start gap-4">
+                                        <label class="relative cursor-pointer flex items-start gap-3">
+                                            <input type="checkbox"
+                                                   {% if not label_setting.show_total_amount %}checked{% endif %}
+                                                   id="hideTotalAmount"
+                                                   name="hide_total_amount"
+                                                   class="sr-only peer">
+                                            <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                                <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
+                                                     fill="none"
+                                                     stroke="currentColor"
+                                                     stroke-width="3"
+                                                     viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                                    Hide Total
+                                                    Amount
+                                                </p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                    Avoid printing order
+                                                    totals on label.
+                                                </p>
+                                            </div>
+                                        </label>
+                                    </div>
+
+                                    <div class="space-y-2 ml-6">
+                                        <div class="flex items-start gap-4">
+                                            <label class="relative cursor-pointer flex items-start gap-3">
+                                                <input type="checkbox"
+                                                       {% if not label_setting.show_weight %}checked{% endif %}
+                                                       id="hideWeight"
+                                                       name="hide_weight"
+                                                       class="sr-only peer">
+                                                <div class="w-4 h-4 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                                    <svg class="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
+                                                         fill="none"
+                                                         stroke="currentColor"
+                                                         stroke-width="3"
+                                                         viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </div>
+                                                <div class="space-y-1">
+                                                    <p class="text-xs font-medium text-gray-900 dark:text-white">Hide Weight</p>
+                                                    <p class="text-[11px] text-gray-500 dark:text-gray-400">
+                                                        Prevent showing
+                                                        product weight.
+                                                    </p>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <div class="flex items-start gap-4">
+                                            <label class="relative cursor-pointer flex items-start gap-3">
+                                                <input type="checkbox"
+                                                       {% if not label_setting.show_dimension %}checked{% endif %}
+                                                       id="hideDimension"
+                                                       name="hide_dimension"
+                                                       class="sr-only peer">
+                                                <div class="w-4 h-4 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                                    <svg class="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
+                                                         fill="none"
+                                                         stroke="currentColor"
+                                                         stroke-width="3"
+                                                         viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </div>
+                                                <div class="space-y-1">
+                                                    <p class="text-xs font-medium text-gray-900 dark:text-white">
+                                                        Hide
+                                                        Dimension
+                                                    </p>
+                                                    <p class="text-[11px] text-gray-500 dark:text-gray-400">
+                                                        Don't show size
+                                                        of the product.
+                                                    </p>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="mt-6">
+                                <button type="submit"
+                                        id="submitBtn"
+                                        class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-sm font-semibold text-white rounded-lg transition-all duration-200 shadow-md">
+                                    Save Preferences
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+
+
+                </div>
+                <!-- Right Section (Global) -->
+                <div class="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+                    <!-- ▶️ Add Global Right Content Here -->
+                    <div class="max-w-md mx-auto bg-white border-2 border-black p-2 space-y-2 font-sans"
+                         id="labelContainer">
+
+                        <!-- TO Address -->
+                        <div class="flex justify-between items-start text-xs">
+                            <div>
+                                <p class="font-bold">To: Mr. Kishan</p>
+                                <p>62, Test Patel Apartments, Sector-512, Gurugram, Haryana, India</p>
+                                <p id="customer_mobile_number_hide">Mob: 9999999999</p>
+                                <p>Fwd Dest Code 131028 / KDL / KDHISK</p>
+                            </div>
+                            <div id="company_logo" class="text-center">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGLv2UwQENzu10BKOSAwGgIHcW5aHJX-hpbA&s"
+                                     alt="Logo"
+                                     class="h-8 w-32 object-contain mx-auto">
+                            </div>
+                        </div>
+
+                        <hr class="border-black my-1" />
+
+                        <!-- COD & Dimensions -->
+                        <div class="flex justify-between items-start text-xs">
+                            <div>
+                                <p class="font-bold">COD ₹100</p>
+                                <p id="weight_hide">Wt:0.5kg</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="font-bold">SMARTER</p>
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGLv2UwQENzu10BKOSAwGgIHcW5aHJX-hpbA&s"
+                                     alt="Barcode"
+                                     class="h-8 w-32 object-contain mx-auto">
+                                <p>XSE21157413001</p>
+                                <p id="dimension_hide">10x30x10cm</p>
+                            </div>
+                        </div>
+
+                        <table class="w-full border-2 border-black text-xs mt-1">
+                            <thead>
+                                <tr>
+                                    <th class="border p-0.5">SKU</th>
+                                    <th class="border p-0.5 product_hide">Item</th>
+                                    <th class="border p-0.5">Qty</th>
+                                    <th class="border p-0.5">Amt</th>
+                                    <th class="border p-0.5">Tax</th>
+                                    <th class="border p-0.5">IGST%</th>
+                                    <th class="border p-0.5 hide_total_amount">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="border p-0.5"></td>
+                                    <td class="border p-0.5 product_hide">+5 More</td>
+                                    <td class="border p-0.5">0</td>
+                                    <td class="border p-0.5"></td>
+                                    <td class="border p-0.5"></td>
+                                    <td class="border p-0.5"></td>
+                                    <td class="border p-0.5 hide_total_amount">₹60700</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <hr class="border-black my-1 hide_picup_return_address" />
+
+                        <!-- Pickup & Return Addresses -->
+                        <div class="flex justify-between text-xs hide_picup_return_address">
+                            <div class="w-1/2 pr-1">
+                                <p class="font-bold">Pickup Address:</p>
+                                <p>Pickup Warehouse Name</p>
+                                <p>Test 234 45678, Gurugram, Haryana - 122001</p>
+                            </div>
+                            <div id="return_address_container" class="w-1/2 pl-1 ">
+                                <p class="font-bold">Return Address:</p>
+                                <p>Return Warehouse Name</p>
+                                <p>Test 234 45678, Gurugram, Haryana - 122001</p>
+                                <p>Mob: 9999999999</p>
+                            </div>
+                        </div>
+                        <hr class="border-black my-1 hide_support_info" />
+
+
+                        <!-- Support Info -->
+                        <div class="text-center text-xs hide_support_info">
+                            <p class="font-bold">For queries: Mob 6576576765 | Email: support@idiotship.com</p>
+                        </div>
+
+                        <hr class="border-black my-1" />
+
+                        <p class="italic text-xs">
+                            Computer generated, no signature needed. All disputes under Delhi jurisdiction. Returns per
+                            store policy.
+                        </p>
+                        <div class="flex justify-between items-center powered_by_hide" id="powered_by">
+                            <p class="font-bold text-xs">Powered By Idiotship</p>
+                            <div id="shipzee_logo" class="ml-2">
+                                <img src="{% static 'images/logo/shipzee_logo.png' %}"
+                                     alt="Idiotship Logo"
+                                     class="h-6 object-contain">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Label Setting Tab -->
+        <div x-show="tab === 'label'" x-transition class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Left Section (Label) -->
+                <div class="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+                    <!-- ▶️ Add Label Left Content Here -->
+                </div>
+                <!-- Right Section (Label) -->
+                <div class="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+                    <!-- ▶️ Add Label Right Content Here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alpine.js (if not already loaded) -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+            defer></script>
+
+
+
+    {% comment %}
+<!-- Make the tabs container full-width and remove max-width constraints -->
+<div x-data="{ tab: 'global' }" class="w-full mt-10 px-4">
+    <!-- Tabs -->
+    <div class="flex border-b">
+        <button @click="tab = 'global'" :class="tab === 'global' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-600 hover:text-gray-800'" class="px-4 py-2 -mb-px border-b-2 font-medium transition">
+            Global Label Setting
+        </button>
+        <button @click="tab = 'printer'" :class="tab === 'printer' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-600 hover:text-gray-800'" class="px-4 py-2 -mb-px border-b-2 font-medium transition">
+            Printer Setting
+        </button>
+    </div>
+
+    <!-- Global Label Setting Content -->
+    <div x-show="tab === 'global'" class="mt-6" x-cloak>
+        <div class="grid grid-cols-2 gap-6 w-full">
+            <!-- Left section for Global Label -->
+            <div class="w-full h-64 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                <!-- Add global label left content here -->
+            </div>
+            <!-- Right section for Global Label -->
+            <div class="w-full h-64 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                <!-- Add global label right content here -->
+                <div class="max-w-md mx-auto bg-white border-2 border-black p-4 space-y-4 font-sans" id="labelContainer">
+
+
+                    <!-- TO Address -->
+                    <div class="flex justify-between items-start text-sm">
+                        <div>
+                            <p class="font-bold text-sm">To:</p>
+                            <p class="text-sm">Mr. Kishan</p>
+                            <p class="text-sm">
+                                62, Test Patel Apartments, Sector-
+                                <br>
+                                512, Gurugram, Haryana, India
+                            </p>
+                            <p class="text-sm">Mobile No: 9999999999</p>
+                            <p class="text-sm">
+                                Fwd Destination Code 131028 - KDL
+                                <br>
+                                / KDL / KDHISK
+                            </p>
+                        </div>
+                        <div class="text-center">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGLv2UwQENzu10BKOSAwGgIHcW5aHJX-hpbA&s" alt="Barcode" class="h-12 w-48 object-contain mx-auto">
+                        </div>
+                    </div>
+
+                    <hr class="border-black my-2" />
+
+                    <!-- Order Details -->
+                    <div class="flex justify-between items-start text-sm">
+                        <div>
+                            <p>
+                                <strong>Order Date:</strong> May 06, 2025
+                            </p>
+                            <p>
+                                <strong>Invoice No:</strong> 1686558180
+                            </p>
+                        </div>
+                        <div class="text-center">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGLv2UwQENzu10BKOSAwGgIHcW5aHJX-hpbA&s" alt="Barcode" class="h-12 w-48 object-contain mx-auto">
+                            <p class="text-xs mt-1">1686558180</p>
+                        </div>
+                    </div>
+
+                    <hr class="border-black my-2" />
+
+                    <!-- COD Section -->
+                    <div class="flex justify-between items-start text-sm">
+                        <div>
+                            <p class="font-bold">COD</p>
+                            <p class="text-lg font-bold">₹100</p>
+                            <p class="text-sm">WEIGHT: 0.5KG</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-sm font-bold">SMARTER</p>
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGLv2UwQENzu10BKOSAwGgIHcW5aHJX-hpbA&s" alt="Barcode" class="h-12 w-48 object-contain mx-auto">
+                            <p class="text-xs mt-1">XSE21157413001</p>
+                            <p class="text-xs">Dimensions (cm): 10X30X10</p>
+                        </div>
+                    </div>
+
+                    <!-- Product Table -->
+                    <table class="w-full border-2 border-black text-xs">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="border-2 border-black p-1">SKU</th>
+                                <th class="border-2 border-black p-1">Item Name</th>
+                                <th class="border-2 border-black p-1">Qty.</th>
+                                <th class="border-2 border-black p-1">Product Amount</th>
+                                <th class="border-2 border-black p-1">Tax Amount</th>
+                                <th class="border-2 border-black p-1">IGST(%)</th>
+                                <th class="border-2 border-black p-1">Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border-2 border-black p-1">+5 More Products</td>
+                                <td class="border-2 border-black p-1"></td>
+                                <td class="border-2 border-black p-1">0</td>
+                                <td class="border-2 border-black p-1"></td>
+                                <td class="border-2 border-black p-1"></td>
+                                <td class="border-2 border-black p-1"></td>
+                                <td class="border-2 border-black p-1">₹60700</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Total Section -->
+                    <div class="text-right text-sm">
+                        <p>
+                            Discount applied: <strong>₹100</strong>
+                        </p>
+                        <p>
+                            Order Total: <strong>₹60700</strong>
+                        </p>
+                    </div>
+
+                    <hr class="border-black my-2" />
+
+
+                    <div class="flex justify-between items-start text-sm">
+                        <div>
+                            <!-- Pickup Address -->
+                            <div class="text-sm">
+                                <p class="font-bold">Pickup Address:</p>
+                                <p>Pickup Warehouse Name</p>
+                                <p>
+                                    Test 234 45678 gurugram,
+                                    <br>
+                                    Haryana, India - 122001
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-center">
+
+
+                            <!-- Return Address -->
+                            <div class="text-sm">
+                                <p class="font-bold">Return Address:</p>
+                                <p>Return Warehouse Name</p>
+                                <p>
+                                    Test 234 45678 gurugram,
+                                    <br>
+                                    Haryana, India - 122001
+                                </p>
+                                <p>Mobile No: 9999999999</p>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+                    <hr class="border-black my-2" />
+                    <!-- Contact & Footer -->
+                    <div class="text-s mt-4 text-center">
+                        <p>
+                        <p class="font-bold">For any query please contact</p>
+                        <i class="font-bold">Mobile:</i> 6576576765,
+                        <i class="font-bold">Email:</i> 6576576765
+                        </p>
+                    </div>
+                    <hr class="border-black my-2" />
+                    <div class="text-sm">
+                        <p class="mt-4 italic">
+                            This is computer generated document, hence does not required signature.
+                            <br>
+                            Note: All disputes are subject to Delhi jurisdiction. Goods once sold will only be taken
+                            back or exchanged
+                            as per the store's exchange/return policy
+                        </p>
+                        <i class="font-bold">Powerd By Idiotship</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Printer Setting Content -->
+    <div x-show="tab === 'printer'" class="mt-6" x-cloak>
+        <div class="grid grid-cols-2 gap-6 w-full">
+            <!-- Left section for Printer Setting -->
+            <div class="w-full h-64 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                <!-- Add printer setting left content here -->
+            </div>
+            <!-- Right section for Printer Setting -->
+            <div class="w-full h-64 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                <!-- Add printer setting right content here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+    {% endcomment %}
+
+
+
+
+
+
+
+
+{% endblock body %}
+
+{% block js %}
+
+    <script>
+        // Utility to toggle visibility
+
+        function togglePickupAddress(checkboxId, pickupId, returnContainerId) {
+            const checkbox = document.getElementById(checkboxId);
+            const pickup = document.getElementById(pickupId);
+            const returnContainer = document.getElementById(returnContainerId);
+
+            function updateVisibility() {
+                const isHidden = checkbox.checked;
+                pickup.style.display = isHidden ? 'none' : '';
+                returnContainer.classList.toggle('md:w-full', isHidden);
+                returnContainer.classList.toggle('md:w-1/2', !isHidden);
+            }
+
+            checkbox.addEventListener('change', updateVisibility);
+            updateVisibility(); // Initialize on load
+        }
+
+
+
+
+
+
+        function toggleVisibility(controlId, targetId) {
+            const ctl = document.getElementById(controlId);
+            const tgt = document.getElementById(targetId);
+            if (!ctl || !tgt) return;
+            // on change, hide when checked, show when unchecked
+            ctl.addEventListener('change', () => {
+                tgt.style.display = ctl.checked ? 'none' : '';
+            });
+            // initialize on load
+            tgt.style.display = ctl.checked ? 'none' : '';
+        }
+
+        function toggleVisibilityClasses(controlId, targetClass) {
+            const ctl = document.getElementById(controlId);
+            if (!ctl) return;
+
+            // Handler to show/hide all elements with the given class
+            const updateVisibility = () => {
+                document.querySelectorAll(`.${targetClass}`).forEach(el => {
+                    el.style.display = ctl.checked ? 'none' : '';
+                });
+            };
+
+            // Wire up on-change behavior
+            ctl.addEventListener('change', updateVisibility);
+
+            // Initialize on load
+            updateVisibility();
+        }
+        toggleVisibilityClasses('hideProduct', 'product_hide');
+        toggleVisibilityClasses('hidePoweredBy', 'powered_by_hide');
+        toggleVisibilityClasses('hideTotalAmount', 'hide_total_amount');
+        toggleVisibilityClasses('hidePicupReturnAddress', 'hide_picup_return_address');
+        toggleVisibilityClasses('hideSupportInfo', 'hide_support_info');
+
+
+        // 1. Support dropdown
+        // toggleVisibility('hideEmail', 'email_hide');
+        toggleVisibility('hideMobileNo', 'mobile_number_hide');
+
+        // 2. Stand-alone
+        toggleVisibility('hideCustomerMobile', 'customer_mobile_number_hide');
+        toggleVisibility('hidePickupAddress', 'pikcup_address_hide'); // note the given ID
+        toggleVisibility('hideProduct', 'product_hide');
+
+        // 3. Total Amount dropdown
+        toggleVisibility('hideWeight', 'weight_hide');
+        toggleVisibility('hideDimension', 'dimension_hide');
+    </script>
+
+    <!-- JavaScript -->
+    <script>
+        const showLogoCheckbox = document.getElementById('showLogoCheckbox');
+        const logoUploadWrapper = document.getElementById('logoUploadWrapper');
+        const logoUploader = document.getElementById('logoUploader');
+        const companyLogoDiv = document.getElementById('company_logo');
+
+        // Show/hide upload input
+        showLogoCheckbox.addEventListener('change', function() {
+            logoUploadWrapper.classList.toggle('hidden', !this.checked);
+        });
+
+        // Change logo preview on upload
+        logoUploader.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file || !file.type.startsWith('image/')) {
+                alert("Please upload a valid image file.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                companyLogoDiv.innerHTML = `<img src="${e.target.result}" alt="Uploaded Logo" class="h-12 w-48 object-contain mx-auto rounded shadow-md">`;
+            };
+            reader.readAsDataURL(file);
+        });
+
+
+
+
+        // Add this JavaScript to handle the new functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const showSupportCheckbox = document.getElementById('showSupportInfo');
+            const supportFields = document.getElementById('supportInfoFields');
+            const supportEmailInput = document.getElementById('supportEmail');
+            const supportMobileInput = document.getElementById('supportMobile');
+            const supportPreview = document.querySelector('.hide_support_info p');
+
+            // Toggle support info visibility and fields
+            function updateSupportInfo() {
+                const isChecked = showSupportCheckbox.checked;
+
+                // Toggle fields visibility
+                supportFields.classList.toggle('hidden', !isChecked);
+
+                // Toggle preview visibility
+                document.querySelectorAll('.hide_support_info').forEach(el => {
+                    el.style.display = isChecked ? 'block' : 'none';
+                });
+
+                // Update preview content
+                const email = supportEmailInput.value || 'support@idiotship.com';
+                const mobile = supportMobileInput.value || '6576576765';
+                supportPreview.textContent = `For queries: Mob ${mobile} | Email: ${email}`;
+            }
+
+            // Event listeners
+            showSupportCheckbox.addEventListener('change', updateSupportInfo);
+            supportEmailInput.addEventListener('input', updateSupportInfo);
+            supportMobileInput.addEventListener('input', updateSupportInfo);
+
+            // Initial state check
+            updateSupportInfo();
+        });
+    </script>
+
+{% endblock js %}

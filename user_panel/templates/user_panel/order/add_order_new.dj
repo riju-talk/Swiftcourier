@@ -1,0 +1,16 @@
+{% extends 'components/layouts/layout.dj' %}
+
+{% block title %}
+  Add Order
+{% endblock %}
+
+{% load static %}
+
+{% block css %}
+{% endblock %}
+
+{% block body %}
+{% endblock %}
+
+{% block js %}
+{% endblock %}

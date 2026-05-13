@@ -1,0 +1,81 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+    Printer Settings
+{% endblock title %}
+
+{% load static %}
+
+{% block css %}
+{% endblock css %}
+
+{% block body %}
+    <div class="max-w-3xl mx-auto px-4 py-6">
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Label Page Size</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                Select the page size to use when downloading shipping labels.
+            </p>
+
+            <form method="post" action="{% url 'user_panel:printer' %}" class="space-y-4">
+                {% csrf_token %}
+
+                <label class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer">
+                    <input type="radio"
+                           name="label_page_size"
+                           value="a4"
+                           class="mt-1"
+                           {% if label_setting.label_page_size == "a4" %}checked{% endif %}>
+                    <span>
+                        <span class="block font-medium text-gray-900 dark:text-white">A4</span>
+                        <span class="block text-xs text-gray-600 dark:text-gray-400">Multiple labels per page</span>
+                    </span>
+                </label>
+
+                <label class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer">
+                    <input type="radio"
+                           name="label_page_size"
+                           value="a4_single"
+                           class="mt-1"
+                           {% if label_setting.label_page_size == "a4_single" %}checked{% endif %}>
+                    <span>
+                        <span class="block font-medium text-gray-900 dark:text-white">A4 (single label per page)</span>
+                        <span class="block text-xs text-gray-600 dark:text-gray-400">One label centered on a full A4 sheet</span>
+                    </span>
+                </label>
+
+                <label class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer">
+                    <input type="radio"
+                           name="label_page_size"
+                           value="4x6"
+                           class="mt-1"
+                           {% if label_setting.label_page_size == "4x6" %}checked{% endif %}>
+                    <span>
+                        <span class="block font-medium text-gray-900 dark:text-white">4x6</span>
+                        <span class="block text-xs text-gray-600 dark:text-gray-400">Single thermal label page</span>
+                    </span>
+                </label>
+
+                <label class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer">
+                    <input type="radio"
+                           name="label_page_size"
+                           value="3x5"
+                           class="mt-1"
+                           {% if label_setting.label_page_size == "3x5" %}checked{% endif %}>
+                    <span>
+                        <span class="block font-medium text-gray-900 dark:text-white">3x5</span>
+                        <span class="block text-xs text-gray-600 dark:text-gray-400">Compact thermal label page</span>
+                    </span>
+                </label>
+
+                <button type="submit"
+                        class="mt-2 inline-flex items-center px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium">
+                    Save Printer Settings
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock body %}
+
+{% block js %}
+{% endblock js %}

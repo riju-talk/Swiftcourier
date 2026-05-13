@@ -1,0 +1,17 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+Invoice Settings
+{% endblock title %}
+
+{% load static %}
+
+{% block css %}
+{% endblock css %}
+
+{% block body %}
+{% endblock body %}
+
+{% block js %}
+{% endblock js %}
+    

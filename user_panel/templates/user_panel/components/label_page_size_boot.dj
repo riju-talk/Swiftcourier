@@ -1,0 +1,4 @@
+{# Injected before label_client_pdf.js so page size matches DB even if API/cache is stale. #}
+<script>
+window.SHIPZEE_LABEL_PAGE_SIZE = "{{ label_page_size|default:'4x6'|escapejs }}";
+</script>

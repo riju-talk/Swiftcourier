@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <input type="text" name="datefilter" id="datetimefilter" value="" />
+        <script
+            type="text/javascript"
+            src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"
+        ></script>
+        <script
+            type="text/javascript"
+            src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
+        ></script>
+        <script
+            type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
+        ></script>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
+        />
+        <script>
+            function getCurrentDate() {
+                const today = new Date();
+                // getMonth() returns 0-11, so add 1 for the correct month number
+                let mm = (today.getMonth() + 1).toString();
+                let dd = today.getDate().toString();
+                const yyyy = today.getFullYear();
+
+                // Pad single-digit month/day with a leading zero
+                if (mm.length < 2) mm = '0' + mm;
+                if (dd.length < 2) dd = '0' + dd;
+
+                return `${dd}/${mm}/${yyyy}`;
+            }
+            $('#datetimefilter').daterangepicker(
+                {
+                    showDropdowns: true,
+                    ranges: {
+                        Today: [moment(), moment()],
+                        Yesterday: [
+                            moment().subtract(1, 'days'),
+                            moment().subtract(1, 'days'),
+                        ],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [
+                            moment().subtract(29, 'days'),
+                            moment(),
+                        ],
+                        'This Month': [
+                            moment().startOf('month'),
+                            moment().endOf('month'),
+                        ],
+                        'Last Month': [
+                            moment().subtract(1, 'month').startOf('month'),
+                            moment().subtract(1, 'month').endOf('month'),
+                        ],
+                    },
+                    // showCustomRangeLabel: true,
+                    alwaysShowCalendars: true,
+                    opens: 'right',
+                    autoApply: true,
+                    timePicker: true,
+                    startDate: '28/01/2025',
+                    endDate: getCurrentDate(),
+                    minDate: '01/01/2025',
+                    maxDate: getCurrentDate(),
+                    locale: {
+                        "format": "DD/MM/YYYY"
+                    }
+                },
+                function (start, end, label) {
+                    console.log(
+                        'New date range selected: ' +
+                            start.format('YYYY-MM-DD') +
+                            ' to ' +
+                            end.format('YYYY-MM-DD') +
+                            ' (predefined range: ' +
+                            label +
+                            ')'
+                    );
+                }
+            );
+        </script>
+    </body>
+</html>

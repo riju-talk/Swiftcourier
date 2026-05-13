@@ -1,0 +1,63 @@
+<div id="agreementPopupOverlay"
+     class="fixed inset-0 hidden items-center justify-center z-50 bg-black/50 dark:bg-black/70 transition-opacity">
+
+    <!-- Popup Box -->
+    <div class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl shadow-2xl p-6 w-full max-w-md transform scale-95 opacity-0 transition-all duration-300"
+         id="agreementPopupBox">
+
+        <h2 class="text-xl font-semibold mb-3">Agreement Required</h2>
+
+        <p class="text-gray-600 dark:text-gray-300 mb-6">Please accept the agreement to continue using your dashboard.</p>
+
+        <!-- Buttons -->
+        <div class="flex justify-end gap-3">
+
+            <!-- Remind me -->
+            <button id="remindLaterBtn"
+                    class="px-4 py-2 rounded-lg border border-gray-400 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800">
+                Remind me later
+            </button>
+
+            <!-- Accept Now -->
+            <button id="acceptNowBtn"
+                    class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Accept Now</button>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const overlay = document.getElementById("agreementPopupOverlay");
+        const box = document.getElementById("agreementPopupBox");
+        const remindBtn = document.getElementById("remindLaterBtn");
+        const acceptBtn = document.getElementById("acceptNowBtn");
+
+        const params = new URLSearchParams(window.location.search);
+        const show = params.get("show_agreement_accept_popup").toLowerCase();
+
+        if (show === "true") {
+            // Show overlay
+            overlay.classList.remove("hidden");
+            overlay.classList.add("flex");
+
+            // Animate popup
+            setTimeout(() => {
+                box.classList.remove("scale-95", "opacity-0");
+                box.classList.add("scale-100", "opacity-100");
+            }, 30);
+
+            // Hide other popups
+            const otherPopups = document.querySelectorAll(".other-popup");
+            otherPopups.forEach(p => p.classList.add("hidden"));
+        }
+
+        // Close popup
+        remindBtn.addEventListener("click", () => {
+            overlay.classList.add("hidden");
+        });
+
+        // Accept now → Redirect
+        acceptBtn.addEventListener("click", () => {
+            window.location.href = "/user_panel/setting/kyc/#other"; // Change URL here
+        });
+    });
+</script>

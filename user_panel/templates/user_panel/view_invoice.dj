@@ -1,0 +1,167 @@
+{% load static %}
+<style>
+  /* Full-page modern invoice — dynamic-only fields */
+  @page { size: A4 portrait; margin: 16mm; }
+  .invoice-wrap { width: 100%; padding: 28px; box-sizing: border-box; }
+  .invoice-card { background: white; border-radius: 10px; padding: 28px; box-shadow: 0 8px 30px rgba(18,38,63,0.06); }
+  .invoice-header { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; }
+  .invoice-title { font-size:1.6rem; font-weight:800; text-transform:uppercase; }
+  .subtitle { color:#6b7280; margin-top:6px; }
+
+  /* Right top block contains logo + Bill To stacked neatly */
+  .top-right { display:flex; flex-direction:column; align-items:flex-end; gap:12px; }
+  .logo-sm { width:160px; height:auto; }
+  .bill-to { text-align:right; border-radius:8px; padding:8px 12px; background:linear-gradient(180deg,#fcfdff,#ffffff); box-shadow:0 2px 8px rgba(15,23,42,0.03); }
+  .bill-to .title { font-weight:700; }
+  .muted { color:#6b7280; }
+
+  /* Second row: two-column layout: Issue For (left) and Invoice Meta (right) */
+  .row-2 { display:grid; grid-template-columns: 1fr 360px; gap:20px; margin-top:20px; align-items:start; }
+  .issue-for { padding:10px; border-radius:8px; }
+  .meta-box { padding:12px; border-radius:8px; background:linear-gradient(180deg,#f8fafc,#ffffff); box-shadow:0 2px 10px rgba(15,23,42,0.03); }
+
+  /* Table: allow long names, many rows, and full width */
+  .table-modern { width:100%; border-collapse:collapse; font-size:0.95rem; table-layout:auto; }
+  .table-modern thead th { text-align:left; padding:14px 12px; font-weight:700; border-bottom:1px solid #e6eef6; color:#0f172a; }
+  .table-modern tbody td { padding:14px 12px; border-bottom:1px dashed rgba(15,23,42,0.04); vertical-align:middle; }
+  .product-cell { display:flex; gap:12px; align-items:flex-start; }
+  .product-thumb { width:68px; height:68px; flex:0 0 68px; border-radius:8px; object-fit:cover; }
+  .product-name { font-weight:700; font-size:1rem; line-height:1.2; word-break:break-word; }
+  .product-meta { font-size:0.85rem; color:#6b7280; margin-top:6px; }
+
+  .right { text-align:right; }
+  .center { text-align:center; }
+  .totals { font-weight:700; }
+
+  .table-wrap { max-height:640px; overflow:auto; padding-right:6px; }
+
+  /* Responsive */
+  @media (max-width: 980px) {
+    .row-2 { grid-template-columns: 1fr; }
+    .top-right { align-items:flex-start; text-align:left; }
+  }
+
+  /* Print tweaks */
+  @media print {
+    body { -webkit-print-color-adjust: exact; }
+    .invoice-card { box-shadow:none; }
+    .table-wrap { max-height:none; overflow:visible; }
+  }
+</style>
+
+<section class="panel invoice-wrap">
+  <div class="invoice-card">
+
+    <!-- Header: left = title, right = logo + bill-to -->
+    <div class="invoice-header">
+      <div>
+        <div class="invoice-title">Invoice</div>
+      </div>
+
+      <div class="top-right">
+        <div>
+          <img src="{% static 'images/logo/shipzee_logo.png' %}" alt="logo" class="logo-sm" />
+        </div>
+        <div class="bill-to">
+          <div class="title">Client:</div>
+          {% if order.user.full_name %}
+            <div style="font-weight:700;">{{ order.user.full_name }}</div>
+          {% endif %}
+          {% if order.user.company_name %}<div class="muted">{{ order.user.company_name }}</div>{% endif %}
+          {% if order.user.address %}<div class="muted">{{ order.user.address }}</div>{% endif %}
+          <div class="muted">
+            {% if order.user.city %}{{ order.user.city }}{% endif %}{% if order.user.state %}, {{ order.user.state }}{% endif %}{% if order.user.pin_code %} - {{ order.user.pin_code }}{% endif %}
+          </div>
+          {% if order.user.country %}<div class="muted">{{ order.user.country }}</div>{% endif %}
+          {% if order.user.email %}<div class="muted">Email: {{ order.user.email }}</div>{% endif %}
+          {% if order.user.contact_no %}<div class="muted">Phone: {{ order.user.contact_no }}</div>{% endif %}
+          {% if order.user.gstin %}<div class="muted">GSTIN: {{ order.user.gstin }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Second row: Issue For (left) and Invoice Meta (right) -->
+    <div class="row-2">
+      <div class="issue-for">
+        <div style="font-weight:600; margin-bottom:8px;">Issue For</div>
+        {% if order.shipping_address.name %}
+          <div style="font-weight:700;">{{ order.shipping_address.name }}</div>
+        {% endif %}
+        {% if order.shipping_address.get_full_address %}<div class="muted">{{ order.shipping_address.get_full_address }}</div>{% endif %}
+        {% if order.shipping_address.email %}<div class="muted">{{ order.shipping_address.email }}</div>{% endif %}
+        {% if order.shipping_address.phone %}<div class="muted">{{ order.shipping_address.phone }}</div>{% endif %}
+      </div>
+
+      <div class="meta-box">
+        {% if order.get_order_id %}
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><div class="muted">Invoice :</div><div style="font-weight:700;">{{ order.get_order_id }}</div></div>
+        {% endif %}
+        {% if order.order_date %}
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><div class="muted">Issue Date :</div><div style="font-weight:600;">{{ order.order_date|date:"d M Y" }}</div></div>
+        {% endif %}
+        {% if order.order_number %}
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><div class="muted">Order Number :</div><div style="font-weight:600;">{{ order.order_number }}</div></div>
+        {% endif %}
+        {% if order.shipment %}
+          <div style="display:flex; justify-content:space-between;"><div class="muted">Shipment Tracking ID :</div><div style="font-weight:600;">{{ order.shipment.tracking_number }}{% if order.shipment.courier %} / {{ order.shipment.courier }}{% endif %}</div></div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Items Table -->
+    <div class="table-wrap" style="margin-top:22px;">
+      <table class="table-modern">
+        <thead>
+          <tr>
+            <th style="width:6%;">S.NO</th>
+            <th>ITEM</th>
+            <th class="center" style="width:80px;">QTY</th>
+            <th class="right" style="width:140px;">UNIT PRICE</th>
+            <th class="right" style="width:140px;">AMOUNT</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in order.items.all %}
+            <tr>
+              <td>{{ forloop.counter }}.</td>
+              <td>
+                <div class="product-cell">
+                  {% if item.product.thumbnail %}
+                    <img src="{{ item.product.thumbnail.url }}" alt="thumb" class="product-thumb" />
+                  {% endif %}
+                  <div>
+                    <div class="product-name">{{ item.product.name }}</div>
+                    {% if item.product.sku %}<div class="product-meta">SKU: {{ item.product.sku }}</div>{% endif %}
+                  </div>
+                </div>
+              </td>
+              <td class="center">{{ item.quantity }}</td>
+              <td class="right">{{ item.unit_price }}</td>
+              <td class="right">{{ item.total_price }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="p-6 text-center muted">No items added to this order.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Totals (full-width, below table) -->
+    <div style="display:flex; justify-content:flex-end; margin-top:18px;">
+      <div style="width:360px;">
+        {% if order.total_amount %}
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><div class="muted">Subtotal</div><div class="totals">{{ order.total_amount }}</div></div>
+        {% endif %}
+        {% if order.calculate_gst_amount %}
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><div class="muted">Tax</div><div class="totals">{{ order.calculate_gst_amount }}</div></div>
+        {% endif %}
+        <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.05rem; margin-top:6px;"><div>Grand Total</div><div class="totals">{{ order.total_amount|add:order.calculate_gst_amount }}</div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+

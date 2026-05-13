@@ -1,0 +1,1057 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+    Add Order
+{% endblock title %}
+
+{% load static %}
+
+{% block css %}
+    <style>
+        /* Chrome, Safari, Edge, Opera */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+{% endblock css %}
+
+{% block body %}
+    <div x-data="add-order">
+
+        <!-- Alpine wrapper -->
+        <div x-data="{ tab: 'single' }">
+
+            <!-- Tabs -->
+            <ul class="flex flex-wrap mt-3 mb-5 border-b border-white-light dark:border-[#191e3a]">
+                <li>
+                    <a href="javascript:;"
+                       class="p-5 py-3 -mb-[1px] flex items-center hover:border-b border-transparent hover:!border-secondary hover:text-secondary"
+                       :class="{ 'border-b !border-secondary text-secondary': tab === 'single' }"
+                       @click="tab = 'single'">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="w-5 h-5 ltr:mr-2 rtl:ml-2"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path d="M6 6h15l-1.5 9h-13z" />
+                            <circle cx="9" cy="20" r="1.5" />
+                            <circle cx="18" cy="20" r="1.5" />
+                            <path d="M6 6L4 2H2" />
+                        </svg>
+                        Single Order
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:;"
+                       class="p-5 py-3 -mb-[1px] flex items-center hover:border-b border-transparent hover:!border-secondary hover:text-secondary"
+                       :class="{ 'border-b !border-secondary text-secondary': tab === 'bulk' }"
+                       @click="tab = 'bulk'">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="w-5 h-5 ltr:mr-2 rtl:ml-2"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.5">
+                            <path d="M12 16v-8M8 12l4-4 4 4" />
+                            <path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2" />
+                        </svg>
+                        Bulk Order
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Single Order Form -->
+            <div x-show="tab === 'single'" x-cloak>
+                <form class="space-y-8 p-6 bg-white dark:bg-dark/40 rounded-xl shadow-md"
+                      id="single_order_form"
+                      action="{% url 'order_manager:save-single-order' %}?action={{ request.GET.action }}"
+                      method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="real_order_id" value="{{ request.GET.order_id }}">
+                    <input type="hidden" name="myAction" value="{{ request.GET.action }}">
+                    <!-- 4-Step Rounded-Pill Wizard (No “Add Product”) -->
+                    <div x-data="wizard()" class="mb-5">
+
+                        <ul class="grid grid-cols-3 sm:grid-cols-3 gap-3 mb-5">
+
+                            <!-- Tab 1: General Info -->
+                            <li class="text-center">
+                                <a href="javascript:;"
+                                   @click="go(1)"
+                                   :class="{ '!bg-info text-white': activeTab === 1 }"
+                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:!bg-info hover:text-white hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)] transition-all duration-300">
+
+                                    <svg fill="#000000"
+                                         version="1.1"
+                                         id="Capa_1"
+                                         xmlns="http://www.w3.org/2000/svg"
+                                         xmlns:xlink="http://www.w3.org/1999/xlink"
+                                         viewBox="0 0 477.297 477.297"
+                                         xml:space="preserve"
+                                         height="20"
+                                         width="20">
+                                        <path d="M42.85,358.075c0-24.138,0-306.758,0-330.917c23.9,0,278.867,0,302.767,0c0,8.542,0,49.44,0,99.722 c5.846-1.079,11.842-1.812,17.99-1.812c3.149,0,6.126,0.647,9.232,0.928V0H15.649v385.233h224.638v-27.158 C158.534,358.075,57.475,358.075,42.85,358.075z" />
+                                        <path d="M81.527,206.842h184.495c1.812-10.16,5.393-19.608,10.095-28.452H81.527V206.842z" />
+                                        <rect x="81.527" y="89.432" width="225.372" height="28.452" />
+                                        <path d="M81.527,295.822h191.268c5.112-3.106,10.57-5.63,16.415-7.183c-5.544-6.45-10.095-13.697-13.978-21.269H81.527V295.822z" />
+                                        <path d="M363.629,298.669c41.071,0,74.16-33.197,74.16-74.139c0-40.984-33.09-74.16-74.16-74.16 c-40.898,0-74.009,33.176-74.009,74.16C289.62,265.472,322.731,298.669,363.629,298.669z" />
+                                        <path d="M423.143,310.706H304.288c-21.226,0-38.612,19.457-38.612,43.422v119.33c0,1.316,0.604,2.481,0.69,3.84h194.59 c0.086-1.337,0.69-2.524,0.69-3.84v-119.33C461.733,330.227,444.39,310.706,423.143,310.706z" />
+                                    </svg>
+                                </a>
+                            </li>
+
+                            <!-- Tab 2: Details -->
+                            <li class="text-center">
+                                <a href="javascript:;"
+                                   @click="go(2)"
+                                   :class="{ '!bg-info text-white': activeTab === 2 }"
+                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:!bg-info hover:text-white hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)] transition-all duration-300">
+                                    <svg height="20"
+                                         width="20"
+                                         viewBox="0 0 1024 1024"
+                                         fill="#000000"
+                                         class="icon"
+                                         version="1.1"
+                                         xmlns="http://www.w3.org/2000/svg"
+                                         stroke="#000000"
+                                         stroke-width="21.503999999999998">
+                                        <g id="SVGRepo_bgCarrier" stroke-width="0">
+                                        </g>
+                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+                                        </g>
+                                        <g id="SVGRepo_iconCarrier">
+                                        <path d="M53.6 1023.2c-6.4 0-12.8-2.4-17.6-8-4.8-4.8-7.2-11.2-6.4-18.4L80 222.4c0.8-12.8 11.2-22.4 24-22.4h211.2v-3.2c0-52.8 20.8-101.6 57.6-139.2C410.4 21.6 459.2 0.8 512 0.8c108 0 196.8 88 196.8 196.8 0 0.8-0.8 1.6-0.8 2.4v0.8H920c12.8 0 23.2 9.6 24 22.4l49.6 768.8c0.8 2.4 0.8 4 0.8 6.4-0.8 13.6-11.2 24.8-24.8 24.8H53.6z m25.6-48H944l-46.4-726.4H708v57.6h0.8c12.8 8.8 20 21.6 20 36 0 24.8-20 44.8-44.8 44.8s-44.8-20-44.8-44.8c0-14.4 7.2-27.2 20-36h0.8v-57.6H363.2v57.6h0.8c12.8 8.8 20 21.6 20 36 0 24.8-20 44.8-44.8 44.8-24.8 0-44.8-20-44.8-44.8 0-14.4 7.2-27.2 20-36h0.8v-57.6H125.6l-46.4 726.4zM512 49.6c-81.6 0-148.8 66.4-148.8 148.8v3.2h298.4l-0.8-1.6v-1.6c0-82.4-67.2-148.8-148.8-148.8z" fill="">
+                                        </path>
+                                        </g>
+                                    </svg>
+                                </a>
+                            </li>
+
+                            <!-- Tab 3: Address & Payment -->
+                            <li class="text-center">
+                                <a href="javascript:;"
+                                   @click="go(3)"
+                                   :class="{ '!bg-info text-white': activeTab === 3 }"
+                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:!bg-info hover:text-white hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)] transition-all duration-300">
+                                    <svg height="20"
+                                         width="20"
+                                         viewBox="0 0 24 24"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M20.5 7.27783L12 12.0001M12 12.0001L3.49997 7.27783M12 12.0001L12 21.5001M21 12.0001V7.94153C21 7.59889 21 7.42757 20.9495 7.27477C20.9049 7.13959 20.8318 7.01551 20.7354 6.91082C20.6263 6.79248 20.4766 6.70928 20.177 6.54288L12.777 2.43177C12.4934 2.27421 12.3516 2.19543 12.2015 2.16454C12.0685 2.13721 11.9315 2.13721 11.7986 2.16454C11.6484 2.19543 11.5066 2.27421 11.223 2.43177L3.82297 6.54288C3.52345 6.70928 3.37368 6.79248 3.26463 6.91082C3.16816 7.01551 3.09515 7.13959 3.05048 7.27477C3 7.42757 3 7.59889 3 7.94153V16.0586C3 16.4013 3 16.5726 3.05048 16.7254C3.09515 16.8606 3.16816 16.9847 3.26463 17.0893C3.37368 17.2077 3.52346 17.2909 3.82297 17.4573L11.223 21.5684C11.5066 21.726 11.6484 21.8047 11.7986 21.8356C11.9315 21.863 12.0685 21.863 12.2015 21.8356C12.3516 21.8047 12.4934 21.726 12.777 21.5684L13 21.4445M7.5 4.50008L16.5 9.50008M22 21.5001L21 20.5001M22 18.0001C22 19.6569 20.6569 21.0001 19 21.0001C17.3431 21.0001 16 19.6569 16 18.0001C16 16.3432 17.3431 15.0001 19 15.0001C20.6569 15.0001 22 16.3432 22 18.0001Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </a>
+                            </li>
+
+
+                        </ul>
+
+                        <!-- 4 Sections -->
+                        <!-- Section 1 -->
+                        <section x-show="activeTab === 1" x-cloak class="mb-5">
+                            <!-- Consignee Details -->
+                            <h2 class="text-xl font-bold text-gray-800 dark:text-white border-b pb-2 mb-4">Consignee Details</h2>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Name <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text"
+                                           required
+                                           placeholder="Enter Name"
+                                           name="consignee_name"
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+                                <div x-data="{ phone: '', error: '' }">
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Phone Number <span class="text-red-500">*</span>
+                                    </label>
+
+                                    <input type="number"
+                                           inputmode="numeric"
+                                           pattern="[0-9]*"
+                                           name="consignee_phone"
+                                           x-model="phone"
+                                           x-on:input="error = ''; let val = phone.toString(); if (val.length !== 10 || !/^\d{10}$/.test(val)) { error = 'Phone number must be exactly 10 digits'; }"
+                                           x-on:keydown.enter.prevent="if (error) { $event.preventDefault(); }"
+                                           x-on:keydown.tab="if (error) { $event.preventDefault(); }"
+                                           placeholder="XXXXXXXXXX"
+                                           class="w-full px-4 py-2 rounded-xl border focus:outline-none transition shadow-sm bg-white dark:bg-dark/40 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary"
+                                           :class="error ? 'border-red-500 focus:ring-red-500' : ''"
+                                           required />
+
+                                    <template x-if="error">
+                                        <p class="mt-1 text-sm text-red-500" x-text="error"></p>
+                                    </template>
+                                </div>
+
+
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Alt. Number <span class="text-gray-400 text-sm">(Optional)</span>
+                                    </label>
+                                    <input type="tel"
+                                           placeholder="Enter Alt. Number"
+                                           name="consignee_alt_phone"
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Email <span class="text-gray-400 text-sm">(Optional)</span>
+                                    </label>
+                                    <input type="email"
+                                           placeholder="Enter Email"
+                                           name="consignee_email"
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+                            </div>
+
+                            <!-- Consignee Address -->
+                            <h2 class="text-xl font-bold text-gray-800 dark:text-white border-b pb-2 mb-4">Consignee Address</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Address (Required) -->
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Address <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text"
+                                           required
+                                           placeholder="Enter Address"
+                                           id="address"
+                                           name="address"
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+
+                                <!-- Address 2 (Optional) -->
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Address 2 <span class="text-gray-400 text-sm">(Optional)</span>
+                                    </label>
+                                    <input type="text"
+                                           placeholder="Apartment, Suite, etc."
+                                           id="address2"
+                                           name="address2"
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+                                <!-- Landmark (Optional) -->
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Landmark <span class="text-gray-400 text-sm">(Optional)</span>
+                                    </label>
+                                    <input type="text"
+                                           placeholder="Nearby place or landmark"
+                                           id="landmark"
+                                           name="landmark"
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+
+                                <!-- Company Name (Optional) -->
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Company Name <span class="text-gray-400 text-sm">(Optional)</span>
+                                    </label>
+                                    <input type="text"
+                                           placeholder="Company or Organization"
+                                           id="company_name"
+                                           name="company_name"
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+
+                                <div x-data="{ pin: '', error: '', validate() { this.error = ''; let val = this.pin.toString(); if (!/^\d{6}$/.test(val)) { this.error = 'PIN code must be exactly 6 digits'; return false; } return true; }, moveFocus(event) { if (this.validate()) { let formElements = Array.from(document.querySelectorAll('input, select, textarea, button')); let index = formElements.indexOf(event.target); if (index !== -1 && index + 1 < formElements.length) { try{formElements[index + 1].focus();} catch (error) {} } } else { event.preventDefault(); } } }">
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        PIN Code <span class="text-red-500">*</span>
+                                    </label>
+
+                                    <input type="number"
+                                           inputmode="numeric"
+                                           pattern="[0-9]*"
+                                           x-model="pin"
+                                           name="pin_code"
+                                           x-on:input="error = ''; let val = pin.toString(); if (val.length !== 6 || !/^\d{6}$/.test(val)) { error = 'PIN code must be exactly 6 digits'; }"
+                                           x-on:keydown.enter.prevent="if (error) { $event.preventDefault(); }"
+                                           x-on:keydown.tab="if (error) { $event.preventDefault(); }"
+                                           placeholder="Enter Pin Code"
+                                           class="w-full px-4 py-2 rounded-xl border focus:outline-none transition shadow-sm bg-white dark:bg-dark/40 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary"
+                                           :class="error ? 'border-red-500 focus:ring-red-500' : ''"
+                                           required
+                                           id="pin_code" />
+
+                                    <template x-if="error">
+                                        <p class="mt-1 text-sm text-red-500" x-text="error"></p>
+                                    </template>
+                                </div>
+
+
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        City <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text"
+                                           required
+                                           placeholder="Enter City"
+                                           id="city_name"
+                                           name="city"
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        State <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text"
+                                           required
+                                           placeholder="Enter State"
+                                           id="state_name"
+                                           name="state"
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Country <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text"
+                                           required
+                                           placeholder="Enter Country"
+                                           id="country"
+                                           name="country"
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+                            </div>
+                        </section>
+
+
+                        <!-- Section 2 -->
+                        <!-- Order Details -->
+                        <section x-show="activeTab === 2" x-cloak class="mb-5">
+                            <h2 class="text-xl font-bold text-gray-800 dark:text-white border-b pb-2 mb-4 mt-10">
+                                Order
+                                Details
+                            </h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Order ID <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text"
+                                           required
+                                           placeholder="Enter Order ID"
+                                           name="order_id"
+                                           class="input-required-2 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Channel <span class="text-gray-400 text-sm">(Optional)</span>
+                                    </label>
+                                    <input type="text"
+                                           name="channel"
+                                           value="Single"
+                                           readonly
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-dark/40 shadow-sm text-gray-500 cursor-not-allowed focus:outline-none" />
+                                </div>
+
+                            </div>
+                            <!-- Product Details -->
+                            <h2 class="text-xl font-bold text-gray-800 dark:text-white border-b pb-2 mb-4 mt-10">
+                                Product Details <span class="text-sm text-gray-500">(What does the order contain?)</span>
+                            </h2>
+
+                            <div id="product-container" class="space-y-4">
+                                <!-- Product Row Template -->
+                                <div>
+
+                                    <div id="product-container">
+                                        <!-- Initial Product Row -->
+                                        <div class="product-row grid grid-cols-1 md:grid-cols-6 gap-4 items-start">
+                                            <input type="hidden" name="product_id" name="product_id">
+                                            <!-- Product Name -->
+                                            <div class="md:col-span-2">
+                                                <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                                    Product Name <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="text"
+                                                       placeholder="Product Name"
+                                                       required
+                                                       name="product_name"
+                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                            </div>
+
+                                            <!-- Quantity -->
+                                            <div>
+                                                <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                                    Quantity <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="number"
+                                                       min="1"
+                                                       placeholder="Qty"
+                                                       required
+                                                       name="quantity"
+                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                            </div>
+
+                                            <!-- Total Price -->
+                                            <div>
+                                                <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                                    Total Price <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="number"
+                                                       min="0"
+                                                       step="0.01"
+                                                       placeholder="Total Price"
+                                                       required
+                                                       name="total_price"
+                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                            </div>
+
+                                            <!-- SKU Code -->
+                                            <div class="md:col-span-2">
+                                                <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                                    SKU Code <span class="text-gray-400 text-sm">(optional)</span>
+                                                </label>
+                                                <div class="flex items-center gap-2">
+                                                    <input type="text"
+                                                           placeholder="SKU Code"
+                                                           name="sku_code"
+                                                           class="px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                                    <!-- Remove button - hidden for first row -->
+                                                    <button type="button" class="remove-btn hidden" title="Remove product">×</button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                            <button type="button"
+                                    onclick="addProductRow()"
+                                    class="flex items-center px-6 py-2 mt-4 bg-primary text-white rounded-xl shadow hover:bg-primary-dark transition">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5 mr-1"
+                                     viewBox="0 0 20 20"
+                                     fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                                Add Product
+                            </button>
+
+
+
+                            <!-- Payment -->
+                            <h2 class="text-xl font-bold text-gray-800 dark:text-white border-b pb-2 mt-10">
+                                Payment
+                                Information
+                            </h2>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6"
+                                 x-data="{ paymentMethod: 'prepaid' }">
+                                <!-- Payment Method Dropdown -->
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Payment Method <span class="text-red-500">*</span>
+                                    </label>
+                                    <select id="payment-method"
+                                            x-model="paymentMethod"
+                                            name="payment_method"
+                                            class="input-required-2 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition">
+                                        <option value="prepaid" selected>Prepaid</option>
+                                        <option value="cod">COD</option>
+                                    </select>
+                                </div>
+
+                                <!-- Shipping Charges -->
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Shipping
+                                        Charges
+                                        <span class="text-gray-400 text-sm">(Optional)</span>
+                                    </label>
+                                    <input type="number"
+                                           min="0"
+                                           placeholder="0"
+                                           name="shipping_charges"
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+
+                                <!-- COD Charges -->
+                                <div class="mt-4">
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        COD Charges <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="number"
+                                           min="0"
+                                           placeholder="0"
+                                           name="cod_charges"
+                                           x-bind:disabled="paymentMethod === 'prepaid'"
+                                           x-bind:value="paymentMethod === 'prepaid' ? 0 : undefined"
+                                           class="input-required-2 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+
+                                <!-- Discounts -->
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Discounts
+                                        <span class="text-gray-400 text-sm">(Optional)</span>
+                                    </label>
+                                    <input type="number"
+                                           min="0"
+                                           placeholder="0"
+                                           name="discounts"
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+
+                                <!-- Gift Wrap -->
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Gift
+                                        Wrap
+                                        <span class="text-gray-400 text-sm">(Optional)</span>
+                                    </label>
+                                    <input type="number"
+                                           min="0"
+                                           placeholder="0"
+                                           name="gift_wrap"
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+
+                                <!-- Other Charges -->
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Other
+                                        Charges
+                                        <span class="text-gray-400 text-sm">(Optional)</span>
+                                    </label>
+                                    <input type="number"
+                                           min="0"
+                                           placeholder="0"
+                                           name="other_charges"
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+
+                                <!-- Tax (percent) -->
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Tax
+                                        (Percent)
+                                        <span class="text-gray-400 text-sm">(Optional)</span>
+                                    </label>
+                                    <input type="number"
+                                           min="0"
+                                           step="0.01"
+                                           placeholder="0"
+                                           name="tax_percent"
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                </div>
+                            </div>
+                        </section>
+
+
+                        <!-- Section 3 -->
+                        <!-- Package Details -->
+                        <section x-show="activeTab === 3" x-cloak class="mb-5">
+                            <h2 class="text-xl font-bold text-gray-800 dark:text-white border-b pb-2 mt-6">Package Details</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                                <div x-data="{ weight: '', error: '', validate() { this.error = ''; let val = parseFloat(this.weight); if (isNaN(val) || val < 0.01) { this.error = 'Weight must be at least 0.01 kg'; return false; } else if (val > 20) { this.error = 'Weight cannot exceed 20 kg'; return false; } return true; }, moveFocus(event) { if (this.validate()) { let formElements = Array.from(document.querySelectorAll('input, select, textarea, button')); let index = formElements.indexOf(event.target); if (index !== -1 && index + 1 < formElements.length) { try{formElements[index + 1].focus();} catch(error){} } } else { event.preventDefault(); } } }">
+                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        Weight (in kg) <span class="text-red-500">*</span>
+                                    </label>
+
+                                    <input type="number"
+                                           step="0.01"
+                                           min="0.01"
+                                           max="20"
+                                           required
+                                           placeholder="0.00 KG"
+                                           name="weight"
+                                           x-model="weight"
+                                           x-on:input="error = ''; let val = parseFloat(weight); if (isNaN(val) || val < 0.01) { error = 'Weight must be at least 0.01 kg'; } else if (val > 20) { error = 'Weight cannot exceed 20 kg'; }"
+                                           x-on:keydown.enter.prevent="if (error) { $event.preventDefault(); }"
+                                           x-on:keydown.tab="if (error) { $event.preventDefault(); }"
+                                           x-on:blur="let val = parseFloat(weight); if (val < 0.01) weight = '0.01'; if (val > 20) weight = '20';"
+                                           class="w-full px-4 py-2 rounded-xl border focus:outline-none transition shadow-sm bg-white dark:bg-dark/40 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary"
+                                           :class="error ? 'border-red-500 focus:ring-red-500' : ''" />
+
+                                        <template x-if="error">
+                                            <p class="mt-1 text-sm text-red-500" x-text="error"></p>
+                                        </template>
+                                    </div>
+
+
+
+
+                                    <!-- Length -->
+                                    <div>
+                                        <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                            Length (cm) <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="number"
+                                               id="length"
+                                               placeholder="0 CM"
+                                               required
+                                               name="length"
+                                               oninput="checkDimension(this)"
+                                               data-label="Length"
+                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                        <p id="length-error" class="text-red-500 text-sm mt-1 hidden"></p>
+                                    </div>
+
+                                    <!-- Breadth -->
+                                    <div>
+                                        <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                            Breadth (cm) <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="number"
+                                               id="breadth"
+                                               placeholder="0 CM"
+                                               required
+                                               name="breadth"
+                                               oninput="checkDimension(this)"
+                                               data-label="Breadth"
+                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                        <p id="breadth-error" class="text-red-500 text-sm mt-1 hidden"></p>
+                                    </div>
+
+                                    <!-- Height -->
+                                    <div>
+                                        <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                            Height (cm) <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="number"
+                                               id="height"
+                                               placeholder="0 CM"
+                                               required
+                                               oninput="checkDimension(this)"
+                                               data-label="Height"
+                                               name="height"
+                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                        <p id="height-error" class="text-red-500 text-sm mt-1 hidden"></p>
+                                    </div>
+
+
+                                </div>
+                            </section>
+
+
+
+                            <!-- Navigation Buttons -->
+                            <div class="flex justify-end">
+                                <!-- BACK -->
+                                <button type="button"
+                                        x-show="activeTab > 1"
+                                        x-cloak
+                                        @click="prev()"
+                                        class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg shadow hover:bg-gray-300 transition mr-4">
+                                    Back
+                                </button>
+
+                                <!-- NEXT -->
+                                <button type="button"
+                                        x-show="activeTab < 3"
+                                        @click="next()"
+                                        class="px-4 py-2 bg-info text-white rounded-lg shadow hover:bg-info-dark transition mr-4">
+                                    Next
+                                </button>
+
+                                <!-- SUBMIT -->
+                                <button type="submit"
+                                        x-show="activeTab === 3"
+                                        @click="submitSingleOrderForm()"
+                                        class="px-4 py-2 bg-success text-white rounded-lg shadow hover:bg-success-dark transition">
+                                    Submit
+                                </button>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div>
+
+
+                <!-- Bulk Order -->
+                <div x-show="tab === 'bulk'" x-cloak class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <!-- Left Section: File Upload and Buttons -->
+                        <div>
+                            <form action="{% url 'order_manager:save-bulk-order' %}"
+                                  method="post"
+                                  enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <label class="block mb-2 font-medium text-gray-700">Upload Bulk Order File (CSV)*</label>
+                                <input name="bulk_order_file"
+                                       type="file"
+                                       accept=".csv, .xlsx"
+                                       class="form-input w-full mb-4">
+
+                                <!-- Buttons -->
+                                <div class="flex flex-wrap gap-4">
+                                    <button type="submit" class="btn btn-primary">Upload</button>
+                                    <button type="reset"
+                                            class="btn border border-red-500 text-red-500 hover:bg-red-100">
+                                        Cancel
+                                    </button>
+                                    <a href="{% static 'assets/bulk_order_sample.xlsx' %}"
+                                       download
+                                       class="btn border border-gray-300 text-gray-700 hover:bg-gray-100">
+                                        Download Sample File
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Right Section: Instructions -->
+                        <div class="bg-white dark:bg-dark/40 border border-gray-200 dark:border-gray-600 rounded-xl p-6 shadow-md">
+                            <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Bulk Upload Instructions</h2>
+                            <ol class="list-decimal list-inside space-y-3 text-gray-700 dark:text-gray-300">
+                                <li>
+                                    <strong class="text-gray-900 dark:text-white">Step 1:</strong>
+                                    Add warehouse by inputting the pickup details to generate warehouse ID.
+                                </li>
+                                <li>
+                                    <strong class="text-gray-900 dark:text-white">Step 2:</strong>
+                                    Star marked (<span class="text-red-500">*</span>) are mandatory fields & non-star marked are
+                                    optional.
+                                </li>
+                                <li>
+                                    <strong class="text-gray-900 dark:text-white">Step 3:</strong>
+                                    Fill all the relevant fields required in the appropriate format and upload the file in
+                                    <strong class="text-primary">CSV</strong> format.
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}
+
+{% block js %}
+    <script>
+        // Fetch city/state/country by PIN code
+        document.querySelector("#pin_code").addEventListener("change", () => {
+            let pin = document.querySelector("#pin_code").value;
+            if (pin.length === 6) {
+                fetch(`https://api.postalpincode.in/pincode/${pin}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data[0].Status === "Success") {
+                            const city = data[0].PostOffice[0].District;
+                            const state = data[0].PostOffice[0].State;
+                            const country = data[0].PostOffice[0].Country;
+                            document.querySelector('#city_name').value = city;
+                            document.querySelector('#state_name').value = state;
+                            document.querySelector('#country').value = country;
+                        } else {
+                            console.log(data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error fetching location:", error);
+                    });
+            }
+        });
+
+        // Global counter for product rows
+        let productCounter = 1;
+
+        // Add new product row
+        function addProductRow() {
+            productCounter++;
+            const container = document.getElementById('product-container');
+            const template = document.querySelector('.product-row').cloneNode(true);
+
+            // Clear input values
+            template.querySelectorAll('input').forEach(input => {
+                input.value = '';
+            });
+
+            // Update field names with index
+            template.querySelector('[name="product_id"]').name = `product_id${productCounter}`;
+            template.querySelector('[name="product_name"]').name = `product_name${productCounter}`;
+            template.querySelector('[name="quantity"]').name = `quantity${productCounter}`;
+            template.querySelector('[name="total_price"]').name = `total_price${productCounter}`;
+            template.querySelector('[name="sku_code"]').name = `sku_code${productCounter}`;
+
+            // Show remove button
+            const removeBtn = template.querySelector('.remove-btn');
+            removeBtn.classList.remove('hidden');
+            removeBtn.addEventListener('click', function() {
+                template.remove();
+            });
+
+            // Add to container
+            container.appendChild(template);
+        }
+
+        // Check dimension limits
+        function checkDimension() {
+            const maxLimit = 60;
+            const dimensions = [{
+                id: "length",
+                value: parseFloat(document.getElementById("length").value) || 0
+            }, {
+                id: "breadth",
+                value: parseFloat(document.getElementById("breadth").value) || 0
+            }, {
+                id: "height",
+                value: parseFloat(document.getElementById("height").value) || 0
+            }];
+            dimensions.forEach(({
+                id,
+                value
+            }) => {
+                const input = document.getElementById(id);
+                const error = document.getElementById(id + "-error");
+                if (value > maxLimit) {
+                    input.classList.add("border-red-500", "ring-1", "ring-red-500");
+                    error.textContent = `${id.charAt(0).toUpperCase() + id.slice(1)} must not exceed ${maxLimit} cm.`;
+                    error.classList.remove("hidden");
+                } else {
+                    input.classList.remove("border-red-500", "ring-1", "ring-red-500");
+                    error.textContent = "";
+                    error.classList.add("hidden");
+                }
+            });
+        }
+
+        // Attach dimension listeners
+        document.getElementById("length").addEventListener("input", checkDimension);
+        document.getElementById("breadth").addEventListener("input", checkDimension);
+        document.getElementById("height").addEventListener("input", checkDimension);
+
+        // Submit form and clear localStorage
+        function submitSingleOrderForm() {
+            const form = document.getElementById('single_order_form');
+            if (form.checkValidity()) {
+                localStorage.removeItem('singleOrderFormData');
+                form.submit();
+            } else {
+                const invalidField = form.querySelector(':invalid');
+                if (invalidField) {
+                    try{
+                        invalidField.focus();
+                        invalidField.reportValidity();
+                    } catch (error) {}
+                }
+            }
+        }
+
+        // Handle URL parameters and restore form data
+        function handleUrlParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const paramData = {};
+            for (const [key, value] of urlParams.entries()) {
+                paramData[key] = value;
+            }
+            if (Object.keys(paramData).length > 0) {
+                const storedData = JSON.parse(localStorage.getItem('singleOrderFormData') || '{}');
+                let fieldMap = {
+                    'name': 'consignee_name',
+                    'contact_no': 'consignee_phone',
+                    'alt_contact_no': 'consignee_alt_phone',
+                    'email': 'consignee_email',
+                    'address': 'address',
+                    'address2': 'address2',
+                    'landmark': 'landmark',
+                    'company': 'company_name',
+                    'pin_code': 'pin_code',
+                    'city': 'city',
+                    'state': 'state',
+                    'country': 'country',
+                    'order_number': 'order_id',
+                    'payment_method': 'payment_method',
+                    'shipping_charges': 'shipping_charges',
+                    'cod_charges': 'cod_charges',
+                    'discounts': 'discounts',
+                    'gift_wrap': 'gift_wrap',
+                    'other_charges': 'other_charges',
+                    'tax_percent': 'tax_percent',
+                    'weight': 'weight',
+                    'length': 'length',
+                    'breadth': 'breadth',
+                    'height': 'height',
+                    'product_id': 'product_id',
+                    'product': 'product_name',
+                    'qty': 'quantity',
+                    'total_price': 'total_price',
+                    'sku': 'sku_code'
+                };
+
+                function mapProducts(urlParams) {
+                    const result = {};
+                    const productGroups = {};
+                    for (const key in urlParams) {
+                        const match = key.match(/^product(\d+)$/);
+                        if (match) {
+                            const suffix = match[1];
+                            productGroups[suffix] = true;
+                        }
+                    }
+                    for (const [key, mappedKey] of Object.entries(fieldMap)) {
+                        if (urlParams.hasOwnProperty(key)) {
+                            result[mappedKey] = urlParams[key];
+                        }
+                    }
+                    for (const suffix of Object.keys(productGroups)) {
+                        const requiredFields = [
+                            `product_id${suffix}`,
+                            `product${suffix}`,
+                            `qty${suffix}`,
+                            `sku${suffix}`,
+                            `total_price${suffix}`
+                        ];
+                        if (requiredFields.every(field => urlParams.hasOwnProperty(field))) {
+                            fieldMap[`product_id${suffix}`] = `product_id${suffix}`;
+                            fieldMap[`product${suffix}`] = `product_name${suffix}`;
+                            fieldMap[`qty${suffix}`] = `quantity${suffix}`;
+                            fieldMap[`sku${suffix}`] = `sku_code${suffix}`;
+                            fieldMap[`total_price${suffix}`] = `total_price${suffix}`;
+                            addProductRow();
+                        }
+                    }
+                    return result;
+                }
+                let mappedData = mapProducts(paramData);
+                Object.entries(paramData).forEach(([param, value]) => {
+                    if (fieldMap[param]) {
+                        storedData[fieldMap[param]] = value;
+                    }
+                });
+                localStorage.setItem('singleOrderFormData', JSON.stringify(storedData));
+            }
+        }
+
+        // Alpine.js Wizard Component
+        function wizard() {
+            return {
+                activeTab: 1,
+                go(tab) {
+                    if (tab >= 1 && tab <= 3) {
+                        this.activeTab = tab;
+                        document.getElementById('single_order_form').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                },
+                next() {
+                    if (this.activeTab < 3) {
+                        const requiredInputs = document.querySelectorAll(
+                            `#single_order_form section[x-show="activeTab === ${this.activeTab}"] [required]`
+                        );
+                        let allValid = true;
+                        requiredInputs.forEach(input => {
+                            input.dispatchEvent(new Event('input'));
+                            if (!input.checkValidity()) {
+                                try{
+                                    input.focus();
+                                    input.reportValidity();
+                                    allValid = false;
+                                } catch(error) {}
+                            }
+                        });
+                        if (allValid) {
+                            this.go(this.activeTab + 1);
+                        }
+                    }
+                },
+                prev() {
+                    if (this.activeTab > 1) this.go(this.activeTab - 1);
+                }
+            }
+        }
+
+        // DOMContentLoaded: Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('single_order_form');
+            if (!form) return;
+
+            handleUrlParameters();
+
+            // Clear storage after successful submission
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('submitted')) {
+                localStorage.removeItem('singleOrderFormData');
+                window.history.replaceState({}, document.title, window.location.pathname);
+                form.reset();
+                const wizardElement = document.querySelector('[x-data="wizard()"]');
+                if (wizardElement) {
+                    const wizardData = Alpine.$data(wizardElement);
+                    wizardData.activeTab = 1;
+                }
+            }
+
+            // Restore saved data
+            const storedData = JSON.parse(localStorage.getItem('singleOrderFormData') || '{}');
+            const isActionEdit = urlParams.get('action') == 'edit';
+            if (isActionEdit){
+                Object.keys(storedData).forEach(key => {
+                    const elements = form.querySelectorAll(`[name="${key}"]`);
+                    elements.forEach(element => {
+                        if (element.type !== 'radio' && element.type !== 'checkbox') {
+                            element.value = storedData[key];
+                        } else if (element.value === storedData[key]) {
+                            element.checked = true;
+                        }
+                        element.dispatchEvent(new Event('input'));
+                    });
+                });
+            }
+
+            // Restore active tab
+            if (storedData.activeTab) {
+                Alpine.nextTick(() => {
+                    const wizardElement = document.querySelector('[x-data="wizard()"]');
+                    if (wizardElement) {
+                        const wizardData = Alpine.$data(wizardElement);
+                        wizardData.activeTab = parseInt(storedData.activeTab);
+                    }
+                });
+            }
+
+            // Save form data on input
+            form.addEventListener('input', function(e) {
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                data.product_name = formData.getAll('product_name');
+                data.quantity = formData.getAll('quantity');
+                data.total_price = formData.getAll('total_price');
+                data.sku_code = formData.getAll('sku_code');
+                const wizardElement = document.querySelector('[x-data="wizard()"]');
+                if (wizardElement) {
+                    const wizardData = Alpine.$data(wizardElement);
+                    data.activeTab = wizardData.activeTab;
+                }
+                localStorage.setItem('singleOrderFormData', JSON.stringify(data));
+            });
+
+            // Enhanced Enter key handling
+            form.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    const wizardElement = document.querySelector('[x-data="wizard()"]');
+                    if (!wizardElement) return;
+                    const wizardData = Alpine.$data(wizardElement);
+                    if (wizardData.activeTab === 4) return;
+                    event.preventDefault();
+                    if (event.target.tagName === 'INPUT') {
+                        const formElements = Array.from(form.querySelectorAll('input, select, textarea, button'));
+                        const currentIndex = formElements.indexOf(event.target);
+                        if (currentIndex > -1 && currentIndex < formElements.length - 1) {
+                            try{formElements[currentIndex + 1].focus();} catch (error) {}
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+
+{% endblock js %}

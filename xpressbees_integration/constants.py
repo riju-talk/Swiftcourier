@@ -1,0 +1,30 @@
+STATUS_MAPPING = {
+    "PP": "pending_pickup",
+    "IT": "in_transit",
+    "EX": "exception",
+    "FD": "out_for_delivery",
+    "OFD": "out_for_delivery",
+    "DL": "delivered",
+    "RT": "rto",
+    "RT-IT": "rto_out_for_delivery",
+    "RT-DL": "rto_delivered",
+}
+
+ORDER_STATUS = [
+        ("ready_to_ship", "Ready To Ship"),
+        ("pending_pickup", "Pending Pickup"),
+        ("in_transit", "In Trasnit"),
+        ("out_for_delivery", "Out For Delivery"),
+        ("delivered", "Delivered"),
+        ("cancelled", "Cancelled"),
+        ("lost", "Lost"),
+        ("damaged", "Damaged"),
+        ("rto", "RTO"),
+        ("rto_pending_pickup", "RTO Pending Pickup"),
+        ("rto_in_transit", "RTO In Trasnit"),
+        ("rto_out_for_delivery", "RTO Out For Delivery"),
+        ("rto_delivered", "RTO Delivered"),
+        ("rto_cancelled", "RTO Cancelled"),
+        ("rto_lost", "RTO Lost"),
+        ("rto_damaged", "RTO Damaged"),
+    ]

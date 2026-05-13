@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>IdiotShip Manifest</title>
+
+        <style>
+            body {
+                font-family: sans-serif;
+                color: #111;
+            }
+
+            h1 {
+                text-align: center;
+                font-size: 20px;
+            }
+
+            /* Single bordered header box with two columns inside */
+            .header-box {
+                border: 1px solid #ccc;
+                padding: 10px;
+                font-size: 14px;
+                margin-bottom: 18px;
+                display: flex;
+                justify-content: space-between;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .header-left,
+            .header-right {
+                width: 48%;
+                box-sizing: border-box;
+            }
+
+            .header-left p,
+            .header-right p {
+                margin: 6px 0;
+            }
+
+            .header-right {
+                text-align: right;
+            }
+
+            /* Table */
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+                font-size: 14px;
+            }
+
+            th,
+            td {
+                border: 1px solid #ccc;
+                padding: 6px;
+            }
+
+            th {
+                background: #f2f2f2;
+                text-align: left;
+            }
+
+            /* Footer title margin as requested */
+            h2.footer-title {
+                text-align: center;
+                margin-top: 40px;
+                /* explicit top margin */
+                margin-bottom: 10px;
+                font-size: 16px;
+            }
+
+            .footer-grid {
+                display: flex;
+                gap: 40px;
+                font-size: 14px;
+            }
+
+            .footer-col {
+                width: 50%;
+            }
+
+            .line {
+                border-bottom: 1px dashed #999;
+                margin: 12px 0;
+                padding-bottom: 4px;
+            }
+
+            .small-text {
+                font-size: 12px;
+                text-align: center;
+                margin-top: 14px;
+            }
+
+            /* Watermark / faded system message */
+            .watermark {
+                color: #666;
+                opacity: 0.45;
+                font-style: italic;
+                margin-top: 24px;
+            }
+
+            /* Ensure printing with WeasyPrint keeps layout */
+            @page {
+                size: A4;
+            }
+        </style>
+    </head>
+
+    <body>{{ content|safe }}</body>
+</html>

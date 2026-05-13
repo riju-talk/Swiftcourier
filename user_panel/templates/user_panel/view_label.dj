@@ -1,0 +1,640 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Shipping Label Generator</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Roboto', Arial, sans-serif;
+                font-size: 9px;
+            }
+
+            body {
+                background: #f0f0f0;
+                padding: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 400px;
+                text-align: center;
+                padding: 10px;
+            }
+
+            .controls {
+                background: white;
+                padding: 10px;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+                margin-bottom: 15px;
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .btn {
+                background: #1976D2;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 5px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                font-size: 10px;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .btn:hover {
+                background: #0D47A1;
+            }
+
+            .btn.print {
+                background: #2E7D32;
+            }
+
+            .btn.print:hover {
+                background: #1B5E20;
+            }
+
+            .shipping-label {
+                width: 100%;
+                background: white;
+                border: 1px solid #ccc;
+                padding: 10px;
+                position: relative;
+                margin: 0 auto;
+                border-radius: 5px;
+                box-sizing: border-box;
+            }
+
+            .ship-to-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 8px;
+                padding-bottom: 8px;
+                border-bottom: 1px dashed #ddd;
+            }
+
+            .address-block {
+                flex: 1;
+                padding-right: 8px;
+                text-align: left;
+            }
+
+            .section-title {
+                font-weight: bold;
+                margin-bottom: 4px;
+                color: #1565C0;
+                font-size: 9px;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+                border-bottom: 1px solid #e3f2fd;
+                padding-bottom: 2px;
+            }
+
+            .address-block .name {
+                font-weight: 700;
+                font-size: 10px;
+                color: #0D47A1;
+                margin-bottom: 3px;
+            }
+
+            .address-block div {
+                margin-bottom: 2px;
+                font-size: 9px;
+                color: #37474F;
+                line-height: 1.3;
+            }
+
+            .logo-container {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+            }
+
+            .company-logo {
+                height: 30px;
+                margin-bottom: 5px;
+                border: 1px solid #ddd;
+                border-radius: 3px;
+                padding: 2px;
+                background: white;
+            }
+
+            .order-id {
+                font-weight: bold;
+                font-size: 9px;
+                color: #1565C0;
+                background: #e3f2fd;
+                padding: 3px 6px;
+                border-radius: 3px;
+            }
+
+            .details-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+                margin: 8px 0;
+                font-size: 8px;
+            }
+
+            .detail-item {
+                display: flex;
+                justify-content: space-between;
+                padding: 3px 0;
+                border-bottom: 1px dotted #ccc;
+            }
+
+            .detail-label {
+                font-weight: bold;
+                min-width: 60px;
+                color: #1565C0;
+            }
+
+            .courier-info {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #e3f2fd;
+                padding: 6px;
+                border-radius: 3px;
+                margin: 8px 0;
+                font-size: 9px;
+                border: 1px solid #90caf9;
+            }
+
+            .barcode {
+                text-align: center;
+                margin: 10px 0;
+                padding: 8px;
+                background: white;
+                border: 1px solid #ddd;
+                border-radius: 3px;
+            }
+
+            .barcode-img {
+                height: 60px;
+                margin: 5px auto;
+                display: block;
+                max-width: 95%;
+            }
+
+            .payment-info {
+                display: flex;
+                justify-content: space-between;
+                background: #fff8e1;
+                padding: 6px;
+                border-radius: 3px;
+                margin: 10px 0;
+                font-weight: bold;
+                font-size: 9px;
+                border: 1px solid #ffd54f;
+            }
+
+            .product-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 8px 0;
+                font-size: 8px;
+                border: 1px solid #ddd;
+            }
+
+            .product-table th {
+                background: #1565C0;
+                color: white;
+                text-align: left;
+                padding: 5px;
+                font-size: 9px;
+            }
+
+            .product-table td {
+                padding: 5px;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .product-table tr:nth-child(even) {
+                background-color: #f5f5f5;
+            }
+
+            .total-row {
+                font-weight: bold;
+                background: #c8e6c9 !important;
+            }
+
+            .address-row {
+                display: flex;
+                gap: 8px;
+                margin-top: 10px;
+            }
+
+            .address-col {
+                flex: 1;
+                padding: 6px;
+                background: #e3f2fd;
+                border-radius: 3px;
+                font-size: 8px;
+                border: 1px solid #90caf9;
+            }
+
+            .address-col h3 {
+                font-size: 9px;
+                margin-bottom: 3px;
+                color: #1565C0;
+                border-bottom: 1px solid #bbdefb;
+                padding-bottom: 2px;
+            }
+
+            .footer-note {
+                font-size: 7px;
+                color: #546E7A;
+                line-height: 1.3;
+                padding: 8px;
+                background: #f5f5f5;
+                border-radius: 3px;
+                margin-top: 10px;
+                border: 1px solid #ddd;
+            }
+
+            .powered-by {
+                text-align: center;
+                margin-top: 10px;
+                padding-top: 6px;
+                border-top: 1px dashed #bbdefb;
+                font-weight: bold;
+                color: #1976D2;
+                font-size: 8px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .powered-by img {
+                height: 14px;
+            }
+
+            #loadingOverlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.9);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                flex-direction: column;
+                font-size: 1rem;
+                color: #1976D2;
+            }
+
+            .spinner {
+                border: 5px solid #f3f3f3;
+                border-top: 5px solid #1976D2;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                animation: spin 1s linear infinite;
+                margin-bottom: 12px;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            @media print {
+                body {
+                    padding: 0;
+                    background: white;
+                }
+
+                .container {
+                    padding: 0;
+                    max-width: 100mm;
+                }
+
+                .controls {
+                    display: none;
+                }
+
+                .shipping-label {
+                    box-shadow: none;
+                    border: 1px solid #000;
+                    padding: 8px;
+                    max-width: 100mm;
+                    width: 100mm;
+                    height: 150mm;
+                    margin: 0;
+                    page-break-inside: avoid;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="loadingOverlay" style="display: none;">
+            <div class="spinner"></div>
+            <p>Generating PDF...</p>
+        </div>
+
+        <div class="container">
+            <div class="controls">
+                <button class="btn" id="downloadBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="14"
+                         height="14"
+                         fill="currentColor"
+                         viewBox="0 0 16 16">
+                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+                    </svg>
+                    Download PDF
+                </button>
+                <button class="btn print" id="printBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="14"
+                         height="14"
+                         fill="currentColor"
+                         viewBox="0 0 16 16">
+                        <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2H5zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1z" />
+                        <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2V7zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z" />
+                    </svg>
+                    Print Label
+                </button>
+            </div>
+
+            <div class="shipping-label" id="labelContainer">
+                <div class="ship-to-container">
+                    <div class="address-block">
+                        <div class="section-title">SHIP TO:</div>
+                        <div>
+                            <div class="name">{{ order.shipping_address.name }}</div>
+                            <div class="address-line">{{ order.shipping_address.line1 }}</div>
+                            <div class="address-line">{{ order.shipping_address.line2 }}</div>
+                            <div class="address-line">
+                                {{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.pin_code }}, {{ order.shipping_address.country }}
+                            </div>
+                            <div class="address-line">Mob: {{ order.shipping_address.phone }}</div>
+                        </div>
+                    </div>
+
+                    {% if order.user.label_setting.show_logo %}
+                        <div class="logo-container">
+                            <img src="{{ order.user.label_setting.logo.url }}"
+                                 alt="Company Logo"
+                                 class="company-logo" />
+                            <div class="order-id">ORDER ID: {{ order.order_number }}</div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Dimensions:</span>
+                        <span>{{ order.shipment.package_length_cm }}x{{ order.shipment.package_width_cm }}x{{ order.shipment.package_height_cm }} cm</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Weight:</span>
+                        <span>{{ order.shipment.package_weight_kg }} kg</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Date:</span>
+                        <span>{{ order.order_date|date:"d/m/Y" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Order ID:</span>
+                        <span>{{ order.order_number }}</span>
+                    </div>
+                </div>
+
+                <div class="courier-info">
+                    <div>
+                        <div class="section-title">COURIER</div>
+                        <div style="font-weight: bold; font-size: 10px;">{{ order.logistic_partner.name }}</div>
+                    </div>
+                    <div>
+                        <div class="section-title">AWB NUMBER</div>
+                        <div style="font-weight: bold; font-size: 10px;">{{ order.awb_number }}</div>
+                    </div>
+                </div>
+
+                <div class="barcode">
+                    <div style="margin-bottom: 4px; font-weight: 500; font-size: 8px;">SCAN TO TRACK SHIPMENT</div>
+                    <img src="{{ order.barcode.url }}" alt="Barcode" class="barcode-img">
+                </div>
+
+                <div class="payment-info">
+                    <div>PAYMENT METHOD: {{ order.payment.get_method_display }}</div>
+                    {% if order.payment.method == "cod" %}<div>Rs {{ order.payment.amount }}</div>{% endif %}
+                </div>
+
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Item</th>
+                            <th>Qty</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order_item in order.items.all %}
+                            <tr>
+                                <td>{{ order_item.sku_code }}</td>
+                                <td>{{ order_item.product.name }}</td>
+                                <td>{{ order_item.quantity }}</td>
+                                <td>{{ order_item.total_price }}</td>
+                            </tr>
+                        {% endfor %}
+                        <tr class="total-row">
+                            <td colspan="3">Total</td>
+                            <td>{{ order.total_amount }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                {% if order.user.label_setting.show_pickup_address %}
+                    <div class="address-row">
+                        <div class="address-col">
+                            <h3>PICKUP ADDRESS:</h3>
+                            <div>{{ order.hub.name }}</div>
+                            <div>{{ order.hub.address_line1 }} {{ order.hub.address_line2 }}</div>
+                            <div>{{ order.hub.city }}, {{ order.hub.state }}, {{ order.hub.pincode }}</div>
+                            <div>Mob: {{ order.hub.phone }}</div>
+                        </div>
+
+                        <div class="address-col">
+                            <h3>RETURN ADDRESS:</h3>
+                            <div>{{ order.hub.name }}</div>
+                            <div>{{ order.hub.address_line1 }} {{ order.hub.address_line2 }}</div>
+                            <div>{{ order.hub.city }}, {{ order.hub.state }}, {{ order.hub.pincode }}</div>
+                            <div>Mob: {{ order.hub.phone }}</div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="footer-note">
+                    {% if order.user.label_setting.show_support_info %}
+                        <p>
+                            <strong>Customer Support:</strong> Phone {{ order.user.label_setting.support_phone }} |
+                            Email: {{ order.user.label_setting.support_email }}
+                        </p>
+                    {% endif %}
+                    <p style="margin-top: 5px;">
+                        This is a computer-generated shipping label. No signature is required. All disputes are subject to the jurisdiction of Delhi courts. Returns must comply with our store policy.
+                    </p>
+                </div>
+
+                <div class="powered-by">
+                    <span>Powered by IdiotShip</span>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                const downloadBtn = document.getElementById('downloadBtn');
+                const printBtn = document.getElementById('printBtn');
+
+                // Get the next URL parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const nextUrl = urlParams.get('next');
+
+                // Auto-download and redirect if nextUrl is provided
+                if (nextUrl) {
+                    setTimeout(async () => {
+                        loadingOverlay.style.display = 'flex';
+                        try {
+                            await downloadPDF();
+                        } catch (error) {
+                            console.error('PDF generation failed:', error);
+                        }
+                        setTimeout(() => {
+                            window.location.href = nextUrl;
+                        }, 500);
+                    }, 500); // Reduced from 1500ms to 500ms for faster start
+                }
+
+                // Manual download button
+                if (downloadBtn) {
+                    downloadBtn.addEventListener('click', async () => {
+                        loadingOverlay.style.display = 'flex';
+                        try {
+                            await downloadPDF();
+                            // Show success message on button
+                            const originalText = downloadBtn.innerHTML;
+                            downloadBtn.innerHTML = '✓ Downloaded!';
+                            setTimeout(() => {
+                                downloadBtn.innerHTML = originalText;
+                            }, 2000);
+                        } catch (error) {
+                            console.error('PDF download failed:', error);
+                            const originalText = downloadBtn.innerHTML;
+                            downloadBtn.innerHTML = 'Error! Try Again';
+                            setTimeout(() => {
+                                downloadBtn.innerHTML = originalText;
+                            }, 2000);
+                        } finally {
+                            loadingOverlay.style.display = 'none';
+                        }
+                    });
+                }
+
+                // Print button
+                if (printBtn) {
+                    printBtn.addEventListener('click', () => {
+                        window.print();
+                    });
+                }
+
+                // PDF generation function
+                async function downloadPDF() {
+                    const {
+                        jsPDF
+                    } = window.jspdf;
+                    const label = document.getElementById("labelContainer");
+
+                    if (!label) {
+                        console.error("Label container not found!");
+                        loadingOverlay.style.display = 'none';
+                        throw new Error("Label container not found");
+                    }
+
+                    try {
+                        // Wait for all assets to load
+                        await new Promise(resolve => {
+                            if (document.readyState === 'complete') {
+                                resolve();
+                            } else {
+                                window.addEventListener('load', resolve);
+                            }
+                        });
+
+                        // Capture the label as an image
+                        const canvas = await html2canvas(label, {
+                            scale: 3, // Increased scale for better quality
+                            useCORS: true,
+                            backgroundColor: "#FFFFFF",
+                            logging: false,
+                            allowTaint: true
+                        });
+
+                        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+                        // Create PDF (100mm x 150mm)
+                        const pdf = new jsPDF({
+                            orientation: "portrait",
+                            unit: "mm",
+                            format: [100, 150]
+                        });
+
+                        // Add image to PDF
+                        pdf.addImage(imgData, 'JPEG', 0, 0, 100, 150);
+
+                        const now = new Date();
+                        const timestamp = now.toISOString().replace(/[:.]/g, '-'); // Safe filename format
+
+                        // Save the PDF
+                        pdf.save(`shipping-label-${timestamp}.pdf`);
+
+                    } catch (error) {
+                        console.error('PDF generation error:', error);
+                        throw error;
+                    } finally {
+                        // Hide loading overlay only for manual downloads
+                        if (!nextUrl) {
+                            loadingOverlay.style.display = 'none';
+                        }
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>

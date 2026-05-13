@@ -1,0 +1,438 @@
+{% extends 'components/layouts/layout.dj' %}
+
+{% load static %}
+
+{% block title %}
+  Ready to Ship
+{% endblock %}
+
+{% block css %}
+  <style>
+    [x-cloak] {
+      display: none !important;
+    }
+    
+    .date-transition {
+      transition: all 0.2s ease-in-out;
+    }
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      @apply bg-gray-100 dark:bg-gray-700;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      @apply bg-gray-400 dark:bg-gray-500;
+    }
+  </style>
+  <style>
+    /* Optimized tooltip styling */
+    .tooltip {
+      min-width: 120px;
+      pointer-events: none;
+      transform-origin: top center;
+      will-change: transform, opacity;
+    }
+    
+    /* Dark mode compatibility */
+    .dark .tooltip {
+      background-color: #374151;
+      color: #f9fafb;
+    }
+  </style>
+{% endblock %}
+
+{% block body %}
+  {% include 'user_panel/components/common/pickup_cutoff.dj' %}
+
+  {% include 'user_panel/components/common/shipment_navbar.dj' %}
+
+  <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+    <!-- Header Section -->
+    <div class="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b dark:border-gray-700 gap-4">
+      <!-- Left: Title + Search -->
+      <div class="flex items-center gap-4 w-full sm:w-auto">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">Ready to Ship</h2>
+        <input type="text" id="searchInput" name="q" placeholder="Search Order" value="{{ request.GET.q }}" onenter="handleSearch(this.value)" class="w-48 px-3 py-1.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400" />
+      </div>
+
+      <!-- Right: Buttons -->
+      <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+        <div id="cancelActionButtons" class="hidden">
+          <button onclick="openCancelModal()" class="px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white text-sm">Cancel</button>
+        </div>
+        <div id="actionButtons" class="hidden">
+          <button onclick="openModal()" class="px-3 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white text-sm">Ship</button>
+        </div>
+        <button id="filterToggleBtn" class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-sm" title="Filter Orders">
+          <!-- Original filter icon -->
+          <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 019 17v-3.586L3.293 6.707A1 1 0 013 6V4z" />
+          </svg>
+          <span id="filterToggleText" class="text-indigo-600 font-semibold">Filter</span>
+        </button>
+        <button class="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm" id="exportOrderButton">Export</button>
+      </div>
+    </div>
+
+    {% include 'components/common/user_panel_filter.dj' %}
+
+    <div id="selectedCountBox" class="hidden mt-3 px-3 py-2 bg-blue-100 text-blue-800 rounded shadow text-sm font-medium">
+      Selected Rows: <span id="selectedCount">0</span>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto">
+      <div class="overflow-y-auto max-h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
+            <tr>
+              <th class="px-2 py-1 text-left text-center align-middle bg-gray-50 dark:bg-gray-700">
+                <div class="flex items-center">
+                  <input type="checkbox" id="selectAll" class="w-4 h-4 rounded border-gray-300 dark:bg-gray-600 dark:border-gray-500" />
+                </div>
+              </th>
+              <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">CHANNEL</th>
+              <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">IDIOTSHIP ID</th>
+              <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">ORDER NUMBER</th>
+              <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">DATE</th>
+              <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">CUSTOMER</th>
+              <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">PRODUCTS</th>
+              <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">QTY</th>
+              <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">AMT</th>
+              <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">WT (lbh)</th>
+              <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">STATUS</th>
+              <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">ACTION</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            {% for order in page_obj %}
+              <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                <td class="px-2 py-1">
+                  <input type="checkbox" value="{{ order.id }}" class="ship-order-ids row-checkbox rounded border-gray-300 dark:bg-gray-600" />
+                </td>
+                <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">{{ order.get_channel_display }}</td>
+                <td class="px-1 py-0.5 text-xs text-center font-medium text-gray-900 dark:text-gray-100">IS{{ order.id }}</td>
+                <td class="px-1 py-0.5 text-xs text-center font-medium text-blue-600 hover:underline dark:text-blue-400">
+                  <a href="{% url 'user_panel:order-details' id=order.id %}">{{ order.order_number }}</a>
+                </td>
+
+                <td class="px-1 py-0.5 text-xs text-center text-center text-gray-700 dark:text-gray-300">
+                  <p>{{ order.created_at|date:'M d, Y' }}</p>
+                  <p>
+                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">{{ order.placed_at|date:'h:i A' }}</span>
+                  </p>
+                </td>
+                <td class="px-1 py-0.5 text-xs text-center text-center text-gray-700 dark:text-gray-300">
+                  <div class="group relative inline-block w-full">
+                    <span class="truncate max-w-[100px] inline-block rounded-md px-1 py-0.5">
+                      <p>{{ order.shipping_address.name|truncatechars:15 }}</p>
+                      <p>
+                        <span class="ml-1 text-[10px] px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">{{ order.shipping_address.phone|default:'No phone' }}</span>
+                      </p>
+                    </span>
+                    <span class="tooltip rounded-md shadow-lg px-2 py-1 bg-gray-800 text-white text-xs absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-50 whitespace-normal max-w-xs text-left"><div>{{ order.shipping_address.get_full_address|default:'No address' }}</div></span>
+                  </div>
+                </td>
+
+                {# Product name with tooltip - rounded and efficient #}
+                <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">
+                  <div class="group relative inline-block w-full">
+                    <span class="truncate max-w-[120px] inline-block rounded-md px-1 py-0.5">{{ order.items.first.product.name|truncatechars:20 }}</span>
+                    <span class="tooltip rounded-md shadow-lg px-2 py-1 bg-gray-800 text-white text-xs absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-50 max-w-xs">{{ order.items.first.product.name }}</span>
+                  </div>
+                </td>
+
+                <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">{{ order.items.first.quantity }}</td>
+                <td class="px-1 py-0.5 text-xs text-center text-center text-gray-700 dark:text-gray-300">
+                  ₹ {{ order.total_amount|floatformat:0 }}
+                  <p>
+                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">{{ order.payment.method|upper }}</span>
+                  </p>
+                </td>
+
+                <td class="px-1 py-0.5 text-xs text-center text-center text-gray-700 dark:text-gray-300">
+                  {{ order.shipment.package_weight_kg }}kg<p>
+                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">{{ order.shipment.package_length_cm }}x{{ order.shipment.package_width_cm }}x{{ order.shipment.package_height_cm }}cm</span>
+                  </p>
+                </td>
+                <td class="px-1 py-0.5 text-center">
+                  <button onclick="singleModal('{{ order.id }}')" class="px-2 py-1 text-xs bg-blue-500 hover:bg-blue-600 rounded-md text-white shadow-sm transition">Ship</button>
+                </td>
+
+                <td class="px-1 py-0.5 text-center">
+                  <div class="relative">
+                    <button class="action-btn p-0.5 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg">⋮</button>
+                    <div class="action-menu hidden absolute right-0 mt-1 w-32 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg py-1 z-50">
+                      <a href="{% url 'order_manager:cancel-order' order.id %}?next={{ request.path }}" class="block px-3 py-2 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-100">Cancel</a>
+                      <a href="{% url 'order_manager:order-edit-clone' order.id 'clone' %}" class="block px-3 py-2 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-100">Clone</a>
+                      <a href="{% url 'order_manager:order-edit-clone' order.id 'edit' %}" class="block px-3 py-2 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-100">Edit</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="11" class="text-center py-4 text-gray-500 dark:text-gray-400">
+                  <div class="flex justify-center items-center h-full">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>No data found
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% include 'components/common/pagination.dj' %}
+  </div>
+
+  <!-- Modal -->
+  <div id="shipModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-96 p-6 mx-4 transform -translate-y-1/2 -translate-x-1/2 top-1/2 left-1/2 fixed">
+      <h2 class="text-lg font-bold mb-4 dark:text-gray-100">Ship Selected Orders</h2>
+      <form id="shipForm" action="{% url 'order_manager:ship-order' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="order_ids" value="" />
+        <label class="block mb-2 text-sm text-gray-700 dark:text-gray-300">Select Warehouse</label>
+        <div class="flex items-center gap-2 mb-4">
+          <select name="warehouse" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+            <option disabled selected>Select Warehouse</option>
+            {% for hub in request.user.hubs.all %}
+              <option value="{{ hub.id }}">{{ hub.name }}</option>
+            {% endfor %}
+          </select>
+
+          <!-- Add Warehouse Button with Tooltip -->
+          <a href="{% url 'user_panel:add-hub' %}" class="text-blue-600 hover:text-blue-800 text-xl font-bold relative">+</a>
+        </div>
+        <label class="block mb-2 text-sm text-gray-700 dark:text-gray-300">Courier Partner</label>
+        <select name="courier" class="w-full mb-4 px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+          <option value="preference" selected>According to Preference</option>
+          {% for rate_card in request.user.rate_cards.all %}
+            <option value="{{ rate_card.courier.id }}">{{ rate_card.courier.name }}</option>
+          {% endfor %}
+        </select>
+        <div class="flex justify-end gap-2">
+          <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded dark:text-gray-100">Cancel</button>
+          <button type="submit" onclick="shipSelectedOrders()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Single Ship Modal -->
+  <div id="singleShipModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-96 p-6 mx-4 transform -translate-y-1/2 -translate-x-1/2 top-1/2 left-1/2 fixed">
+      <h2 class="text-lg font-bold mb-4 dark:text-gray-100">Ship Order</h2>
+      <form id="singleShipForm" action="{% url 'order_manager:ship-order' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="order_ids" id="singleOrderId" value="" />
+        <label class="block mb-2 text-sm text-gray-700 dark:text-gray-300">Select Warehouse</label>
+        <div class="flex items-center gap-2 mb-4">
+          <select name="warehouse" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+            <option disabled selected>Select Warehouse</option>
+            {% for hub in request.user.hubs.all %}
+              <option value="{{ hub.id }}">{{ hub.name }}</option>
+            {% endfor %}
+          </select>
+
+          <!-- Add Warehouse Button with Tooltip -->
+          <a href="{% url 'user_panel:add-hub' %}" class="text-blue-600 hover:text-blue-800 text-xl font-bold relative">+</a>
+        </div>
+
+        <label class="block mb-2 text-sm text-gray-700 dark:text-gray-300">Courier Partner</label>
+        <select name="courier" class="w-full mb-4 px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+          <option value="preference" selected>According to Preference</option>
+          {% for rate_card in request.user.rate_cards.all %}
+            <option value="{{ rate_card.courier.id }}">{{ rate_card.courier.name }}</option>
+          {% endfor %}
+        </select>
+        <div class="flex justify-end gap-2">
+          <button type="button" onclick="closeSingleModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded dark:text-gray-100">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="cancelModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-96 p-6 mx-4 transform -translate-y-1/2 -translate-x-1/2 top-1/2 left-1/2 fixed">
+      <h2 class="text-lg font-bold mb-4 dark:text-gray-100">Confirm Cancellation</h2>
+      <p class="mb-4 text-sm text-gray-600 dark:text-gray-300">Are you sure you want to cancel the selected orders?</p>
+      <form id="cancelForm" action="{% url 'order_manager:cancel-bulk-order' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="order_ids" value="" />
+        <div class="flex justify-end gap-2">
+          <button type="button" onclick="closeCancelModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded dark:text-gray-100">No, Go Back</button>
+          <button type="button" onclick="cancelSelectedOrders()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded">Yes, Cancel Orders</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script defer src="{% static 'assets/js/apexcharts.js' %}"></script>
+  <script src="{% static 'assets/js/simple-datatables.js' %}"></script>
+
+  <script>
+    // Handle Single Ship Modal
+    function singleModal(orderId) {
+      document.getElementById('singleOrderId').value = orderId
+      document.getElementById('singleShipModal').classList.remove('hidden')
+    }
+    
+    function closeSingleModal() {
+      document.getElementById('singleShipModal').classList.add('hidden')
+    }
+    
+    // Action Menu Handling
+    document.querySelectorAll('.action-btn').forEach((button) => {
+      button.addEventListener('click', (e) => {
+        e.stopPropagation()
+        const menu = button.nextElementSibling
+        const isOpen = !menu.classList.contains('hidden')
+    
+        // Close all other menus
+        document.querySelectorAll('.action-menu').forEach((m) => m.classList.add('hidden'))
+    
+        // Toggle current menu
+        menu.classList.toggle('hidden', isOpen)
+      })
+    })
+    
+    // Close menus when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.action-btn')) {
+        document.querySelectorAll('.action-menu').forEach((menu) => {
+          menu.classList.add('hidden')
+        })
+      }
+    })
+    
+    const selectAll = document.getElementById('selectAll')
+    const checkboxes = document.querySelectorAll('.row-checkbox')
+    const selectedCountBox = document.getElementById('selectedCountBox')
+    const selectedCount = document.getElementById('selectedCount')
+    
+    function updateActionButtons() {
+      const checkedCount = document.querySelectorAll('.row-checkbox:checked').length
+    
+      // Toggle action buttons (your existing code)
+      document.getElementById('actionButtons').classList.toggle('hidden', checkedCount === 0)
+      document.getElementById('cancelActionButtons').classList.toggle('hidden', checkedCount === 0)
+    
+      // Update count box
+      selectedCount.textContent = checkedCount
+      selectedCountBox.classList.toggle('hidden', checkedCount === 0)
+    }
+    
+    // Handle "Select All"
+    selectAll.addEventListener('change', (e) => {
+      checkboxes.forEach((cb) => (cb.checked = e.target.checked))
+      updateActionButtons()
+    })
+    
+    // Handle individual checkboxes
+    checkboxes.forEach((cb) => {
+      cb.addEventListener('change', () => {
+        if (!cb.checked) {
+          selectAll.checked = false
+        } else if (document.querySelectorAll('.row-checkbox:checked').length === checkboxes.length) {
+          selectAll.checked = true
+        }
+        updateActionButtons()
+      })
+    })
+    
+    document.getElementById('selectAll').addEventListener('change', (e) => {
+      document.querySelectorAll('.row-checkbox').forEach((checkbox) => {
+        checkbox.checked = e.target.checked
+      })
+      updateActionButtons()
+    })
+    
+    document.querySelectorAll('.row-checkbox').forEach((checkbox) => {
+      checkbox.addEventListener('change', updateActionButtons)
+    })
+    
+    // Modal Handling
+    function openModal() {
+      document.getElementById('shipModal').classList.remove('hidden')
+    }
+    
+    function closeModal() {
+      document.getElementById('shipModal').classList.add('hidden')
+    }
+    
+    // Add debounce to prevent too many requests
+    function handleSearch(value) {
+      updateSearchParams(value)
+    }
+    
+    function updateSearchParams(searchTerm) {
+      const urlParams = new URLSearchParams(window.location.search)
+    
+      if (searchTerm.trim()) {
+        urlParams.set('q', searchTerm)
+      } else {
+        urlParams.delete('q')
+      }
+    
+      // Reset to first page when searching
+      urlParams.set('page', 1)
+      window.location.search = urlParams.toString()
+    }
+    
+    document.getElementById('searchInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        updateSearchParams(e.target.value)
+      }
+    })
+    
+    const shipSelectedOrders = () => {
+      // Get all checked checkboxes with class 'ship-order-ids'
+      const selectedCheckboxes = document.querySelectorAll('.ship-order-ids:checked')
+    
+      // Extract values (order IDs) from the checked checkboxes
+      const orderIds = Array.from(selectedCheckboxes).map((checkbox) => checkbox.value)
+    
+      // Find the hidden input inside the form
+      const hiddenInput = document.querySelector('#shipForm input[name="order_ids"]')
+    
+      // Set the value of the hidden input to comma-separated order IDs
+      hiddenInput.value = orderIds.join(',')
+    
+      // Submit the form programmatically
+      document.getElementById('shipForm').submit()
+    }
+    
+    // Modal Handling for Cancellation
+    function openCancelModal() {
+      document.getElementById('cancelModal').classList.remove('hidden')
+    }
+    
+    function closeCancelModal() {
+      document.getElementById('cancelModal').classList.add('hidden')
+    }
+    const cancelSelectedOrders = () => {
+      const selectedCheckboxes = document.querySelectorAll('.ship-order-ids:checked')
+      const orderIds = Array.from(selectedCheckboxes).map((checkbox) => checkbox.value)
+      const hiddenInput = document.querySelector('#cancelForm input[name="order_ids"]')
+      hiddenInput.value = orderIds.join(',')
+      document.getElementById('cancelForm').submit()
+    }
+  </script>
+{% endblock %}

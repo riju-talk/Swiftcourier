@@ -1,0 +1,133 @@
+{% extends 'components/layouts/layout.dj' %}
+
+{% block title %}
+  Courier Performance | Super Admin - Dashboard
+{% endblock %}
+
+{% load static %}
+
+{% block body %}
+  <div class="w-full">
+    <!-- Tabs -->
+    <div class="flex flex-wrap gap-2 mb-4">
+      <a href="{% url 'superadmin_panel:dashboard' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">Overview</a>
+      <a href="{% url 'superadmin_panel:dashboard-client' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">Client</a>
+      <a href="{% url 'superadmin_panel:dashboard-courier-partner' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">Courier Partner</a>
+      <a href="{% url 'superadmin_panel:dashboard-courier-performance' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-blue-600 text-white dark:bg-blue-500">Courier Performance</a>
+    </div>
+
+    <!-- Content Container -->
+    <div class="rounded-lg p-4 shadow bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100">
+      <!-- Courier Performance -->
+      <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow">
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Courier Performance</h3>
+
+        <!-- KPI Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div class="rounded-lg p-4 bg-green-50 dark:bg-green-900/20">
+            <p class="text-xs text-green-700 dark:text-green-400">Avg Delivery Success</p>
+            <p id="avgDeliverySuccess" class="text-2xl font-bold text-green-800 dark:text-green-300">N/A%</p>
+          </div>
+
+          <div class="rounded-lg p-4 bg-yellow-50 dark:bg-yellow-900/20">
+            <p class="text-xs text-yellow-700 dark:text-yellow-400">Avg Pickup TAT</p>
+            <p id="avgPickupTat" class="text-2xl font-bold text-yellow-800 dark:text-yellow-300">N/A Days</p>
+          </div>
+
+          <div class="rounded-lg p-4 bg-blue-50 dark:bg-blue-900/20">
+            <p class="text-xs text-blue-700 dark:text-blue-400">Avg Delivery TAT</p>
+            <p id="avgDeliveryTat" class="text-2xl font-bold text-blue-800 dark:text-blue-300">N/A Days</p>
+          </div>
+
+          <div class="rounded-lg p-4 bg-red-50 dark:bg-red-900/20">
+            <p class="text-xs text-red-700 dark:text-red-400">Avg RTO Rate</p>
+            <p id="avgRtoTat" class="text-2xl font-bold text-red-800 dark:text-red-300">N/A%</p>
+          </div>
+        </div>
+
+        <!-- Performance Table -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <thead class="bg-gray-100 dark:bg-gray-800">
+              <tr>
+                <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Courier Partner</th>
+                <th class="px-4 py-3 text-center text-gray-700 dark:text-gray-300">Delivery %</th>
+                <th class="px-4 py-3 text-center text-yellow-600 dark:text-yellow-400">Pickup TAT</th>
+                <th class="px-4 py-3 text-center text-blue-600 dark:text-blue-400">Delivery TAT</th>
+                <th class="px-4 py-3 text-center text-red-600 dark:text-red-400">RTO %</th>
+                <th class="px-4 py-3 text-center text-purple-600 dark:text-purple-400">NDR %</th>
+                <th class="px-4 py-3 text-center text-gray-700 dark:text-gray-300">SLA Status</th>
+              </tr>
+            </thead>
+
+            <tbody id="courierPerformanceTable" class="divide-y divide-gray-200 dark:divide-gray-700">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    fetch(`${window.location.pathname}?data=true`)
+      .then(res => res.json())
+      .then(data => {
+
+        /* ---------- KPIs ---------- */
+        avgDeliverySuccess.innerText = `${data.avg_delivery_success}%`;
+        avgPickupTat.innerText = `${data.avg_pickup_tat} Days`;
+        avgDeliveryTat.innerText = `${data.avg_delivery_tat} Days`;
+        avgRtoTat.innerText = `${data.avg_rto_tat}%`;
+
+        /* ---------- Table ---------- */
+        const tableBody = document.getElementById("courierPerformanceTable");
+        tableBody.innerHTML = "";
+
+        Object.entries(data.courier_partners).forEach(([courier, stats]) => {
+          const statusColor = {
+            "Good": "green",
+            "Watch": "yellow",
+            "Risk": "red"
+          };
+
+          const status = stats.sla_status;
+          const color = statusColor[status] || "gray";
+
+          tableBody.innerHTML += `
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+              <td class="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">
+                ${courier.charAt(0).toUpperCase() + courier.slice(1)}
+              </td>
+              <td class="px-4 py-3 text-center text-green-600 font-semibold">
+                ${stats.delivery_perc}%
+              </td>
+              <td class="px-4 py-3 text-center">
+                ${stats.pickup_tat} d
+              </td>
+              <td class="px-4 py-3 text-center">
+                ${stats.delivery_tat} d
+              </td>
+              <td class="px-4 py-3 text-center text-red-600">
+                ${stats.rto_perc}%
+              </td>
+              <td class="px-4 py-3 text-center text-purple-600">
+                ${stats.ndr_perc}%
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="px-2 py-1 text-xs rounded 
+                  bg-${color}-100 text-${color}-700 
+                  dark:bg-${color}-900/40 dark:text-${color}-300">
+                  ${status}
+                </span>
+              </td>
+            </tr>
+          `;
+        });
+      })
+      .catch(err => console.error("Courier performance dashboard error:", err));
+  });
+</script>
+{% endblock %}

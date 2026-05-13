@@ -1,0 +1,114 @@
+<ul x-cloak
+    x-show="open"
+    x-transition
+    x-transition.duration.300ms
+    class="top-11 !py-0 text-dark dark:text-white-dark w-[300px] ltr:-right-16 sm:ltr:-right-2 rtl:-left-16 sm:rtl:-left-2 sm:w-[375px] text-xs">
+    <li class="mb-5">
+        <div class="overflow-hidden relative rounded-t-md !p-5 text-white">
+            <div class="absolute h-full w-full bg-[url(../images/menu-heade.jpg)] bg-no-repeat bg-center bg-cover inset-0"></div>
+            <h4 class="font-semibold relative z-10 text-lg">Notifications</h4>
+        </div>
+    </li>
+    {% for notification in unread_5_notifications %}
+        <li>
+            <div class="flex items-center px-5 py-3" @click.self="toggle">
+                <div>
+                    <span class="grid place-content-center w-9 h-9 rounded-full">
+                        {% if notification.category == "success" %}
+                            <svg height="27"
+                                 width="27"
+                                 viewBox="0 0 117 117"
+                                 version="1.1"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <g fill="none" fill-rule="evenodd" id="Page-1" stroke="none" stroke-width="1">
+                                <g fill-rule="nonzero" id="correct">
+                                <path d="M34.5,55.1 C32.9,53.5 30.3,53.5 28.7,55.1 C27.1,56.7 27.1,59.3 28.7,60.9 L47.6,79.8 C48.4,80.6 49.4,81 50.5,81 C50.6,81 50.6,81 50.7,81 C51.8,80.9 52.9,80.4 53.7,79.5 L101,22.8 C102.4,21.1 102.2,18.5 100.5,17 C98.8,15.6 96.2,15.8 94.7,17.5 L50.2,70.8 L34.5,55.1 Z" fill="#17AB13" id="Shape" />
+                                <path d="M89.1,9.3 C66.1,-5.1 36.6,-1.7 17.4,17.5 C-5.2,40.1 -5.2,77 17.4,99.6 C28.7,110.9 43.6,116.6 58.4,116.6 C73.2,116.6 88.1,110.9 99.4,99.6 C118.7,80.3 122,50.7 107.5,27.7 C106.3,25.8 103.8,25.2 101.9,26.4 C100,27.6 99.4,30.1 100.6,32 C113.1,51.8 110.2,77.2 93.6,93.8 C74.2,113.2 42.5,113.2 23.1,93.8 C3.7,74.4 3.7,42.7 23.1,23.3 C39.7,6.8 65,3.9 84.8,16.2 C86.7,17.4 89.2,16.8 90.4,14.9 C91.6,13 91,10.5 89.1,9.3 Z" fill="#4A4A4A" id="Shape" />
+                                </g>
+                                </g>
+                            </svg>
+                        {% elif notification.category == "error" %}
+                            <svg width="27"
+                                 height="27"
+                                 viewBox="0 0 117 117"
+                                 version="1.1"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <g fill="none" fill-rule="evenodd" id="Page-1" stroke="none" stroke-width="1">
+                                <g fill-rule="nonzero" id="cancel">
+                                <path d="M58.5,116.6 C90.5,116.6 116.6,90.6 116.6,58.5 C116.6,26.4 90.5,0.4 58.5,0.4 C26.5,0.4 0.4,26.5 0.4,58.5 C0.4,90.5 26.5,116.6 58.5,116.6 Z M58.5,8.6 C86,8.6 108.4,31 108.4,58.5 C108.4,86 86,108.4 58.5,108.4 C31,108.4 8.6,86 8.6,58.5 C8.6,31 31,8.6 58.5,8.6 Z" fill="#4A4A4A" id="Shape" />
+                                <path d="M36.7,79.7 C37.5,80.5 38.5,80.9 39.6,80.9 C40.7,80.9 41.7,80.5 42.5,79.7 L58.5,63.7 L74.5,79.7 C75.3,80.5 76.3,80.9 77.4,80.9 C78.5,80.9 79.5,80.5 80.3,79.7 C81.9,78.1 81.9,75.5 80.3,73.9 L64.3,57.9 L80.3,41.9 C81.9,40.3 81.9,37.7 80.3,36.1 C78.7,34.5 76.1,34.5 74.5,36.1 L58.5,52.1 L42.5,36.1 C40.9,34.5 38.3,34.5 36.7,36.1 C35.1,37.7 35.1,40.3 36.7,41.9 L52.7,57.9 L36.7,73.9 C35.1,75.5 35.1,78.1 36.7,79.7 Z" fill="#17AB13" id="Shape" />
+                                </g>
+                                </g>
+                            </svg>
+                        {% elif notification.category == "warning" %}
+                            <svg width="27"
+                                 height="27"
+                                 viewBox="0 0 117 117"
+                                 version="1.1"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <g fill="none" fill-rule="evenodd" id="Page-1" stroke="none" stroke-width="1">
+                                <g fill-rule="nonzero" id="bell">
+                                <path d="M63.2,31.9 C63.2,14.7 49.2,0.6 31.9,0.6 C14.6,0.6 0.6,14.6 0.6,31.9 C0.6,49.2 14.6,63.2 31.9,63.2 C49.2,63.2 63.2,49.1 63.2,31.9 Z M8.9,31.9 C8.9,19.2 19.2,8.9 31.9,8.9 C44.6,8.9 54.9,19.2 54.9,31.9 C54.9,44.6 44.6,54.9 31.9,54.9 C19.2,54.9 8.9,44.6 8.9,31.9 Z" fill="#4A4A4A" id="Shape" />
+                                <path d="M74.7,43.4 C66.1,43.4 59.1,50.4 59.1,59 C59.1,65.2 62.7,70.5 67.9,73.1 C64.5,81.9 58,89.1 49.6,93.4 L49.6,92.9 C49.6,90.6 47.8,88.8 45.5,88.8 L18.3,88.8 C16,88.8 14.2,90.6 14.2,92.9 L14.2,112.3 C14.2,114.6 16,116.4 18.3,116.4 L45.5,116.4 C47.8,116.4 49.6,114.6 49.6,112.3 L49.6,102.5 C62.1,97.4 71.7,87.3 76.2,74.6 C84.1,73.9 90.4,67.2 90.4,59 C90.3,50.4 83.3,43.4 74.7,43.4 Z M41.4,99.1 C41.3,99.5 41.3,99.9 41.4,100.3 L41.4,108.2 L22.5,108.2 L22.5,97 L41.4,97 L41.4,99.1 Z M74.7,66.4 C70.6,66.4 67.3,63.1 67.3,59 C67.3,54.9 70.6,51.6 74.7,51.6 C78.8,51.6 82.1,54.9 82.1,59 C82.1,63.1 78.8,66.4 74.7,66.4 Z" fill="#17AB13" id="Shape" />
+                                </g>
+                                </g>
+                            </svg>
+                        {% elif notification.category == "info" %}
+                            <svg width="27"
+                                 height="27"
+                                 viewBox="0 0 117 117"
+                                 version="1.1"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <g fill="none" fill-rule="evenodd" id="Page-1" stroke="none" stroke-width="1">
+                                <g fill-rule="nonzero" id="info">
+                                <path d="M58.5,116.6 C90.5,116.6 116.5,90.6 116.5,58.6 C116.5,26.6 90.5,0.6 58.5,0.6 C26.5,0.6 0.4,26.6 0.4,58.6 C0.4,90.6 26.5,116.6 58.5,116.6 Z M58.5,8.6 C86,8.6 108.4,31 108.4,58.5 C108.4,86 86,108.4 58.5,108.4 C31,108.4 8.6,86 8.6,58.5 C8.6,31 31,8.6 58.5,8.6 Z" fill="#4A4A4A" id="Shape" />
+                                <path d="M45.1,84.2 C42.8,84.2 41,86 41,88.3 C41,90.6 42.8,92.4 45.1,92.4 L72,92.4 C74.3,92.4 76.1,90.6 76.1,88.3 C76.1,86 74.3,84.2 72,84.2 L62.6,84.2 L62.6,48.1 C62.6,45.8 60.8,44 58.5,44 L45.1,44 C42.8,44 41,45.8 41,48.1 C41,50.4 42.8,52.2 45.1,52.2 L54.5,52.2 L54.5,84.2 L45.1,84.2 Z" fill="#17AB13" id="Shape" />
+                                <circle cx="57.6" cy="30.6" fill="#17AB13" id="Oval" r="6.6" />
+                                </g>
+                            </svg>
+                        {% endif %}
+                    </span>
+                </div>
+                <span class="px-3 dark:text-gray-500">
+                    <div class="font-semibold text-sm dark:text-white-light/90">{{ notification.get_category_display }}</div>
+                    <div>{{ notification.msg|truncatechars:20 }}</div>
+                </span>
+                <span class="font-semibold bg-white-dark/20 rounded text-dark/60 px-1 ltr:ml-auto rtl:mr-auto whitespace-pre dark:text-white-dark ltr:mr-2 rtl:ml-2">{{ notification.created_at|timesince }} ago</span>
+            </div>
+        </li>
+    {% empty %}
+        <li class="mb-5">
+            <div class="!grid place-content-center hover:!bg-transparent text-lg min-h-[200px]">
+                <div class="mx-auto ring-4 ring-primary/30 rounded-full mb-4 text-primary">
+                    <svg width="40"
+                         height="40"
+                         viewBox="0 0 20 20"
+                         fill="none"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path opacity="0.5" d="M20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20C15.5228 20 20 15.5228 20 10Z" fill="currentColor" />
+                        <path d="M10 4.25C10.4142 4.25 10.75 4.58579 10.75 5V11C10.75 11.4142 10.4142 11.75 10 11.75C9.58579 11.75 9.25 11.4142 9.25 11V5C9.25 4.58579 9.58579 4.25 10 4.25Z" fill="currentColor" />
+                        <path d="M10 15C10.5523 15 11 14.5523 11 14C11 13.4477 10.5523 13 10 13C9.44772 13 9 13.4477 9 14C9 14.5523 9.44772 15 10 15Z" fill="currentColor" />
+                    </svg>
+                </div>
+                No unread notification
+            </div>
+        </li>
+    {% endfor %}
+    <li class="border-t border-white-light text-center dark:border-white/10 mt-5">
+        <div class="flex items-center px-4 py-4 text-primary font-semibold group dark:text-gray-400  justify-center cursor-pointer"
+             @click="toggle">
+            <a href="{% url 'account:notifications' %}"
+               class="group-hover:underline ltr:mr-1 rtl:ml-1">VIEW ALL NOTIFICATIONS</a>
+            <svg class="w-4 h-4 group-hover:translate-x-1 transition duration-300 ltr:ml-1 rtl:mr-1"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </div>
+    </li>
+</ul>

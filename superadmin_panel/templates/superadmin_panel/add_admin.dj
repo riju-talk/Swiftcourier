@@ -1,0 +1,84 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+Add Admin
+{% endblock title %}
+
+{% load static %}
+
+{% block css %}
+{% endblock css %}
+
+{% block body %}
+
+<!-- Admin Registration -->
+<h2 class="text-xl font-bold text-gray-800 dark:text-white border-b pb-2 mt-10">
+  Admin Registration
+</h2>
+
+<form class="mt-6 space-y-6">
+  <!-- Company Name -->
+  <div>
+    <label for="company_name" class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+      Company Name <span class="text-red-500">*</span>
+    </label>
+    <input type="text" id="company_name" name="company_name" required placeholder="Enter Company Name"
+      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+  </div>
+
+  <!-- Email / Username -->
+  <div>
+    <label for="email" class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+      Email / Username <span class="text-red-500">*</span>
+    </label>
+    <input type="email" id="email" name="email" required placeholder="Enter Email or Username"
+      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+  </div>
+
+  <!-- Company Logo -->
+  <div>
+    <label for="company_logo" class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+      Company Logo
+    </label>
+    <input type="file" id="company_logo" name="company_logo"
+      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:outline-none transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-dark" />
+  </div>
+
+  <!-- Mobile Number -->
+  <div>
+    <label for="mobile" class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+      Mobile Number <span class="text-red-500">*</span>
+    </label>
+    <div class="flex">
+      <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-dark/40 text-gray-600 dark:text-gray-300 text-sm">
+        +91
+      </span>
+      <input type="tel" id="mobile" name="mobile" required placeholder="Enter Mobile Number"
+        class="w-full px-4 py-2 rounded-r-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+    </div>
+  </div>
+
+  <!-- Password -->
+  <div>
+    <label for="password" class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+      Password <span class="text-red-500">*</span>
+    </label>
+    <input type="password" id="password" name="password" required placeholder="Enter Password"
+      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+  </div>
+
+  <!-- Submit Button -->
+  <div>
+    <button type="submit"
+      class="w-full px-6 py-2 bg-primary text-white rounded-xl shadow hover:bg-primary-dark transition">
+      Register
+    </button>
+  </div>
+</form>
+
+
+
+{% endblock body %}
+
+{% block js %}
+{% endblock js %}

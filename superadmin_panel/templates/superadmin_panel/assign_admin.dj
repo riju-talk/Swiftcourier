@@ -1,0 +1,128 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}Assign Admin{% endblock title %}
+{% load static %}
+
+{% block body %}
+<div>
+            <button onclick="history.back()"
+                    class="border border-blue-500 hover:bg-blue-700 text-blue-500 hover:text-white font-bold py-2 px-4 rounded">
+                Back
+            </button>
+        </div>
+<div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center px-4 py-10 transition-colors duration-200">
+  <div class="w-full max-w-3xl bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
+    <h2 class="text-3xl font-bold text-center text-indigo-600 dark:text-indigo-400">
+      Assign Admin
+    </h2>
+
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+
+      {% if is_single %}
+        <input type="hidden" name="user_ids" value="{{ users.0.id }}">
+        <div class="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <strong>User:</strong> {{ users.0.full_name }} ({{ users.0.email }})
+        </div>
+      {% else %}
+        <!-- Multi-user selection -->
+        <div>
+          <label for="user_ids"
+                 class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+            Select Users
+          </label>
+          <select id="user_ids"
+                  name="user_ids"
+                  multiple
+                  class="tom-select-users w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+            {% for user in users %}
+              <option value="{{ user.id }}">{{ user.full_name }} ({{ user.email }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Selected users display -->
+        <div id="selected-users-container" class="flex flex-wrap gap-2 mt-2"></div>
+      {% endif %}
+
+      <!-- Admin selection -->
+      <div>
+        <label for="admin_id"
+               class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+          Select Admin
+        </label>
+        <select id="admin_id"
+                name="admin_id"
+                required
+                class="tom-select-admin w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+          <option value="">-- Choose an Admin --</option>
+          {% for admin in admins %}
+            <option value="{{ admin.id }}">{{ admin.full_name }} ({{ admin.email }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit"
+              class="w-full py-2 px-4 bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white font-semibold rounded-lg shadow-md transition-transform duration-300 transform hover:scale-105">
+        Assign Admin to User{% if not is_single %}s{% endif %}
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock body %}
+
+{% block js %}
+  <!-- Tom Select CSS & JS -->
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
+  <script>
+    // Admin Select Initialization
+    new TomSelect('.tom-select-admin', {
+      placeholder: 'Search admin...',
+      maxItems: 1,
+      allowEmptyOption: true,
+      highlight: true
+    });
+
+    {% if not is_single %}
+    // User Multi-Select
+    const userSelect = new TomSelect('.tom-select-users', {
+      plugins: ['remove_button'],
+      placeholder: 'Search and select users...',
+      persist: false,
+      maxItems: null,
+      onItemAdd: updateUserDisplay,
+      onItemRemove: updateUserDisplay,
+    });
+
+    function updateUserDisplay() {
+      const container = document.getElementById('selected-users-container');
+      container.innerHTML = '';
+      userSelect.getValue().forEach(val => {
+        const label = userSelect.options[val]?.text || val;
+        const tag = document.createElement('span');
+        tag.className = 'bg-indigo-100 dark:bg-indigo-700 text-indigo-800 dark:text-indigo-200 text-sm font-medium px-3 py-1 rounded-full flex items-center gap-2';
+        tag.innerHTML = `
+          ${label}
+          <button onclick="userSelect.removeItem('${val}')" class="text-indigo-600 dark:text-indigo-300 hover:text-red-500 font-bold ml-2">&times;</button>
+        `;
+        container.appendChild(tag);
+      });
+    }
+    {% endif %}
+
+    // Fade-in animation
+    document.addEventListener('DOMContentLoaded', () => {
+      const el = document.querySelector('.animate-fade-in');
+      if (el) el.classList.add('opacity-100');
+    });
+  </script>
+
+  <style>
+    .animate-fade-in {
+      transition: opacity 0.4s ease-in-out;
+      opacity: 0;
+    }
+  </style>
+{% endblock js %}

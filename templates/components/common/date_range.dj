@@ -1,0 +1,383 @@
+<div x-data="dateRangePicker()" class="relative w-full max-w-md mx-auto flex-1 mb-4">
+    <!-- Input Box -->
+    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="dateRangeInput">Select Date Range</label>
+    <input type="text"
+           name="dateRange"
+           value="{{ request.GET.dateRange }}"
+           id="dateRangeInput"
+           class="w-full px-4 py-2 border rounded cursor-pointer bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+           readonly
+           x-model="displayDateRange"
+           @click="showDropdown = true"
+           placeholder="Select Date Range">
+
+    <!-- Dropdown -->
+    <div class="absolute z-50 w-[700px] bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg mt-1 transition-all duration-200 ease-out origin-top"
+         x-show="showDropdown"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         @click.outside="showDropdown = false"
+         x-cloak>
+        <div class="flex">
+            <!-- Presets -->
+            <div class="w-48 p-4 border-r dark:border-gray-700">
+                <h3 class="mb-2 font-semibold dark:text-gray-200">Presets</h3>
+                <template x-for="preset in presets">
+                    <button type="button"
+                            @click="setPreset(preset)"
+                            class="w-full text-left px-2 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded date-transition"
+                            :class="{ 'bg-blue-100 dark:bg-blue-900/50': preset.active, 'font-semibold text-blue-600 dark:text-blue-400': preset.label === 'Custom Range' && isCustomRange, 'text-gray-700 dark:text-gray-300': !preset.active }">
+                        <span x-text="preset.label"></span>
+                    </button>
+                </template>
+            </div>
+
+            <!-- Calendars -->
+            <div class="flex-1 p-4">
+                <div class="flex gap-8">
+                    <!-- Start Date Calendar -->
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <button type="button"
+                                    @click="prevMonth('start')"
+                                    class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full date-transition text-gray-700 dark:text-gray-300">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5"
+                                     viewBox="0 0 20 20"
+                                     fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <h3 class="font-semibold text-center dark:text-gray-200"
+                                x-text="startCalendar.monthYear"></h3>
+                            <button type="button"
+                                    @click="nextMonth('start')"
+                                    class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full date-transition text-gray-7 00 dark:text-gray-300">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5"
+                                     viewBox="0 0 20 20"
+                                     fill="currentColor">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-7 gap-1 text-sm">
+                            <template x-for="day in startCalendar.days" :key="day">
+                                <div class="text-center text-gray-500 dark:text-gray-400" x-text="day"></div>
+                            </template>
+                            <template x-for="date in startCalendar.dates">
+                                <button type="button"
+                                        @click="setTempStart(date.date)"
+                                        class="p-1 text-center rounded date-transition relative"
+                                        :class="{ 'bg-blue-500 text-white': date.isSelectedStart, 'text-gray-400 dark:text-gray-500': !date.isCurrentMonth, 'hover:bg-gray-100 dark:hover:bg-gray-700': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-blue-100 dark:bg-blue-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-gray-900 dark:text-gray-100': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
+                                        :disabled="!date.isSelectable">
+                                    <span x-text="date.day"></span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- End Date Calendar -->
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <button type="button"
+                                    @click="prevMonth('end')"
+                                    class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full date-transition text-gray-700 dark:text-gray-300">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5"
+                                     viewBox="0 0 20 20"
+                                     fill="currentColor">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <h3 class="font-semibold text-center dark:text-gray-200"
+                                x-text="endCalendar.monthYear"></h3>
+                            <button type="button"
+                                    @click="nextMonth('end')"
+                                    class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full date-transition text-gray-700 dark:text-gray-300">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="h-5 w-5"
+                                     viewBox="0 0 20 20"
+                                     fill="currentColor">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-7 gap-1 text-sm">
+                            <template x-for="day in endCalendar.days" :key="day">
+                                <div class="text-center text-gray-500 dark:text-gray-400" x-text="day"></div>
+                            </template>
+                            <template x-for="date in endCalendar.dates">
+                                <button type="button"
+                                        @click="setTempEnd(date.date)"
+                                        class="p-1 text-center rounded date-transition relative"
+                                        :class="{ 'bg-blue-500 text-white': date.isSelectedEnd, 'text-gray-400 dark:text-gray-500': !date.isCurrentMonth, 'hover:bg-gray-100 dark:hover:bg-gray-700': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-blue-100 dark:bg-blue-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-gray-900 dark:text-gray-100': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
+                                        :disabled="!date.isSelectable">
+                                    <span x-text="date.day"></span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end gap-2 mt-4">
+                    <button type="button"
+                            @click="cancel()"
+                            class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded date-transition">
+                        Cancel
+                    </button>
+                    <button type="button"
+                            @click="apply()"
+                            class="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-600 rounded date-transition"
+                            :disabled="!tempStart || !tempEnd"
+                            :class="{ 'opacity-50 cursor-not-allowed': !tempStart || !tempEnd }">Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('dateRangePicker', () => ({
+            DateTime: luxon.DateTime,
+            startDate: null,
+            endDate: null,
+            tempStart: null,
+            tempEnd: null,
+            showDropdown: false,
+            startMonth: luxon.DateTime.local(),
+            endMonth: luxon.DateTime.local().plus({
+                months: 1
+            }),
+
+            presets: [{
+                label: 'Today',
+                days: 0
+            }, {
+                label: 'Yesterday',
+                days: -1
+            }, {
+                label: 'Last 7 Days',
+                days: -6
+            }, {
+                label: 'Last 30 Days',
+                days: -29
+            }, {
+                label: 'This Month',
+                month: 'current'
+            }, {
+                label: 'Last Month',
+                month: 'previous'
+            }, {
+                label: 'Custom Range',
+                type: 'custom'
+            }],
+
+            get isCustomRange() {
+                return !this.presets.find(p => p.active)
+            },
+
+            init() {
+                this.setPreset(this.presets[0])
+            },
+
+
+            get displayDateRange() {
+                if (!this.startDate || !this.endDate) return ''
+                return `${this.startDate.toFormat('MMM dd, yyyy')} - ${this.endDate.toFormat('MMM dd, yyyy')}`
+            },
+
+            get startCalendar() {
+                return this.generateCalendar(this.startMonth, 'start')
+            },
+
+            get endCalendar() {
+                return this.generateCalendar(this.endMonth, 'end')
+            },
+
+            generateCalendar(referenceDate, type) {
+                const monthStart = referenceDate.startOf('month')
+                const monthEnd = monthStart.endOf('month')
+                const startDay = monthStart.weekday
+                const daysInMonth = monthEnd.day
+
+                const dates = []
+                let currentDate = monthStart.minus({
+                    days: startDay
+                })
+
+                for (let i = 0; i < 42; i++) {
+                    const date = currentDate.plus({
+                        days: i
+                    })
+                    const isCurrentMonth = date.month === referenceDate.month
+                    const isSelectedStart = this.tempStart && date.hasSame(this.tempStart, 'day')
+                    const isSelectedEnd = this.tempEnd && date.hasSame(this.tempEnd, 'day')
+                    const isInRange = this.isInRange(date)
+                    const isFirstDayOfMonth = date.day === 1
+                    const isLastDayOfMonth = date.day === date.endOf('month').day
+
+                    const isSelectable = type === 'start' ?
+                        (!this.tempEnd || date <= this.tempEnd) :
+                        (!this.tempStart || date >= this.tempStart)
+
+                    dates.push({
+                        day: date.day,
+                        date: date,
+                        isCurrentMonth,
+                        isSelectedStart,
+                        isSelectedEnd,
+                        isInRange,
+                        isFirstDayOfMonth,
+                        isLastDayOfMonth,
+                        isSelectable: isSelectable && isCurrentMonth
+                    })
+                }
+
+                return {
+                    days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                    dates: dates,
+                    monthYear: referenceDate.toFormat('MMMM yyyy')
+                }
+            },
+
+            isInRange(date) {
+                if (!this.tempStart || !this.tempEnd) return false
+                return date > this.tempStart.startOf('day') && date < this.tempEnd.endOf('day')
+            },
+
+            setTempStart(date) {
+                this.tempStart = date.startOf('day')
+                if (!this.tempEnd || this.tempEnd < this.tempStart) {
+                    this.tempEnd = this.tempStart
+                }
+                this.activateCustomRange()
+            },
+
+            setTempEnd(date) {
+                this.tempEnd = date.endOf('day')
+                if (!this.tempStart || this.tempStart > this.tempEnd) {
+                    this.tempStart = this.tempEnd
+                }
+                this.activateCustomRange()
+            },
+
+            prevMonth(type) {
+                if (type === 'start') {
+                    this.startMonth = this.startMonth.minus({
+                        months: 1
+                    })
+                } else {
+                    this.endMonth = this.endMonth.minus({
+                        months: 1
+                    })
+                }
+                this.activateCustomRange()
+            },
+
+            nextMonth(type) {
+                if (type === 'start') {
+                    this.startMonth = this.startMonth.plus({
+                        months: 1
+                    })
+                } else {
+                    this.endMonth = this.endMonth.plus({
+                        months: 1
+                    })
+                }
+                this.activateCustomRange()
+            },
+
+            setPreset(preset) {
+                this.presets.forEach(p => p.active = false)
+                preset.active = true
+
+                const today = this.DateTime.local()
+                switch (preset.label) {
+                    case 'Today':
+                        this.tempStart = today.startOf('day')
+                        this.tempEnd = today.endOf('day')
+                        this.startMonth = today
+                        this.endMonth = today
+                        break
+                    case 'Yesterday':
+                        const yesterday = today.minus({
+                            days: 1
+                        })
+                        this.tempStart = yesterday.startOf('day')
+                        this.tempEnd = yesterday.endOf('day')
+                        this.startMonth = yesterday
+                        this.endMonth = yesterday
+                        break
+                    case 'Last 7 Days':
+                        this.tempStart = today.minus({
+                            days: 6
+                        }).startOf('day')
+                        this.tempEnd = today.endOf('day')
+                        this.startMonth = this.tempStart
+                        this.endMonth = this.tempEnd
+                        break
+                    case 'Last 30 Days':
+                        this.tempStart = today.minus({
+                            days: 29
+                        }).startOf('day')
+                        this.tempEnd = today.endOf('day')
+                        this.startMonth = this.tempStart
+                        this.endMonth = this.tempEnd
+                        break
+                    case 'This Month':
+                        this.tempStart = today.startOf('month')
+                        this.tempEnd = today.endOf('month')
+                        this.startMonth = today
+                        this.endMonth = today
+                        break
+                    case 'Last Month':
+                        const lastMonth = today.minus({
+                            months: 1
+                        })
+                        this.tempStart = lastMonth.startOf('month')
+                        this.tempEnd = lastMonth.endOf('month')
+                        this.startMonth = lastMonth
+                        this.endMonth = lastMonth
+                        break
+                    case 'Custom Range':
+                        this.tempStart = null
+                        this.tempEnd = null
+                        this.startMonth = today
+                        this.endMonth = today.plus({
+                            months: 1
+                        })
+                        break
+                }
+            },
+
+            activateCustomRange() {
+                this.presets.forEach(p => {
+                    if (p.label === 'Custom Range') p.active = true
+                    else p.active = false
+                })
+            },
+
+            cancel() {
+                this.tempStart = this.startDate
+                this.tempEnd = this.endDate
+                this.showDropdown = false
+            },
+
+            apply() {
+                if (this.tempStart && this.tempEnd) {
+                    this.startDate = this.tempStart
+                    this.endDate = this.tempEnd
+                    this.showDropdown = false
+                }
+            }
+        }))
+    })
+</script>

@@ -1,0 +1,91 @@
+{% extends 'components/layouts/layout.dj' %}
+
+{% block title %}
+  Courier Partner | Super Admin - Dashboard
+{% endblock %}
+
+{% load static %}
+
+{% block body %}
+  <div class="w-full">
+    <!-- Tabs -->
+    <div class="flex flex-wrap gap-2 mb-4">
+      <a href="{% url 'superadmin_panel:dashboard' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">Overview</a>
+      <a href="{% url 'superadmin_panel:dashboard-client' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">Client</a>
+      <a href="{% url 'superadmin_panel:dashboard-courier-partner' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-blue-600 text-white dark:bg-blue-500">Courier Partner</a>
+      <a href="{% url 'superadmin_panel:dashboard-courier-performance' %}" class="px-4 py-2 rounded-md text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">Courier Performance</a>
+    </div>
+
+    <!-- Content Container -->
+    <div class="rounded-lg p-4 shadow bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100">
+      <!-- Courier-wise Performance -->
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Courier-wise Performance</h3>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <thead class="bg-gray-100 dark:bg-gray-800">
+            <tr>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700 dark:text-gray-300">Courier Partner</th>
+              <th class="px-4 py-3 text-center text-yellow-600 dark:text-yellow-400">Pending</th>
+              <th class="px-4 py-3 text-center text-blue-600 dark:text-blue-400">In Transit</th>
+              <th class="px-4 py-3 text-center text-green-600 dark:text-green-400">Delivered</th>
+              <th class="px-4 py-3 text-center text-red-600 dark:text-red-400">RTO</th>
+              <th class="px-4 py-3 text-center text-purple-600 dark:text-purple-400">NDR</th>
+              <th class="px-4 py-3 text-center text-gray-700 dark:text-gray-300">Delivery %</th>
+              <th class="px-4 py-3 text-right text-gray-700 dark:text-gray-300">Total Orders</th>
+            </tr>
+          </thead>
+
+          <tbody id="courierPartnerTable" class="divide-y divide-gray-200 dark:divide-gray-700">
+            <!-- Rows will be injected by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      fetch(`${window.location.pathname}?data=true`)
+        .then((res) => res.json())
+        .then((data) => {
+          const tableBody = document.getElementById('courierPartnerTable')
+          tableBody.innerHTML = ''
+    
+          Object.entries(data).forEach(([courier, stats]) => {
+            tableBody.innerHTML += `
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <td class="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">
+                    ${courier.charAt(0).toUpperCase() + courier.slice(1)}
+                  </td>
+                  <td class="px-4 py-3 text-center text-yellow-600">
+                    ${stats.pending_pickup}
+                  </td>
+                  <td class="px-4 py-3 text-center text-blue-600">
+                    ${stats.in_transit}
+                  </td>
+                  <td class="px-4 py-3 text-center text-green-600">
+                    ${stats.delivered}
+                  </td>
+                  <td class="px-4 py-3 text-center text-red-600">
+                    ${stats.rto}
+                  </td>
+                  <td class="px-4 py-3 text-center text-purple-600">
+                    ${stats.ndr}
+                  </td>
+                  <td class="px-4 py-3 text-center font-semibold text-green-600">
+                    ${stats.delivery_perc}%
+                  </td>
+                  <td class="px-4 py-3 text-right font-bold">
+                    ${stats.total_orders}
+                  </td>
+                </tr>
+              `
+          })
+        })
+        .catch((err) => console.error('Courier partner dashboard error:', err))
+    })
+  </script>
+{% endblock %}

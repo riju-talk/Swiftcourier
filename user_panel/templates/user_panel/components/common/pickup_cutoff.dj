@@ -1,0 +1,73 @@
+<div id="pickup-box"
+     class="p-3 rounded-lg bg-red-100 border border-red-200 dark:bg-red-900/20 dark:border-red-800 text-sm
+            flex items-center gap-2">
+
+    <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none"
+         xmlns="http://www.w3.org/2000/svg">
+        <path opacity="0.4"
+              d="M17.3509 9.04979L15.0109 16.5898C14.4509 18.3798 11.9409 18.4098 11.3509 16.6298L10.651 14.5598C10.461 13.9898 10.0109 13.5298 9.44095 13.3498L7.36095 12.6498C5.59095 12.0598 5.62095 9.5298 7.41095 8.9898L14.951 6.63979C16.431 6.18979 17.8209 7.57979 17.3509 9.04979Z"
+              stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z"
+              stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+
+    <div id="pickup-text" class="text-gray-800 dark:text-gray-200"></div>
+</div>
+
+
+<script>
+    const couriers = [{
+        name: "Delhivery",
+        cutoff: 11,
+        display: "11 AM"
+    }, {
+        name: "DTDC",
+        cutoff: 10,
+        display: "10 AM"
+    }, {
+        name: "Amazon",
+        cutoff: 10,
+        display: "10 AM"
+    }, {
+        name: "Xpressbees",
+        cutoff: 10,
+        display: "10 AM"
+    }, {
+        name: "Bluedart",
+        cutoff: 9,
+        display: "9 AM"
+    }];
+
+    function updatePickupMessage() {
+        const nowHour = new Date().getHours();
+
+        let today = [];
+        let tomorrow = [];
+
+        couriers.forEach(c => {
+            if (nowHour < c.cutoff) {
+                today.push(`${c.name} (${c.display})`);
+            } else {
+                tomorrow.push(c.name);
+            }
+        });
+
+        let html = `<strong>Pickup Cutoff:</strong> `;
+
+        // If all are tomorrow → ultra short
+        if (today.length === 0) {
+            html += `Pickup will happen tomorrow for all couriers.`;
+        }
+        // Mixed situation
+        else {
+            html += `<strong>Today:</strong> ${today.join(", ")}`;
+            if (tomorrow.length > 0) {
+                html += `<strong>Tomorrow:</strong> ${tomorrow.join(", ")}`;
+            }
+        }
+
+        document.getElementById("pickup-text").innerHTML = html;
+    }
+
+    updatePickupMessage();
+</script>
