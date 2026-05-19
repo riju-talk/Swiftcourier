@@ -1,6 +1,10 @@
 # shopify_integration/utils/parsers.py
 
+import logging
 from order_manager.models import Address, Product, OrderItem, Order
+
+
+logger = logging.getLogger("my-logger")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -66,8 +70,17 @@ def is_cod(payload: dict) -> bool:
     if payload.get("financial_status", "").lower() == "partially_paid":
         return True
 
-    gateway = (payload.get("payment_gateway") or "").lower()
-    cod_keywords = ["cod", "cash_on_delivery", "cash on delivery", "pay_on_delivery", "cash on delivery (cod)"]
+    gateway = (payload.get("payment_gateway") or payload.get("payment_gateway_names") or [])
+    if isinstance(gateway, list):
+        gateway = [g.lower() for g in gateway]
+
+    cod_keywords = [
+        "cod",
+        "cash_on_delivery",
+        "cash on delivery",
+        "pay_on_delivery",
+        "cash on delivery (cod)",
+    ]
     return any(kw in gateway for kw in cod_keywords)
 
 
@@ -137,19 +150,15 @@ def parse_line_items(line_items: list, order: Order) -> list:
         shopify_product_id = str(item.get("product_id") or "")
         sku = item.get("sku") or shopify_variant_id or shopify_product_id
 
-        product, _ = Product.objects.get_or_create(
+        product = Product.objects.create(
             sku=sku,
-            defaults={
-                "name": item.get("title") or "Shopify Product",
-                "description": item.get("variant_title") or "",
-                "weight_kg": grams_to_kg(item.get("grams", 0)),
-                "length_cm": 1,
-                "width_cm": 1,
-                "height_cm": 1,
-                "price": float(item.get("price") or 0.0),
-                "stock": 999,
-                "active": True,
-            },
+            name=item.get("title") or "Shopify Product",
+            description=item.get("variant_title") or "",
+            weight_kg=grams_to_kg(item.get("grams", 0)),
+            length_cm=10,
+            width_cm=10,
+            height_cm=10,
+            price=float(item.get("price") or 0.0),
         )
 
         quantity = int(item.get("quantity") or 1)
