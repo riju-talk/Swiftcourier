@@ -72,7 +72,6 @@ sync_static:
 	aws s3 sync /home/ubuntu/project/idiotship/media/ s3://shipee-static-media-storage/media/
 
 ready:
-	git restore theme/static/assets/css/styles.css
 	git pull
 	@make ireq
 	@make mm
