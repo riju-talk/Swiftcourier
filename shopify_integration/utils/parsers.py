@@ -67,7 +67,7 @@ def is_cod(payload: dict) -> bool:
         return True
 
     gateway = (payload.get("payment_gateway") or "").lower()
-    cod_keywords = ["cod", "cash_on_delivery", "cash on delivery", "pay_on_delivery"]
+    cod_keywords = ["cod", "cash_on_delivery", "cash on delivery", "pay_on_delivery", "cash on delivery (cod)"]
     return any(kw in gateway for kw in cod_keywords)
 
 
