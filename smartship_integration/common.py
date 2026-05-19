@@ -120,7 +120,7 @@ def smartship_request(
             headers["Authorization"] = f"Bearer {creds.SMARTSHIP_TOKEN.strip()}"
 
     def _do_request():
-        logger.debug(f"Making request: {url}. Data: {data}")
+        logger.debug(f"SmartShip:: Making request: {url}. Data: {data}")
         res = SESSION.request(
             method=method.upper(),
             url=url,
@@ -128,7 +128,7 @@ def smartship_request(
             data=data,
             timeout=(5, 20),
         )
-        logger.debug(f"Res Json: {res.json()}")
+        logger.debug(f"SmartShip:: Res Json: {res.json()}")
         return res
 
     _set_auth()

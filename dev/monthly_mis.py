@@ -70,8 +70,8 @@ def export_orders_to_xlsx(file_path="monthly_mis.xlsx"):
     # ---------------------------------------------------
     orders = (
         Order.objects.filter(
-            created_at__date__gte=datetime(2026, 4, 1),
-            created_at__date__lte=datetime(2026, 5, 1),
+            created_at__date__gte=datetime(2026, 5, 1),
+            created_at__date__lte=datetime(2026, 6, 1),
         )
         .select_related("shipment", "logistic_partner")
         .prefetch_related(
@@ -167,5 +167,5 @@ def export_orders_to_xlsx(file_path="monthly_mis.xlsx"):
     return file_path
 
 export_orders_to_xlsx(
-    "all_time_april_mis_3.xlsx"
+    "all_time_may_mis_4.xlsx"
 )
