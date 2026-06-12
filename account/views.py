@@ -13,6 +13,9 @@ from django.utils.timezone import now
 from django.views import View
 from django.urls import reverse
 
+"""
+ADDe d commit to diverge branches compltely
+"""
 # Local app imports
 from .models import (
     Activity,
