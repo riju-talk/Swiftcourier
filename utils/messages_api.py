@@ -39,7 +39,6 @@ def send_message(
 
     if send_email:
         try:
-            # Prepare plain text version for clients that don't support HTML
             text_content = strip_tags(content)
             html_content = content
 
@@ -50,10 +49,8 @@ def send_message(
                 [user.email],
             )
             email.attach_alternative(html_content, "text/html")
-            
-            # Use connection to ensure proper SMTP handshake
-            connection = email.get_connection()
-            connection.open()
+
+            connection = email.get_connection(fail_silently=False)
             sent = connection.send_messages([email])
             connection.close()
 
