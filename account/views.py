@@ -426,9 +426,19 @@ class SendVerificationOtp(View):
         ).first()
 
         if user:
-            # Send email verification OTP
-            _ = send_registration_verification_otp.delay(user.id)
-            messages.info(request, "Verification OTP has been sent to your email")
+            # Send email verification OTP synchronously (in same request)
+            email_status, sms_status = send_registration_verification_otp.run(user.id)
+            
+            if email_status:
+                messages.info(
+                    request, 
+                    "Verification OTP has been sent to your email. Please check your inbox."
+                )
+            else:
+                messages.error(
+                    request, 
+                    "Failed to send OTP. Please try again later."
+                )
             return redirect("account:verify_email")
 
         # User not found or already verified - clear session and redirect
@@ -471,11 +481,19 @@ class ForgetPassword(View):
         user = User.objects.filter(query, is_active=True).first()
 
         if user:
-            _ = send_forget_password_otp.delay(user.id)
-            messages.info(
-                request,
-                "If the account exists, a reset link has been sent to the registered email",
-            )
+            # Send password reset OTP synchronously
+            email_status, sms_status = send_forget_password_otp.run(user.id)
+            
+            if email_status:
+                messages.info(
+                    request,
+                    "If the account exists, a reset link has been sent to the registered email.",
+                )
+            else:
+                messages.error(
+                    request,
+                    "Failed to send reset link. Please try again later.",
+                )
         else:
             messages.warning(request, "No account associated with this email id.")
 

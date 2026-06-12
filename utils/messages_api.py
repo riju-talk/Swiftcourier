@@ -37,8 +37,6 @@ def send_message(
     subject = subject.strip()
     content = content.strip()
 
-    from_email = settings.EMAIL_HOST_USER or settings.DEFAULT_FROM_EMAIL
-
     if send_email:
         try:
             # Prepare plain text version for clients that don't support HTML
@@ -48,11 +46,16 @@ def send_message(
             email = EmailMultiAlternatives(
                 subject,
                 text_content,
-                from_email,
+                settings.EMAIL_HOST_USER,
                 [user.email],
             )
             email.attach_alternative(html_content, "text/html")
-            sent = email.send(fail_silently=not settings.DEBUG)
+            
+            # Use connection to ensure proper SMTP handshake
+            connection = email.get_connection()
+            connection.open()
+            sent = connection.send_messages([email])
+            connection.close()
 
             email_otp_send_status = sent > 0
         except Exception as e:
