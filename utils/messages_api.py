@@ -50,9 +50,9 @@ def send_message(
                 [user.email],
             )
             email.attach_alternative(html_content, "text/html")
-            email.send(fail_silently=not settings.DEBUG)
+            sent = email.send(fail_silently=not settings.DEBUG)
 
-            email_otp_send_status = True
+            email_otp_send_status = sent > 0
         except Exception as e:
             logger.exception(f"Error sending email to {user.email}: {str(e)}")
             email_otp_send_status = False
@@ -85,20 +85,46 @@ def send_registration_verification_otp(
     otp = randint(100000, 999999)
     # Prepare email subject and content
     subject = "Welcome to IdiotShip! Verify Your Contact Details"
-    content = f"""Hi {user.full_name},
-
-Thank you for registering with IdiotShip!
-
-To complete your registration and verify your email address, please use the following One-Time Password (OTP):
-
-OTP: {otp}
-
-Enter this OTP on our registration page to finalize your account setup. If you didn't attempt to register, please ignore this message.
-
-If you need any assistance or have any questions, feel free to contact our support team at support@idiotship.tech.
-
-Best regards,
-The IdiotShip Team"""
+    content = f"""
+    <html>
+      <body style="margin:0; padding:0; background-color:#f4f4f4;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+          <tr>
+            <td align="center" style="padding:20px 0;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1); font-family:Arial, sans-serif;">
+                <!-- Header -->
+                <tr>
+                  <td align="center" style="background-color:#007BFF; padding:20px;">
+                    <h1 style="margin:0; font-size:24px; color:#ffffff;">IdiotShip</h1>
+                  </td>
+                </tr>
+                <!-- Body -->
+                <tr>
+                  <td style="padding:30px; color:#333; font-size:16px; line-height:1.6;">
+                    <p>Hello <strong>{user.full_name}</strong>,</p>
+                    <p>Thank you for registering with <strong>IdiotShip</strong>!</p>
+                    <p>To complete your registration and verify your email address, please use the following One-Time Password (OTP):</p>
+                    <p style="text-align:center; margin:30px 0;">
+                      <span style="display:inline-block; padding:14px 28px; font-size:28px; font-weight:bold; letter-spacing:6px; color:#ffffff; background-color:#007BFF; border-radius:6px;">{otp}</span>
+                    </p>
+                    <p>Enter this OTP on our registration page to finalize your account setup. If you did not attempt to register, please ignore this message.</p>
+                    <p>If you need any assistance or have any questions, feel free to contact our support team at <a href="mailto:support@idiotship.tech" style="color:#007BFF; text-decoration:none;">support@idiotship.tech</a>.</p>
+                    <p>Best regards,<br><strong>The IdiotShip Team</strong></p>
+                  </td>
+                </tr>
+                <!-- Footer -->
+                <tr>
+                  <td align="center" style="background-color:#f4f4f4; padding:15px; font-size:12px; color:#777;">
+                    © {datetime.datetime.now().year} IdiotShip. All rights reserved.
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+    """
 
     # Check if there is an existing ConfirmEmail object for the user, delete it if it exists
     cnfm = ConfirmEmail.objects.filter(user=user).first()
