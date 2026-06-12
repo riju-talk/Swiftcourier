@@ -222,49 +222,51 @@ class Signup(View):
                 messages.info(request, "Email and full name are required.")
                 return redirect("account:signup")
 
-            # Check if a user already exists with the provided email or username
-            user = User.objects.filter(
+            # Check if a user already exists with the provided email or contact number
+            existing_user = User.objects.filter(
                 Q(email=email) | Q(contact_no=contact_no)
             ).first()
 
-            # If no user exists or the existing user is inactive
-            if user is None:
-                # Create a new user with the provided details
-                user = User(
-                    email=email,
-                    contact_no=contact_no,
-                    full_name=full_name,
-                    is_active=False,
+            # If user exists and is active, they should login instead
+            if existing_user and existing_user.is_active:
+                messages.warning(
+                    request,
+                    "An account with this email or contact number already exists. Please login.",
                 )
-                user.set_password(passwd1)
-                user.save()
+                return redirect("account:signin")
 
-                # Append data to fetch again in verify email handler
+            # If user exists but is inactive (previous registration attempt)
+            if existing_user and not existing_user.is_active:
+                messages.info(
+                    request,
+                    "Your account is pending verification. Please check your email for the OTP.",
+                )
+                # Update session with existing user's data for OTP verification
                 request.session["verify_otp"] = {
-                    "uid": user.id,  # type: ignore
-                    "email": user.email,
-                    "contact_no": user.contact_no,
-                }  # type: ignore
-
+                    "uid": existing_user.id,
+                    "email": existing_user.email,
+                    "contact_no": existing_user.contact_no,
+                }
                 return redirect("account:send_verification_otp")
-            elif not user.is_active:
-                # If the user exists but is inactive, re-send the OTP
-                # You may need to implement a method to re-send OTP here
-                messages.info(request, "User exists but is not active. OTP re-sent.")
 
-                # Append data to fetch again in verify email handler
-                request.session["verify_otp"] = {
-                    "uid": user.id,  # type: ignore
-                    "email": user.email,
-                    "contact_no": user.contact_no,
-                }  # type: ignore
+            # No existing user - create new inactive user
+            user = User(
+                email=email,
+                contact_no=contact_no,
+                full_name=full_name,
+                is_active=False,
+            )
+            user.set_password(passwd1)
+            user.save()
 
-                return redirect("account:send_verification_otp")
-            else:
-                # If the user is active, handle accordingly
-                messages.info(request, "User already exists")
-                # You may want to redirect the user or inform them about the existing active account
-            return redirect("account:signup")
+            # Store user data in session for OTP verification
+            request.session["verify_otp"] = {
+                "uid": user.id,
+                "email": user.email,
+                "contact_no": user.contact_no,
+            }
+
+            return redirect("account:send_verification_otp")
         except Exception as e:
             messages.error(request, "Facing temporary issue while signup")
             logger.error(f"Getting error: {e}")
@@ -394,44 +396,45 @@ class SendVerificationOtp(View):
         to the user. If the session data is invalid or incomplete, redirect to home page.
         """
         # Check if 'verify_otp' exists in the session
-        if "verify_otp" in request.session:
-            data = request.session["verify_otp"]
-
-            # Validate and extract user data from session
-            user_id = data.get("uid")
-            user_email = data.get("email")
-            user_contact_no = data.get("contact_no")
-
-            if user_id is None or user_email is None or user_contact_no is None:
-                messages.warning(request, "Session data is incomplete or invalid.")
-                return redirect("index")
-
-            # Fetch user based on session data
-            user = User.objects.filter(
-                id=user_id,
-                email=user_email,
-                contact_no=user_contact_no,
-                is_active=False,
-            ).first()
-
-            if user:
-                # Send email verification OTP
-                _ = send_registration_verification_otp.delay(user.id)
-                messages.info(request, "Verification OTP will be sent")
-                return redirect("account:verify_email")
-
-            else:
-                messages.warning(
-                    request,
-                    "Your account is either already verified or not registered.",
-                )
-        else:
+        if "verify_otp" not in request.session:
             messages.warning(
                 request,
-                "Invalid session data. Please try the registration process again.",
+                "Session data is missing. Please complete the registration process.",
             )
+            return redirect("account:signup")
 
-        return redirect("index")
+        data = request.session["verify_otp"]
+
+        # Validate and extract user data from session
+        user_id = data.get("uid")
+        user_email = data.get("email")
+        user_contact_no = data.get("contact_no")
+
+        if user_id is None or user_email is None or user_contact_no is None:
+            messages.warning(request, "Session data is incomplete or invalid.")
+            return redirect("account:signup")
+
+        # Fetch user based on session data (should be inactive for verification)
+        user = User.objects.filter(
+            id=user_id,
+            email=user_email,
+            contact_no=user_contact_no,
+            is_active=False,
+        ).first()
+
+        if user:
+            # Send email verification OTP
+            _ = send_registration_verification_otp.delay(user.id)
+            messages.info(request, "Verification OTP has been sent to your email")
+            return redirect("account:verify_email")
+
+        # User not found or already verified - clear session and redirect
+        messages.warning(
+            request,
+            "Account not found or already verified. Please register again.",
+        )
+        request.session.pop("verify_otp", None)
+        return redirect("account:signup")
 
 
 class ForgetPassword(View):
