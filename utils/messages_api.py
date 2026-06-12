@@ -37,6 +37,8 @@ def send_message(
     subject = subject.strip()
     content = content.strip()
 
+    from_email = settings.EMAIL_HOST_USER or settings.DEFAULT_FROM_EMAIL
+
     if send_email:
         try:
             # Prepare plain text version for clients that don't support HTML
@@ -46,7 +48,7 @@ def send_message(
             email = EmailMultiAlternatives(
                 subject,
                 text_content,
-                settings.EMAIL_HOST_USER,
+                from_email,
                 [user.email],
             )
             email.attach_alternative(html_content, "text/html")
@@ -79,69 +81,80 @@ def send_registration_verification_otp(
         bool: True if the email was sent successfully, False otherwise.
         bool: True if the sms was sent successfully, False otherwise.
     """
-    user = User.objects.get(id=user_id)
+    email_status = False
+    sms_status = False
 
-    # Generate a random OTP (One Time Password) for email verification
-    otp = randint(100000, 999999)
-    # Prepare email subject and content
-    subject = "Welcome to IdiotShip! Verify Your Contact Details"
-    content = f"""
-    <html>
-      <body style="margin:0; padding:0; background-color:#f4f4f4;">
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-          <tr>
-            <td align="center" style="padding:20px 0;">
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1); font-family:Arial, sans-serif;">
-                <!-- Header -->
-                <tr>
-                  <td align="center" style="background-color:#007BFF; padding:20px;">
-                    <h1 style="margin:0; font-size:24px; color:#ffffff;">IdiotShip</h1>
-                  </td>
-                </tr>
-                <!-- Body -->
-                <tr>
-                  <td style="padding:30px; color:#333; font-size:16px; line-height:1.6;">
-                    <p>Hello <strong>{user.full_name}</strong>,</p>
-                    <p>Thank you for registering with <strong>IdiotShip</strong>!</p>
-                    <p>To complete your registration and verify your email address, please use the following One-Time Password (OTP):</p>
-                    <p style="text-align:center; margin:30px 0;">
-                      <span style="display:inline-block; padding:14px 28px; font-size:28px; font-weight:bold; letter-spacing:6px; color:#ffffff; background-color:#007BFF; border-radius:6px;">{otp}</span>
-                    </p>
-                    <p>Enter this OTP on our registration page to finalize your account setup. If you did not attempt to register, please ignore this message.</p>
-                    <p>If you need any assistance or have any questions, feel free to contact our support team at <a href="mailto:support@idiotship.tech" style="color:#007BFF; text-decoration:none;">support@idiotship.tech</a>.</p>
-                    <p>Best regards,<br><strong>The IdiotShip Team</strong></p>
-                  </td>
-                </tr>
-                <!-- Footer -->
-                <tr>
-                  <td align="center" style="background-color:#f4f4f4; padding:15px; font-size:12px; color:#777;">
-                    © {datetime.datetime.now().year} IdiotShip. All rights reserved.
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </body>
-    </html>
-    """
+    try:
+        user = User.objects.get(id=user_id)
 
-    # Check if there is an existing ConfirmEmail object for the user, delete it if it exists
-    cnfm = ConfirmEmail.objects.filter(user=user).first()
-    if cnfm:
-        cnfm.delete()
+        # Generate a random OTP (One Time Password) for email verification
+        otp = randint(100000, 999999)
+        # Prepare email subject and content
+        subject = "Welcome to IdiotShip! Verify Your Contact Details"
+        content = f"""
+        <html>
+          <body style="margin:0; padding:0; background-color:#f4f4f4;">
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+              <tr>
+                <td align="center" style="padding:20px 0;">
+                  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1); font-family:Arial, sans-serif;">
+                    <!-- Header -->
+                    <tr>
+                      <td align="center" style="background-color:#007BFF; padding:20px;">
+                        <h1 style="margin:0; font-size:24px; color:#ffffff;">IdiotShip</h1>
+                      </td>
+                    </tr>
+                    <!-- Body -->
+                    <tr>
+                      <td style="padding:30px; color:#333; font-size:16px; line-height:1.6;">
+                        <p>Hello <strong>{user.full_name}</strong>,</p>
+                        <p>Thank you for registering with <strong>IdiotShip</strong>!</p>
+                        <p>To complete your registration and verify your email address, please use the following One-Time Password (OTP):</p>
+                        <p style="text-align:center; margin:30px 0;">
+                          <span style="display:inline-block; padding:14px 28px; font-size:28px; font-weight:bold; letter-spacing:6px; color:#ffffff; background-color:#007BFF; border-radius:6px;">{otp}</span>
+                        </p>
+                        <p>Enter this OTP on our registration page to finalize your account setup. If you did not attempt to register, please ignore this message.</p>
+                        <p>If you need any assistance or have any questions, feel free to contact our support team at <a href="mailto:support@idiotship.tech" style="color:#007BFF; text-decoration:none;">support@idiotship.tech</a>.</p>
+                        <p>Best regards,<br><strong>The IdiotShip Team</strong></p>
+                      </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                      <td align="center" style="background-color:#f4f4f4; padding:15px; font-size:12px; color:#777;">
+                        © {datetime.datetime.now().year} IdiotShip. All rights reserved.
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+        """
 
-    # Create a new ConfirmEmail object for the current user with the generated OTP
-    cnfm = ConfirmEmail(user=user, otp=otp)
-    cnfm.save()
+        # Check if there is an existing ConfirmEmail object for the user, delete it if it exists
+        cnfm = ConfirmEmail.objects.filter(user=user).first()
+        if cnfm:
+            cnfm.delete()
 
-    return send_message(
-        user=user,
-        content=content,
-        subject=subject,
-        send_email=send_email,
-        send_sms=send_sms,
-    )
+        # Create a new ConfirmEmail object for the current user with the generated OTP
+        cnfm = ConfirmEmail(user=user, otp=otp)
+        cnfm.save()
+
+        email_status, sms_status = send_message(
+            user=user,
+            content=content,
+            subject=subject,
+            send_email=send_email,
+            send_sms=send_sms,
+        )
+
+    except Exception as e:
+        logger.exception(
+            f"Failed to generate or send registration verification OTP for user {user_id}: {str(e)}"
+        )
+
+    return email_status, sms_status
 
 
 @shared_task
@@ -151,9 +164,8 @@ def send_forget_password_otp(
     email_status = False
     sms_status = False
 
-    user = User.objects.get(id=user_id)
-
     try:
+        user = User.objects.get(id=user_id)
         # Delete any existing OTPs for the user
         for i in PasswordReset.objects.filter(user=user):
             i.delete()
@@ -223,7 +235,7 @@ def send_forget_password_otp(
 
     except Exception as e:
         logger.exception(
-            f"Failed to generate or send password reset OTP for user {user.id}: {str(e)}"
+            f"Failed to generate or send password reset OTP for user {user_id}: {str(e)}"
         )
 
     return email_status, sms_status
