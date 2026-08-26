@@ -135,6 +135,7 @@ EXTERNAL_APPS = [
     "smartship_integration.apps.SmartshipIntegrationConfig",
     "rapidshyp_integration.apps.RapidshypIntegrationConfig",
     "rapidshyp_new_integration.apps.RapidshypNewIntegrationConfig",
+    "nimbuspost_integration.apps.NimbuspostIntegrationConfig",
 ]
 
 
@@ -421,6 +422,12 @@ PURPLEDRONE_CLIENT_CODE = os.environ.get("PURPLEDRONE_CLIENT_CODE", "RATEDANE")
 PARCELX_ACCESS_KEY = os.environ.get("PARCELX_ACCESS_KEY", "")
 PARCELX_SECRET_KEY = os.environ.get("PARCELX_SECRET_KEY", "")
 
+# The "Secret" configured on the webhook in the NimbusPost partner dashboard
+# (Settings -> Webhooks). Used to verify the X-Hmac-Sha256 header NimbusPost
+# sends with every webhook call. Left blank = signature check is skipped,
+# matching NimbusPost's own "no hash generated if left blank" behavior.
+NIMBUSPOST_WEBHOOK_SECRET = os.environ.get("NIMBUSPOST_WEBHOOK_SECRET", "")
+
 SHIPROCKET_ATS_250GM_EMAIL = os.environ.get("SHIPROCKET_ATS_250GM_EMAIL", "")
 SHIPROCKET_ATS_250GM_PASSWORD = os.environ.get("SHIPROCKET_ATS_250GM_PASSWORD", "")
 
@@ -550,6 +557,11 @@ AGGREGATOR_BLACKLISTED_TEXTS = [
     "XpressBees",
     "zippyy",
     "Zippyy",
+    "nimbuspost",
+    "Nimbuspost",
+    "NimbusPost",
+    "nimbus post",
+    "Nimbus Post",
 ]
 
 

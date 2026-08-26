@@ -51,6 +51,7 @@ urlpatterns = [
     path("fship-integration/", include("fship_integration.urls")),
     path("rapidshyp-integration/", include("rapidshyp_integration.urls")),
     path("rapidshyp-new-integration/", include("rapidshyp_new_integration.urls")),
+    path("nimbuspost-integration/", include("nimbuspost_integration.urls")),
     path("smartship-integration/", include("smartship_integration.urls")),
     path("bdl-integration/", include("bdl_integration.urls")),
     path("zippyy-integration/", include("zippyy_integration.urls")),
