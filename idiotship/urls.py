@@ -18,7 +18,6 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
-from django.conf.urls import handler404, handler500
 from .views import contact_us, index, subscribe_newsletter, track_shipment
 
 
@@ -53,6 +52,8 @@ urlpatterns = [
     path("rapidshyp-integration/", include("rapidshyp_integration.urls")),
     path("rapidshyp-new-integration/", include("rapidshyp_new_integration.urls")),
     path("smartship-integration/", include("smartship_integration.urls")),
+    path("bdl-integration/", include("bdl_integration.urls")),
+    path("zippyy-integration/", include("zippyy_integration.urls")),
 ]
 
 if settings.DEBUG:

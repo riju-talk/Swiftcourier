@@ -21,6 +21,10 @@ def index(request):
     if request.user.role == User.USER:
         return redirect("user_panel:dashboard")
 
+    # role is unset/unrecognized (e.g. a superuser created without a role) —
+    # fall back rather than returning None, which Django would treat as a crash.
+    return redirect("account:signin")
+
 
 def track_shipment(request):
     if request.method != "GET":

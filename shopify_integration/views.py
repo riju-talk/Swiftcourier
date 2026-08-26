@@ -6,7 +6,6 @@ import urllib.parse
 
 import requests
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.utils.timezone import now
@@ -25,7 +24,6 @@ from .utils.webhook_processor import (
 
 
 logger = logging.getLogger("my-logger")
-User = get_user_model()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -75,7 +73,7 @@ def _handle_webhook(request, topic: str, processor_fn=None) -> HttpResponse:
     """
     shop = request.headers.get("X-Shopify-Shop-Domain", "")
     store = ShopifyStore.get_shopify_store_by_shop_url(shop_url=shop)
-    user = store.user
+    user = store.user if store else None
 
     # Use per-merchant secret if available, fall back to global setting
     secret = (
@@ -85,9 +83,9 @@ def _handle_webhook(request, topic: str, processor_fn=None) -> HttpResponse:
     )
 
     # ── 1. HMAC VERIFICATION ──────────────────────────────────────────────
-    # if not verify_webhook_hmac(request, secret):
-    #     logger.warning(f"[webhook] HMAC failed | topic={topic} | shop={shop}")
-    #     return HttpResponse("Unauthorized", status=401)
+    if not verify_webhook_hmac(request, secret):
+        logger.warning(f"[webhook] HMAC failed | topic={topic} | shop={shop}")
+        return HttpResponse("Unauthorized", status=401)
 
     # ── 2. PARSE BODY ─────────────────────────────────────────────────────
     try:
@@ -199,21 +197,19 @@ def oauth_callback(request):
     store = ShopifyStore.get_shopify_store_by_shop_url(
         shop_url=shop
     )
-    
-    # ── 1. VERIFY HMAC ────────────────────────────────────────────────────
-    # if not verify_oauth_hmac(dict(request.GET.lists()), store):
-    #     return HttpResponse("OAuth HMAC verification failed.", status=401)
 
-    
     if not store:
         return HttpResponse(
             f"No user registered for shop '{shop}'. "
             "Please register and set your shop domain first.",
         )
 
-
     if not shop or not code:
         return HttpResponse("Missing shop or code parameter.", status=400)
+
+    # ── 1. VERIFY HMAC ────────────────────────────────────────────────────
+    if not verify_oauth_hmac(dict(request.GET.lists()), store):
+        return HttpResponse("OAuth HMAC verification failed.", status=401)
 
     # ── 2. EXCHANGE CODE FOR ACCESS TOKEN ─────────────────────────────────
     resp = requests.post(
@@ -272,7 +268,7 @@ def oauth_uninstall(request):
     """
     shop = request.headers.get("X-Shopify-Shop-Domain", "")
     store = ShopifyStore.get_shopify_store_by_shop_url(shop_url=shop)
-    user = store.user
+    user = store.user if store else None
 
     if store:
         store.shopify_access_token = ""
@@ -398,7 +394,7 @@ def webhook_orders(request):
             )
 
         store = ShopifyStore.get_shopify_store_by_shop_url(shop)
-        user = store.user
+        user = store.user if store else None
         if not user:
             return JsonResponse(
                 {
@@ -441,35 +437,31 @@ def fetch_orders(request):
     shop = request.GET.get("shop", "").strip()
     limit = min(int(request.GET.get("limit", 50)), 250)  # Shopify max is 250
 
+    stores = ShopifyStore.objects.filter(shopify_access_token__gt="")
     if shop:
-        users = User.objects.filter(
-            shopify_shop_domain=shop,
-            shopify_access_token__gt="",
-        )
-    else:
-        users = User.objects.filter(shopify_access_token__gt="")
+        stores = stores.filter(shopify_shop_domain=shop)
 
-    if not users.exists():
+    if not stores.exists():
         return JsonResponse(
             {"error": "No connected Shopify merchants found."}, status=404
         )
 
     all_results = []
 
-    for user in users:
+    for store in stores:
         from .services.shopify_client import ShopifyClient, ShopifyAPIError
 
-        client = ShopifyClient(user.shopify_shop_domain, user.shopify_access_token)
+        client = ShopifyClient(store.shopify_shop_domain, store.shopify_access_token)
 
         try:
             orders = client.get_orders(limit=limit)
         except ShopifyAPIError as e:
             logger.error(
-                f"[fetch_orders] Shopify API error for {user.shopify_shop_domain}: {e}"
+                f"[fetch_orders] Shopify API error for {store.shopify_shop_domain}: {e}"
             )
             all_results.append(
                 {
-                    "shop": user.shopify_shop_domain,
+                    "shop": store.shopify_shop_domain,
                     "error": str(e),
                 }
             )
@@ -479,19 +471,20 @@ def fetch_orders(request):
             shopify_id = str(order_data["id"])
             log = _log_webhook(
                 "orders/create",
-                user.shopify_shop_domain,
+                store,
                 shopify_id,
                 order_data,
             )
             result = process_order_created(
-                user_id=user.id,
+                user_id=store.user_id,
                 shopify_order_id=shopify_id,
                 payload=order_data,
                 log=log,
+                store=store,
             )
             all_results.append(
                 {
-                    "shop": user.shopify_shop_domain,
+                    "shop": store.shopify_shop_domain,
                     "shopify_id": shopify_id,
                     **result,
                 }
@@ -612,9 +605,11 @@ def merchant_list(request):
 
     List all users with a connected Shopify store.
     """
-    merchants = User.objects.filter(shopify_access_token__gt="").values(
+    merchants = ShopifyStore.objects.filter(
+        shopify_access_token__gt=""
+    ).values(
         "id",
-        "email",
+        "user__email",
         "shopify_shop_domain",
         "shopify_installed_at",
         "shopify_uninstalled_at",
@@ -632,23 +627,25 @@ def sync_orders(request, pk: int):
     any that don't exist in the system yet.
 
     Path params:
-        pk: User primary key.
+        pk: ShopifyStore primary key.
     """
     try:
-        user = User.objects.get(pk=pk, shopify_access_token__gt="")
-    except User.DoesNotExist:
+        store = ShopifyStore.objects.get(pk=pk, shopify_access_token__gt="")
+    except ShopifyStore.DoesNotExist:
         return JsonResponse(
             {"error": "Merchant not found or Shopify not connected."}, status=404
         )
 
     from .services.shopify_client import ShopifyClient, ShopifyAPIError
 
-    client = ShopifyClient(user.shopify_shop_domain, user.shopify_access_token)
+    client = ShopifyClient(store.shopify_shop_domain, store.shopify_access_token)
 
     try:
         orders = client.get_orders()
     except ShopifyAPIError as e:
-        logger.exception(f"[sync_orders] Shopify API error for user {user.email}: {e}")
+        logger.exception(
+            f"[sync_orders] Shopify API error for store {store.shopify_shop_domain}: {e}"
+        )
         return JsonResponse({"error": str(e)}, status=500)
 
     results = []
@@ -656,15 +653,16 @@ def sync_orders(request, pk: int):
         shopify_id = str(order_data["id"])
         log = _log_webhook(
             "orders/create",
-            user.shopify_shop_domain,
+            store,
             shopify_id,
             order_data,
         )
         result = process_order_created(
-            user_id=user.id,
+            user_id=store.user_id,
             shopify_order_id=shopify_id,
             payload=order_data,
             log=log,
+            store=store,
         )
         results.append({"shopify_id": shopify_id, **result})
 

@@ -57,7 +57,7 @@ class ShopifyStore(MyModel):
 
     @classmethod
     def get_shopify_store_by_shop_url(cls, shop_url):
-        return cls.objects.get(shopify_shop_domain=shop_url)
+        return cls.objects.filter(shopify_shop_domain=shop_url).first()
 
     @classmethod
     def get_user_by_shop_url(cls, shop_url):

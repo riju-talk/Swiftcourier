@@ -527,14 +527,11 @@ def dashboard_courier_performance(request):
 
 @superadmin_required
 def dashboard_data(request):
-    # TODO: Implement real data fetching and processing
     data = request.GET
 
     order_queryset = Order.objects.all()
     date_filter = data.get("date_filter", "this_month")
-    if date_filter in ["this_month", "last_month", "this_year"]:
-        pass
-    else:
+    if date_filter not in ["this_month", "last_month", "this_year"]:
         return JsonResponse(
             {
                 "success": False,
@@ -542,6 +539,27 @@ def dashboard_data(request):
                 "data": {},
             }
         )
+
+    now_dt = timezone.now()
+    if date_filter == "this_month":
+        start = now_dt.replace(
+            day=1, hour=0, minute=0, second=0, microsecond=0
+        )
+        order_queryset = order_queryset.filter(order_date__gte=start)
+    elif date_filter == "last_month":
+        first_of_this_month = now_dt.replace(
+            day=1, hour=0, minute=0, second=0, microsecond=0
+        )
+        last_month_end = first_of_this_month - timedelta(microseconds=1)
+        start = last_month_end.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        order_queryset = order_queryset.filter(
+            order_date__gte=start, order_date__lte=last_month_end
+        )
+    elif date_filter == "this_year":
+        start = now_dt.replace(
+            month=1, day=1, hour=0, minute=0, second=0, microsecond=0
+        )
+        order_queryset = order_queryset.filter(order_date__gte=start)
 
     tab = data.get("tab", "overview")
     if tab == "overview":
@@ -551,26 +569,19 @@ def dashboard_data(request):
                 "success": True,
                 "data": {
                     "total_orders": order_queryset.count(),
-                    "total_pickup_order": order_queryset.aggregate(
-                        total_revenue=Count("total_amount")
-                    )["total_revenue"]
-                    or 0,
-                    "total_in_transit_order": order_queryset.aggregate(
-                        total_revenue=Count("total_amount")
-                    )["total_revenue"]
-                    or 0,
-                    "total_delivered_order": order_queryset.aggregate(
-                        total_revenue=Count("total_amount")
-                    )["total_revenue"]
-                    or 0,
-                    "total_ndr_order": order_queryset.aggregate(
-                        total_revenue=Count("total_amount")
-                    )["total_revenue"]
-                    or 0,
-                    "total_rto_order": order_queryset.aggregate(
-                        total_revenue=Count("total_amount")
-                    )["total_revenue"]
-                    or 0,
+                    "total_pickup_order": order_queryset.filter(
+                        status="pending_pickup"
+                    ).count(),
+                    "total_in_transit_order": order_queryset.filter(
+                        status="in_transit"
+                    ).count(),
+                    "total_delivered_order": order_queryset.filter(
+                        status="delivered"
+                    ).count(),
+                    "total_ndr_order": order_queryset.filter(status="ndr").count(),
+                    "total_rto_order": order_queryset.filter(
+                        status__startswith="rto"
+                    ).count(),
                 },
             }
         )
@@ -581,30 +592,14 @@ def dashboard_data(request):
                 "success": True,
                 "data": {
                     "total_shipment": order_queryset.count(),
-                    "booked": order_queryset.aggregate(
-                        total_revenue=Count("total_amount")
-                    )["total_revenue"]
-                    or 0,
-                    "pending_pickup": order_queryset.aggregate(
-                        total_revenue=Count("total_amount")
-                    )["total_revenue"]
-                    or 0,
-                    "in_transit": order_queryset.aggregate(
-                        total_revenue=Count("total_amount")
-                    )["total_revenue"]
-                    or 0,
-                    "delivered": order_queryset.aggregate(
-                        total_revenue=Count("total_amount")
-                    )["total_revenue"]
-                    or 0,
-                    "rto": order_queryset.aggregate(
-                        total_revenue=Count("total_amount")
-                    )["total_revenue"]
-                    or 0,
-                    "ndr": order_queryset.aggregate(
-                        total_revenue=Count("total_amount")
-                    )["total_revenue"]
-                    or 0,
+                    "booked": order_queryset.filter(status="ready_to_ship").count(),
+                    "pending_pickup": order_queryset.filter(
+                        status="pending_pickup"
+                    ).count(),
+                    "in_transit": order_queryset.filter(status="in_transit").count(),
+                    "delivered": order_queryset.filter(status="delivered").count(),
+                    "rto": order_queryset.filter(status__startswith="rto").count(),
+                    "ndr": order_queryset.filter(status="ndr").count(),
                     "clients": [
                         "S_no",
                         "client_name",

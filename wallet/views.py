@@ -87,9 +87,14 @@ def checkout(request):
 
 @csrf_exempt
 def payment_redirect(request, merchant_txn_id: str):
-    t = Transaction.objects.get(
-        merchant_transaction_id=merchant_txn_id, user=request.user
-    )
+    try:
+        t = Transaction.objects.get(
+            merchant_transaction_id=merchant_txn_id, user=request.user
+        )
+    except Transaction.DoesNotExist:
+        messages.error(request, "Transaction not found")
+        return redirect("index")
+
     try:
         get_order_status = client.get_order_status(merchant_txn_id)
 
@@ -126,7 +131,7 @@ def callback(request):
     # 2. Parse the wrapper JSON
     try:
         incoming = json.loads(request.body)
-    except json.JSONDecodeError as e:
+    except json.JSONDecodeError:
         return HttpResponseBadRequest("Malformed JSON")
 
     mylogger.debug(f"Incoming callback data: {incoming}")
@@ -199,6 +204,12 @@ def callback(request):
     #     return HttpResponse("OK, Failed")
 
     # return HttpResponse("OK, Success")
+
+    # Crediting is handled server-side by payment_redirect(), which verifies
+    # the transaction directly against PhonePe's get_order_status API rather
+    # than trusting this callback body. This endpoint just needs to
+    # acknowledge receipt so PhonePe doesn't retry/alert on it.
+    return HttpResponse("OK")
 
 
 @login_required

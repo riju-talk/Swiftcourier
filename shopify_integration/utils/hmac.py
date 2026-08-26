@@ -58,7 +58,7 @@ def verify_oauth_hmac(params: dict, store) -> bool:
     )
 
     digest = hmac.new(
-        store.shopify_api_token.encode(),
+        store.shopify_api_secret.encode(),
         sorted_params.encode(),
         hashlib.sha256,
     ).hexdigest()

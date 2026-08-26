@@ -432,7 +432,6 @@ def track_shipment(
     Track a SmartShip order by AWB (tracking_number).
     SmartShip tracking API is a GET request with a query param.
     """
-    global SESSION
     url = f"{BASE_URL}/v1/Trackorder"
     headers = {}
     if creds.SMARTSHIP_TOKEN:

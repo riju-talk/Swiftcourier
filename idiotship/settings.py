@@ -2,6 +2,7 @@ from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 from phonepe.sdk.pg.env import Env
+from django.core.exceptions import ImproperlyConfigured
 import os
 
 
@@ -13,16 +14,38 @@ load_dotenv(dotenv_path=BASE_DIR / ".env", override=True)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv(
-    "SECRET_KEY",
-    default="xKQ4azxkpTqa7Jjv4i7rlyIllTwFImhr",
-)
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", default="True") == "True"
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = "xKQ4azxkpTqa7Jjv4i7rlyIllTwFImhr"  # dev-only fallback, never used when DEBUG=False
+    else:
+        raise ImproperlyConfigured(
+            "SECRET_KEY environment variable must be set when DEBUG=False"
+        )
+
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(",")
+
+# Production hardening (env-overridable; secure-by-default once DEBUG=False).
+# HSTS starts at 1 hour rather than the usual 1 year so a botched HTTPS rollout
+# doesn't lock browsers out of the site for a full year - raise it once HTTPS is confirmed stable.
+SECURE_SSL_REDIRECT = (
+    os.getenv("SECURE_SSL_REDIRECT", default="False" if DEBUG else "True") == "True"
+)
+SESSION_COOKIE_SECURE = (
+    os.getenv("SESSION_COOKIE_SECURE", default="False" if DEBUG else "True") == "True"
+)
+CSRF_COOKIE_SECURE = (
+    os.getenv("CSRF_COOKIE_SECURE", default="False" if DEBUG else "True") == "True"
+)
+SECURE_HSTS_SECONDS = int(
+    os.getenv("SECURE_HSTS_SECONDS", default="0" if DEBUG else "3600")
+)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+SECURE_HSTS_PRELOAD = not DEBUG
 
 
 if not DEBUG:
@@ -123,27 +146,11 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_auto_logout.middleware.auto_logout",
-]
-
-
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5500",
-    "http://localhost:5500",
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
-    "https://app.idiotship.tech",
-    "http://app.idiotship.tech",
-    "https://dashboard.idiotship.tech",
-    "http://dashboard.idiotship.tech",
-    "https://idiotship.tech",
-    "http://idiotship.tech",
 ]
 
 ROOT_URLCONF = "idiotship.urls"
@@ -374,7 +381,6 @@ if not TMP_DIR.exists():
 
 XPRESSBEES_USERNAME = os.getenv("XPRESSBEES_USERNAME")
 XPRESSBEES_PASSWORD = os.getenv("XPRESSBEES_PASSWORD")
-XPRESSBEES_API_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NDgzMjExMTMsImp0aSI6IlpQSGRoTlo3WHE2MWFGYjd6ZklYUDdjVlBZTU96TXc2XC9ZekJMRlZ1bkZvPSIsIm5iZiI6MTc0ODMyMTExMywiZXhwIjoxNzQ4MzMxOTEzLCJkYXRhIjp7InVzZXJfaWQiOiIxMDg1OTgiLCJwYXJlbnRfaWQiOiIwIiwiZW1haWwiOiJiYWxseWZhc2hpb243N0BnbWFpbC5jb20ifX0.DWSz_-u-ib91soB1dEVQhzzwZgLAG10oh9j6Pb10N197SvRL0pQT8L3RVuldP5UE9veVCTRCBFhTuK0hSyKIlg"
 
 ZIPPYY_EMAIL = os.getenv("ZIPPYY_EMAIL")
 ZIPPYY_PASSWORD = os.getenv("ZIPPYY_PASSWORD")
@@ -404,7 +410,6 @@ JIFFY_XPRESSBEES_500GM_PASSWORD = os.environ.get("JIFFY_XPRESSBEES_500GM_PASSWOR
 
 LASTMILES_EMAIL = os.getenv("LASTMILES_EMAIL")
 LASTMILES_PASSWORD = os.getenv("LASTMILES_PASSWORD")
-LASTMILES_API_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NDgzMjExMTMsImp0aSI6IlpQSGRoTlo3WHE2MWFGYjd6ZklYUDdjVlBZTU96TXc2XC9ZekJMRlZ1bkZvPSIsIm5iZiI6MTc0ODMyMTExMywiZXhwIjoxNzQ4MzMxOTEzLCJkYXRhIjp7InVzZXJfaWQiOiIxMDg1OTgiLCJwYXJlbnRfaWQiOiIwIiwiZW1haWwiOiJiYWxseWZhc2hpb243N0BnbWFpbC5jb20ifX0.DWSz_-u-ib91soB1dEVQhzzwZgLAG10oh9j6Pb10N197SvRL0pQT8L3RVuldP5UE9veVCTRCBFhTuK0hSyKIlg"
 
 PURPLEDRONE_HOST = os.environ.get(
     "PURPLEDRONE_HOST", "https://backend-uat.fulfillzy.com"
@@ -549,7 +554,14 @@ AGGREGATOR_BLACKLISTED_TEXTS = [
 
 
 DEFAULT_ADMIN_USER = "defaultadminuser@shipee.tech"
-DEFAULT_ADMIN_USER_PASSWORD = "fun@ult@dmoutp@$$wd"
+DEFAULT_ADMIN_USER_PASSWORD = os.getenv("DEFAULT_ADMIN_USER_PASSWORD")
+if not DEFAULT_ADMIN_USER_PASSWORD:
+    if DEBUG:
+        DEFAULT_ADMIN_USER_PASSWORD = "fun@ult@dmoutp@$$wd"  # dev-only fallback, never used when DEBUG=False
+    else:
+        raise ImproperlyConfigured(
+            "DEFAULT_ADMIN_USER_PASSWORD environment variable must be set when DEBUG=False"
+        )
 
 
 # 0.18 == 18% GST
@@ -622,8 +634,16 @@ if DEBUG:
 
 
 CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
     "https://app.idiotship.tech",
     "http://app.idiotship.tech",
+    "https://dashboard.idiotship.tech",
+    "http://dashboard.idiotship.tech",
+    "https://idiotship.tech",
+    "http://idiotship.tech",
 ]
 
 
