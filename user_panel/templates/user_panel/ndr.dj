@@ -24,7 +24,7 @@
             <!-- Filter Toggle Icon with Label -->
             <div class="flex justify-end mb-6">
                 <button id="filterToggleBtn"
-                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-sm"
+                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-xs"
                         title="Filter Orders">
                     <svg class="w-5 h-5 text-indigo-600"
                          fill="none"
@@ -52,7 +52,7 @@
                             </label>
                             <select name="date_range"
                                     id="filter-date-range"
-                                    class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                    class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                                 <option value="today">Today</option>
                                 <option value="7days">Last 7 Days</option>
                                 <option value="thismonth">This Month</option>
@@ -64,11 +64,11 @@
                                 <input type="date"
                                        name="start_date"
                                        id="filter-start-date"
-                                       class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none" />
+                                       class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden" />
                                 <input type="date"
                                        name="end_date"
                                        id="filter-end-date"
-                                       class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none" />
+                                       class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden" />
                             </div>
                         </div>
 
@@ -147,12 +147,12 @@
                     <div class="mt-6 flex justify-end space-x-3">
                         <button type="button"
                                 id="filterCancelBtn"
-                                class="px-5 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-200">
+                                class="px-5 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-red-200">
                             Cancel
                         </button>
                         <button type="submit"
                                 id="filterSubmitBtn"
-                                class="px-5 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transform hover:scale-105 transition-transform duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-green-300">
+                                class="px-5 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transform hover:scale-105 transition-transform duration-200 ease-out focus:outline-hidden focus:ring-2 focus:ring-green-300">
                             Apply Filters
                         </button>
                     </div>
@@ -186,9 +186,9 @@
             <!-- Modal -->
             <div x-show="showModal"
                  x-data="{ selectedAction: '' }"
-                 class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                 class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                 <div @click.away="closeModal"
-                     class="bg-white dark:bg-gray-800 p-4 rounded shadow w-full max-w-sm">
+                     class="bg-white dark:bg-gray-800 p-4 rounded-sm shadow-sm w-full max-w-sm">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-lg font-semibold">NDR Submit Form</h2>
                         <button @click="closeModal" class="text-gray-500 hover:text-gray-800 text-lg">&times;</button>
@@ -201,13 +201,13 @@
                             <input type="text"
                                    name="order_id"
                                    x-model="modalData.orderId"
-                                   class="w-full px-3 py-2 border rounded"
+                                   class="w-full px-3 py-2 border rounded-sm"
                                    readonly>
                         </div>
 
                         <div class="mb-3">
                             <label class="block mb-1">Choose Action:</label>
-                            <select class="w-full px-3 py-2 border rounded"
+                            <select class="w-full px-3 py-2 border rounded-sm"
                                     name="action"
                                     x-model="selectedAction"
                                     required>
@@ -222,7 +222,7 @@
 
                         {% comment %} <div class="mb-3" x-data="{ today: new Date().toISOString().split('T')[0] }">
                             <label class="block mb-1">Re-Attempt Date:</label>
-                            <input type="date" class="w-full px-3 py-2 border rounded" name="re_attempt_date" :min="today">
+                            <input type="date" class="w-full px-3 py-2 border rounded-sm" name="re_attempt_date" :min="today">
                         </div> {% endcomment %}
 
 
@@ -231,7 +231,7 @@
                             <template x-if="selectedAction === 'update_address'">
                                 <div>
                                     <label class="block mb-1">New Address:</label>
-                                    <textarea class="w-full px-3 py-2 border rounded"
+                                    <textarea class="w-full px-3 py-2 border rounded-sm"
                                               rows="2"
                                               name="remark"
                                               placeholder="Enter new address"
@@ -243,7 +243,7 @@
                                 <div>
                                     <label class="block mb-1">New Contact Number:</label>
                                     <input type="tel"
-                                           class="w-full px-3 py-2 border rounded"
+                                           class="w-full px-3 py-2 border rounded-sm"
                                            name="remark"
                                            placeholder="9876543210"
                                            required>
@@ -253,7 +253,7 @@
                             <template x-if="selectedAction !== 'update_address' && selectedAction !== 'update_phone'">
                                 <div>
                                     <label class="block mb-1">Remark:</label>
-                                    <textarea class="w-full px-3 py-2 border rounded"
+                                    <textarea class="w-full px-3 py-2 border rounded-sm"
                                               rows="2"
                                               name="remark"
                                               placeholder="Enter your remark"></textarea>
@@ -263,7 +263,7 @@
 
                         <div class="text-right">
                             <button type="submit"
-                                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Submit</button>
+                                    class="bg-blue-600 text-white px-4 py-2 rounded-sm hover:bg-blue-700">Submit</button>
                         </div>
                     </form>
                 </div>

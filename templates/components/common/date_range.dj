@@ -5,7 +5,7 @@
            name="dateRange"
            value="{{ request.GET.dateRange }}"
            id="dateRangeInput"
-           class="w-full px-4 py-2 border rounded cursor-pointer bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+           class="w-full px-4 py-2 border rounded-sm cursor-pointer bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
            readonly
            x-model="displayDateRange"
            @click="showDropdown = true"
@@ -29,7 +29,7 @@
                 <template x-for="preset in presets">
                     <button type="button"
                             @click="setPreset(preset)"
-                            class="w-full text-left px-2 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded date-transition"
+                            class="w-full text-left px-2 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm date-transition"
                             :class="{ 'bg-blue-100 dark:bg-blue-900/50': preset.active, 'font-semibold text-blue-600 dark:text-blue-400': preset.label === 'Custom Range' && isCustomRange, 'text-gray-700 dark:text-gray-300': !preset.active }">
                         <span x-text="preset.label"></span>
                     </button>
@@ -72,7 +72,7 @@
                             <template x-for="date in startCalendar.dates">
                                 <button type="button"
                                         @click="setTempStart(date.date)"
-                                        class="p-1 text-center rounded date-transition relative"
+                                        class="p-1 text-center rounded-sm date-transition relative"
                                         :class="{ 'bg-blue-500 text-white': date.isSelectedStart, 'text-gray-400 dark:text-gray-500': !date.isCurrentMonth, 'hover:bg-gray-100 dark:hover:bg-gray-700': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-blue-100 dark:bg-blue-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-gray-900 dark:text-gray-100': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
                                         :disabled="!date.isSelectable">
                                     <span x-text="date.day"></span>
@@ -114,7 +114,7 @@
                             <template x-for="date in endCalendar.dates">
                                 <button type="button"
                                         @click="setTempEnd(date.date)"
-                                        class="p-1 text-center rounded date-transition relative"
+                                        class="p-1 text-center rounded-sm date-transition relative"
                                         :class="{ 'bg-blue-500 text-white': date.isSelectedEnd, 'text-gray-400 dark:text-gray-500': !date.isCurrentMonth, 'hover:bg-gray-100 dark:hover:bg-gray-700': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-blue-100 dark:bg-blue-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-gray-900 dark:text-gray-100': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
                                         :disabled="!date.isSelectable">
                                     <span x-text="date.day"></span>
@@ -128,12 +128,12 @@
                 <div class="flex justify-end gap-2 mt-4">
                     <button type="button"
                             @click="cancel()"
-                            class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded date-transition">
+                            class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm date-transition">
                         Cancel
                     </button>
                     <button type="button"
                             @click="apply()"
-                            class="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-600 rounded date-transition"
+                            class="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-600 rounded-sm date-transition"
                             :disabled="!tempStart || !tempEnd"
                             :class="{ 'opacity-50 cursor-not-allowed': !tempStart || !tempEnd }">Apply</button>
                 </div>

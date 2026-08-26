@@ -45,7 +45,7 @@
 
 
 
-    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xs">
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b dark:border-gray-700 gap-4">
             <!-- Left: Title + Search -->
@@ -57,7 +57,7 @@
                        placeholder="Search Order"
                        value="{{ request.GET.q }}"
                        onenter="handleSearch(this.value)"
-                       class="w-48 px-3 py-1.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400">
+                       class="w-48 px-3 py-1.5 border rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400">
             </div>
 
             <!-- Right: Buttons -->
@@ -78,7 +78,7 @@
 
                 </div>
                 <button id="filterToggleBtn"
-                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-sm"
+                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-xs"
                         title="Filter Orders">
                     <!-- Original filter icon -->
                     <svg class="w-5 h-5 text-indigo-600"
@@ -107,7 +107,7 @@
                             <div class="flex items-center">
                                 <input type="checkbox"
                                        id="selectAll"
-                                       class="w-4 h-4 rounded border-gray-300 dark:bg-gray-600 dark:border-gray-500">
+                                       class="w-4 h-4 rounded-sm border-gray-300 dark:bg-gray-600 dark:border-gray-500">
                             </div>
                         </th>
                         <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">CHANNEL</th>
@@ -131,7 +131,7 @@
                             <td class="px-2 py-1">
                                 <input type="checkbox"
                                        value="{{ order.id }}"
-                                       class="ship-order-ids row-checkbox rounded border-gray-300 dark:bg-gray-600">
+                                       class="ship-order-ids row-checkbox rounded-sm border-gray-300 dark:bg-gray-600">
                             </td>
                             <td class="px-1 py-0.5 text-xs text-gray-700 dark:text-gray-300">{{ order.get_channel_display }}</td>
                             <td class="px-1 py-0.5 text-xs font-medium text-gray-900 dark:text-gray-100">IS{{ order.id }}</td>
@@ -145,7 +145,7 @@
                             <td class="px-1 py-0.5 text-xs text-gray-700 dark:text-gray-300">{{ order.total_amount }}</td>
                             <td class="px-1 py-0.5 text-xs text-gray-700 dark:text-gray-300">Standard</td>
                             <td class="px-1 py-0.5">
-                                <span class="px-1 py-0.5 text-[9px] font-medium rounded bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                <span class="px-1 py-0.5 text-[9px] font-medium rounded-sm bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                                     {{ order.get_status_display }}
                                 </span>
                             </td>
@@ -195,7 +195,7 @@
                     <span class="text-sm text-gray-700 dark:text-gray-300">Show:</span>
                     <select id="pageSize"
                             onchange="updatePageSize(this.value)"
-                            class="px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                            class="px-2 py-1 border rounded-sm text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
                         <option value="10" {% if page_size == 10 %}selected{% endif %}>10</option>
                         <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
                         <option value="100" {% if page_size == 100 %}selected{% endif %}>100</option>
@@ -206,7 +206,7 @@
 
                 <div class="flex gap-1">
                     <button onclick="navigatePage('prev')"
-                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded text-sm dark:text-gray-100"
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100"
                             {% if not page_obj.has_previous %}disabled{% endif %}>Previous</button>
 
                     {% for num in page_obj.paginator.page_range %}
@@ -221,7 +221,7 @@
                     {% endfor %}
 
                     <button onclick="navigatePage('next')"
-                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded text-sm dark:text-gray-100"
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100"
                             {% if not page_obj.has_next %}disabled{% endif %}>Next</button>
                 </div>
             </div>
@@ -230,7 +230,7 @@
 
     <!-- Modal -->
     <div id="shipModal"
-         class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+         class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-96 p-6 mx-4 transform -translate-y-1/2 -translate-x-1/2 top-1/2 left-1/2 fixed">
             <h2 class="text-lg font-bold mb-4 dark:text-gray-100">Ship Selected Orders</h2>
             <form id="shipForm"
@@ -253,12 +253,12 @@
                 <div class="flex justify-end gap-2">
                     <button type="button"
                             onclick="closeModal()"
-                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded dark:text-gray-100">
+                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm dark:text-gray-100">
                         Cancel
                     </button>
                     <button type="submit"
                             onclick="shipSelectedOrders()"
-                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Submit</button>
+                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-sm">Submit</button>
                 </div>
             </form>
         </div>

@@ -3,7 +3,7 @@
 <div :class="{ 'dark text-white-dark': $store.app.semidark }">
     <nav x-data="sidebar"
          class="sidebar fixed min-h-screen h-full top-0 bottom-0 w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] z-50 transition-all duration-300">
-        <div class="bg-white dark:bg-[#0e1726] h-full">
+        <div class="bg-white dark:bg-black h-full">
             <div class="flex justify-between items-center px-4 py-3">
                 <a href=""
                    class="main-logo flex items-center shrink-0">
@@ -31,7 +31,7 @@
                 <li class="menu nav-item">
                     <a href="{% url 'superadmin_panel:dashboard' %}" class="nav-link group">
                         <div class="flex items-center">
-                            <svg class="group-hover:!text-primary shrink-0"
+                            <svg class="group-hover:text-primary! shrink-0"
                                  width="20"
                                  height="20"
                                  viewBox="0 0 24 24"
@@ -45,7 +45,7 @@
                     </a>
                 </li>
 
-                <h2 class="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
+                <h2 class="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark/[0.08] -mx-4 mb-1">
 
                     <svg class="w-4 h-5 flex-none hidden"
                          viewBox="0 0 24 24"
@@ -68,7 +68,7 @@
                                     :class="{ 'active': activeDropdown === 'courier-settings' }"
                                     @click="activeDropdown === 'courier-settings' ? activeDropdown = null : activeDropdown = 'courier-settings'">
                                 <div class="flex items-center">
-                                    <svg class="group-hover:!text-primary shrink-0"
+                                    <svg class="group-hover:text-primary! shrink-0"
                                          width="20"
                                          height="20"
                                          viewBox="0 0 32 32"
@@ -86,7 +86,7 @@
                                     <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Courier Settings</span>
                                 </div>
                                 <div class="rtl:rotate-180"
-                                     :class="{ '!rotate-90': activeDropdown === 'courier-settings' }">
+                                     :class="{ 'rotate-90!': activeDropdown === 'courier-settings' }">
 
                                     <svg width="16"
                                          height="16"
@@ -118,7 +118,7 @@
                     </ul>
                 </li>
 
-                <h2 class="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
+                <h2 class="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark/[0.08] -mx-4 mb-1">
 
                     <svg class="w-4 h-5 flex-none hidden"
                          viewBox="0 0 24 24"
@@ -138,7 +138,7 @@
                             :class="{ 'active': activeDropdown === 'admin-dropdown' }"
                             @click="activeDropdown === 'admin-dropdown' ? activeDropdown = null : activeDropdown = 'admin-dropdown'">
                         <div class="flex items-center">
-                            <svg class="shrink-0 w-5 h-5 group-hover:!text-primary transition duration-300 ease-in-out"
+                            <svg class="shrink-0 w-5 h-5 group-hover:text-primary! transition duration-300 ease-in-out"
                                  version="1.1"
                                  xmlns="http://www.w3.org/2000/svg"
                                  xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -159,7 +159,7 @@
                             <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">All About Admins</span>
                         </div>
                         <div class="rtl:rotate-180"
-                             :class="{ '!rotate-90': activeDropdown === 'admin-dropdown' }">
+                             :class="{ 'rotate-90!': activeDropdown === 'admin-dropdown' }">
                             <svg width="16"
                                  height="16"
                                  viewBox="0 0 24 24"
@@ -182,7 +182,7 @@
                     </ul>
                 </li>
 
-                <h2 class="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
+                <h2 class="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark/[0.08] -mx-4 mb-1">
                     <svg class="w-4 h-5 flex-none hidden"
                          viewBox="0 0 24 24"
                          stroke="currentColor"
@@ -201,7 +201,7 @@
                             :class="{ 'active': activeDropdown === 'client' }"
                             @click="activeDropdown === 'client' ? activeDropdown = null : activeDropdown = 'client'">
                         <div class="flex items-center">
-                            <svg class="group-hover:!text-primary shrink-0"
+                            <svg class="group-hover:text-primary! shrink-0"
                                  width="20"
                                  height="20"
                                  viewBox="0 0 1024 1024"
@@ -218,7 +218,7 @@
                             <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Client</span>
                         </div>
                         <div class="rtl:rotate-180"
-                             :class="{ '!rotate-90': activeDropdown === 'client' }">
+                             :class="{ 'rotate-90!': activeDropdown === 'client' }">
                             <svg width="16"
                                  height="16"
                                  viewBox="0 0 24 24"
@@ -242,7 +242,7 @@
                 </ul>
             </li>
 
-            <h2 class="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
+            <h2 class="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark/[0.08] -mx-4 mb-1">
 
                 <svg class="w-4 h-5 flex-none hidden"
                      viewBox="0 0 24 24"
@@ -258,7 +258,7 @@
             <li class="menu nav-item">
                 <a href="{% url 'superadmin_panel:manage_pincode' %}" class="nav-link group">
                     <div class="flex items-center">
-                        <svg class="group-hover:!text-primary shrink-0"
+                        <svg class="group-hover:text-primary! shrink-0"
                              width="20"
                              height="20"
                              viewBox="0 0 24 24"

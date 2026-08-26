@@ -3,7 +3,7 @@
 <div :class="{ 'dark text-white-dark': $store.app.semidark }">
     <nav x-data="sidebar"
          class="sidebar fixed min-h-screen h-full top-0 bottom-0 w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] z-50 transition-all duration-300">
-        <div class="bg-white dark:bg-[#0e1726] h-full">
+        <div class="bg-white dark:bg-black h-full">
             <div class="flex justify-between items-center px-4 py-3">
                 <a href=""
                    class="main-logo flex items-center shrink-0">
@@ -35,7 +35,7 @@
                             @click="activeDropdown === 'dashboard' ? activeDropdown = null : activeDropdown = 'dashboard'">
                         <div class="flex items-center">
 
-                            <svg class="group-hover:!text-primary shrink-0"
+                            <svg class="group-hover:text-primary! shrink-0"
                                  width="20"
                                  height="20"
                                  viewBox="0 0 24 24"
@@ -48,7 +48,7 @@
                             <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">User</span>
                         </div>
                         <div class="rtl:rotate-180"
-                             :class="{ '!rotate-90': activeDropdown === 'dashboard' }">
+                             :class="{ 'rotate-90!': activeDropdown === 'dashboard' }">
 
                             <svg width="16"
                                  height="16"

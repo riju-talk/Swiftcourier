@@ -2,9 +2,9 @@
     x-show="open"
     x-transition
     x-transition.duration.300ms
-    class="top-11 !py-0 text-dark dark:text-white-dark w-[300px] ltr:-right-16 sm:ltr:-right-2 rtl:-left-16 sm:rtl:-left-2 sm:w-[375px] text-xs">
+    class="top-11 py-0! text-dark dark:text-white-dark w-[300px] ltr:-right-16 sm:ltr:-right-2 rtl:-left-16 sm:rtl:-left-2 sm:w-[375px] text-xs">
     <li class="mb-5">
-        <div class="overflow-hidden relative rounded-t-md !p-5 text-white">
+        <div class="overflow-hidden relative rounded-t-md p-5! text-white">
             <div class="absolute h-full w-full bg-[url(../images/menu-heade.jpg)] bg-no-repeat bg-center bg-cover inset-0"></div>
             <h4 class="font-semibold relative z-10 text-lg">Notifications</h4>
         </div>
@@ -77,12 +77,12 @@
                     <div class="font-semibold text-sm dark:text-white-light/90">{{ notification.get_category_display }}</div>
                     <div>{{ notification.msg|truncatechars:20 }}</div>
                 </span>
-                <span class="font-semibold bg-white-dark/20 rounded text-dark/60 px-1 ltr:ml-auto rtl:mr-auto whitespace-pre dark:text-white-dark ltr:mr-2 rtl:ml-2">{{ notification.created_at|timesince }} ago</span>
+                <span class="font-semibold bg-white-dark/20 rounded-sm text-dark/60 px-1 ltr:ml-auto rtl:mr-auto whitespace-pre dark:text-white-dark ltr:mr-2 rtl:ml-2">{{ notification.created_at|timesince }} ago</span>
             </div>
         </li>
     {% empty %}
         <li class="mb-5">
-            <div class="!grid place-content-center hover:!bg-transparent text-lg min-h-[200px]">
+            <div class="grid! place-content-center hover:bg-transparent! text-lg min-h-[200px]">
                 <div class="mx-auto ring-4 ring-primary/30 rounded-full mb-4 text-primary">
                     <svg width="40"
                          height="40"

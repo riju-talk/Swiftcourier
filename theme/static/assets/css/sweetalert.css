@@ -23,7 +23,7 @@ body.swal2-toast-shown .swal2-container.toast {
     width: 100%;
     color: #3b3f5c;
     font-size: 24px;
-    @apply ltr:!pr-10 rtl:!pl-10;
+    @apply ltr:pr-10! rtl:pl-10!;
 }
 
 .swal2-popup .swal2-styled {
@@ -64,7 +64,7 @@ body.swal2-toast-shown .swal2-container.toast {
     margin: 0 !important;
     color: #e95f2b;
     font-weight: 300;
-    @apply ltr:!pr-10 rtl:!pl-10;
+    @apply ltr:pr-10! rtl:pl-10!;
 }
 
 .swal2-popup .swal2-close {
@@ -262,7 +262,7 @@ body.swal2-toast-shown .swal2-container.toast {
     font-size: 5.75rem !important;
 }
 .swal2-icon-content {
-    @apply !text-xl;
+    @apply text-xl!;
 }
 
 .swal2-show {
@@ -289,11 +289,11 @@ body.swal2-toast-shown .swal2-container.toast {
 }
 
 .sweet-alerts.swal2-popup .swal2-html-container {
-    @apply !mt-4 !px-0;
+    @apply mt-4! px-0!;
 }
 
 .sweet-alerts.swal2-popup .swal2-title {
-    @apply ltr:!pr-6 rtl:!pl-6;
+    @apply ltr:pr-6! rtl:pl-6!;
 }
 
 .swal2-popup.swal2-toast .swal2-success [class^='swal2-success-circular-line'] {

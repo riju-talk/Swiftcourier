@@ -81,8 +81,8 @@
                                 <h6>Prepaid Packets</h6>
                                 <p class="ltr:ml-auto rtl:mr-auto">₹{{ summary.prepaid.amount|default:0 }}</p>
                             </div>
-                            <div class="rounded-full h-2 bg-dark-light dark:bg-[#1b2e4b] shadow">
-                                <div class="bg-gradient-to-r from-[#7579ff] to-[#b224ef] h-full rounded-full"
+                            <div class="rounded-full h-2 bg-dark-light dark:bg-[#1b2e4b] shadow-sm">
+                                <div class="bg-linear-to-r from-[#7579ff] to-[#b224ef] h-full rounded-full"
                                      style="width: {{ summary.prepaid.progress|default:0 }}%"></div>
                             </div>
                         </div>
@@ -107,8 +107,8 @@
                                 <h6>COD Packets</h6>
                                 <p class="ltr:ml-auto rtl:mr-auto">₹{{ summary.cod.amount|default:0 }}</p>
                             </div>
-                            <div class="w-full rounded-full h-2 bg-dark-light dark:bg-[#1b2e4b] shadow">
-                                <div class="bg-gradient-to-r from-[#3cba92] to-[#0ba360] h-full rounded-full"
+                            <div class="w-full rounded-full h-2 bg-dark-light dark:bg-[#1b2e4b] shadow-sm">
+                                <div class="bg-linear-to-r from-[#3cba92] to-[#0ba360] h-full rounded-full"
                                      style="width: {{ summary.cod.progress|default:0 }}%"></div>
                             </div>
                         </div>
@@ -154,7 +154,7 @@
                                 <div class="bg-{{ activity.type }} w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
                                 <div class="flex-1 truncate">{{ activity.content }}</div>
                                 <div class="ltr:ml-auto rtl:mr-auto text-xs text-white-dark dark:text-gray-500">{{ activity.time }}</div>
-                                <span class="badge badge-outline-{{ activity.type }} absolute ltr:right-0 rtl:left-0 text-xs bg-{{ activity.type }}-light dark:bg-[#0e1726] opacity-0 group-hover:opacity-100">{{ activity.badge }}</span>
+                                <span class="badge badge-outline-{{ activity.type }} absolute ltr:right-0 rtl:left-0 text-xs bg-{{ activity.type }}-light dark:bg-black opacity-0 group-hover:opacity-100">{{ activity.badge }}</span>
                             </div>
                         {% empty %}
                             <div class="text-center py-4 text-white-dark">No recent activities.</div>
@@ -165,7 +165,7 @@
                     <a href="javascript:;"
                        class="font-semibold group hover:text-primary p-4 flex items-center justify-center group">
                         View All
-                        <svg class="w-4 h-4 rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition duration-300 ltr:ml-1 rtl:mr-1"
+                        <svg class="w-4 h-4 rtl:rotate-180 group-hover:translate-x-1 group-hover:rtl:-translate-x-1 transition duration-300 ltr:ml-1 rtl:mr-1"
                              viewBox="0 0 24 24"
                              fill="none"
                              xmlns="http://www.w3.org/2000/svg">
@@ -221,7 +221,7 @@
 
             <!-- Wallet Balance -->
             <div class="panel h-full p-0 border-0 overflow-hidden">
-                <div class="p-6 bg-gradient-to-r from-[#4361ee] to-[#160f6b] min-h-[190px]">
+                <div class="p-6 bg-linear-to-r from-[#4361ee] to-[#160f6b] min-h-[190px]">
                     <div class="flex justify-between items-center mb-6">
                         <div class="bg-black/50 rounded-full p-1 ltr:pr-3 rtl:pl-3 flex items-center text-white font-semibold">
                             <img class="w-8 h-8 rounded-full border-2 border-white/50 block object-cover ltr:mr-1 rtl:ml-1"
@@ -516,7 +516,7 @@
                     bar: {
                         horizontal: false,
                         columnWidth: '35%',
-                        endingShape: 'rounded'
+                        endingShape: 'rounded-sm'
                     }
                 }
             });

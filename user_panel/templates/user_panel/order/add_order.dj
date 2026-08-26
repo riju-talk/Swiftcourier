@@ -32,8 +32,8 @@
             <ul class="flex flex-wrap mt-3 mb-5 border-b border-white-light dark:border-[#191e3a]">
                 <li>
                     <a href="javascript:;"
-                       class="p-5 py-3 -mb-[1px] flex items-center hover:border-b border-transparent hover:!border-secondary hover:text-secondary"
-                       :class="{ 'border-b !border-secondary text-secondary': tab === 'single' }"
+                       class="p-5 py-3 -mb-px flex items-center hover:border-b border-transparent hover:border-secondary! hover:text-secondary"
+                       :class="{ 'border-b border-secondary! text-secondary': tab === 'single' }"
                        @click="tab = 'single'">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              class="w-5 h-5 ltr:mr-2 rtl:ml-2"
@@ -50,8 +50,8 @@
                 </li>
                 <li>
                     <a href="javascript:;"
-                       class="p-5 py-3 -mb-[1px] flex items-center hover:border-b border-transparent hover:!border-secondary hover:text-secondary"
-                       :class="{ 'border-b !border-secondary text-secondary': tab === 'bulk' }"
+                       class="p-5 py-3 -mb-px flex items-center hover:border-b border-transparent hover:border-secondary! hover:text-secondary"
+                       :class="{ 'border-b border-secondary! text-secondary': tab === 'bulk' }"
                        @click="tab = 'bulk'">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              class="w-5 h-5 ltr:mr-2 rtl:ml-2"
@@ -85,8 +85,8 @@
                             <li class="text-center">
                                 <a href="javascript:;"
                                    @click="go(1)"
-                                   :class="{ '!bg-info text-white': activeTab === 1 }"
-                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:!bg-info hover:text-white hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)] transition-all duration-300">
+                                   :class="{ 'bg-info! text-white': activeTab === 1 }"
+                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:bg-info! hover:text-white hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)] transition-all duration-300">
 
                                     <svg fill="#000000"
                                          version="1.1"
@@ -111,8 +111,8 @@
                             <li class="text-center">
                                 <a href="javascript:;"
                                    @click="go(2)"
-                                   :class="{ '!bg-info text-white': activeTab === 2 }"
-                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:!bg-info hover:text-white hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)] transition-all duration-300">
+                                   :class="{ 'bg-info! text-white': activeTab === 2 }"
+                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:bg-info! hover:text-white hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)] transition-all duration-300">
                                     <svg height="20"
                                          width="20"
                                          viewBox="0 0 1024 1024"
@@ -138,8 +138,8 @@
                             <li class="text-center">
                                 <a href="javascript:;"
                                    @click="go(3)"
-                                   :class="{ '!bg-info text-white': activeTab === 3 }"
-                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:!bg-info hover:text-white hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)] transition-all duration-300">
+                                   :class="{ 'bg-info! text-white': activeTab === 3 }"
+                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:bg-info! hover:text-white hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)] transition-all duration-300">
                                     <svg height="20"
                                          width="20"
                                          viewBox="0 0 24 24"
@@ -167,7 +167,7 @@
                                            required
                                            placeholder="Enter Name"
                                            name="consignee_name"
-                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
                                 <div x-data="{ phone: '', error: '' }">
                                     <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
@@ -183,7 +183,7 @@
                                            x-on:keydown.enter.prevent="if (error) { $event.preventDefault(); }"
                                            x-on:keydown.tab="if (error) { $event.preventDefault(); }"
                                            placeholder="XXXXXXXXXX"
-                                           class="w-full px-4 py-2 rounded-xl border focus:outline-none transition shadow-sm bg-white dark:bg-dark/40 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary"
+                                           class="w-full px-4 py-2 rounded-xl border focus:outline-hidden transition shadow-xs bg-white dark:bg-dark/40 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary"
                                            :class="error ? 'border-red-500 focus:ring-red-500' : ''"
                                            required />
 
@@ -200,7 +200,7 @@
                                     <input type="tel"
                                            placeholder="Enter Alt. Number"
                                            name="consignee_alt_phone"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
                                 <div>
                                     <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
@@ -209,7 +209,7 @@
                                     <input type="email"
                                            placeholder="Enter Email"
                                            name="consignee_email"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
                             </div>
 
@@ -226,7 +226,7 @@
                                            placeholder="Enter Address"
                                            id="address"
                                            name="address"
-                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
 
                                 <!-- Address 2 (Optional) -->
@@ -238,7 +238,7 @@
                                            placeholder="Apartment, Suite, etc."
                                            id="address2"
                                            name="address2"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
                                 <!-- Landmark (Optional) -->
                                 <div>
@@ -249,7 +249,7 @@
                                            placeholder="Nearby place or landmark"
                                            id="landmark"
                                            name="landmark"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
 
                                 <!-- Company Name (Optional) -->
@@ -261,7 +261,7 @@
                                            placeholder="Company or Organization"
                                            id="company_name"
                                            name="company_name"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
 
                                 <div x-data="{ pin: '', error: '', validate() { this.error = ''; let val = this.pin.toString(); if (!/^\d{6}$/.test(val)) { this.error = 'PIN code must be exactly 6 digits'; return false; } return true; }, moveFocus(event) { if (this.validate()) { let formElements = Array.from(document.querySelectorAll('input, select, textarea, button')); let index = formElements.indexOf(event.target); if (index !== -1 && index + 1 < formElements.length) { try{formElements[index + 1].focus();} catch (error) {} } } else { event.preventDefault(); } } }">
@@ -278,7 +278,7 @@
                                            x-on:keydown.enter.prevent="if (error) { $event.preventDefault(); }"
                                            x-on:keydown.tab="if (error) { $event.preventDefault(); }"
                                            placeholder="Enter Pin Code"
-                                           class="w-full px-4 py-2 rounded-xl border focus:outline-none transition shadow-sm bg-white dark:bg-dark/40 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary"
+                                           class="w-full px-4 py-2 rounded-xl border focus:outline-hidden transition shadow-xs bg-white dark:bg-dark/40 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary"
                                            :class="error ? 'border-red-500 focus:ring-red-500' : ''"
                                            required
                                            id="pin_code" />
@@ -298,7 +298,7 @@
                                            placeholder="Enter City"
                                            id="city_name"
                                            name="city"
-                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
                                 <div>
                                     <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
@@ -309,7 +309,7 @@
                                            placeholder="Enter State"
                                            id="state_name"
                                            name="state"
-                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
                                 <div>
                                     <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
@@ -320,7 +320,7 @@
                                            placeholder="Enter Country"
                                            id="country"
                                            name="country"
-                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
                             </div>
                         </section>
@@ -342,7 +342,7 @@
                                            required
                                            placeholder="Enter Order ID"
                                            name="order_id"
-                                           class="input-required-2 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="input-required-2 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
                                 <div>
                                     <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
@@ -352,7 +352,7 @@
                                            name="channel"
                                            value="Single"
                                            readonly
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-dark/40 shadow-sm text-gray-500 cursor-not-allowed focus:outline-none" />
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-dark/40 shadow-xs text-gray-500 cursor-not-allowed focus:outline-hidden" />
                                 </div>
 
                             </div>
@@ -378,7 +378,7 @@
                                                        placeholder="Product Name"
                                                        required
                                                        name="product_name"
-                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                             </div>
 
                                             <!-- Quantity -->
@@ -391,7 +391,7 @@
                                                        placeholder="Qty"
                                                        required
                                                        name="quantity"
-                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                             </div>
 
                                             <!-- Total Price -->
@@ -405,7 +405,7 @@
                                                        placeholder="Total Price"
                                                        required
                                                        name="total_price"
-                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                             </div>
 
                                             <!-- SKU Code -->
@@ -417,7 +417,7 @@
                                                     <input type="text"
                                                            placeholder="SKU Code"
                                                            name="sku_code"
-                                                           class="px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                                           class="px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                                     <!-- Remove button - hidden for first row -->
                                                     <button type="button" class="remove-btn hidden" title="Remove product">×</button>
                                                 </div>
@@ -432,7 +432,7 @@
 
                             <button type="button"
                                     onclick="addProductRow()"
-                                    class="flex items-center px-6 py-2 mt-4 bg-primary text-white rounded-xl shadow hover:bg-primary-dark transition">
+                                    class="flex items-center px-6 py-2 mt-4 bg-primary text-white rounded-xl shadow-sm hover:bg-primary-dark transition">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      class="h-5 w-5 mr-1"
                                      viewBox="0 0 20 20"
@@ -460,7 +460,7 @@
                                     <select id="payment-method"
                                             x-model="paymentMethod"
                                             name="payment_method"
-                                            class="input-required-2 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition">
+                                            class="input-required-2 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition">
                                         <option value="prepaid" selected>Prepaid</option>
                                         <option value="cod">COD</option>
                                     </select>
@@ -477,7 +477,7 @@
                                            min="0"
                                            placeholder="0"
                                            name="shipping_charges"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
 
                                 <!-- COD Charges -->
@@ -491,7 +491,7 @@
                                            name="cod_charges"
                                            x-bind:disabled="paymentMethod === 'prepaid'"
                                            x-bind:value="paymentMethod === 'prepaid' ? 0 : undefined"
-                                           class="input-required-2 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="input-required-2 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
 
                                 <!-- Discounts -->
@@ -504,7 +504,7 @@
                                            min="0"
                                            placeholder="0"
                                            name="discounts"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
 
                                 <!-- Gift Wrap -->
@@ -518,7 +518,7 @@
                                            min="0"
                                            placeholder="0"
                                            name="gift_wrap"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
 
                                 <!-- Other Charges -->
@@ -532,7 +532,7 @@
                                            min="0"
                                            placeholder="0"
                                            name="other_charges"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
 
                                 <!-- Tax (percent) -->
@@ -547,7 +547,7 @@
                                            step="0.01"
                                            placeholder="0"
                                            name="tax_percent"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                 </div>
                             </div>
                         </section>
@@ -575,7 +575,7 @@
                                            x-on:keydown.enter.prevent="if (error) { $event.preventDefault(); }"
                                            x-on:keydown.tab="if (error) { $event.preventDefault(); }"
                                            x-on:blur="let val = parseFloat(weight); if (val < 0.01) weight = '0.01'; if (val > 20) weight = '20';"
-                                           class="w-full px-4 py-2 rounded-xl border focus:outline-none transition shadow-sm bg-white dark:bg-dark/40 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary"
+                                           class="w-full px-4 py-2 rounded-xl border focus:outline-hidden transition shadow-xs bg-white dark:bg-dark/40 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary"
                                            :class="error ? 'border-red-500 focus:ring-red-500' : ''" />
 
                                         <template x-if="error">
@@ -598,7 +598,7 @@
                                                name="length"
                                                oninput="checkDimension(this)"
                                                data-label="Length"
-                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                         <p id="length-error" class="text-red-500 text-sm mt-1 hidden"></p>
                                     </div>
 
@@ -614,7 +614,7 @@
                                                name="breadth"
                                                oninput="checkDimension(this)"
                                                data-label="Breadth"
-                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                         <p id="breadth-error" class="text-red-500 text-sm mt-1 hidden"></p>
                                     </div>
 
@@ -630,7 +630,7 @@
                                                oninput="checkDimension(this)"
                                                data-label="Height"
                                                name="height"
-                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
                                         <p id="height-error" class="text-red-500 text-sm mt-1 hidden"></p>
                                     </div>
 
@@ -647,7 +647,7 @@
                                         x-show="activeTab > 1"
                                         x-cloak
                                         @click="prev()"
-                                        class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg shadow hover:bg-gray-300 transition mr-4">
+                                        class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg shadow-sm hover:bg-gray-300 transition mr-4">
                                     Back
                                 </button>
 
@@ -655,7 +655,7 @@
                                 <button type="button"
                                         x-show="activeTab < 3"
                                         @click="next()"
-                                        class="px-4 py-2 bg-info text-white rounded-lg shadow hover:bg-info-dark transition mr-4">
+                                        class="px-4 py-2 bg-info text-white rounded-lg shadow-sm hover:bg-info-dark transition mr-4">
                                     Next
                                 </button>
 
@@ -663,7 +663,7 @@
                                 <button type="submit"
                                         x-show="activeTab === 3"
                                         @click="submitSingleOrderForm()"
-                                        class="px-4 py-2 bg-success text-white rounded-lg shadow hover:bg-success-dark transition">
+                                        class="px-4 py-2 bg-success text-white rounded-lg shadow-sm hover:bg-success-dark transition">
                                     Submit
                                 </button>
                             </div>

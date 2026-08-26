@@ -61,7 +61,7 @@
     {% include "user_panel/components/common/shipment_navbar.dj" %}
 
 
-    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xs">
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b dark:border-gray-700 gap-4">
             <!-- Left: Title + Search -->
@@ -73,7 +73,7 @@
                        placeholder="Search Order"
                        value="{{ request.GET.q }}"
                        onenter="handleSearch(this.value)"
-                       class="w-48 px-3 py-1.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400">
+                       class="w-48 px-3 py-1.5 border rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400">
             </div>
 
             <!-- Right: Buttons -->
@@ -91,7 +91,7 @@
                         </button>
 
                         <div id="downloadDropdownMenu"
-                             class="absolute right-0 top-[100%] bg-white shadow-lg rounded-md border hidden z-50 w-44">
+                             class="absolute right-0 top-full bg-white shadow-lg rounded-md border hidden z-50 w-44">
 
                             <button onclick="downloadLabelOfSelectedOrders()"
                                     class="block w-full text-left pl-4 pr-0 py-2 hover:bg-gray-100 text-sm">
@@ -112,7 +112,7 @@
                 </div>
 
                 <button id="filterToggleBtn"
-                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-sm"
+                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-xs"
                         title="Filter Orders">
                     <!-- Original filter icon -->
                     <svg class="w-5 h-5 text-indigo-600"
@@ -141,7 +141,7 @@
                             <div class="flex items-center">
                                 <input type="checkbox"
                                        id="selectAll"
-                                       class="w-4 h-4 rounded border-gray-300 dark:bg-gray-600 dark:border-gray-500">
+                                       class="w-4 h-4 rounded-sm border-gray-300 dark:bg-gray-600 dark:border-gray-500">
                             </div>
                         </th>
                         <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">CHANNEL</th>
@@ -166,7 +166,7 @@
                             <td class="px-2 py-1">
                                 <input type="checkbox"
                                        value="{{ order.id }}"
-                                       class="ship-order-ids row-checkbox rounded border-gray-300 dark:bg-gray-600">
+                                       class="ship-order-ids row-checkbox rounded-sm border-gray-300 dark:bg-gray-600">
                             </td>
                             <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">{{ order.get_channel_display }}</td>
                             <td class="px-1 py-0.5 text-xs text-center font-medium text-gray-900 dark:text-gray-100">IS{{ order.id }}</td>
@@ -176,7 +176,7 @@
                             <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">
                                 <p>{{ order.shipment.booked_at|date:"M d, Y" }}</p>
                                 <p>
-                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                                         {{ order.placed_at|date:"h:i A" }}
                                     </span>
                                 </p>
@@ -186,7 +186,7 @@
                                     <span class="truncate max-w-[100px] inline-block rounded-md px-1 py-0.5">
                                         <p>{{ order.shipping_address.name|truncatechars:15 }}</p>
                                         <p>
-                                            <span class="ml-1 text-[10px] px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                            <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                                                 {{ order.shipping_address.phone|default:"No phone" }}
                                             </span>
                                         </p>
@@ -213,7 +213,7 @@
                             <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">
                                 ₹ {{ order.total_amount|floatformat:0 }}
                                 <p>
-                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                                         {{ order.payment.method|upper }}
                                     </span>
                                 </p>
@@ -221,7 +221,7 @@
                             <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">
                                 {{ order.shipment.package_weight_kg }}kg
                                 <p>
-                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                                         {{ order.shipment.package_length_cm }}x{{ order.shipment.package_width_cm }}x{{ order.shipment.package_height_cm }}cm
                                     </span>
                                 </p>
@@ -229,13 +229,13 @@
                             <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">
                                 <a href="{% url 'track-shipment' %}?awb_number={{ order.awb_number }}" target="_blank">{{ order.awb_number }}</a>
                                 <p>
-                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                                         {{ order.logistic_partner.name|default:"N/A" }}
                                     </span>
                                 </p>
                             </td>
                             <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">
-                                <span class="px-1 py-0.5 text-[9px] font-medium rounded bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                <span class="px-1 py-0.5 text-[9px] font-medium rounded-sm bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                                     Pickup Pending
                                 </span>
                             </td>
@@ -296,7 +296,7 @@
     </div>
 
     <!-- Modal -->
-    {% comment %} <div id="shipModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    {% comment %} <div id="shipModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-96 p-6 mx-4 transform -translate-y-1/2 -translate-x-1/2 top-1/2 left-1/2 fixed">
             <h2 class="text-lg font-bold mb-4 dark:text-gray-100">Cancel Orders</h2>
             <form id="shipForm" action="{% url 'order_manager:ship-order' %}" method="post">
@@ -310,16 +310,16 @@
                     <option>Bluedart</option>
                 </select>
                 <div class="flex justify-end gap-2">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded dark:text-gray-100">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm dark:text-gray-100">
                         Cancel
                     </button>
-                    <button type="submit" onclick="shipSelectedOrders()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Submit</button>
+                    <button type="submit" onclick="shipSelectedOrders()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-sm">Submit</button>
                 </div>
             </form>
         </div>
     </div> {% endcomment %}
     <div id="cancelModal"
-         class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+         class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-96 p-6 mx-4 transform -translate-y-1/2 -translate-x-1/2 top-1/2 left-1/2 fixed">
             <h2 class="text-lg font-bold mb-4 dark:text-gray-100">Confirm Cancellation</h2>
             <p class="mb-4 text-sm text-gray-600 dark:text-gray-300">Are you sure you want to cancel the selected orders?</p>
@@ -331,12 +331,12 @@
                 <div class="flex justify-end gap-2">
                     <button type="button"
                             onclick="closeCancelModal()"
-                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded dark:text-gray-100">
+                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm dark:text-gray-100">
                         No, Go Back
                     </button>
                     <button type="button"
                             onclick="cancelSelectedOrders()"
-                            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded">
+                            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-sm">
                         Yes, Cancel Orders
                     </button>
                 </div>

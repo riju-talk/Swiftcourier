@@ -45,7 +45,7 @@
                 {% for courier in couriers %}
                     <li draggable="true"
                         data-id="{{ courier.id }}"
-                        class="drag-item flex items-center gap-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-xl shadow dark:shadow-gray-900 cursor-grab transition">
+                        class="drag-item flex items-center gap-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-xl shadow-sm dark:shadow-gray-900 cursor-grab transition">
                         <img src="{{ courier.icon.url }}"
                              alt="{{ courier.name }}"
                              class="w-12 h-12 rounded-md object-cover" />
@@ -57,7 +57,7 @@
             <!-- SUBMIT BUTTON -->
             <button type="submit"
                     id="saveButton"
-                    class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl shadow transition dark:shadow-gray-900">
+                    class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl shadow-sm transition dark:shadow-gray-900">
                 Save Priorities
             </button>
         </form>

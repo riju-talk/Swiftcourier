@@ -111,7 +111,7 @@ User Details
                     <h5 class="font-semibold text-lg dark:text-white-light">Summary</h5>
                 </div>
                 <div class="space-y-4">
-                    <div class="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
+                    <div class="border border-[#ebedf2] rounded-sm dark:bg-[#1b2e4b] dark:border-0">
                         <div class="flex items-center justify-between p-4 py-2">
                             <div class="grid place-content-center w-9 h-9 rounded-md bg-secondary-light dark:bg-secondary text-secondary dark:text-secondary-light">
 
@@ -128,7 +128,7 @@ User Details
                             </div>
                         </div>
                     </div>
-                    <div class="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
+                    <div class="border border-[#ebedf2] rounded-sm dark:bg-[#1b2e4b] dark:border-0">
                         <div class="flex items-center justify-between p-4 py-2">
                             <div class="grid place-content-center w-9 h-9 rounded-md bg-info-light dark:bg-info text-info dark:text-info-light">
 
@@ -145,7 +145,7 @@ User Details
                             </div>
                         </div>
                     </div>
-                    <div class="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
+                    <div class="border border-[#ebedf2] rounded-sm dark:bg-[#1b2e4b] dark:border-0">
                         <div class="flex items-center justify-between p-4 py-2">
                             <div class="grid place-content-center w-9 h-9 rounded-md bg-info-light dark:bg-info text-info dark:text-info-light">
 
@@ -162,7 +162,7 @@ User Details
                             </div>
                         </div>
                     </div>
-                    <div class="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
+                    <div class="border border-[#ebedf2] rounded-sm dark:bg-[#1b2e4b] dark:border-0">
                         <div class="flex items-center justify-between p-4 py-2">
                             <div class="grid place-content-center w-9 h-9 rounded-md bg-info-light dark:bg-info text-info dark:text-info-light">
 
@@ -179,7 +179,7 @@ User Details
                             </div>
                         </div>
                     </div>
-                    <div class="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
+                    <div class="border border-[#ebedf2] rounded-sm dark:bg-[#1b2e4b] dark:border-0">
                         <div class="flex items-center justify-between p-4 py-2">
                             <div class="grid place-content-center w-9 h-9 rounded-md bg-info-light dark:bg-info text-info dark:text-info-light">
 
@@ -207,7 +207,7 @@ User Details
                     <h5 class="font-semibold text-lg dark:text-white-light">Summary</h5>
                 </div>
                 <div class="space-y-4">
-                    <div class="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
+                    <div class="border border-[#ebedf2] rounded-sm dark:bg-[#1b2e4b] dark:border-0">
                         <div class="flex items-center justify-between p-4 py-2">
                             <div class="grid place-content-center w-9 h-9 rounded-md bg-secondary-light dark:bg-secondary text-secondary dark:text-secondary-light">
 
@@ -224,7 +224,7 @@ User Details
                             </div>
                         </div>
                     </div>
-                    <div class="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
+                    <div class="border border-[#ebedf2] rounded-sm dark:bg-[#1b2e4b] dark:border-0">
                         <div class="flex items-center justify-between p-4 py-2">
                             <div class="grid place-content-center w-9 h-9 rounded-md bg-info-light dark:bg-info text-info dark:text-info-light">
 
@@ -241,7 +241,7 @@ User Details
                             </div>
                         </div>
                     </div>
-                    <div class="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
+                    <div class="border border-[#ebedf2] rounded-sm dark:bg-[#1b2e4b] dark:border-0">
                         <div class="flex items-center justify-between p-4 py-2">
                             <div class="grid place-content-center w-9 h-9 rounded-md bg-warning-light dark:bg-warning text-warning dark:text-warning-light">
 
@@ -284,7 +284,7 @@ User Details
                         <p class="text-info">$25 / month</p>
                     </div>
                     <div class="rounded-full h-2.5 p-0.5 bg-dark-light overflow-hidden mb-5 dark:bg-dark-light/10">
-                        <div class="bg-gradient-to-r from-[#f67062] to-[#fc5296] w-full h-full rounded-full relative" style="width: 65%;"></div>
+                        <div class="bg-linear-to-r from-[#f67062] to-[#fc5296] w-full h-full rounded-full relative" style="width: 65%;"></div>
                     </div>
                 </div>
             </div>

@@ -53,7 +53,7 @@
 
 
 {% block body %}
-    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xs">
 
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b dark:border-gray-700 gap-4">
@@ -65,7 +65,7 @@
             <!-- Right: Buttons -->
             <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
                 <button id="filterToggleBtn"
-                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-sm"
+                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-xs"
                         title="Filter Orders">
                     <!-- Original filter icon -->
                     <svg class="w-5 h-5 text-indigo-600"

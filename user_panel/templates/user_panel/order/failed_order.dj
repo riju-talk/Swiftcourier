@@ -47,7 +47,7 @@
                 <div class="flex items-center space-x-4">
                     <a href="#"
                        id="exportOrderBtn"
-                       class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-sm"
+                       class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-xs"
                        title="Export Orders">
                         <!-- Original download/export icon -->
                         <svg class="w-5 h-5 text-blue-600"
@@ -63,7 +63,7 @@
                     </a>
 
                     <button id="filterToggleBtn"
-                            class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-sm"
+                            class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-xs"
                             title="Filter Orders">
                         <!-- Original filter icon -->
                         <svg class="w-5 h-5 text-indigo-600"
@@ -95,7 +95,7 @@
                             <!-- Input Box -->
                             <input type="text"
                                    id="dateRangeInput"
-                                   class="w-full px-4 py-2 border rounded cursor-pointer bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                                   class="w-full px-4 py-2 border rounded-sm cursor-pointer bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                                    readonly
                                    x-model="displayDateRange"
                                    @click="showDropdown = true"
@@ -118,7 +118,7 @@
                                         <h3 class="mb-2 font-semibold dark:text-gray-200">Presets</h3>
                                         <template x-for="preset in presets">
                                             <button @click="setPreset(preset)"
-                                                    class="w-full text-left px-2 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded date-transition"
+                                                    class="w-full text-left px-2 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm date-transition"
                                                     :class="{ 'bg-blue-100 dark:bg-blue-900/50': preset.active, 'font-semibold text-blue-600 dark:text-blue-400': preset.label === 'Custom Range' && isCustomRange, 'text-gray-700 dark:text-gray-300': !preset.active }">
                                                 <span x-text="preset.label"></span>
                                             </button>
@@ -158,7 +158,7 @@
                                                     </template>
                                                     <template x-for="date in startCalendar.dates">
                                                         <button @click="setTempStart(date.date)"
-                                                                class="p-1 text-center rounded date-transition relative"
+                                                                class="p-1 text-center rounded-sm date-transition relative"
                                                                 :class="{ 'bg-blue-500 text-white': date.isSelectedStart, 'text-gray-400 dark:text-gray-500': !date.isCurrentMonth, 'hover:bg-gray-100 dark:hover:bg-gray-700': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-blue-100 dark:bg-blue-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-gray-900 dark:text-gray-100': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
                                                                 :disabled="!date.isSelectable">
                                                             <span x-text="date.day"></span>
@@ -197,7 +197,7 @@
                                                     </template>
                                                     <template x-for="date in endCalendar.dates">
                                                         <button @click="setTempEnd(date.date)"
-                                                                class="p-1 text-center rounded date-transition relative"
+                                                                class="p-1 text-center rounded-sm date-transition relative"
                                                                 :class="{ 'bg-blue-500 text-white': date.isSelectedEnd, 'text-gray-400 dark:text-gray-500': !date.isCurrentMonth, 'hover:bg-gray-100 dark:hover:bg-gray-700': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-blue-100 dark:bg-blue-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-gray-900 dark:text-gray-100': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
                                                                 :disabled="!date.isSelectable">
                                                             <span x-text="date.day"></span>
@@ -210,11 +210,11 @@
                                         <!-- Action Buttons -->
                                         <div class="flex justify-end gap-2 mt-4">
                                             <button @click="cancel()"
-                                                    class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded date-transition">
+                                                    class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm date-transition">
                                                 Cancel
                                             </button>
                                             <button @click="apply()"
-                                                    class="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-600 rounded date-transition"
+                                                    class="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-600 rounded-sm date-transition"
                                                     :disabled="!tempStart || !tempEnd"
                                                     :class="{ 'opacity-50 cursor-not-allowed': !tempStart || !tempEnd }">
                                                 Apply
@@ -232,7 +232,7 @@
                             </label>
                             <select name="order_type"
                                     id="filter-order-type"
-                                    class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                    class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                                 <option value="prepaid">Prepaid</option>
                                 <option value="cod">COD</option>
                             </select>
@@ -246,7 +246,7 @@
                             </label>
                             <select name="warehouse"
                                     id="filter-warehouse"
-                                    class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                    class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                                 <option value="HUB00012">HUB00012</option>
                                 <option value="HUB00034">HUB00034</option>
                             </select>
@@ -262,7 +262,7 @@
                                    name="order_id"
                                    id="filter-order-id"
                                    placeholder="ORD-00124"
-                                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
+                                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
                         </div>
 
                         <!-- Product Name -->
@@ -275,19 +275,19 @@
                                    name="product_name"
                                    id="filter-product-name"
                                    placeholder="T-Shirt"
-                                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
+                                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
                         </div>
                     </div>
                     <!-- Submit & Cancel Buttons -->
                     <div class="mt-6 flex justify-end space-x-3">
                         <button type="button"
                                 id="filterCancelBtn"
-                                class="px-5 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-200">
+                                class="px-5 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-red-200">
                             Cancel
                         </button>
                         <button type="submit"
                                 id="filterSubmitBtn"
-                                class="px-5 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transform hover:scale-105 transition-transform duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-green-300">
+                                class="px-5 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transform hover:scale-105 transition-transform duration-200 ease-out focus:outline-hidden focus:ring-2 focus:ring-green-300">
                             Apply Filters
                         </button>
                     </div>
@@ -318,7 +318,7 @@
                     <a href="#"">2025-04-15</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Time: 9:35 AM</p>
 
                         <!-- arrow -->
@@ -330,7 +330,7 @@
                     <a href="#"">Rahul Kumar</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Name: John Doe</p>
                         <p class="mt-1">Phone: +1 234 567 8901</p>
                         <p class="mt-1">Address: 123 Main St, Springfield, USA</p>
@@ -347,7 +347,7 @@
                     </a>
 
                     <!-- popover (fixed-width, wraps, light / dark) -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Name: Awesome Widget</p>
                         <p class="mt-1">SKU: AW-12345</p>
                         <p class="mt-1">Price: $19.99</p>
@@ -364,7 +364,7 @@
   <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-gray-700 hover:text-black" onclick="toggleDropdown(this, event)">
     ⋮
   </button>
-  <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+  <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black/5">
     <div class="py-1 text-sm text-gray-700">
       <a href="#" class="block px-4 py-2 hover:bg-gray-100">Clone Order</a>
       <a href="#" class="block px-4 py-2 hover:bg-gray-100">Edit Order</a>
@@ -380,7 +380,7 @@
                     <a href="#"">2025-04-15</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Time: 9:35 AM</p>
 
                         <!-- arrow -->
@@ -392,7 +392,7 @@
                     <a href="#"">Rahul Kumar</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Name: John Doe</p>
                         <p class="mt-1">Phone: +1 234 567 8901</p>
                         <p class="mt-1">Address: 123 Main St, Springfield, USA</p>
@@ -409,7 +409,7 @@
                     </a>
 
                     <!-- popover (fixed-width, wraps, light / dark) -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Name: Awesome Widget</p>
                         <p class="mt-1">SKU: AW-12345</p>
                         <p class="mt-1">Price: $19.99</p>
@@ -426,7 +426,7 @@
   <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-gray-700 hover:text-black" onclick="toggleDropdown(this, event)">
     ⋮
   </button>
-  <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+  <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black/5">
     <div class="py-1 text-sm text-gray-700">
       <a href="#" class="block px-4 py-2 hover:bg-gray-100">Clone Order</a>
       <a href="#" class="block px-4 py-2 hover:bg-gray-100">Edit Order</a>
@@ -442,7 +442,7 @@
                     <a href="#"">2025-04-15</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Time: 9:35 AM</p>
 
                         <!-- arrow -->
@@ -454,7 +454,7 @@
                     <a href="#"">Rahul Kumar</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Name: John Doe</p>
                         <p class="mt-1">Phone: +1 234 567 8901</p>
                         <p class="mt-1">Address: 123 Main St, Springfield, USA</p>
@@ -471,7 +471,7 @@
                     </a>
 
                     <!-- popover (fixed-width, wraps, light / dark) -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Name: Awesome Widget</p>
                         <p class="mt-1">SKU: AW-12345</p>
                         <p class="mt-1">Price: $19.99</p>
@@ -488,7 +488,7 @@
   <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-gray-700 hover:text-black" onclick="toggleDropdown(this, event)">
     ⋮
   </button>
-  <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+  <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black/5">
     <div class="py-1 text-sm text-gray-700">
       <a href="#" class="block px-4 py-2 hover:bg-gray-100">Clone Order</a>
       <a href="#" class="block px-4 py-2 hover:bg-gray-100">Edit Order</a>
@@ -504,7 +504,7 @@
                     <a href="#"">2025-04-15</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Time: 9:35 AM</p>
 
                         <!-- arrow -->
@@ -516,7 +516,7 @@
                     <a href="#"">Rahul Kumar</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Name: John Doe</p>
                         <p class="mt-1">Phone: +1 234 567 8901</p>
                         <p class="mt-1">Address: 123 Main St, Springfield, USA</p>
@@ -533,7 +533,7 @@
                     </a>
 
                     <!-- popover (fixed-width, wraps, light / dark) -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Name: Awesome Widget</p>
                         <p class="mt-1">SKU: AW-12345</p>
                         <p class="mt-1">Price: $19.99</p>
@@ -550,7 +550,7 @@
   <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-gray-700 hover:text-black" onclick="toggleDropdown(this, event)">
     ⋮
   </button>
-  <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+  <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black/5">
     <div class="py-1 text-sm text-gray-700">
       <a href="#" class="block px-4 py-2 hover:bg-gray-100">Clone Order</a>
       <a href="#" class="block px-4 py-2 hover:bg-gray-100">Edit Order</a>
@@ -566,7 +566,7 @@
                     <a href="#"">2025-04-15</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Time: 9:35 AM</p>
 
                         <!-- arrow -->
@@ -578,7 +578,7 @@
                     <a href="#"">Rahul Kumar</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Name: John Doe</p>
                         <p class="mt-1">Phone: +1 234 567 8901</p>
                         <p class="mt-1">Address: 123 Main St, Springfield, USA</p>
@@ -595,7 +595,7 @@
                     </a>
 
                     <!-- popover (fixed-width, wraps, light / dark) -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Name: Awesome Widget</p>
                         <p class="mt-1">SKU: AW-12345</p>
                         <p class="mt-1">Price: $19.99</p>
@@ -612,7 +612,7 @@
   <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-gray-700 hover:text-black" onclick="toggleDropdown(this, event)">
     ⋮
   </button>
-  <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+  <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black/5">
     <div class="py-1 text-sm text-gray-700">
       <a href="#" class="block px-4 py-2 hover:bg-gray-100">Clone Order</a>
       <a href="#" class="block px-4 py-2 hover:bg-gray-100">Edit Order</a>
@@ -628,7 +628,7 @@
                     <a href="#"">2025-04-15</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Time: 9:35 AM</p>
 
                         <!-- arrow -->
@@ -640,7 +640,7 @@
                     <a href="#"">Rahul Kumar</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Name: John Doe</p>
                         <p class="mt-1">Phone: +1 234 567 8901</p>
                         <p class="mt-1">Address: 123 Main St, Springfield, USA</p>
@@ -657,7 +657,7 @@
                     </a>
 
                     <!-- popover (fixed-width, wraps, light / dark) -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal break-words dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
                         <p class="font-medium">Name: Awesome Widget</p>
                         <p class="mt-1">SKU: AW-12345</p>
                         <p class="mt-1">Price: $19.99</p>
@@ -674,7 +674,7 @@
   <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-gray-700 hover:text-black" onclick="toggleDropdown(this, event)">
     ⋮
   </button>
-  <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+  <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black/5">
     <div class="py-1 text-sm text-gray-700">
       <a href="#" class="block px-4 py-2 hover:bg-gray-100">Clone Order</a>
       <a href="#" class="block px-4 py-2 hover:bg-gray-100">Edit Order</a>

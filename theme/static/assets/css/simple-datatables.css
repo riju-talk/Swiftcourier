@@ -5,12 +5,12 @@ table.dataTable-table tfoot tr th {
 
 table.table-bordered thead tr th,
 table.table-bordered tbody tr td {
-  @apply !border !border-solid !border-[#f6f7fa] dark:!border-[#191e3a];
+  @apply border! border-solid! border-[#f6f7fa]! dark:border-[#191e3a]!;
 }
 
 table.table-compact thead tr th,
 table.table-compact tbody tr td {
-  @apply !py-2 !px-3;
+  @apply py-2! px-3!;
 }
 
 .sticky-header table thead {
@@ -23,11 +23,11 @@ table.table-compact tbody tr td {
 
 .sticky-column table thead tr th:first-child,
 .sticky-column table tbody tr td:first-child {
-  @apply sticky z-[8] bg-[#f6f8fa] ltr:left-0 rtl:right-0 dark:bg-[#1a2941];
+  @apply sticky z-8 bg-[#f6f8fa] ltr:left-0 rtl:right-0 dark:bg-[#1a2941];
 }
 .sticky-column table thead tr th:nth-child(2),
 .sticky-column table tbody tr td:nth-child(2) {
-  @apply sticky z-[8] bg-[#f6f8fa] ltr:left-[58px] rtl:right-[58px] dark:bg-[#1a2941];
+  @apply sticky z-8 bg-[#f6f8fa] ltr:left-[58px] rtl:right-[58px] dark:bg-[#1a2941];
 }
 
 .sticky-header.sticky-column table thead tr th:first-child,
@@ -57,7 +57,7 @@ table.table-compact tbody tr td {
 }
 
 .dataTable-pagination a {
-  @apply grid h-9 w-9 place-content-center rounded-full bg-white-light text-dark hover:!bg-primary hover:!text-white ltr:ml-1 rtl:mr-1 dark:bg-[#191e3a] dark:text-white-light;
+  @apply grid h-9 w-9 place-content-center rounded-full bg-white-light text-dark hover:bg-primary! hover:text-white! ltr:ml-1 rtl:mr-1 dark:bg-[#191e3a] dark:text-white-light;
 }
 
 .dataTable-pagination .active a {
@@ -181,7 +181,7 @@ table.table-compact tbody tr td {
 }
 
 .no-number-pagination ul.dataTable-pagination-list li.pager {
-  @apply !block;
+  @apply block!;
 }
 
 .next-prev-pagination .dataTable-pagination a {

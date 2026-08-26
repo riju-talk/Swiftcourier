@@ -28,7 +28,7 @@
             display: none !important;
         }
         .panel {
-            @apply bg-white dark:bg-[#0e1726] rounded-xl shadow-[0_0_15px_0_rgba(0, 0, 0, 0.05)] dark:shadow-[0_0_15px_0_rgba(0, 0, 0, 0.2)] border border-white-light dark:border-dark p-5;
+            @apply bg-white dark:bg-black rounded-xl shadow-[0_0_15px_0_rgba(0, 0, 0, 0.05)] dark:shadow-[0_0_15px_0_rgba(0, 0, 0, 0.2)] border border-white-light dark:border-dark p-5;
         }
         .badge {
             @apply inline-flex items-center justify-center px-2.5 py-0.5 text-xs font-medium rounded-full;
@@ -52,7 +52,7 @@
         </ul>
         <!-- Loading Indicator -->
         <div id="loading-indicator"
-             class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+             class="fixed inset-0 bg-gray-600/50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
             <div class="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-xl">
                 <div class="flex items-center space-x-4">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -63,7 +63,7 @@
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-6 text-white">
             <!-- Total Orders -->
-            <div class="panel bg-gradient-to-r from-cyan-500 to-cyan-400 p-5 rounded-lg">
+            <div class="panel bg-linear-to-r from-cyan-500 to-cyan-400 p-5 rounded-lg">
                 <div class="text-md font-semibold">Total Orders</div>
                 <div class="text-3xl font-bold mt-3" id="total-orders">-</div>
                 <div class="mt-2 text-sm font-medium">
@@ -71,7 +71,7 @@
                 </div>
             </div>
             <!-- In Transit -->
-            <div class="panel bg-gradient-to-r from-violet-500 to-violet-400 p-5 rounded-lg">
+            <div class="panel bg-linear-to-r from-violet-500 to-violet-400 p-5 rounded-lg">
                 <div class="text-md font-semibold">In Transit</div>
                 <div class="text-3xl font-bold mt-3" id="in-transit">-</div>
                 <div class="mt-2 text-sm font-medium">
@@ -79,7 +79,7 @@
                 </div>
             </div>
             <!-- Delivered -->
-            <div class="panel bg-gradient-to-r from-blue-500 to-blue-400 p-5 rounded-lg">
+            <div class="panel bg-linear-to-r from-blue-500 to-blue-400 p-5 rounded-lg">
                 <div class="text-md font-semibold">Delivered</div>
                 <div class="text-3xl font-bold mt-3" id="delivered">-</div>
                 <div class="mt-2 text-sm font-medium">
@@ -87,7 +87,7 @@
                 </div>
             </div>
             <!-- RTO -->
-            <div class="panel bg-gradient-to-r from-fuchsia-500 to-fuchsia-400 p-5 rounded-lg">
+            <div class="panel bg-linear-to-r from-fuchsia-500 to-fuchsia-400 p-5 rounded-lg">
                 <div class="text-md font-semibold">RTO</div>
                 <div class="text-3xl font-bold mt-3" id="rto">-</div>
                 <div class="mt-2 text-sm font-medium">
@@ -303,7 +303,7 @@
                     <div class="text-lg font-bold">State Wise Load</div>
                 </div>
                 <!-- Disabled content -->
-                <div class="w-full h-[400px] rounded bg-gray-100 dark:bg-gray-800 opacity-30"></div>
+                <div class="w-full h-[400px] rounded-sm bg-gray-100 dark:bg-gray-800 opacity-30"></div>
 
                 <!-- Big Coming Soon Overlay -->
                 <div class="absolute inset-0 flex flex-col items-center justify-center text-center">

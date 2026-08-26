@@ -35,7 +35,7 @@
 {% endblock css %}
 
 {% block body %}
-    <section class="bg-white dark:bg-gray-900 shadow rounded-xl p-6 md:p-8 w-full max-w-4xl mx-auto">
+    <section class="bg-white dark:bg-gray-900 shadow-sm rounded-xl p-6 md:p-8 w-full max-w-4xl mx-auto">
         <!-- Header -->
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Notifications</h2>
@@ -108,7 +108,7 @@
 
                 {% for num in notifications.paginator.page_range %}
                     {% if num == notifications.number %}
-                        <span class="px-3 py-1 rounded-md bg-blue-600 text-white font-semibold shadow">{{ num }}</span>
+                        <span class="px-3 py-1 rounded-md bg-blue-600 text-white font-semibold shadow-sm">{{ num }}</span>
                     {% elif num >= notifications.number|add:'-2' and num <= notifications.number|add:'2' %}
                         <a href="?page={{ num }}"
                            class="px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition">{{ num }}</a>

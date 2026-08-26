@@ -2,8 +2,8 @@
 
 <header class="z-40"
         :class="{ 'dark': $store.app.semidark && $store.app.menu === 'horizontal' }">
-    <div class="shadow-sm">
-        <div class="relative bg-white flex w-full items-center px-5 py-2.5 dark:bg-[#0e1726]">
+    <div class="shadow-xs">
+        <div class="relative bg-white flex w-full items-center px-5 py-2.5 dark:bg-black">
             <div class="horizontal-logo flex lg:hidden justify-between items-center ltr:mr-2 rtl:ml-2">
                 <a href="#" class="main-logo flex items-center shrink-0">
                     <img class="w-8 ltr:-ml-1 rtl:-mr-1 inline"
@@ -29,17 +29,17 @@
             </div>
 
             <div x-data="header"
-                 class="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]">
+                 class="sm:flex-1 sm:ltr:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]">
                 <!-- Search -->
                 <div class="sm:ltr:mr-auto sm:rtl:ml-auto"
                      x-data="{ search: false }"
                      @click.outside="search = false">
                     <form class="sm:relative absolute inset-x-0 sm:top-0 top-1/2 sm:translate-y-0 -translate-y-1/2 sm:mx-0 mx-4 z-10 sm:block hidden"
-                          :class="{ '!block': search }"
+                          :class="{ 'block!': search }"
                           @submit.prevent="search = false">
                         <div class="relative">
                             <input type="text"
-                                   class="form-input ltr:pl-9 rtl:pr-9 ltr:sm:pr-4 rtl:sm:pl-4 ltr:pr-9 rtl:pl-9 peer sm:bg-transparent bg-gray-100 placeholder:tracking-widest"
+                                   class="form-input ltr:pl-9 rtl:pr-9 sm:ltr:pr-4 sm:rtl:pl-4 ltr:pr-9 rtl:pl-9 peer sm:bg-transparent bg-gray-100 placeholder:tracking-widest"
                                    placeholder="Search" />
                             <button type="button"
                                     class="absolute w-9 h-9 inset-0 ltr:right-auto rtl:left-auto appearance-none peer-focus:text-primary">
@@ -165,7 +165,7 @@
                 <a href="javascript:;"
                    class="relative block p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
                    @click="toggle">
-                    <svg class="group-hover:!text-primary shrink-0"
+                    <svg class="group-hover:text-primary! shrink-0"
                          width="20"
                          height="20"
                          viewBox="0 0 24 24"
@@ -179,7 +179,7 @@
                     </svg>
 
                     <span class="flex absolute w-3 h-3 ltr:right-0 rtl:left-0 top-0">
-                        <span class="animate-ping absolute ltr:-left-[3px] rtl:-right-[3px] -top-[3px] inline-flex h-full w-full rounded-full bg-success/50 opacity-75"></span>
+                        <span class="animate-ping absolute ltr:left-[-3px] rtl:right-[-3px] top-[-3px] inline-flex h-full w-full rounded-full bg-success/50 opacity-75"></span>
                         <span class="relative inline-flex rounded-full w-[6px] h-[6px] bg-success"></span>
                     </span>
                 </a>
@@ -189,7 +189,7 @@
             </div>
 
             <!-- Profile -->
-            <div class="dropdown flex-shrink-0"
+            <div class="dropdown shrink-0"
                  x-data="dropdown"
                  @click.outside="open = false">
                 <a href="javascript:;" class="relative group" @click="toggle()">
@@ -203,7 +203,7 @@
                     x-show="open"
                     x-transition
                     x-transition.duration.300ms
-                    class="ltr:right-0 rtl:left-0 text-dark dark:text-white-dark top-11 !py-0 w-[230px] font-semibold dark:text-white-light/90">
+                    class="ltr:right-0 rtl:left-0 text-dark dark:text-white-dark top-11 py-0! w-[230px] font-semibold dark:text-white-light/90">
                     <li>
                         <div class="flex items-center px-4 py-4">
                             <div class="flex-none">
@@ -213,7 +213,7 @@
                             </div>
                             <div class="ltr:pl-4 rtl:pr-4 truncate">
                                 <h4 class="text-base">
-                                    John Doe<span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Pro</span>
+                                    John Doe<span class="text-xs bg-success-light rounded-sm text-success px-1 ltr:ml-2 rtl:ml-2">Pro</span>
                                 </h4>
                                 <a class="text-black/60  hover:text-primary dark:text-dark-light/60 dark:hover:text-white"
                                    href="javascript:;">johndoe@gmail.com</a>
@@ -264,7 +264,7 @@
                     </li>
                     <li class="border-t border-white-light dark:border-white-light/10">
                         <a href="{% url 'account:signout' %}"
-                           class="text-danger !py-3"
+                           class="text-danger py-3!"
                            @click="toggle">
                             <svg class="shrink-0 w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 rotate-90"
                                  width="18"
@@ -284,7 +284,7 @@
     </div>
 
     <!-- horizontal menu -->
-    <ul class="horizontal-menu hidden py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] dark:border-[#191e3a] dark:bg-[#0e1726] text-black dark:text-white-dark">
+    <ul class="horizontal-menu hidden py-1.5 font-semibold px-6 lg:space-x-1.5 xl:space-x-8 rtl:space-x-reverse bg-white border-t border-[#ebedf2] dark:border-[#191e3a] dark:bg-black text-black dark:text-white-dark">
         <li class="menu nav-item relative">
             <a href="javascript:;" class="nav-link">
                 <div class="flex items-center">
@@ -389,7 +389,7 @@
                             </svg>
                         </div>
                     </a>
-                    <ul class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
+                    <ul class="rounded-sm absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-10 text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow-sm p-0 py-2 hidden">
                         <li>
                             <a href="/apps/invoice/list">List</a>
                         </li>
@@ -607,7 +607,7 @@
                             </svg>
                         </div>
                     </a>
-                    <ul class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
+                    <ul class="rounded-sm absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-10 text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow-sm p-0 py-2 hidden">
                         <li>
                             <a href="/datatables/basic">Basic</a>
                         </li>
@@ -766,7 +766,7 @@
                             </svg>
                         </div>
                     </a>
-                    <ul class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
+                    <ul class="rounded-sm absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-10 text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow-sm p-0 py-2 hidden">
                         <li>
                             <a href="/users/profile">Profile</a>
                         </li>
@@ -802,7 +802,7 @@
                             </svg>
                         </div>
                     </a>
-                    <ul class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
+                    <ul class="rounded-sm absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-10 text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow-sm p-0 py-2 hidden">
                         <li>
                             <a href="/pages/error404" target="_blank">404</a>
                         </li>
@@ -826,7 +826,7 @@
                             </svg>
                         </div>
                     </a>
-                    <ul class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
+                    <ul class="rounded-sm absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-10 text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow-sm p-0 py-2 hidden">
                         <li>
                             <a href="/auth/cover-login" target="_blank">Login Cover</a>
                         </li>
@@ -847,7 +847,7 @@
                             </svg>
                         </div>
                     </a>
-                    <ul class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
+                    <ul class="rounded-sm absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-10 text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow-sm p-0 py-2 hidden">
                         <li>
                             <a href="/auth/cover-register" target="_blank">Register Cover</a>
                         </li>
@@ -868,7 +868,7 @@
                             </svg>
                         </div>
                     </a>
-                    <ul class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
+                    <ul class="rounded-sm absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-10 text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow-sm p-0 py-2 hidden">
                         <li>
                             <a href="/auth/cover-password-reset" target="_blank">Recover ID Cover</a>
                         </li>
@@ -889,7 +889,7 @@
                             </svg>
                         </div>
                     </a>
-                    <ul class="rounded absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-[10] text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow p-0 py-2 hidden">
+                    <ul class="rounded-sm absolute top-0 ltr:left-[95%] rtl:right-[95%] min-w-[180px] bg-white z-10 text-dark dark:text-white-dark dark:bg-[#1b2e4b] shadow-sm p-0 py-2 hidden">
                         <li>
                             <a href="/auth/cover-lockscreen" target="_blank">Unlock Cover</a>
                         </li>

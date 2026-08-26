@@ -38,7 +38,7 @@
 {% endblock css %}
 
 {% block body %}
-    <section class="bg-white dark:bg-gray-900 shadow rounded-xl p-6 md:p-8 w-full max-w-4xl mx-auto">
+    <section class="bg-white dark:bg-gray-900 shadow-sm rounded-xl p-6 md:p-8 w-full max-w-4xl mx-auto">
         <!-- Header -->
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-bold text-gray-800 dark:text-white">Recent Activity</h2>
@@ -148,7 +148,7 @@
                     <form method="get">
                         <select name="per_page"
                                 onchange="this.form.submit()"
-                                class="px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                                class="px-2 py-1 border rounded-sm text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
                             {% for option in per_page_options %}
                                 <option value="{{ option }}"
                                         {% if activities.paginator.per_page == option %}selected{% endif %}>{{ option }}</option>
@@ -162,23 +162,23 @@
                 <div class="flex gap-1 flex-wrap text-sm">
                     {% if activities.has_previous %}
                         <a href="?page={{ activities.previous_page_number }}&per_page={{ activities.paginator.per_page }}"
-                           class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded dark:text-gray-100">Previous</a>
+                           class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm dark:text-gray-100">Previous</a>
                     {% endif %}
 
                     {% for num in activities.paginator.page_range %}
                         {% if num >= activities.number|add:"-2" and num <= activities.number|add:"2" %}
                             {% if num == activities.number %}
-                                <span class="px-3 py-1 rounded bg-blue-600 text-white font-semibold shadow">{{ num }}</span>
+                                <span class="px-3 py-1 rounded-sm bg-blue-600 text-white font-semibold shadow-sm">{{ num }}</span>
                             {% else %}
                                 <a href="?page={{ num }}&per_page={{ activities.paginator.per_page }}"
-                                   class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded dark:text-gray-100">{{ num }}</a>
+                                   class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm dark:text-gray-100">{{ num }}</a>
                             {% endif %}
                         {% endif %}
                     {% endfor %}
 
                     {% if activities.has_next %}
                         <a href="?page={{ activities.next_page_number }}&per_page={{ activities.paginator.per_page }}"
-                           class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded dark:text-gray-100">Next</a>
+                           class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm dark:text-gray-100">Next</a>
                     {% endif %}
                 </div>
             </div>

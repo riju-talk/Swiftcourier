@@ -176,10 +176,10 @@
 {% endblock %}
 
 {% block body %}
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded z-50">Skip to main content</a>
-  <a href="#navigation" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-32 bg-blue-600 text-white px-4 py-2 rounded z-50">Skip to navigation</a>
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-sm z-50">Skip to main content</a>
+  <a href="#navigation" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-32 bg-blue-600 text-white px-4 py-2 rounded-sm z-50">Skip to navigation</a>
 
-  <div class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700">
+  <div class="bg-white dark:bg-slate-800 rounded-lg shadow-xs border border-gray-200 dark:border-slate-700">
     <nav id="navigation" role="tablist" aria-label="Report sections" class="flex items-center border-b border-gray-200 dark:border-slate-700 px-0 text-sm overflow-x-auto">
       <button class="tab-btn px-4 py-4 text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-400 transition-colors text-sm font-medium whitespace-nowrap" data-heading="&#9635 Reports - Daily Order Summary" onclick="showTab('daily-summary', this)" role="tab" aria-selected="false" aria-controls="daily-summary" id="daily-summary-tab">Daily Summary</button>
 
@@ -190,16 +190,16 @@
       <button class="tab-btn px-4 py-4 text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white border-b-2 border-transparent hover:border-gray-300 dark:hover:border-gray-400 transition-colors text-sm font-medium whitespace-nowrap" data-heading="&#9635 Reports - Courier Wise Summary" onclick="showTab('courier-wise-summary', this)" role="tab" aria-selected="false" aria-controls="courier-wise-summary" id="courier-wise-summary-tab">Courier Wise Summary</button>
     </nav>
 
-    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700">
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-xs border border-gray-200 dark:border-slate-700">
       <div class="px-6 py-5 grid grid-cols-1 md:grid-cols-5 gap-4 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700">
         <div class="col-span-1">
           <label class="block text-gray-700 dark:text-white text-xs font-semibold uppercase tracking-wide mb-2">Date Range</label>
-          <input type="text" id="dateRangeInput" value="09/01/2022 - 01/22/2026" class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 cursor-pointer bg-white dark:bg-slate-600 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" readonly />
+          <input type="text" id="dateRangeInput" value="09/01/2022 - 01/22/2026" class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 cursor-pointer bg-white dark:bg-slate-600 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" readonly />
         </div>
 
         <div class="col-span-1">
           <label class="block text-gray-700 dark:text-white text-xs font-semibold uppercase tracking-wide mb-2">Method</label>
-          <select class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+          <select class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-600 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
             <option value="all">All</option>
             <option value="prepaid">Prepaid</option>
             <option value="cod">COD</option>
@@ -208,7 +208,7 @@
 
         <div class="col-span-1">
           <label class="block text-gray-700 dark:text-white text-xs font-semibold uppercase tracking-wide mb-2">Courier</label>
-          <select class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+          <select class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-600 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
             <option value="all">All</option>
             {% for id, courier in couriers_available.items %}
               <option value="{{ id }}">{{ courier }}</option>
@@ -235,15 +235,15 @@
             <!-- Filter Buttons (Left Side) -->
             <div class="flex sm:flex-col gap-2 overflow-x-auto sm:overflow-visible min-w-max sm:min-w-fit">
               <p class="text-xs font-bold text-gray-700 dark:text-white uppercase tracking-wider mb-2 sm:block hidden">Quick Select</p>
-              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all flex-shrink-0" data-range="today">Today</button>
-              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all flex-shrink-0" data-range="yesterday">Yesterday</button>
-              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all flex-shrink-0" data-range="last7">Last 7 days</button>
-              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all flex-shrink-0" data-range="last30">Last 30 days</button>
+              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all shrink-0" data-range="today">Today</button>
+              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all shrink-0" data-range="yesterday">Yesterday</button>
+              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all shrink-0" data-range="last7">Last 7 days</button>
+              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all shrink-0" data-range="last30">Last 30 days</button>
             </div>
 
             <!-- Calendars (Right Side) -->
             <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto justify-center sm:justify-start overflow-x-auto">
-              <div class="calendar bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md shadow-sm">
+              <div class="calendar bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md shadow-xs">
                 <div class="calendar-header">
                   <button id="prevYear" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs">◄◄</button>
                   <button id="prevMonth" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">&lt;</button>
@@ -256,7 +256,7 @@
                 </div>
               </div>
 
-              <div class="calendar bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md shadow-sm">
+              <div class="calendar bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md shadow-xs">
                 <div class="calendar-header">
                   <button id="prevYear2" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs">◄◄</button>
                   <button id="prevMonth2" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">&lt;</button>
@@ -283,7 +283,7 @@
       <!-- Main Content Area -->
       <div class="px-6 py-6">
         <div id="top-ndr-reasons" class="tab-content hidden">
-          <div class="overflow-x-auto border rounded">
+          <div class="overflow-x-auto border rounded-sm">
             <table class="min-w-full text-sm text-left">
               <thead class="bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-gray-200 uppercase text-xs">
                 <tr>
@@ -319,7 +319,7 @@
         </div>
 
         <div id="daily-summary" class="tab-content hidden">
-          <div class="overflow-x-auto border rounded">
+          <div class="overflow-x-auto border rounded-sm">
             <table class="min-w-full text-sm text-left">
               <thead class="bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-gray-200 uppercase text-xs">
                 <tr>
@@ -356,7 +356,7 @@
 
         <!-- Product wise Summary -->
         <div id="product-wise-summary" class="tab-content hidden">
-          <div class="overflow-x-auto border rounded">
+          <div class="overflow-x-auto border rounded-sm">
             <table class="min-w-full text-sm text-left">
               <thead class="bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-gray-200 uppercase text-xs">
                 <tr>
@@ -392,7 +392,7 @@
         </div>
 
         <div id="courier-wise-summary" class="tab-content hidden">
-          <div class="overflow-x-auto border rounded">
+          <div class="overflow-x-auto border rounded-sm">
             <table class="min-w-full text-sm text-left">
               <thead class="bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-gray-200 uppercase text-xs">
                 <tr>

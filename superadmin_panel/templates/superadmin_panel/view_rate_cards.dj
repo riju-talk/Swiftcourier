@@ -20,7 +20,7 @@
             <button type="submit"
                     id="delete-selected"
                     disabled
-                    class="px-4 py-2 bg-red-600 text-white rounded disabled:opacity-50">Delete Selected</button>
+                    class="px-4 py-2 bg-red-600 text-white rounded-sm disabled:opacity-50">Delete Selected</button>
 
             {% include "components/common/view_rate_card.dj" with rate_cards=user.rate_cards.all %}
         </form>

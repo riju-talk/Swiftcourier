@@ -23,7 +23,7 @@ Add Admin
       Company Name <span class="text-red-500">*</span>
     </label>
     <input type="text" id="company_name" name="company_name" required placeholder="Enter Company Name"
-      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
   </div>
 
   <!-- Email / Username -->
@@ -32,7 +32,7 @@ Add Admin
       Email / Username <span class="text-red-500">*</span>
     </label>
     <input type="email" id="email" name="email" required placeholder="Enter Email or Username"
-      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
   </div>
 
   <!-- Company Logo -->
@@ -41,7 +41,7 @@ Add Admin
       Company Logo
     </label>
     <input type="file" id="company_logo" name="company_logo"
-      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:outline-none transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-dark" />
+      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:outline-hidden transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-dark" />
   </div>
 
   <!-- Mobile Number -->
@@ -54,7 +54,7 @@ Add Admin
         +91
       </span>
       <input type="tel" id="mobile" name="mobile" required placeholder="Enter Mobile Number"
-        class="w-full px-4 py-2 rounded-r-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+        class="w-full px-4 py-2 rounded-r-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
     </div>
   </div>
 
@@ -64,13 +64,13 @@ Add Admin
       Password <span class="text-red-500">*</span>
     </label>
     <input type="password" id="password" name="password" required placeholder="Enter Password"
-      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
   </div>
 
   <!-- Submit Button -->
   <div>
     <button type="submit"
-      class="w-full px-6 py-2 bg-primary text-white rounded-xl shadow hover:bg-primary-dark transition">
+      class="w-full px-6 py-2 bg-primary text-white rounded-xl shadow-sm hover:bg-primary-dark transition">
       Register
     </button>
   </div>

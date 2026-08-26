@@ -34,7 +34,7 @@
                    min="5"
                    max="20"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
         </div>
 
         <!-- PIN Code -->
@@ -49,7 +49,7 @@
                    placeholder="PIN Code"
                    min="6"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
         </div>
 
         <!-- Mobile Number -->
@@ -63,7 +63,7 @@
                    min="10"
                    placeholder="Mobile Number"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
         </div>
 
         <!-- Alternate Mobile Number -->
@@ -73,7 +73,7 @@
                    name="alt_phone"
                    value="{{ hub.alt_phone }}"
                    placeholder="Alternate Mobile Number"
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
         </div>
 
         <!-- Address -->
@@ -86,13 +86,13 @@
                       min="5"
                       rows="2"
                       required
-                      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition">{{ hub.address_line1 }}</textarea>
+                      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition">{{ hub.address_line1 }}</textarea>
         </div>
 
         <!-- Address2 -->
         {% comment %} <div class="md:col-span-2">
             <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Address 2</label>
-            <textarea name="address_line2" placeholder="Apartment, suite, unit, building, floor, etc." rows="2" class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition">{{ hub.address_line2 }}</textarea>
+            <textarea name="address_line2" placeholder="Apartment, suite, unit, building, floor, etc." rows="2" class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition">{{ hub.address_line2 }}</textarea>
         </div> {% endcomment %}
 
         <!-- Contact Person Name -->
@@ -106,7 +106,7 @@
                    value="{{ hub.contact_person }}"
                    placeholder="Contact Person"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
         </div>
 
         <!-- Email -->
@@ -119,7 +119,7 @@
                    value="{{ hub.email }}"
                    placeholder="name@example.com"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
         </div>
 
         <!-- City -->
@@ -133,7 +133,7 @@
                    value="{{ hub.city }}"
                    placeholder="City"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
         </div>
 
         <!-- State -->
@@ -147,7 +147,7 @@
                    value="{{ hub.state }}"
                    placeholder="State"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
         </div>
 
         <!-- Country -->
@@ -161,7 +161,7 @@
                    value="{{ hub.country }}"
                    placeholder="Country"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
         </div>
 
         <!-- GSTIN -->
@@ -169,13 +169,13 @@
             <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                 GSTIN <span class="text-red-500">*</span>
             </label>
-            <input type="text" name="gstin" value="{{ hub.gstin }}" placeholder="GSTIN" required class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-sm focus:ring-2 focus:ring-primary focus:outline-none transition" />
+            <input type="text" name="gstin" value="{{ hub.gstin }}" placeholder="GSTIN" required class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
         </div> {% endcomment %}
 
         <!-- Submit Button -->
         <div class="md:col-span-2 text-right mt-4">
             <button type="submit"
-                    class="px-6 py-2 bg-primary text-white font-semibold rounded-xl shadow hover:bg-primary-dark transition">
+                    class="px-6 py-2 bg-primary text-white font-semibold rounded-xl shadow-sm hover:bg-primary-dark transition">
                 Submit
             </button>
         </div>

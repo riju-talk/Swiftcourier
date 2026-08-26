@@ -1,4 +1,4 @@
-<div class="dark:text-white-dark text-center ltr:sm:text-left rtl:sm:text-right p-6 mt-auto">
+<div class="dark:text-white-dark text-center sm:ltr:text-left sm:rtl:text-right p-6 mt-auto">
     © <span id="footer-year">2025</span>.
     Idiotship All rights reserved.
 </div>

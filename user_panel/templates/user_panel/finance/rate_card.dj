@@ -215,7 +215,7 @@
                         <div class="relative">
                             <select name="mode"
                                     onchange="this.form.submit()"
-                                    class="w-44 px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-600">
+                                    class="w-44 px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-primary-600">
                                 <option value="" {% if not request.GET.mode %}selected{% endif %}>All Types</option>
                                 <option value="surface"
                                         {% if request.GET.mode == "surface" %}selected{% endif %}>Surface</option>
@@ -231,7 +231,7 @@
                         <div class="relative">
                             <select name="weight"
                                     onchange="this.form.submit()"
-                                    class="w-44 px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-600">
+                                    class="w-44 px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-primary-600">
                                 <option value="" {% if not request.GET.weight %}selected{% endif %}>All Weights</option>
                                 <option value="0.5" {% if request.GET.weight == "0.5" %}selected{% endif %}>0.5 KG</option>
                                 <option value="2" {% if request.GET.weight == "2" %}selected{% endif %}>2 KG</option>
@@ -250,7 +250,7 @@
                                name="q"
                                value="{{ request.GET.q|default_if_none:'' }}"
                                placeholder="Search couriers"
-                               class="pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-primary-600">
+                               class="pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-sm w-64 focus:outline-hidden focus:ring-2 focus:ring-primary-600">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-search text-gray-400"></i>
                         </div>
@@ -308,7 +308,7 @@
                 <div class="flex items-start space-x-4">
 
                     <!-- Icon -->
-                    <div class="flex-shrink-0 bg-yellow-100 dark:bg-yellow-900 p-3 rounded-xl">
+                    <div class="shrink-0 bg-yellow-100 dark:bg-yellow-900 p-3 rounded-xl">
                         <i class="fas fa-file-contract text-yellow-600 dark:text-yellow-400 text-2xl"></i>
                     </div>
 

@@ -12,7 +12,7 @@
     <!-- ================= TRACK SHIPMENT ================= -->
     <section class="w-full">
       <!-- Header / Search -->
-      <div class="w-full bg-gradient-to-br from-blue-100 to-blue-50 dark:from-[#0F172A] dark:to-[#020617] px-4 py-12 md:px-12 lg:px-24">
+      <div class="w-full bg-linear-to-br from-blue-100 to-blue-50 dark:from-[#0F172A] dark:to-[#020617] px-4 py-12 md:px-12 lg:px-24">
         <div class="text-center">
           <h1 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white">Track Shipment</h1>
           <p class="mt-3 font-medium text-gray-600 dark:text-gray-400">Get real-time delivery updates instantly</p>
@@ -20,7 +20,7 @@
 
         <form action="{% url 'track-shipment' %}" method="get" class="mt-10">
           <div class="relative mx-auto max-w-3xl">
-            <input type="text" name="awb_number" id="awb_number_input" value="{{ request.GET.awb_number }}" required placeholder="Enter your AWB Number" class="w-full rounded-lg border border-gray-300 dark:border-[#1E293B] bg-white dark:bg-[#020617] py-4 pl-5 pr-[120px] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400" />
+            <input type="text" name="awb_number" id="awb_number_input" value="{{ request.GET.awb_number }}" required placeholder="Enter your AWB Number" class="w-full rounded-lg border border-gray-300 dark:border-[#1E293B] bg-white dark:bg-[#020617] py-4 pl-5 pr-[120px] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400" />
 
             <button type="submit" class="absolute right-1 top-1 h-[52px] rounded-lg px-8 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold transition">Track</button>
           </div>
@@ -138,22 +138,22 @@
       <!-- Features -->
       <div class="w-full bg-blue-50 dark:bg-[#020617] px-4 py-10 md:px-12 lg:px-24">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="rounded-xl bg-white dark:bg-[#0F172A] border border-gray-200 dark:border-[#1E293B] p-6 text-center shadow-sm">
+          <div class="rounded-xl bg-white dark:bg-[#0F172A] border border-gray-200 dark:border-[#1E293B] p-6 text-center shadow-xs">
             <h3 class="font-semibold text-lg text-gray-900 dark:text-white">Live Tracking</h3>
             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Track your shipments in real-time with accurate updates.</p>
           </div>
 
-          <div class="rounded-xl bg-white dark:bg-[#0F172A] border border-gray-200 dark:border-[#1E293B] p-6 text-center shadow-sm">
+          <div class="rounded-xl bg-white dark:bg-[#0F172A] border border-gray-200 dark:border-[#1E293B] p-6 text-center shadow-xs">
             <h3 class="font-semibold text-lg text-gray-900 dark:text-white">Order Management</h3>
             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Manage and monitor all your orders from one dashboard.</p>
           </div>
 
-          <div class="rounded-xl bg-white dark:bg-[#0F172A] border border-gray-200 dark:border-[#1E293B] p-6 text-center shadow-sm">
+          <div class="rounded-xl bg-white dark:bg-[#0F172A] border border-gray-200 dark:border-[#1E293B] p-6 text-center shadow-xs">
             <h3 class="font-semibold text-lg text-gray-900 dark:text-white">Secure Delivery</h3>
             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">End-to-end secure delivery with trusted partners.</p>
           </div>
 
-          <div class="rounded-xl bg-white dark:bg-[#0F172A] border border-gray-200 dark:border-[#1E293B] p-6 text-center shadow-sm">
+          <div class="rounded-xl bg-white dark:bg-[#0F172A] border border-gray-200 dark:border-[#1E293B] p-6 text-center shadow-xs">
             <h3 class="font-semibold text-lg text-gray-900 dark:text-white">Easy Returns</h3>
             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Hassle-free reverse logistics and quick returns.</p>
           </div>

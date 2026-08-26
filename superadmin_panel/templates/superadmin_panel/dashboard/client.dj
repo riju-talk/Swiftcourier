@@ -17,7 +17,7 @@
     </div>
 
     <!-- Content Container -->
-    <div class="rounded-lg p-4 shadow bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100">
+    <div class="rounded-lg p-4 shadow-sm bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-100">
       <div class="space-y-6">
         <!-- Header -->
         <div>
@@ -27,32 +27,32 @@
 
         <!-- Primary KPIs -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
-          <div class="rounded-xl p-4 bg-white dark:bg-gray-900 shadow">
+          <div class="rounded-xl p-4 bg-white dark:bg-gray-900 shadow-sm">
             <p class="text-xs text-gray-500 dark:text-gray-400">Total Shipments</p>
             <h2 id="totalShipments" class="text-2xl font-bold">48,920</h2>
           </div>
 
-          <div class="rounded-xl p-4 bg-yellow-50 dark:bg-yellow-900/20 shadow">
+          <div class="rounded-xl p-4 bg-yellow-50 dark:bg-yellow-900/20 shadow-sm">
             <p class="text-xs text-yellow-700 dark:text-yellow-400">Pending Pickup</p>
             <h2 id="pendingPickup" class="text-2xl font-bold">4,320</h2>
           </div>
 
-          <div class="rounded-xl p-4 bg-blue-50 dark:bg-blue-900/20 shadow">
+          <div class="rounded-xl p-4 bg-blue-50 dark:bg-blue-900/20 shadow-sm">
             <p class="text-xs text-blue-700 dark:text-blue-400">In Transit</p>
             <h2 id="inTransit" class="text-2xl font-bold">21,640</h2>
           </div>
 
-          <div class="rounded-xl p-4 bg-green-50 dark:bg-green-900/20 shadow">
+          <div class="rounded-xl p-4 bg-green-50 dark:bg-green-900/20 shadow-sm">
             <p class="text-xs text-green-700 dark:text-green-400">Delivered</p>
             <h2 id="delivered" class="text-2xl font-bold">18,110</h2>
           </div>
 
-          <div class="rounded-xl p-4 bg-red-50 dark:bg-red-900/20 shadow">
+          <div class="rounded-xl p-4 bg-red-50 dark:bg-red-900/20 shadow-sm">
             <p class="text-xs text-red-700 dark:text-red-400">RTO</p>
             <h2 id="rtoOrders" class="text-2xl font-bold">2,180</h2>
           </div>
 
-          <div class="rounded-xl p-4 bg-purple-50 dark:bg-purple-900/20 shadow">
+          <div class="rounded-xl p-4 bg-purple-50 dark:bg-purple-900/20 shadow-sm">
             <p class="text-xs text-purple-700 dark:text-purple-400">NDR</p>
             <h2 id="ndrOrders" class="text-2xl font-bold">1,670</h2>
           </div>
@@ -61,7 +61,7 @@
         <!-- Business Health -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <!-- Client Metrics -->
-          <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow">
+          <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow-sm">
             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Client Metrics</h3>
 
             <div class="space-y-3 text-sm">
@@ -81,7 +81,7 @@
           </div>
 
           <!-- Courier Performance -->
-          <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow">
+          <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow-sm">
             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Courier Performance (Avg)</h3>
 
             <div id="clientCourierPerformance" class="space-y-3 text-sm"></div>
@@ -89,7 +89,7 @@
           </div>
 
           <!-- Risk Indicators -->
-          <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow">
+          <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow-sm">
             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Risk Indicators</h3>
 
             <ul class="space-y-3 text-sm">
@@ -109,7 +109,7 @@
           </div>
         </div>
         <!-- Client-wise Shipment Breakdown -->
-        <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow">
+        <div class="rounded-xl p-6 bg-white dark:bg-gray-900 shadow-sm">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Client Shipment Breakdown</h3>
             <span class="text-xs text-gray-500 dark:text-gray-400">All active clients</span>

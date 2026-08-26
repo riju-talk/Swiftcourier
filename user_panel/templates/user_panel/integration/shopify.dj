@@ -69,7 +69,7 @@
   <!-- ── Page Header ── -->
   <div class="flex items-center justify-between mb-1.5">
     <div class="flex items-center gap-3">
-      <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#96bf48;">
+      <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style="background:#96bf48;">
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
           <path d="M15.337 2.094c-.02-.106-.108-.16-.215-.16-.107 0-1.93.04-1.93.04s-1.283-1.25-1.41-1.377a.42.42 0 0 0-.24-.083v.002L10.5 22l6.5-1.404S15.357 2.2 15.337 2.094zM12.6.894l-.58 1.79a2.45 2.45 0 0 0-1.52-.53c-1.23 0-1.82.775-1.82 1.54 0 .846.663 1.4 1.27 1.895.644.518 1.215.98 1.215 1.7 0 .84-.672 1.39-1.574 1.39a3.3 3.3 0 0 1-1.74-.483l-.307 1.424s.637.36 1.658.36c1.698 0 2.93-1.004 2.93-2.555 0-.938-.598-1.543-1.184-2.01-.543-.432-1.03-.82-1.03-1.454 0-.488.334-.943 1.002-.943.376 0 .7.13.7.13L12.6.894z"/>
         </svg>
@@ -92,7 +92,7 @@
   </p>
 
   <!-- ── Connect Panel ── -->
-  <div id="connectPanel" class="connect-panel bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-7 mb-7 shadow-sm">
+  <div id="connectPanel" class="connect-panel bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-7 mb-7 shadow-xs">
     <div class="flex items-center justify-between mb-6">
       <span class="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Connect a Store</span>
       <button onclick="toggleConnectPanel()"
@@ -107,7 +107,7 @@
 
       <!-- Option 1: Enter URL -->
       <div class="flex flex-col gap-3 p-5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-green-500 dark:hover:border-green-500 hover:-translate-y-0.5 transition-all duration-200">
-        <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-green-50 dark:bg-green-950 flex-shrink-0">
+        <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-green-50 dark:bg-green-950 shrink-0">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/>
             <line x1="2" y1="12" x2="22" y2="12"/>
@@ -120,7 +120,7 @@
         </div>
         <div class="flex gap-2 mt-0.5">
           <input id="shopUrlInput" type="text" placeholder="yourstore.myshopify.com"
-            class="url-input flex-1 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 outline-none focus:border-green-500 dark:focus:border-green-400 focus:ring-2 focus:ring-green-500/10 dark:focus:ring-green-400/10 transition-all" />
+            class="url-input flex-1 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 outline-hidden focus:border-green-500 dark:focus:border-green-400 focus:ring-2 focus:ring-green-500/10 dark:focus:ring-green-400/10 transition-all" />
           <button onclick="handleConnect()"
             class="px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white text-xs font-semibold rounded-lg whitespace-nowrap transition-colors active:scale-95">
             Connect
@@ -129,7 +129,7 @@
       </div>
 
       <!-- OR divider -->
-      <div class="or-divider flex flex-col items-center justify-center px-4 gap-2 flex-shrink-0">
+      <div class="or-divider flex flex-col items-center justify-center px-4 gap-2 shrink-0">
         <div class="or-line w-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
         <span class="text-xs font-bold tracking-wider text-gray-400 dark:text-gray-600 bg-white dark:bg-gray-900 py-1">OR</span>
         <div class="or-line w-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
@@ -137,7 +137,7 @@
 
       <!-- Option 2: App Store -->
       <div class="flex flex-col gap-3 p-5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-green-500 dark:hover:border-green-500 hover:-translate-y-0.5 transition-all duration-200">
-        <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-indigo-50 dark:bg-indigo-950 flex-shrink-0">
+        <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-indigo-50 dark:bg-indigo-950 shrink-0">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
             <line x1="3" y1="6" x2="21" y2="6"/>
@@ -186,7 +186,7 @@
     <!-- Blur notice overlay -->
     <div class="blur-notice">
       <div class="flex items-center gap-2.5 px-5 py-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl text-sm text-gray-500 dark:text-gray-400 font-medium">
-        <svg class="w-4 h-4 text-orange-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="w-4 h-4 text-orange-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
         Connect a store above to see live data
@@ -356,7 +356,7 @@
                ${i===activeTab
                  ? 'text-green-600 dark:text-green-400 font-semibold'
                  : 'text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}">
-        <span class="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></span>
+        <span class="w-2 h-2 rounded-full bg-green-500 shrink-0"></span>
         ${esc(s.name)}
       </button>`).join('') : '';
 

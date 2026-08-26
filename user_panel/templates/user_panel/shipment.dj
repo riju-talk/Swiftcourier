@@ -46,7 +46,7 @@
     {% include "user_panel/components/common/shipment_navbar.dj" %}
 
 
-    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xs">
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b dark:border-gray-700 gap-4">
             <!-- Left: Title + Search -->
@@ -58,7 +58,7 @@
                        placeholder="Search Order"
                        value="{{ request.GET.q }}"
                        onenter="handleSearch(this.value)"
-                       class="w-48 px-3 py-1.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400">
+                       class="w-48 px-3 py-1.5 border rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400">
             </div>
 
             <!-- Right: Buttons -->
@@ -70,7 +70,7 @@
                     </button>
                 </div>
                 <button id="filterToggleBtn"
-                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-sm"
+                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-xs"
                         title="Filter Orders">
                     <!-- Original filter icon -->
                     <svg class="w-5 h-5 text-indigo-600"
@@ -102,7 +102,7 @@
                         </label>
                         <!-- Input Box -->
                         <input type="text"
-                               class="w-full px-4 py-2 border rounded cursor-pointer bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 max-w-xs mb-4"
+                               class="w-full px-4 py-2 border rounded-sm cursor-pointer bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 max-w-xs mb-4"
                                readonly
                                name="date_range"
                                id="myfilter-date-range"
@@ -127,7 +127,7 @@
                                     <h3 class="mb-2 font-semibold dark:text-gray-200">Presets</h3>
                                     <template x-for="preset in presets">
                                         <button @click="setPreset(preset)"
-                                                class="w-full text-left px-2 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded date-transition"
+                                                class="w-full text-left px-2 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm date-transition"
                                                 :class="{ 'bg-blue-100 dark:bg-blue-900/50': preset.active, 'font-semibold text-blue-600 dark:text-blue-400': preset.label === 'Custom Range' && isCustomRange, 'text-gray-700 dark:text-gray-300': !preset.active }">
                                             <span x-text="preset.label"></span>
                                         </button>
@@ -167,7 +167,7 @@
                                                 </template>
                                                 <template x-for="date in startCalendar.dates">
                                                     <button @click="setTempStart(date.date)"
-                                                            class="p-1 text-center rounded date-transition relative"
+                                                            class="p-1 text-center rounded-sm date-transition relative"
                                                             :class="{ 'bg-blue-500 text-white': date.isSelectedStart, 'text-gray-400 dark:text-gray-500': !date.isCurrentMonth, 'hover:bg-gray-100 dark:hover:bg-gray-700': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-blue-100 dark:bg-blue-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-gray-900 dark:text-gray-100': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
                                                             :disabled="!date.isSelectable">
                                                         <span x-text="date.day"></span>
@@ -206,7 +206,7 @@
                                                 </template>
                                                 <template x-for="date in endCalendar.dates">
                                                     <button @click="setTempEnd(date.date)"
-                                                            class="p-1 text-center rounded date-transition relative"
+                                                            class="p-1 text-center rounded-sm date-transition relative"
                                                             :class="{ 'bg-blue-500 text-white': date.isSelectedEnd, 'text-gray-400 dark:text-gray-500': !date.isCurrentMonth, 'hover:bg-gray-100 dark:hover:bg-gray-700': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-blue-100 dark:bg-blue-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-gray-900 dark:text-gray-100': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
                                                             :disabled="!date.isSelectable">
                                                         <span x-text="date.day"></span>
@@ -219,11 +219,11 @@
                                     <!-- Action Buttons -->
                                     <div class="flex justify-end gap-2 mt-4">
                                         <button @click="cancel()"
-                                                class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded date-transition">
+                                                class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm date-transition">
                                             Cancel
                                         </button>
                                         <button @click="apply()"
-                                                class="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-600 rounded date-transition"
+                                                class="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-600 rounded-sm date-transition"
                                                 :disabled="!tempStart || !tempEnd"
                                                 :class="{ 'opacity-50 cursor-not-allowed': !tempStart || !tempEnd }">
                                             Apply
@@ -244,7 +244,7 @@
                                    value="{{ request.GET.order_id }}"
                                    id="filter-order-id"
                                    placeholder="ORD-00123"
-                                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
+                                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
                         </div>
                     </div>
                     <div class="flex-1 mb-4">
@@ -258,7 +258,7 @@
                                    value="{{ request.GET.awb_number }}"
                                    id="awb-number"
                                    placeholder="456546"
-                                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
+                                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
                         </div>
                     </div>
                 </div>
@@ -275,7 +275,7 @@
                         </label>
                         <select name="order_type"
                                 id="filter-order-type"
-                                class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                             <option value="">Select Order Type</option>
                             <option value="prepaid">Prepaid</option>
                             <option value="cod">COD</option>
@@ -290,7 +290,7 @@
                         </label>
                         <select name="warehouse"
                                 id="filter-warehouse"
-                                class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                             <option value="">Select Warehouse</option>
                             {% for hub in request.user.hubs.all %}<option value="{{ hub.id }}">{{ hub.name }}</option>{% endfor %}
                         </select>
@@ -302,7 +302,7 @@
                                class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Channel</label>
                         <select name="courier_partners"
                                 id="filter-courier-partners"
-                                class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                             <option value="">Select Channel</option>
                             <option value="Custom">Custom</option>
                             <option value="Amazon">Amazon</option>
@@ -320,19 +320,19 @@
                                value="{{ request.GET.product_name }}"
                                id="filter-product-name"
                                placeholder="T-Shirt"
-                               class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
+                               class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
                     </div>
                 </div>
                 <!-- Submit & Cancel Buttons -->
                 <div class="mt-6 flex justify-end space-x-3">
                     <button type="button"
                             id="filterCancelBtn"
-                            class="px-5 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-200">
+                            class="px-5 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-red-200">
                         Reset
                     </button>
                     <button type="submit"
                             id="filterSubmitBtn"
-                            class="px-5 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transform hover:scale-105 transition-transform duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-green-300">
+                            class="px-5 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white transform hover:scale-105 transition-transform duration-200 ease-out focus:outline-hidden focus:ring-2 focus:ring-green-300">
                         Apply Filters
                     </button>
                 </div>
@@ -351,7 +351,7 @@
                         <th class="px-4 py-3">
                             <input type="checkbox"
                                    id="selectAll"
-                                   class="rounded border-gray-300 dark:bg-gray-600 dark:border-gray-500">
+                                   class="rounded-sm border-gray-300 dark:bg-gray-600 dark:border-gray-500">
                         </th>
                         <th class="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">CHANNEL</th>
                         <th class="px-4 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-300">ORDER ID</th>
@@ -372,7 +372,7 @@
                             <td class="px-4 py-3">
                                 <input type="checkbox"
                                        value="{{ order.id }}"
-                                       class="ship-order-ids row-checkbox rounded border-gray-300 dark:bg-gray-600">
+                                       class="ship-order-ids row-checkbox rounded-sm border-gray-300 dark:bg-gray-600">
                             </td>
                             <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{{ order.get_channel_display }}</td>
                             <td class="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100">{{ order.order_number }}</td>
@@ -427,7 +427,7 @@
                     <span class="text-sm text-gray-700 dark:text-gray-300">Show:</span>
                     <select id="pageSize"
                             onchange="updatePageSize(this.value)"
-                            class="px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                            class="px-2 py-1 border rounded-sm text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
                         <option value="10" {% if page_size == 10 %}selected{% endif %}>10</option>
                         <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
                         <option value="100" {% if page_size == 100 %}selected{% endif %}>100</option>
@@ -438,7 +438,7 @@
 
                 <div class="flex gap-1">
                     <button onclick="navigatePage('prev')"
-                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded text-sm dark:text-gray-100"
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100"
                             {% if not page_obj.has_previous %}disabled{% endif %}>Previous</button>
 
                     {% for num in page_obj.paginator.page_range %}
@@ -453,7 +453,7 @@
                     {% endfor %}
 
                     <button onclick="navigatePage('next')"
-                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded text-sm dark:text-gray-100"
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100"
                             {% if not page_obj.has_next %}disabled{% endif %}>Next</button>
                 </div>
             </div>
@@ -462,7 +462,7 @@
 
     <!-- Modal -->
     <div id="shipModal"
-         class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+         class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-96 p-6 mx-4 transform -translate-y-1/2 -translate-x-1/2 top-1/2 left-1/2 fixed">
             <h2 class="text-lg font-bold mb-4 dark:text-gray-100">Ship Selected Orders</h2>
             <form id="shipForm"
@@ -481,12 +481,12 @@
                 <div class="flex justify-end gap-2">
                     <button type="button"
                             onclick="closeModal()"
-                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded dark:text-gray-100">
+                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm dark:text-gray-100">
                         Cancel
                     </button>
                     <button type="submit"
                             onclick="shipSelectedOrders()"
-                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Submit</button>
+                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-sm">Submit</button>
                 </div>
             </form>
         </div>

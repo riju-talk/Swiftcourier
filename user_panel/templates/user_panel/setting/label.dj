@@ -44,7 +44,7 @@
                                            name="show_logo"
                                            class="sr-only peer"
                                            {% if label_setting.show_logo %}checked{% endif %}>
-                                    <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                    <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
                                         <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                              fill="none"
                                              stroke="currentColor"
@@ -86,7 +86,7 @@
                                                id="showSupportInfo"
                                                name="show_support_info"
                                                class="sr-only peer">
-                                        <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
                                             <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                  fill="none"
                                                  stroke="currentColor"
@@ -135,7 +135,7 @@
                                                id="hideCustomerMobile"
                                                name="hide_customer_mobile"
                                                class="sr-only peer">
-                                        <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
                                             <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                  fill="none"
                                                  stroke="currentColor"
@@ -164,7 +164,7 @@
                                                id="hidePicupReturnAddress"
                                                name="hide_pickup_address"
                                                class="sr-only peer">
-                                        <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
                                             <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                  fill="none"
                                                  stroke="currentColor"
@@ -190,7 +190,7 @@
                                                id="hideDiscount"
                                                name="hide_discount"
                                                class="sr-only peer">
-                                        <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
                                             <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                  fill="none"
                                                  stroke="currentColor"
@@ -215,7 +215,7 @@
                                                id="hidePoweredBy"
                                                name="hide_powered_by"
                                                class="sr-only peer">
-                                        <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
                                             <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                  fill="none"
                                                  stroke="currentColor"
@@ -241,7 +241,7 @@
                                                id="hideProduct"
                                                name="hide_product"
                                                class="sr-only peer">
-                                        <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
                                             <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                  fill="none"
                                                  stroke="currentColor"
@@ -269,7 +269,7 @@
                                                    id="hideTotalAmount"
                                                    name="hide_total_amount"
                                                    class="sr-only peer">
-                                            <div class="w-5 h-5 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                            <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
                                                 <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                      fill="none"
                                                      stroke="currentColor"
@@ -299,7 +299,7 @@
                                                        id="hideWeight"
                                                        name="hide_weight"
                                                        class="sr-only peer">
-                                                <div class="w-4 h-4 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                                <div class="w-4 h-4 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
                                                     <svg class="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                          fill="none"
                                                          stroke="currentColor"
@@ -325,7 +325,7 @@
                                                        id="hideDimension"
                                                        name="hide_dimension"
                                                        class="sr-only peer">
-                                                <div class="w-4 h-4 rounded border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                                <div class="w-4 h-4 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
                                                     <svg class="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                          fill="none"
                                                          stroke="currentColor"
@@ -796,7 +796,7 @@
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                companyLogoDiv.innerHTML = `<img src="${e.target.result}" alt="Uploaded Logo" class="h-12 w-48 object-contain mx-auto rounded shadow-md">`;
+                companyLogoDiv.innerHTML = `<img src="${e.target.result}" alt="Uploaded Logo" class="h-12 w-48 object-contain mx-auto rounded-sm shadow-md">`;
             };
             reader.readAsDataURL(file);
         });

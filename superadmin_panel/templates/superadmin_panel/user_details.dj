@@ -148,7 +148,7 @@
 
         <div>
             <button onclick="history.back()"
-                    class="border border-blue-500 hover:bg-blue-700 text-blue-500 hover:text-white font-bold py-2 px-4 rounded">
+                    class="border border-blue-500 hover:bg-blue-700 text-blue-500 hover:text-white font-bold py-2 px-4 rounded-sm">
                 Back
             </button>
         </div>
@@ -179,7 +179,7 @@
         <div class="info-grid">
 
             <!-- User Actions Card -->
-            <div class="p-6 rounded-xl glass-card shadow info-card">
+            <div class="p-6 rounded-xl glass-card shadow-sm info-card">
                 <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          class="info-icon text-sky-500 dark:text-sky-400"
@@ -263,7 +263,7 @@
 
 
             <!-- Contact & Role -->
-            <div class="p-6 rounded-xl glass-card shadow info-card">
+            <div class="p-6 rounded-xl glass-card shadow-sm info-card">
                 <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          class="info-icon"
@@ -274,17 +274,17 @@
                     </svg>
                     <h3 class="text-lg font-semibold">Contact & Role</h3>
                 </div>
-                <div class="space-y-3 text-gray-700 dark:text-gray-300 flex-grow">
+                <div class="space-y-3 text-gray-700 dark:text-gray-300 grow">
                     <p class="flex items-start">
-                        <span class="font-medium w-32 flex-shrink-0">Email:</span>
-                        <span class="flex-grow">{{ user.email }}</span>
+                        <span class="font-medium w-32 shrink-0">Email:</span>
+                        <span class="grow">{{ user.email }}</span>
                     </p>
                     <p class="flex items-start">
-                        <span class="font-medium w-32 flex-shrink-0">Mobile:</span>
-                        <span class="flex-grow">{{ user.contact_no }}</span>
+                        <span class="font-medium w-32 shrink-0">Mobile:</span>
+                        <span class="grow">{{ user.contact_no }}</span>
                     </p>
                     <p class="flex items-start">
-                        <span class="font-medium w-32 flex-shrink-0">Role:</span>
+                        <span class="font-medium w-32 shrink-0">Role:</span>
                         <span class="role-badge bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
                             {{ user.get_role_display }}
                         </span>
@@ -293,7 +293,7 @@
             </div>
 
             <!-- Wallet & Account -->
-            <div class="p-6 rounded-xl glass-card shadow info-card">
+            <div class="p-6 rounded-xl glass-card shadow-sm info-card">
                 <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          class="info-icon"
@@ -304,34 +304,34 @@
                     </svg>
                     <h3 class="text-lg font-semibold">Account & Balance</h3>
                 </div>
-                <div class="space-y-3 text-gray-700 dark:text-gray-300 flex-grow">
+                <div class="space-y-3 text-gray-700 dark:text-gray-300 grow">
                     <p class="flex items-start">
-                        <span class="font-medium w-40 flex-shrink-0">Sales Person:</span>
-                        <span class="flex-grow font-mono">{{ user.sales_person }}</span>
+                        <span class="font-medium w-40 shrink-0">Sales Person:</span>
+                        <span class="grow font-mono">{{ user.sales_person }}</span>
                     </p>
                     <p class="flex items-start">
-                        <span class="font-medium w-40 flex-shrink-0">KYC Approved By:</span>
-                        <span class="flex-grow font-mono">{{ user.get_kyc.approved_by }}</span>
+                        <span class="font-medium w-40 shrink-0">KYC Approved By:</span>
+                        <span class="grow font-mono">{{ user.get_kyc.approved_by }}</span>
                     </p>
                     <p class="flex items-start">
-                        <span class="font-medium w-40 flex-shrink-0">Wallet:</span>
-                        <span class="flex-grow font-mono">₹<span id="balance">{{ user.balance|floatformat:2 }}</span></span>
+                        <span class="font-medium w-40 shrink-0">Wallet:</span>
+                        <span class="grow font-mono">₹<span id="balance">{{ user.balance|floatformat:2 }}</span></span>
                     </p>
                     <p class="flex items-start">
-                        <span class="font-medium w-40 flex-shrink-0">Min Balance:</span>
-                        <span class="flex-grow">₹{{ user.min_balance|floatformat:2 }}</span>
+                        <span class="font-medium w-40 shrink-0">Min Balance:</span>
+                        <span class="grow">₹{{ user.min_balance|floatformat:2 }}</span>
                     </p>
                     {% if user.role == "admin" %}
                         <p class="flex items-start">
-                            <span class="font-medium w-40 flex-shrink-0">Commission:</span>
-                            <span class="flex-grow">₹{{ user.commission|floatformat:2 }}/packet</span>
+                            <span class="font-medium w-40 shrink-0">Commission:</span>
+                            <span class="grow">₹{{ user.commission|floatformat:2 }}/packet</span>
                         </p>
                     {% endif %}
                 </div>
             </div>
 
             <!-- Address -->
-            <div class="p-6 rounded-xl glass-card shadow info-card">
+            <div class="p-6 rounded-xl glass-card shadow-sm info-card">
                 <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          class="info-icon"
@@ -343,7 +343,7 @@
                     </svg>
                     <h3 class="text-lg font-semibold">Address</h3>
                 </div>
-                <div class="space-y-2 text-gray-700 dark:text-gray-300 flex-grow">
+                <div class="space-y-2 text-gray-700 dark:text-gray-300 grow">
                     <p>{{ user.address }}</p>
                     <p>{{ user.city }}, {{ user.state }} - {{ user.pin_code }}</p>
                     <p>{{ user.country|title }}</p>
@@ -351,7 +351,7 @@
             </div>
 
             <!-- Bank Details -->
-            <div class="p-6 rounded-xl glass-card shadow info-card">
+            <div class="p-6 rounded-xl glass-card shadow-sm info-card">
                 <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          class="info-icon"
@@ -362,28 +362,28 @@
                     </svg>
                     <h3 class="text-lg font-semibold">Bank Details</h3>
                 </div>
-                <div class="space-y-3 text-gray-700 dark:text-gray-300 flex-grow">
+                <div class="space-y-3 text-gray-700 dark:text-gray-300 grow">
                     <p class="flex items-start">
-                        <span class="font-medium w-24 flex-shrink-0">Bank:</span>
-                        <span class="flex-grow">{{ user.bank_name|default:"-" }}</span>
+                        <span class="font-medium w-24 shrink-0">Bank:</span>
+                        <span class="grow">{{ user.bank_name|default:"-" }}</span>
                     </p>
                     <p class="flex items-start">
-                        <span class="font-medium w-24 flex-shrink-0">Acc No:</span>
-                        <span class="flex-grow">{{ user.bank_account_number|default:"-" }}</span>
+                        <span class="font-medium w-24 shrink-0">Acc No:</span>
+                        <span class="grow">{{ user.bank_account_number|default:"-" }}</span>
                     </p>
                     <p class="flex items-start">
-                        <span class="font-medium w-24 flex-shrink-0">IFSC:</span>
-                        <span class="flex-grow">{{ user.bank_account_ifsc|default:"-" }}</span>
+                        <span class="font-medium w-24 shrink-0">IFSC:</span>
+                        <span class="grow">{{ user.bank_account_ifsc|default:"-" }}</span>
                     </p>
                     <p class="flex items-start">
-                        <span class="font-medium w-24 flex-shrink-0">Type:</span>
-                        <span class="flex-grow">{{ user.bank_account_type|title }}</span>
+                        <span class="font-medium w-24 shrink-0">Type:</span>
+                        <span class="grow">{{ user.bank_account_type|title }}</span>
                     </p>
                 </div>
             </div>
 
             <!-- Business -->
-            <div class="p-6 rounded-xl glass-card shadow info-card">
+            <div class="p-6 rounded-xl glass-card shadow-sm info-card">
                 <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          class="info-icon"
@@ -394,20 +394,20 @@
                     </svg>
                     <h3 class="text-lg font-semibold">Business</h3>
                 </div>
-                <div class="space-y-3 text-gray-700 dark:text-gray-300 flex-grow">
+                <div class="space-y-3 text-gray-700 dark:text-gray-300 grow">
                     <p class="flex items-start">
-                        <span class="font-medium w-32 flex-shrink-0">GSTIN:</span>
-                        <span class="flex-grow">{{ user.gstin|default:"-" }}</span>
+                        <span class="font-medium w-32 shrink-0">GSTIN:</span>
+                        <span class="grow">{{ user.gstin|default:"-" }}</span>
                     </p>
                     <p class="flex items-start">
-                        <span class="font-medium w-32 flex-shrink-0">Brand Name:</span>
-                        <span class="flex-grow">{{ user.company_name|default:"-" }}</span>
+                        <span class="font-medium w-32 shrink-0">Brand Name:</span>
+                        <span class="grow">{{ user.company_name|default:"-" }}</span>
                     </p>
                 </div>
             </div>
 
             <!-- Meta -->
-            <div class="p-6 rounded-xl glass-card shadow info-card">
+            <div class="p-6 rounded-xl glass-card shadow-sm info-card">
                 <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          class="info-icon"
@@ -418,24 +418,24 @@
                     </svg>
                     <h3 class="text-lg font-semibold">System Info</h3>
                 </div>
-                <div class="space-y-3 text-gray-700 dark:text-gray-300 flex-grow">
+                <div class="space-y-3 text-gray-700 dark:text-gray-300 grow">
                     <p class="flex items-start">
-                        <span class="font-medium w-24 flex-shrink-0">Admin:</span>
-                        <span class="flex-grow">{{ user.assigned_admin.full_name|default:"-" }}</span>
+                        <span class="font-medium w-24 shrink-0">Admin:</span>
+                        <span class="grow">{{ user.assigned_admin.full_name|default:"-" }}</span>
                     </p>
                     <p class="flex items-start">
-                        <span class="font-medium w-24 flex-shrink-0">Created:</span>
-                        <span class="flex-grow">{{ user.created_at|date:"M d, Y H:i" }}</span>
+                        <span class="font-medium w-24 shrink-0">Created:</span>
+                        <span class="grow">{{ user.created_at|date:"M d, Y H:i" }}</span>
                     </p>
                     <p class="flex items-start">
-                        <span class="font-medium w-24 flex-shrink-0">Updated:</span>
-                        <span class="flex-grow">{{ user.updated_at|date:"M d, Y H:i" }}</span>
+                        <span class="font-medium w-24 shrink-0">Updated:</span>
+                        <span class="grow">{{ user.updated_at|date:"M d, Y H:i" }}</span>
                     </p>
                 </div>
             </div>
 
             <!-- COD Remittance -->
-            <div class="p-6 rounded-xl glass-card shadow info-card">
+            <div class="p-6 rounded-xl glass-card shadow-sm info-card">
                 <div class="flex items-center mb-4 text-gray-800 dark:text-gray-200">
                     <svg xmlns="http://www.w3.org/2000/svg"
                          class="info-icon"
@@ -446,17 +446,17 @@
                     </svg>
                     <h3 class="text-lg font-semibold">COD Remittance</h3>
                 </div>
-                <div class="space-y-3 text-gray-700 dark:text-gray-300 flex-grow">
+                <div class="space-y-3 text-gray-700 dark:text-gray-300 grow">
                     <p class="flex items-start">
-                        <span class="font-medium w-24 flex-shrink-0">Cycle:</span>
-                        <span class="flex-grow">D+{{ user.cod_remittance_cycle }}</span>
+                        <span class="font-medium w-24 shrink-0">Cycle:</span>
+                        <span class="grow">D+{{ user.cod_remittance_cycle }}</span>
                     </p>
                 </div>
             </div>
         </div>
 
         <!-- Documents -->
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow mt-10">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm mt-10">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-xl font-semibold text-gray-700 dark:text-white flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg"
