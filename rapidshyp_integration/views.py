@@ -13,14 +13,20 @@ logger = logging.getLogger("my-logger")
 @csrf_exempt
 def rapidshyp_webhook(request):
     if request.method != "POST":
-        return JsonResponse({"error": "Method not allowed, only POST method allowed"})
+        return JsonResponse(
+            {"error": "Method not allowed, only POST method allowed"}, status=405
+        )
 
     try:
         data = request.body.decode("utf-8")
         if not data or data == "":
-            return JsonResponse({"error": "Empty payload"})
+            return JsonResponse({"error": "Empty payload"}, status=400)
 
-        payload = json.loads(data)
+        try:
+            payload = json.loads(data)
+        except json.JSONDecodeError:
+            logger.warning(f"RapidShyp Webhook:: Invalid JSON payload: {data!r}")
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
         logger.debug(f"RapidShyp Webhook:: payload: {payload}")
 
         response = {}
@@ -123,9 +129,9 @@ def rapidshyp_webhook(request):
                     logger.error(f"RapidShyp Webhook:: Order with AWB {awb} not found")
                     response["message"] = "Order not found"
                     continue
-                except Exception as e:
+                except Exception:
                     logger.error(
-                        f"RapidShyp Webhook:: Error fetching order with AWB {awb}: {str(e)}"
+                        f"RapidShyp Webhook:: Error fetching order with AWB {awb}", exc_info=True
                     )
                     response["message"] = "Error fetching order"
                     continue
@@ -142,7 +148,7 @@ def rapidshyp_webhook(request):
                     f"RapidShyp Webhook:: Order #{order.id} ({awb}) updated {previous_status} -> {internal_status}"
                 )
 
-        return response or {"message": "No valid shipment details processed"}
-    except Exception as e:
-        logger.error(f"RapidShyp Webhook:: error: {str(e)}")
-        return JsonResponse({"error": "Internal error"})
+        return JsonResponse(response or {"message": "No valid shipment details processed"})
+    except Exception:
+        logger.error("RapidShyp Webhook:: error", exc_info=True)
+        return JsonResponse({"error": "Internal error"}, status=500)

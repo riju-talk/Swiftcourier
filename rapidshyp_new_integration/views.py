@@ -13,24 +13,26 @@ logger = logging.getLogger("my-logger")
 @csrf_exempt
 def rapidshyp_new_webhook(request):
     if request.method != "POST":
-        return JsonResponse({"error": "Method not allowed, only POST method allowed"})
+        return JsonResponse(
+            {"error": "Method not allowed, only POST method allowed"}, status=405
+        )
 
     try:
         try:
             data = request.body.decode("utf-8")
-        except:
+        except Exception:
             logger.exception("RapidShyp New Webhook:: Error: ")
-            return JsonResponse({"error": "Failed while deecoding request body"})
+            return JsonResponse({"error": "Failed while deecoding request body"}, status=400)
 
         if not data or data == "":
-            return JsonResponse({"error": "Empty payload"})
+            return JsonResponse({"error": "Empty payload"}, status=400)
 
         try:
             payload = json.loads(data)
             logger.debug(f"RapidShyp New Webhook:: payload: {payload}")
-        except:
+        except Exception:
             logger.exception("RapidShyp New Webhook:: Error: ")
-            return JsonResponse({"error": "Failed while converting into JSON"})
+            return JsonResponse({"error": "Failed while converting into JSON"}, status=400)
 
         response = {}
         records = payload.get("records", [])
@@ -103,9 +105,9 @@ def rapidshyp_new_webhook(request):
                     )
                     response["message"] = "Order not found"
                     continue
-                except Exception as e:
+                except Exception:
                     logger.error(
-                        f"RapidShyp New Webhook:: Error fetching order with AWB {awb}: {str(e)}"
+                        f"RapidShyp New Webhook:: Error fetching order with AWB {awb}", exc_info=True
                     )
                     response["message"] = "Error fetching order"
                     continue
@@ -123,6 +125,6 @@ def rapidshyp_new_webhook(request):
                 )
 
         return JsonResponse(response)
-    except:
+    except Exception:
         logger.exception("RapidShyp New Webhook:: error")
-        return JsonResponse({"error": "Internal error"})
+        return JsonResponse({"error": "Internal error"}, status=500)

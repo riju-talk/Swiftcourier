@@ -31,9 +31,15 @@ def webhook(request):
         status = data.get("status")
 
         if not awb or not status:
-            return JsonResponse({"error": "tracking_number or status missing"})
+            return JsonResponse({"error": "tracking_number or status missing"}, status=400)
 
         # 1️⃣ Map PurpleDrone -> Internal Order statuses
+        # NOTE: this used to be two separate `status_map` dicts defined back
+        # to back, so the human-readable entries below (from an earlier
+        # webhook format) were dead code, silently shadowed by the
+        # O-*/RTO-* dict that followed. Merged into one so either format is
+        # still recognized instead of every one of these being classified
+        # "unknown" and ignored.
         status_map = {
             "Cancelled": "cancelled",
             "Confirmation": "pending_pickup",
@@ -46,8 +52,6 @@ def webhook(request):
             "RTO in Transit": "rto_in_transit",
             "RTO delivered": "rto_delivered",
             "Shipment Lost": "lost",
-        }
-        status_map = {
             "O-CREATED": "pending_pickup",
             "O-CONFIRMED": "pending_pickup",
             "O-TRKID-GENERATED": "pending_pickup",
@@ -91,9 +95,9 @@ def webhook(request):
         except Order.DoesNotExist:
             logger.error(f"Order with AWB {awb} not found")
             return JsonResponse({"error": "Order not found"}, status=404)
-        except Exception as e:
-            logger.error(f"Error fetching order with AWB {awb}: {str(e)}")
-            return JsonResponse({"error": f"Order not found"})
+        except Exception:
+            logger.error(f"Error fetching order with AWB {awb}", exc_info=True)
+            return JsonResponse({"error": "Internal error"}, status=500)
 
         # 3️⃣ Update order
         previous_status = order.status
@@ -109,6 +113,6 @@ def webhook(request):
 
         return JsonResponse({"message": "Webhook processed successfully"})
 
-    except Exception as e:
-        logger.error(f"PurpleDrone Webhook error: {str(e)}")
-        return JsonResponse({"error": "Internal error"})
+    except Exception:
+        logger.error("PurpleDrone Webhook error", exc_info=True)
+        return JsonResponse({"error": "Internal error"}, status=500)

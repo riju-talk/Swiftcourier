@@ -24,18 +24,26 @@ def webhook(request):
     try:
         data = request.body.decode("utf-8")
         if not data or data == "":
-            response["data"]["message"]["description"] = "Only POST Request Allowed"
-            return JsonResponse(response)
+            response["data"]["message"]["success"] = False
+            response["data"]["message"]["description"] = "Empty payload"
+            return JsonResponse(response, status=400)
 
-        payload = json.loads(data)
+        try:
+            payload = json.loads(data)
+        except json.JSONDecodeError:
+            logger.warning(f"Smartship Webhook:: Invalid JSON payload: {data!r}")
+            response["data"]["message"]["success"] = False
+            response["data"]["message"]["description"] = "Invalid JSON"
+            return JsonResponse(response, status=400)
         logger.debug(f"Smartship Webhook:: payload: {payload}")
 
         awb = payload.get("awbno")
         status = payload.get("status")
 
         if not awb or not status:
+            response["data"]["message"]["success"] = False
             response["data"]["message"]["description"] = "AWB Number Missing"
-            return JsonResponse({"error": "tracking_number or status missing"})
+            return JsonResponse(response, status=400)
 
         # 1️⃣ Map Smartship -> Internal Order statuses
         status_map = {
@@ -87,14 +95,16 @@ def webhook(request):
             )
         except Order.DoesNotExist:
             logger.error(f"Smartship Webhook:: Order with AWB {awb} not found")
+            response["data"]["message"]["success"] = False
             response["data"]["message"]["description"] = "Order not found"
-            return JsonResponse(response)
-        except Exception as e:
+            return JsonResponse(response, status=404)
+        except Exception:
             logger.error(
-                f"Smartship Webhook:: Error fetching order with AWB {awb}: {str(e)}"
+                f"Smartship Webhook:: Error fetching order with AWB {awb}", exc_info=True
             )
+            response["data"]["message"]["success"] = False
             response["data"]["message"]["description"] = "Error while fetching details"
-            return JsonResponse(response)
+            return JsonResponse(response, status=500)
 
         # 3️⃣ Update order
         previous_status = order.status
@@ -111,7 +121,8 @@ def webhook(request):
         response["data"]["message"]["description"] = "Webhook processed successfully"
         return JsonResponse(response)
 
-    except Exception as e:
-        logger.error(f"Smartship Webhook:: error: {str(e)}")
+    except Exception:
+        logger.error("Smartship Webhook:: error", exc_info=True)
+        response["data"]["message"]["success"] = False
         response["data"]["message"]["description"] = "Internal server error"
-        return JsonResponse(response)
+        return JsonResponse(response, status=500)

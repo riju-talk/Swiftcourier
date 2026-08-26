@@ -18,16 +18,20 @@ def webhook(request):
     try:
         data = request.body.decode("utf-8")
         if not data or data == "":
-            return JsonResponse({"error": "Empty payload"})
+            return JsonResponse({"error": "Empty payload"}, status=400)
 
-        payload = json.loads(data)
+        try:
+            payload = json.loads(data)
+        except json.JSONDecodeError:
+            logger.warning(f"Fship Webhook:: Invalid JSON payload: {data!r}")
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
         logger.debug(f"Fship Webhook:: payload: {payload}")
 
         awb = payload.get("awb")
         status = payload.get("status")
 
         if not awb or not status:
-            return JsonResponse({"error": "tracking_number or status missing"})
+            return JsonResponse({"error": "tracking_number or status missing"}, status=400)
 
         # 1️⃣ Map Fship -> Internal Order statuses
         status_map = {
@@ -62,12 +66,12 @@ def webhook(request):
             )
         except Order.DoesNotExist:
             logger.error(f"Fship Webhook:: Order with AWB {awb} not found")
-            return JsonResponse({"error": "Order not found"})
-        except Exception as e:
+            return JsonResponse({"error": "Order not found"}, status=404)
+        except Exception:
             logger.error(
-                f"Fship Webhook:: Error fetching order with AWB {awb}: {str(e)}"
+                f"Fship Webhook:: Error fetching order with AWB {awb}", exc_info=True
             )
-            return JsonResponse({"error": "Internal error"})
+            return JsonResponse({"error": "Internal error"}, status=500)
 
         # 3️⃣ Update order
         previous_status = order.status
@@ -83,6 +87,6 @@ def webhook(request):
 
         return JsonResponse({"message": "Webhook processed successfully"})
 
-    except Exception as e:
-        logger.error(f"Fship Webhook:: error: {str(e)}")
-        return JsonResponse({"error": "Internal error"})
+    except Exception:
+        logger.error("Fship Webhook:: error", exc_info=True)
+        return JsonResponse({"error": "Internal error"}, status=500)
