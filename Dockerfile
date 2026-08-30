@@ -21,12 +21,12 @@ WORKDIR /app
 
 # Dependencies first (cached layer)
 COPY pyproject.toml uv.lock ./
-RUN --mount=type=cache,target=/root/.cache/uv \
+RUN \
     uv sync --frozen --no-install-project --no-dev
 
 # App code
 COPY . .
-RUN --mount=type=cache,target=/root/.cache/uv \
+RUN \
     uv sync --frozen --no-dev
 
 # collectstatic at build time (whitenoise serves from static_prod/)
