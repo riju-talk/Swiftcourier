@@ -32,6 +32,7 @@ services:
       redis: {condition: service_healthy}
     volumes:
       - media:/app/media
+      - ./docker/entrypoint.sh:/app/docker/entrypoint.sh:ro
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:8000/account/signin/"]
       interval: 30s
@@ -52,7 +53,9 @@ services:
       CELERY_WORKER_CONCURRENCY: "4"
     depends_on:
       redis: {condition: service_healthy}
-    volumes: [media:/app/media]
+    volumes:
+      - media:/app/media
+      - ./docker/entrypoint.sh:/app/docker/entrypoint.sh:ro
     restart: unless-stopped
 
   # slow lane: ship / bulk-cancel — outbound carrier APIs
@@ -67,7 +70,9 @@ services:
       CELERY_WORKER_CONCURRENCY: "2"
     depends_on:
       redis: {condition: service_healthy}
-    volumes: [media:/app/media]
+    volumes:
+      - media:/app/media
+      - ./docker/entrypoint.sh:/app/docker/entrypoint.sh:ro
     restart: unless-stopped
 
   beat:
@@ -75,6 +80,8 @@ services:
     build: .
     command: ["beat"]
     env_file: [.env]
+    volumes:
+      - ./docker/entrypoint.sh:/app/docker/entrypoint.sh:ro
     environment:
       REDIS_URL: redis://redis:6379
       CELERY_BROKER_URL: redis://redis:6379/0
