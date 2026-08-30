@@ -730,17 +730,58 @@ SUPER_PASSWORD_HASH = os.getenv("SUPER_PASSWORD_HASH")
 # CELERY_BROKER_URL = os.getenv(
 #     "CELERY_BROKER_URL", "amqp://guest:guest@localhost:5672//"
 # )
-CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://127.0.0.1:6379/0")
+# ----------------------------------------------------------------------------
+# Redis: one instance, two jobs
+#   db 0 -> Celery broker (task queue)
+#   db 1 -> Django cache (page fragments, rate-limits, ephemeral state)
+# ----------------------------------------------------------------------------
+REDIS_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379")
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": f"{REDIS_URL}/1",
+        "KEY_PREFIX": "sc",
+        "TIMEOUT": 300,
+    }
+}
+# fall back to local-memory if Redis is unreachable at import time in dev
+if os.getenv("DISABLE_REDIS_CACHE") == "1":
+    CACHES["default"] = {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
+
+# TIER 1 — Celery task queue
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", f"{REDIS_URL}/0")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_RESULT_BACKEND = "django-db"
-CELERY_CACHE_BACKEND = "django-cache"
+CELERY_CACHE_BACKEND = "default"
 CELERY_BROKER_POOL_LIMIT = 5
 CELERY_RESULT_EXTENDED = True
-CELERY_WORKER_CONCURRENCY = 2
+CELERY_WORKER_CONCURRENCY = int(os.getenv("CELERY_WORKER_CONCURRENCY", "2"))
 CELERY_TASK_TRACK_STARTED = True
 CELERY_RESULT_EXPIRES = 604800
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_TASK_ACKS_LATE = True                 # re-deliver if a worker dies mid-task
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1        # fair dispatch for long carrier calls
+CELERY_TASK_TIME_LIMIT = 600
+CELERY_TASK_SOFT_TIME_LIMIT = 540
+
+# Dedicated queues so slow carrier calls never block fast webhook processing.
+CELERY_TASK_DEFAULT_QUEUE = "default"
+CELERY_TASK_QUEUES = {
+    "default": {},
+    "ship": {},        # ship_orders / bulk cancel — external carrier APIs, slow
+    "webhooks": {},     # inbound carrier status pushes — many, fast
+}
+CELERY_TASK_ROUTES = {
+    "order_manager.tasks.ship_orders": {"queue": "ship"},
+    "order_manager.tasks.bulk_cancel_orders": {"queue": "ship"},
+    "order_manager.tasks_new.*": {"queue": "ship"},
+    "*_integration.tasks.*": {"queue": "webhooks"},
+    "whatsapp_integration.tasks.*": {"queue": "webhooks"},
+    "SMS_integration.tasks.*": {"queue": "webhooks"},
+}
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 

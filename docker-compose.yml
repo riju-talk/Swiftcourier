@@ -1,0 +1,102 @@
+# SwiftCourier — Redis + Celery (tier 1). RabbitMQ available under `--profile tier2`.
+# The database is AWS RDS (external): set DATABASE_* in .env, not a service here.
+#
+#   cp .env .env            # ensure DATABASE_*, REDIS_URL, CELERY_BROKER_URL, SECRET_KEY, DEBUG=False
+#   docker compose build
+#   docker compose up -d
+#   docker compose run --rm web python manage.py createsuperuser
+#
+services:
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --save 60 1 --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes: [redis-data:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  web:
+    build: .
+    command: ["web"]
+    env_file: [.env]
+    environment:
+      REDIS_URL: redis://redis:6379
+      CELERY_BROKER_URL: redis://redis:6379/0
+    ports: ["8000:8000"]
+    depends_on:
+      redis: {condition: service_healthy}
+    volumes:
+      - media:/app/media
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/account/signin/"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+
+  # fast lane: default + inbound carrier webhooks
+  worker-fast:
+    build: .
+    command: ["worker", "default,webhooks"]
+    env_file: [.env]
+    environment:
+      REDIS_URL: redis://redis:6379
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_WORKER_CONCURRENCY: "4"
+    depends_on:
+      redis: {condition: service_healthy}
+    volumes: [media:/app/media]
+    restart: unless-stopped
+
+  # slow lane: ship / bulk-cancel — outbound carrier APIs
+  worker-ship:
+    build: .
+    command: ["worker", "ship"]
+    env_file: [.env]
+    environment:
+      REDIS_URL: redis://redis:6379
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_WORKER_CONCURRENCY: "2"
+    depends_on:
+      redis: {condition: service_healthy}
+    volumes: [media:/app/media]
+    restart: unless-stopped
+
+  beat:
+    build: .
+    command: ["beat"]
+    env_file: [.env]
+    environment:
+      REDIS_URL: redis://redis:6379
+      CELERY_BROKER_URL: redis://redis:6379/0
+    depends_on:
+      redis: {condition: service_healthy}
+    restart: unless-stopped
+
+  # ---- TIER 2 (optional): swap the Celery broker to RabbitMQ ----
+  #   docker compose --profile tier2 up -d rabbitmq
+  #   then in .env:  CELERY_BROKER_URL=amqp://swiftcourier:swiftcourier@rabbitmq:5672//
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    profiles: ["tier2"]
+    environment:
+      RABBITMQ_DEFAULT_USER: swiftcourier
+      RABBITMQ_DEFAULT_PASS: swiftcourier
+    ports: ["15672:15672"]   # management UI
+    volumes: [rabbitmq-data:/var/lib/rabbitmq]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+  rabbitmq-data:
+  media:
