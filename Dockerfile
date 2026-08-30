@@ -33,6 +33,7 @@ RUN uv sync --frozen --no-dev
 RUN DATABASE_ENGINE=django.db.backends.sqlite3 SECRET_KEY=build-only \
     python manage.py collectstatic --no-input --clear
 
-RUN chmod +x docker/entrypoint.sh
-ENTRYPOINT ["docker/entrypoint.sh"]
+# strip any CRLF (Windows checkouts) and make executable
+RUN sed -i 's/\r$//' docker/entrypoint.sh && chmod +x docker/entrypoint.sh
+ENTRYPOINT ["/bin/bash", "docker/entrypoint.sh"]
 CMD ["web"]
