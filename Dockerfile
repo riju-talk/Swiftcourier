@@ -19,15 +19,15 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
 
-# Dependencies first (cached layer)
+# Dependencies first (cached layer). The vendored PhonePe SDK is a path dep in
+# pyproject.toml, so it has to be present before `uv sync`.
 COPY pyproject.toml uv.lock ./
-RUN \
-    uv sync --frozen --no-install-project --no-dev
+COPY dev/phonepe_sdk-2.1.5.zip dev/phonepe_sdk-2.1.5.zip
+RUN uv sync --frozen --no-install-project --no-dev
 
 # App code
 COPY . .
-RUN \
-    uv sync --frozen --no-dev
+RUN uv sync --frozen --no-dev
 
 # collectstatic at build time (whitenoise serves from static_prod/)
 RUN DATABASE_ENGINE=django.db.backends.sqlite3 SECRET_KEY=build-only \
