@@ -1,4 +1,5 @@
 import logging
+import math
 import traceback
 from typing import Tuple
 import uuid
@@ -43,7 +44,7 @@ def fetch_location(pincode: str) -> Tuple[str, str]:
     Fetch and return (city, state) for a given PIN code using India Post API.
     """
     url = f"https://api.postalpincode.in/pincode/{pincode}"
-    resp = requests.get(url)
+    resp = requests.get(url, timeout=(5, 15))
     data = resp.json()
     if not data or data[0].get("Status") != "Success":
         raise ValueError(f"Invalid PIN code or API failure: {pincode}")
@@ -207,6 +208,15 @@ def ship_orders(
         shipping_mode = mode
 
     for order in orders:
+        shipment = getattr(order, "shipment", None)
+        if order.shipping_address is None or shipment is None:
+            errors.append(
+                f"Order #{order.id}: missing a shipping address or package details"
+            )
+            result["count"]["failed"] += 1
+            order.update_status("ready_to_ship")
+            continue
+
         zone = detect_zone_from_pincodes(
             pickup_pin=hub.pin_code,
             dest_pin=order.shipping_address.pin_code,
@@ -214,7 +224,7 @@ def ship_orders(
 
         order.json["detected_zone"] = zone
         order.save()
-        package_weight_kg = order.shipment.package_weight_kg
+        package_weight_kg = order.shipment.package_weight_kg or 0
         # Calculate weight in grams
         package_weight_grams = int(package_weight_kg * 1000)
 
@@ -285,9 +295,13 @@ def ship_orders(
             order.update_status("ready_to_ship")
             continue
 
-        weight_bracket_in_gm = float(weight_bracket) * 1000
+        weight_bracket_in_gm = float(weight_bracket or 0) * 1000
         additional_weight = max(0, package_weight_grams - base_weight_in_gm)
-        additional_units = additional_weight // weight_bracket_in_gm
+        additional_units = (
+            math.ceil(additional_weight / weight_bracket_in_gm)
+            if weight_bracket_in_gm > 0
+            else 0
+        )
 
         cod_charge = 0
         if order.payment.method == "cod":
@@ -372,14 +386,8 @@ def ship_orders(
             res["error_message"] = f"Error while fetching errors. Error: {e}"
 
         for o, shipping_amount in shipping_data:
-            trsn = Transaction.create_transaction(
-                user=user,
-                merchant_txn_id=str(o.id) + "_" + str(uuid.uuid4()),
-                amount_rs=shipping_amount,
-                desc="shipping_charges",
-                transaction_type="debit",
-            )
-            if not trsn.debit(awb_number=o.awb_number):
+            trsn = o.charge_shipping(shipping_amount)
+            if not trsn:
                 errors.append(
                     f"Failed to debit shipping charges for order {o.id} from user {user.username}."
                 )
@@ -387,7 +395,7 @@ def ship_orders(
                 continue
 
             o.payment.transaction = trsn
-            o.payment.amount = total_shipping_charges
+            o.payment.amount = shipping_amount
             o.payment.save()
 
             o.shipment.booked_at = now()
@@ -408,14 +416,8 @@ def ship_orders(
             if success:
                 result["count"]["success"] += 1
 
-                trsn = Transaction.create_transaction(
-                    user=user,
-                    merchant_txn_id=str(order.id) + "_" + str(uuid.uuid4()),
-                    amount_rs=total_shipping_charges,
-                    desc="shipping_charges",
-                    transaction_type="debit",
-                )
-                if not trsn.debit(awb_number=order.awb_number):
+                trsn = order.charge_shipping(total_shipping_charges)
+                if not trsn:
                     errors.append(
                         f"Failed to debit shipping charges for order {order.id} from user {user.username}."
                     )

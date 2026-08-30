@@ -12,7 +12,7 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: {
+                        red-600: {
                             50: '#f0f9ff',
                             100: '#e0f2fe',
                             600: '#0284c7',
@@ -62,8 +62,8 @@
         }
 
         .surface-badge {
-            background-color: #dbeafe;
-            color: #1d4ed8;
+            background-color: #fee2e2;
+            color: #b91c1c;
         }
 
         .air-badge {
@@ -83,7 +83,7 @@
 
         .dark .surface-badge {
             background-color: #1e3a8a;
-            color: #dbeafe;
+            color: #fee2e2;
         }
 
         .dark .air-badge {
@@ -197,25 +197,25 @@
         <!-- Header -->
         <div class="text-center mb-12">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white mb-3">Courier Shipping Rates</h1>
-            <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <p class="text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">
                 Compare rates across different courier services and shipping zones
             </p>
         </div>
 
         <!-- Card Container -->
-        <div class="card bg-white dark:bg-gray-800 p-4 md:p-6">
+        <div class="card bg-white dark:bg-neutral-900 p-4 md:p-6">
             <form method="get"
-                  class="flex flex-wrap gap-4 justify-between items-center mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+                  class="flex flex-wrap gap-4 justify-between items-center mb-6 pb-4 border-b border-white dark:border-white/10">
 
                 <!-- Left side filters -->
                 <div class="flex flex-wrap gap-4">
                     <!-- Mode Filter -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mode / Type</label>
+                        <label class="block text-sm font-medium text-black dark:text-neutral-300 mb-1">Mode / Type</label>
                         <div class="relative">
                             <select name="mode"
                                     onchange="this.form.submit()"
-                                    class="w-44 px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-primary-600">
+                                    class="w-44 px-3 py-2.5 border border-neutral-300 dark:border-white/10 rounded-xl bg-white dark:bg-neutral-900 text-sm text-black dark:text-white focus:outline-hidden focus:ring-2 focus:ring-red-600/20-600">
                                 <option value="" {% if not request.GET.mode %}selected{% endif %}>All Types</option>
                                 <option value="surface"
                                         {% if request.GET.mode == "surface" %}selected{% endif %}>Surface</option>
@@ -227,11 +227,11 @@
 
                     <!-- Weight Filter -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Weight</label>
+                        <label class="block text-sm font-medium text-black dark:text-neutral-300 mb-1">Weight</label>
                         <div class="relative">
                             <select name="weight"
                                     onchange="this.form.submit()"
-                                    class="w-44 px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-primary-600">
+                                    class="w-44 px-3 py-2.5 border border-neutral-300 dark:border-white/10 rounded-xl bg-white dark:bg-neutral-900 text-sm text-black dark:text-white focus:outline-hidden focus:ring-2 focus:ring-red-600/20-600">
                                 <option value="" {% if not request.GET.weight %}selected{% endif %}>All Weights</option>
                                 <option value="0.5" {% if request.GET.weight == "0.5" %}selected{% endif %}>0.5 KG</option>
                                 <option value="2" {% if request.GET.weight == "2" %}selected{% endif %}>2 KG</option>
@@ -250,9 +250,9 @@
                                name="q"
                                value="{{ request.GET.q|default_if_none:'' }}"
                                placeholder="Search couriers"
-                               class="pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-sm w-64 focus:outline-hidden focus:ring-2 focus:ring-primary-600">
+                               class="pl-10 pr-4 py-2.5 border border-neutral-300 dark:border-white/10 rounded-xl bg-white dark:bg-neutral-900 text-sm w-64 focus:outline-hidden focus:ring-2 focus:ring-red-600/20-600">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-search text-gray-400"></i>
+                            <i class="fas fa-search text-neutral-400"></i>
                         </div>
                     </div>
                 </div>
@@ -262,14 +262,14 @@
 
             <!-- Info Section -->
             <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="card bg-white dark:bg-gray-800 p-5">
+                <div class="card bg-white dark:bg-neutral-900 p-5">
                     <div class="flex items-start">
-                        <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg mr-4">
-                            <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 text-xl"></i>
+                        <div class="bg-red-100 dark:bg-red-900 p-3 rounded-lg mr-4">
+                            <i class="fas fa-info-circle text-red-600 dark:text-red-400 text-xl"></i>
                         </div>
                         <div>
                             <h3 class="font-semibold text-lg mb-1">Zone Definitions</h3>
-                            <p class="text-gray-600 dark:text-gray-400 text-sm">
+                            <p class="text-neutral-600 dark:text-neutral-400 text-sm">
                                 Within City: Same city delivery
                                 <br>
                                 Within State: Same state delivery
@@ -284,14 +284,14 @@
                     </div>
                 </div>
 
-                <div class="card bg-white dark:bg-gray-800 p-5">
+                <div class="card bg-white dark:bg-neutral-900 p-5">
                     <div class="flex items-start">
                         <div class="bg-green-100 dark:bg-green-900 p-3 rounded-lg mr-4">
                             <i class="fas fa-percentage text-green-600 dark:text-green-400 text-xl"></i>
                         </div>
                         <div>
                             <h3 class="font-semibold text-lg mb-1">Weight Pricing</h3>
-                            <p class="text-gray-600 dark:text-gray-400 text-sm">
+                            <p class="text-neutral-600 dark:text-neutral-400 text-sm">
                                 Base price: For first kg (or 0.5kg as specified)
                                 <br>
                                 Additional price: Per kg or 0.5kg beyond base weight
@@ -304,7 +304,7 @@
             </div>
 
             <!-- Terms & Conditions -->
-            <div class="card bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow mt-8">
+            <div class="card bg-white dark:bg-neutral-900 p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow mt-8">
                 <div class="flex items-start space-x-4">
 
                     <!-- Icon -->
@@ -314,9 +314,9 @@
 
                     <!-- Content -->
                     <div class="flex-1">
-                        <h3 class="font-bold text-xl mb-4 text-gray-800 dark:text-gray-100">Terms & Conditions</h3>
+                        <h3 class="font-bold text-xl mb-4 text-black dark:text-white">Terms & Conditions</h3>
 
-                        <ul class="space-y-3 text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                        <ul class="space-y-3 text-black dark:text-neutral-300 text-sm leading-relaxed">
                             <li class="flex items-start">
                                 <span class="font-semibold mr-2 text-yellow-600 dark:text-yellow-400">1.</span>
                                 <span>Above prices are exclusive of GST.</span>
@@ -351,7 +351,7 @@
                             </li>
                         </ul>
 
-                        <p class="text-gray-500 dark:text-gray-400 text-xs mt-4 italic">
+                        <p class="text-neutral-500 dark:text-neutral-400 text-xs mt-4 italic">
                             Other terms and conditions will be applicable as defined in the agreement.
                         </p>
                     </div>

@@ -10,13 +10,17 @@
 {% endblock css %}
 
 {% block body %}
-    <div class="mb-5" x-data="{ tab: 'pricing' }">
+    <div class="mb-5" x-data="{ tab: 'invoice' }">
+        <div class="mb-5">
+            <h1 class="text-[22px] font-bold leading-tight tracking-tight text-neutral-900 dark:text-white">Billing</h1>
+            <p class="mt-0.5 text-[13px] text-neutral-500 dark:text-neutral-400">Invoices, credit notes, wallet activity and weight reconciliation in one place.</p>
+        </div>
         <ul class="flex flex-wrap gap-2 mb-5">
             <!-- Pricing Plan -->
             <li>
                 <a href="javascript:;"
-                   class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
-                   :class="{ 'bg-white-light/90 dark:bg-dark/60 text-primary': tab === 'pricing' }"
+                   class="flex items-center gap-2 px-3 h-9 rounded-lg text-sm font-medium text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/5"
+                   :class="{ 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400': tab === 'pricing' }"
                    @click="tab = 'pricing'">
                     <!-- Price Tag Icon -->
                     <svg class="w-5 h-5 mr-2"
@@ -33,8 +37,8 @@
             <!-- COD Remittance -->
             <li>
                 <a href="javascript:;"
-                   class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
-                   :class="{ 'bg-white-light/90 dark:bg-dark/60 text-primary': tab === 'cod' }"
+                   class="flex items-center gap-2 px-3 h-9 rounded-lg text-sm font-medium text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/5"
+                   :class="{ 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400': tab === 'cod' }"
                    @click="tab = 'cod'">
                     <!-- Money with arrows icon -->
                     <svg class="w-5 h-5 mr-2"
@@ -51,8 +55,8 @@
             <!-- Invoice -->
             <li>
                 <a href="javascript:;"
-                   class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
-                   :class="{ 'bg-white-light/90 dark:bg-dark/60 text-primary': tab === 'invoice' }"
+                   class="flex items-center gap-2 px-3 h-9 rounded-lg text-sm font-medium text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/5"
+                   :class="{ 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400': tab === 'invoice' }"
                    @click="tab = 'invoice'">
                     <!-- Receipt Icon -->
                     <svg class="w-5 h-5 mr-2"
@@ -69,8 +73,8 @@
             <!-- Wallet -->
             <li>
                 <a href="javascript:;"
-                   class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
-                   :class="{ 'bg-white-light/90 dark:bg-dark/60 text-primary': tab === 'wallet' }"
+                   class="flex items-center gap-2 px-3 h-9 rounded-lg text-sm font-medium text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/5"
+                   :class="{ 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400': tab === 'wallet' }"
                    @click="tab = 'wallet'">
                     <!-- Wallet Icon -->
                     <svg class="w-5 h-5 mr-2"
@@ -88,8 +92,8 @@
             <!-- All Recharges -->
             <li>
                 <a href="javascript:;"
-                   class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
-                   :class="{ 'bg-white-light/90 dark:bg-dark/60 text-primary': tab === 'recharges' }"
+                   class="flex items-center gap-2 px-3 h-9 rounded-lg text-sm font-medium text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/5"
+                   :class="{ 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400': tab === 'recharges' }"
                    @click="tab = 'recharges'">
                     <!-- Battery charging icon -->
                     <svg class="w-5 h-5 mr-2"
@@ -106,8 +110,8 @@
             <!-- Credit Notes -->
             <li>
                 <a href="javascript:;"
-                   class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
-                   :class="{ 'bg-white-light/90 dark:bg-dark/60 text-primary': tab === 'credits' }"
+                   class="flex items-center gap-2 px-3 h-9 rounded-lg text-sm font-medium text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/5"
+                   :class="{ 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400': tab === 'credits' }"
                    @click="tab = 'credits'">
                     <!-- Document with check icon -->
                     <svg class="w-5 h-5 mr-2"
@@ -124,8 +128,8 @@
             <!-- Weight Reconciliation -->
             <li>
                 <a href="javascript:;"
-                   class="flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
-                   :class="{ 'bg-white-light/90 dark:bg-dark/60 text-primary': tab === 'weight' }"
+                   class="flex items-center gap-2 px-3 h-9 rounded-lg text-sm font-medium text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-white/5"
+                   :class="{ 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400': tab === 'weight' }"
                    @click="tab = 'weight'">
                     <!-- Scale icon -->
                     <svg class="w-5 h-5 mr-2"
@@ -141,15 +145,18 @@
         </ul>
 
         <!-- Future Tab Content -->
-        <div class="text-sm bg-white-light/30 p-4 rounded-lg dark:bg-dark/30">
+        <div class="text-sm">
             <template x-if="tab === 'pricing'">
-                <div></div>
+                <div class="flex flex-col items-center justify-center gap-2 py-16 text-center">
+                    <span class="text-sm font-semibold text-neutral-500 dark:text-neutral-300">You're on the standard rate card</span>
+                    <a href="{% url 'user_panel:rate-card' %}" class="text-sm font-semibold text-red-600 hover:underline">View your rate card &rarr;</a>
+                </div>
             </template>
 
             <template x-if="tab === 'cod'">
                 <div x-data="codbasic">
                     <div class="panel mt-6">
-                        <h5 class="font-semibold text-lg dark:text-white-light">COD Remittance</h5>
+                        <h5 class="text-[22px] font-bold tracking-tight text-neutral-900 dark:text-white">COD Remittance</h5>
                         <table id="cod" class="whitespace-nowrap table-hover">
                             <!-- table will be populated by simple-datatables -->
                         </table>
@@ -160,7 +167,7 @@
             <template x-if="tab === 'invoice'">
                 <div x-data="invoicebasic">
                     <div class="panel mt-6">
-                        <h5 class="font-semibold text-lg dark:text-white-light">Invoice</h5>
+                        <h5 class="text-[22px] font-bold tracking-tight text-neutral-900 dark:text-white">Invoice</h5>
                         <table id="invoice" class="whitespace-nowrap table-hover">
                             <!-- table will be populated by simple-datatables -->
                         </table>
@@ -171,7 +178,7 @@
             <template x-if="tab === 'wallet'">
                 <div x-data="walletbasic">
                     <div class="panel mt-6">
-                        <h5 class="font-semibold text-lg dark:text-white-light">Wallet</h5>
+                        <h5 class="text-[22px] font-bold tracking-tight text-neutral-900 dark:text-white">Wallet</h5>
                         <table id="wallet" class="whitespace-nowrap table-hover">
                             <!-- table will be populated by simple-datatables -->
                         </table>
@@ -182,7 +189,7 @@
             <template x-if="tab === 'recharges'">
                 <div x-data="rechargesbasic">
                     <div class="panel mt-6">
-                        <h5 class="font-semibold text-lg dark:text-white-light">All Recharges</h5>
+                        <h5 class="text-[22px] font-bold tracking-tight text-neutral-900 dark:text-white">All Recharges</h5>
                         <table id="recharges" class="whitespace-nowrap table-hover">
                             <!-- table will be populated by simple-datatables -->
                         </table>
@@ -193,7 +200,7 @@
             <template x-if="tab === 'credits'">
                 <div x-data="creditsbasic">
                     <div class="panel mt-6">
-                        <h5 class="font-semibold text-lg dark:text-white-light">Credit Notes</h5>
+                        <h5 class="text-[22px] font-bold tracking-tight text-neutral-900 dark:text-white">Credit Notes</h5>
                         <table id="credits" class="whitespace-nowrap table-hover">
                             <!-- table will be populated by simple-datatables -->
                         </table>
@@ -204,7 +211,7 @@
             <template x-if="tab === 'weight'">
                 <div x-data="weightbasic">
                     <div class="panel mt-6">
-                        <h5 class="font-semibold text-lg dark:text-white-light">Weight Reconciliation</h5>
+                        <h5 class="text-[22px] font-bold tracking-tight text-neutral-900 dark:text-white">Weight Reconciliation</h5>
                         <table id="weight" class="whitespace-nowrap table-hover">
                             <!-- table will be populated by simple-datatables -->
                         </table>
@@ -249,7 +256,7 @@
                                     '1.5 kg', // APPLIED WEIGHT
                                     '₹25.00', // WEIGHT CHARGES
                                     'T-Shirt', // PRODUCT
-                                    `<button class="btn btn-sm btn-primary">View</button>` // ACTION
+                                    `<button class="btn btn-sm btn-red-600">View</button>` // ACTION
                                 ],
                                 [
                                     '',
@@ -260,7 +267,7 @@
                                     '1.0 kg',
                                     '₹20.00',
                                     'Mug',
-                                    `<button class="btn btn-sm btn-primary">View</button>`
+                                    `<button class="btn btn-sm btn-red-600">View</button>`
                                 ],
                                 [
                                     '',
@@ -368,7 +375,7 @@
                 },
 
                 randomColor() {
-                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    const c = ['#dc2626', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
                     return c[Math.floor(Math.random() * c.length)];
                 },
 
@@ -411,7 +418,7 @@
                                     '2025-04-10', // CN DATE
                                     'Apr 2025 (01-15)', // CN PERIOD
                                     '₹250.00', // CN AMOUNT
-                                    `<button class="btn btn-primary btn-sm">Download</button>` // ACTION
+                                    `<button class="btn btn-red-600 btn-sm">Download</button>` // ACTION
                                 ],
                                 [
                                     '',
@@ -429,7 +436,7 @@
                                     '2025-04-17',
                                     'Apr 2025 (01-15)',
                                     '₹310.00',
-                                    `<button class="btn btn-primary btn-sm">Download</button>`
+                                    `<button class="btn btn-red-600 btn-sm">Download</button>`
                                 ]
                             ]
                         },
@@ -526,7 +533,7 @@
                 },
 
                 randomColor() {
-                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    const c = ['#dc2626', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
                     return c[Math.floor(Math.random() * c.length)];
                 },
 
@@ -670,7 +677,7 @@
                 },
 
                 randomColor() {
-                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    const c = ['#dc2626', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
                     return c[Math.floor(Math.random() * c.length)];
                 },
 
@@ -713,7 +720,7 @@
                                     '2025-04-01', // INVOICE DATE
                                     'Mar 2025', // INVOICE PERIOD
                                     '$500.00', // INVOICE AMOUNT
-                                    `<a href="#" class="text-blue-500">Download</a>` // DOWNLOAD
+                                    `<a href="#" class="text-red-500">Download</a>` // DOWNLOAD
                                 ],
                                 [
                                     '',
@@ -722,7 +729,7 @@
                                     '2025-04-05',
                                     'Mar 2025',
                                     '$720.00',
-                                    `<a href="#" class="text-blue-500">Download</a>`
+                                    `<a href="#" class="text-red-500">Download</a>`
                                 ],
                                 [
                                     '',
@@ -731,7 +738,7 @@
                                     '2025-04-10',
                                     'Apr 2025',
                                     '$310.00',
-                                    `<a href="#" class="text-blue-500">Download</a>`
+                                    `<a href="#" class="text-red-500">Download</a>`
                                 ],
                                 [
                                     '',
@@ -740,7 +747,7 @@
                                     '2025-04-15',
                                     'Apr 2025',
                                     '$1,050.00',
-                                    `<a href="#" class="text-blue-500">Download</a>`
+                                    `<a href="#" class="text-red-500">Download</a>`
                                 ]
                             ]
                         },
@@ -837,7 +844,7 @@
                 },
 
                 randomColor() {
-                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    const c = ['#dc2626', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
                     return c[Math.floor(Math.random() * c.length)];
                 },
 
@@ -886,7 +893,7 @@
                                     '$5.00', // FREIGHT DEDUCTIONS
                                     '$45.00', // REMITTANCE AMOUNT
                                     'TX101', // PAYMENT REF
-                                    `<a href="#" class="text-blue-500">Download</a>`, // DOWNLOAD
+                                    `<a href="#" class="text-red-500">Download</a>`, // DOWNLOAD
                                 ],
                                 [
                                     '',
@@ -897,7 +904,7 @@
                                     '$4.00',
                                     '$56.00',
                                     'TX102',
-                                    `<a href="#" class="text-blue-500">Download</a>`,
+                                    `<a href="#" class="text-red-500">Download</a>`,
                                 ],
                                 [
                                     '',
@@ -908,7 +915,7 @@
                                     '$3.00',
                                     '$72.00',
                                     'TX103',
-                                    `<a href="#" class="text-blue-500">Download</a>`,
+                                    `<a href="#" class="text-red-500">Download</a>`,
                                 ],
                                 [
                                     '',
@@ -919,7 +926,7 @@
                                     '$2.00',
                                     '$38.00',
                                     'TX104',
-                                    `<a href="#" class="text-blue-500">Download</a>`,
+                                    `<a href="#" class="text-red-500">Download</a>`,
                                 ]
                             ]
                         },
@@ -1016,7 +1023,7 @@
                 },
 
                 randomColor() {
-                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    const c = ['#dc2626', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
                     return c[Math.floor(Math.random() * c.length)];
                 },
 
@@ -1186,7 +1193,7 @@
                 },
 
                 randomColor() {
-                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    const c = ['#dc2626', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
                     return c[Math.floor(Math.random() * c.length)];
                 },
 

@@ -1,3 +1,16 @@
+import warnings
+
+# apscheduler 3.10 is pulled in transitively by phonepe-sdk (which pins it) and
+# imports the deprecated pkg_resources at module load. We don't use apscheduler
+# directly and can't unpin it, so silence just that one warning to keep
+# `manage.py` output readable.
+warnings.filterwarnings(
+    "ignore",
+    message="pkg_resources is deprecated as an API",
+    category=UserWarning,
+    module="apscheduler",
+)
+
 from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
@@ -9,7 +22,10 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(dotenv_path=BASE_DIR / ".env", override=True)
+# Real environment variables (systemd EnvironmentFile, container env, CI secrets)
+# MUST win over a checked-out .env - otherwise a stale dev .env on the prod box
+# silently forces DEBUG=True / dev secrets. .env only fills what the env doesn't set.
+load_dotenv(dotenv_path=BASE_DIR / ".env", override=False)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -29,6 +45,15 @@ if not SECRET_KEY:
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(",")
 
+# Single knob for "what domain are we". Set PRIMARY_HOST (e.g. "app.example.com")
+# once the org settles on a domain and it flows into CSRF/CORS trusted origins,
+# the Shopify app URL, and the default From address. Everything still falls back
+# to the historical idiotship.tech values when it is unset, so nothing breaks
+# today. Bare host, no scheme.
+PRIMARY_HOST = os.getenv("PRIMARY_HOST", "").strip().replace("https://", "").replace("http://", "").rstrip("/")
+if PRIMARY_HOST and PRIMARY_HOST not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(PRIMARY_HOST)
+
 # Production hardening (env-overridable; secure-by-default once DEBUG=False).
 # HSTS starts at 1 hour rather than the usual 1 year so a botched HTTPS rollout
 # doesn't lock browsers out of the site for a full year - raise it once HTTPS is confirmed stable.
@@ -42,7 +67,7 @@ CSRF_COOKIE_SECURE = (
     os.getenv("CSRF_COOKIE_SECURE", default="False" if DEBUG else "True") == "True"
 )
 SECURE_HSTS_SECONDS = int(
-    os.getenv("SECURE_HSTS_SECONDS", default="0" if DEBUG else "3600")
+    os.getenv("SECURE_HSTS_SECONDS", "").strip() or ("0" if DEBUG else "3600")
 )
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 SECURE_HSTS_PRELOAD = not DEBUG
@@ -67,8 +92,9 @@ if not DEBUG:
         integrations=[
             DjangoIntegration(),
         ],
-        # Capture Personally Identifiable Information
-        send_default_pii=True,
+        # Do NOT ship PII (emails, IPs, request bodies) to Sentry by default;
+        # opt in per-environment only if the DPA / privacy review allows it.
+        send_default_pii=os.getenv("SENTRY_SEND_PII", "False") == "True",
         # Capture 10% of transactions for tracing
         traces_sample_rate=0.1,
         _experiments={
@@ -82,16 +108,7 @@ if not DEBUG:
     )
 
 
-# AWS_STORAGE_BUCKET_NAME = "shipee-static-media-storage"
-# AWS_S3_REGION_NAME = "ap-south-1"
-# AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-
-# AWS_S3_FILE_OVERWRITE = False
-# AWS_DEFAULT_ACL = "public-read"
-# AWS_QUERYSTRING_AUTH = False
-
-# STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+# (S3 / media storage config lives in the "Storage" section further down.)
 
 
 # Application definition
@@ -136,6 +153,12 @@ EXTERNAL_APPS = [
     "rapidshyp_integration.apps.RapidshypIntegrationConfig",
     "rapidshyp_new_integration.apps.RapidshypNewIntegrationConfig",
     "nimbuspost_integration.apps.NimbuspostIntegrationConfig",
+    # pincode serviceability + rate calculator (no DB models)
+    "serviceability.core.apps.ServiceabilityConfig",
+    "rate_calculator.apps.RateCalculatorConfig",
+    # customer notifications (Twilio; disabled per-user until configured)
+    "whatsapp_integration.apps.WhatsappIntegrationConfig",
+    "SMS_integration.apps.SMSIntegrationConfig",
 ]
 
 
@@ -143,9 +166,10 @@ INSTALLED_APPS += EXTERNAL_APPS
 
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",  # Must be as high as possible
+    "django.middleware.security.SecurityMiddleware",  # must be first
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # serve static files (prod)
+    "corsheaders.middleware.CorsMiddleware",  # before CommonMiddleware
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -154,7 +178,12 @@ MIDDLEWARE = [
     "django_auto_logout.middleware.auto_logout",
 ]
 
-ROOT_URLCONF = "idiotship.urls"
+# Behind an ALB / nginx doing TLS termination, trust the proto header so
+# request.is_secure() is correct (otherwise SECURE_SSL_REDIRECT loops forever).
+if os.getenv("TRUST_PROXY_SSL_HEADER", default="False" if DEBUG else "True") == "True":
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+ROOT_URLCONF = "swiftcourier.urls"
 
 TEMPLATES = [
     {
@@ -163,7 +192,7 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
-                "idiotship.context_processors.ctx_processor",
+                "swiftcourier.context_processors.ctx_processor",
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
@@ -173,13 +202,39 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "idiotship.wsgi.application"
+WSGI_APPLICATION = "swiftcourier.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 if os.getenv("DATABASE_ENGINE") == "django.db.backends.postgresql":
+    # AWS RDS (PostgreSQL). Notes:
+    #  - CONN_MAX_AGE keeps connections alive between requests (RDS charges a real
+    #    TCP+TLS handshake per connect); pair with a PgBouncer/RDS Proxy in front
+    #    when running many gunicorn/celery workers.
+    #  - CONN_HEALTH_CHECKS re-validates a pooled connection before reuse so a
+    #    dropped RDS connection surfaces as a retry, not a 500.
+    #  - sslmode=require: RDS should have `rds.force_ssl=1`; verify-full is better
+    #    once the RDS CA bundle is shipped (set DATABASE_SSL_ROOT_CERT).
+    #  - statement_timeout: no single web query may run longer than 15s.
+    _db_options = {
+        "sslmode": os.getenv("DATABASE_SSLMODE", "require"),
+        "connect_timeout": int(os.getenv("DATABASE_CONNECT_TIMEOUT", "10")),
+        "options": f"-c statement_timeout={os.getenv('DATABASE_STATEMENT_TIMEOUT_MS', '15000')}",
+    }
+    # RDS CA bundle: use an explicit path from the env, otherwise fall back to the
+    # public Amazon RDS global bundle committed at the repo root. When a cert is
+    # available we verify the server identity (verify-full), not just encrypt.
+    _rds_ca = os.getenv("DATABASE_SSL_ROOT_CERT") or (
+        str(BASE_DIR / "rds-ca-bundle.pem")
+        if (BASE_DIR / "rds-ca-bundle.pem").exists()
+        else ""
+    )
+    if _rds_ca:
+        _db_options["sslmode"] = os.getenv("DATABASE_SSLMODE", "verify-full")
+        _db_options["sslrootcert"] = _rds_ca
+
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -187,7 +242,10 @@ if os.getenv("DATABASE_ENGINE") == "django.db.backends.postgresql":
             "USER": os.getenv("DATABASE_USER"),
             "PASSWORD": os.getenv("DATABASE_PASSWORD"),
             "HOST": os.getenv("DATABASE_HOST"),
-            "PORT": os.getenv("DATABASE_PORT"),
+            "PORT": os.getenv("DATABASE_PORT", "5432"),
+            "CONN_MAX_AGE": int(os.getenv("DATABASE_CONN_MAX_AGE", "60")),
+            "CONN_HEALTH_CHECKS": True,
+            "OPTIONS": _db_options,
         }
     }
 else:
@@ -195,6 +253,7 @@ else:
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": BASE_DIR / "db.sqlite3",
+            "OPTIONS": {"timeout": 20},
         }
     }
 
@@ -255,7 +314,9 @@ EMAIL_PORT = int(os.getenv("EMAIL_PORT", default="587"))
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv(
-    "DEFAULT_FROM_EMAIL", default=EMAIL_HOST_USER or "noreply@idiotship.tech"
+    "DEFAULT_FROM_EMAIL",
+    default=EMAIL_HOST_USER
+    or (f"noreply@{PRIMARY_HOST}" if PRIMARY_HOST else "noreply@idiotship.tech"),
 )
 
 
@@ -272,34 +333,56 @@ PHONEPE_ENV = Env.SANDBOX if DEBUG else Env.PRODUCTION
 PHONEPE_SHOULD_PUBLISH_EVENTS = False
 
 
-# AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-# AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-
-# AWS_STORAGE_BUCKET_NAME = 'idiotship-static-media-files'
-# AWS_S3_REGION_NAME = 'ap-south-1'
-# AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-
-# AWS_S3_OBJECT_PARAMETERS = {
-#     'CacheControl': 'max-age=86400',
-# }
-# AWS_S3_FILE_OVERWRITE = True
-# AWS_DEFAULT_ACL = None
-# AWS_QUERYSTRING_AUTH = False
-
-# Static files
-# STATICFILES_STORAGE = 'idiotship.storage_backends.StaticStorage'
+# ----------------------------------------------------------------------------
+# Storage
+# ----------------------------------------------------------------------------
+# Static: always WhiteNoise (served by gunicorn, compressed, far-future cached;
+#         run `collectstatic` on every deploy).
+# Media (user uploads - KYC docs, labels, barcodes, logos, invoices): local disk
+#       in dev; S3 in prod once AWS_STORAGE_BUCKET_NAME is set. Local `media/` is
+#       wrong on EC2 - it is lost on redeploy and not shared between the web
+#       process, celery workers and the db_worker.
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
-# STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "static_prod"
 
-# Media files
-# DEFAULT_FILE_STORAGE = "idiotship.storage_backends.MediaStorage"
 MEDIA_URL = "/media/"
-# MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 MEDIA_ROOT = BASE_DIR / "media/"
+
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
+}
+
+# S3 bucket for media, e.g. AWS_STORAGE_BUCKET_NAME="swift-courier"
+# (arn:aws:s3:::swift-courier). Leave unset to keep media on local disk.
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME", "").strip()
+AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "ap-south-1")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID") or None
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY") or None
+
+if AWS_STORAGE_BUCKET_NAME:
+    AWS_S3_CUSTOM_DOMAIN = os.getenv(
+        "AWS_S3_CUSTOM_DOMAIN",
+        f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com",
+    )
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_DEFAULT_ACL = None  # modern buckets disable ACLs - use a bucket policy
+    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+    # Signed URLs by default (bucket can stay fully private / "Block all public
+    # access" ON). Set AWS_QUERYSTRING_AUTH="False" in env + add a public-read
+    # bucket policy if you want plain https://<domain>/media/... URLs instead.
+    AWS_QUERYSTRING_AUTH = (
+        os.getenv("AWS_QUERYSTRING_AUTH", "True") == "True"
+    )
+    if not AWS_QUERYSTRING_AUTH:
+        MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
+    STORAGES["default"] = {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {"location": "media"},
+    }
 
 
 # site settings
@@ -422,11 +505,44 @@ PURPLEDRONE_CLIENT_CODE = os.environ.get("PURPLEDRONE_CLIENT_CODE", "RATEDANE")
 PARCELX_ACCESS_KEY = os.environ.get("PARCELX_ACCESS_KEY", "")
 PARCELX_SECRET_KEY = os.environ.get("PARCELX_SECRET_KEY", "")
 
+# NimbusPost partner API credentials (Settings -> API in their dashboard).
+# Used by nimbuspost_integration.nimbuspost to log in and push/track/cancel
+# shipments. NIMBUS_POST_URL is the login endpoint; the rest of the API is
+# derived from its host in nimbuspost_integration/constants.py.
+NIMBUS_POST_URL = os.environ.get(
+    "NIMBUS_POST_URL", "https://api.nimbuspost.com/v1/users/login"
+)
+NIMBUS_API_EMAIL = os.environ.get("NIMBUS_API_EMAIL", "")
+NIMBUS_API_PASS = os.environ.get("NIMBUS_API_PASS", "")
+
 # The "Secret" configured on the webhook in the NimbusPost partner dashboard
 # (Settings -> Webhooks). Used to verify the X-Hmac-Sha256 header NimbusPost
 # sends with every webhook call. Left blank = signature check is skipped,
 # matching NimbusPost's own "no hash generated if left blank" behavior.
-NIMBUSPOST_WEBHOOK_SECRET = os.environ.get("NIMBUSPOST_WEBHOOK_SECRET", "")
+# Accepts either NIMBUS_WEBHOOK_SECRET (current .env name) or the older
+# NIMBUSPOST_WEBHOOK_SECRET spelling.
+NIMBUSPOST_WEBHOOK_SECRET = os.environ.get("NIMBUS_WEBHOOK_SECRET") or os.environ.get(
+    "NIMBUSPOST_WEBHOOK_SECRET", ""
+)
+
+# Twilio credentials for customer notifications (whatsapp_integration /
+# SMS_integration). The provider calls Twilio's REST API directly with `requests`
+# (no SDK). Leave blank to keep messaging inert: with no creds every send is
+# recorded as "failed: Twilio credentials missing" and nothing goes out. Sending
+# is ALSO gated per-merchant by WhatsAppSettings.enabled / SMSSettings.enabled
+# (both default False), so notifications stay off until a merchant opts in.
+TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "")
+TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN", "")
+TWILIO_WHATSAPP_NUMBER = os.environ.get("TWILIO_WHATSAPP_NUMBER", "")
+TWILIO_SMS_NUMBER = os.environ.get("TWILIO_SMS_NUMBER", "") or os.environ.get(
+    "TWILIO_PHONE_NUMBER", ""
+)
+# Master kill-switch for the Order.update_status -> notification dispatch. When
+# False (default) no WhatsApp/SMS task is ever queued, regardless of per-user
+# settings - flip to True in the env once Twilio is configured and verified.
+CUSTOMER_NOTIFICATIONS_ENABLED = (
+    os.environ.get("CUSTOMER_NOTIFICATIONS_ENABLED", "False") == "True"
+)
 
 SHIPROCKET_ATS_250GM_EMAIL = os.environ.get("SHIPROCKET_ATS_250GM_EMAIL", "")
 SHIPROCKET_ATS_250GM_PASSWORD = os.environ.get("SHIPROCKET_ATS_250GM_PASSWORD", "")
@@ -565,7 +681,10 @@ AGGREGATOR_BLACKLISTED_TEXTS = [
 ]
 
 
-DEFAULT_ADMIN_USER = "defaultadminuser@shipee.tech"
+DEFAULT_ADMIN_USER = os.getenv(
+    "DEFAULT_ADMIN_USER",
+    f"defaultadminuser@{PRIMARY_HOST}" if PRIMARY_HOST else "defaultadminuser@shipee.tech",
+)
 DEFAULT_ADMIN_USER_PASSWORD = os.getenv("DEFAULT_ADMIN_USER_PASSWORD")
 if not DEFAULT_ADMIN_USER_PASSWORD:
     if DEBUG:
@@ -593,6 +712,14 @@ CRONJOBS = [
     (
         "30 19 * * *",
         "order_manager.cronjobs.cod_remittance.generate_cod_remittance",
+        ">> /tmp/cron.log 2>&1",
+    ),
+    # hourly: fail off wallet transactions that were created but never completed
+    (
+        "15 * * * *",
+        "django.core.management.call_command",
+        ["expire_pending_transactions"],
+        {},
         ">> /tmp/cron.log 2>&1",
     ),
 ]
@@ -630,19 +757,36 @@ SHOPIFY = {
     "WEBHOOK_SECRET": SHOPIFY_WEBHOOK_SECRET,
     "SCOPES": "read_orders,write_orders,write_fulfillments,read_fulfillments",
     "APP_URL": os.getenv(
-        "APP_URL", "https://app.idiotship.tech"
+        "APP_URL",
+        f"https://{PRIMARY_HOST}" if PRIMARY_HOST else "https://app.idiotship.tech",
     ),  # https://yourdomain.com
 }
+
+# Extra comma-separated https origins for the production domain(s), e.g.
+# EXTRA_TRUSTED_ORIGINS="https://app.example.com,https://dashboard.example.com"
+_extra_origins = [
+    o.strip() for o in os.getenv("EXTRA_TRUSTED_ORIGINS", "").split(",") if o.strip()
+]
+if PRIMARY_HOST:
+    _extra_origins += [f"https://{PRIMARY_HOST}", f"https://app.{PRIMARY_HOST}"]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://app.idiotship.tech",
     "http://app.idiotship.tech",
+    *_extra_origins,
 ]
 if DEBUG:
     CSRF_TRUSTED_ORIGINS += [
-        "https://*.ngrok-free.dev",  
-        "https://*.ngrok-free.app",  
+        "http://127.0.0.1:8000",
+        "http://localhost:8000",
+        "https://*.ngrok-free.dev",
+        "https://*.ngrok-free.app",
     ]
+
+# On CSRF failure, redirect back to the form with a message instead of showing
+# Django's raw 403 page (which also triggers the browser's "Confirm Form
+# Resubmission" nag on reload).
+CSRF_FAILURE_VIEW = "swiftcourier.views.csrf_failure"
 
 
 CORS_ALLOWED_ORIGINS = [
@@ -656,6 +800,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://dashboard.idiotship.tech",
     "https://idiotship.tech",
     "http://idiotship.tech",
+    *_extra_origins,
 ]
 
 

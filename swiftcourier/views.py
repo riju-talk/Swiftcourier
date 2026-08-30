@@ -1,11 +1,47 @@
 import logging
+from urllib.parse import urlparse
+
+from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from account.models import ContactUs, SubscribeNewsletter, User
 from order_manager.models import Order
 
 logger = logging.getLogger("my-logger")
+
+
+def csrf_failure(request, reason=""):
+    """Friendly CSRF-failure handler (wired via settings.CSRF_FAILURE_VIEW).
+
+    Django's default is a raw 403 debug page, and because it is the response to
+    a POST the browser then nags with "Confirm Form Resubmission" on reload.
+    Instead: bounce the visitor back to where they came from (as a GET) with a
+    short message. The usual real cause is a stale form after the CSRF token
+    rotated on login, or an expired session in a long-idle tab - both fixed by
+    simply reloading the form.
+    """
+    logger.info("CSRF failure on %s %s: %s", request.method, request.path, reason)
+
+    login_url = reverse("account:signin")
+    ref = request.path if request.method == "GET" else request.META.get("HTTP_REFERER", "")
+
+    safe_target = login_url
+    if ref:
+        parsed = urlparse(ref)
+        same_host = not parsed.netloc or parsed.netloc == request.get_host()
+        if same_host and parsed.path.startswith("/"):
+            safe_target = parsed.path or login_url
+
+    try:
+        messages.warning(request, "Your session expired for security. Please try again.")
+    except Exception:
+        pass
+
+    response = redirect(safe_target)
+    response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    return response
 
 
 def index(request):
@@ -202,9 +238,30 @@ def contact_us(request):
     return JsonResponse({"message": "Invalid Request Method"})
 
 
-def custom_404(request, exception):
-    return render(request, "404.dj", status=404)
+def _render_error(template: str, status: int, **ctx) -> HttpResponse:
+    """Render a standalone error page.
+
+    The error templates deliberately don't use {% extends %}, the DB, or any
+    context processor, and we render them WITHOUT the request so a failure in a
+    context processor (or auth middleware not having run) can never make the
+    error page itself error.
+    """
+    from django.template.loader import render_to_string
+
+    return HttpResponse(render_to_string(template, ctx), status=status)
+
+
+def custom_404(request, exception=None):
+    return _render_error("404.dj", 404)
 
 
 def custom_500(request):
-    return render(request, "500.dj", status=500)
+    return _render_error("500.dj", 500, request_id=request.META.get("HTTP_X_REQUEST_ID", ""))
+
+
+def custom_403(request, exception=None):
+    return _render_error("403.dj", 403)
+
+
+def custom_400(request, exception=None):
+    return _render_error("400.dj", 400)

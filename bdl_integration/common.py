@@ -520,7 +520,7 @@ def ship_order(
 
         if err := res_json1.get(str(bdl_order_id), {}).get("detail"):
             logger.warning(f"BDL: Assign AWB Error: {err}")
-            return False, {"error": err.replace("bdl", "idiotship")}
+            return False, {"error": err.replace("bdl", "swiftcourier")}
 
         logger.debug(f"Assigning AWB Response: {res_json1}")
 

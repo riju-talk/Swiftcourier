@@ -30,7 +30,7 @@
                     <button type="button"
                             @click="setPreset(preset)"
                             class="w-full text-left px-2 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm date-transition"
-                            :class="{ 'bg-blue-100 dark:bg-blue-900/50': preset.active, 'font-semibold text-blue-600 dark:text-blue-400': preset.label === 'Custom Range' && isCustomRange, 'text-gray-700 dark:text-gray-300': !preset.active }">
+                            :class="{ 'bg-red-100 dark:bg-red-900/50': preset.active, 'font-semibold text-red-600 dark:text-red-400': preset.label === 'Custom Range' && isCustomRange, 'text-gray-700 dark:text-gray-300': !preset.active }">
                         <span x-text="preset.label"></span>
                     </button>
                 </template>
@@ -73,7 +73,7 @@
                                 <button type="button"
                                         @click="setTempStart(date.date)"
                                         class="p-1 text-center rounded-sm date-transition relative"
-                                        :class="{ 'bg-blue-500 text-white': date.isSelectedStart, 'text-gray-400 dark:text-gray-500': !date.isCurrentMonth, 'hover:bg-gray-100 dark:hover:bg-gray-700': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-blue-100 dark:bg-blue-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-gray-900 dark:text-gray-100': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
+                                        :class="{ 'bg-red-500 text-white': date.isSelectedStart, 'text-gray-400 dark:text-gray-500': !date.isCurrentMonth, 'hover:bg-gray-100 dark:hover:bg-gray-700': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-red-100 dark:bg-red-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-gray-900 dark:text-gray-100': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
                                         :disabled="!date.isSelectable">
                                     <span x-text="date.day"></span>
                                 </button>
@@ -115,7 +115,7 @@
                                 <button type="button"
                                         @click="setTempEnd(date.date)"
                                         class="p-1 text-center rounded-sm date-transition relative"
-                                        :class="{ 'bg-blue-500 text-white': date.isSelectedEnd, 'text-gray-400 dark:text-gray-500': !date.isCurrentMonth, 'hover:bg-gray-100 dark:hover:bg-gray-700': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-blue-100 dark:bg-blue-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-gray-900 dark:text-gray-100': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
+                                        :class="{ 'bg-red-500 text-white': date.isSelectedEnd, 'text-gray-400 dark:text-gray-500': !date.isCurrentMonth, 'hover:bg-gray-100 dark:hover:bg-gray-700': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-red-100 dark:bg-red-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-gray-900 dark:text-gray-100': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
                                         :disabled="!date.isSelectable">
                                     <span x-text="date.day"></span>
                                 </button>
@@ -133,7 +133,7 @@
                     </button>
                     <button type="button"
                             @click="apply()"
-                            class="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-600 rounded-sm date-transition"
+                            class="px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded-sm date-transition"
                             :disabled="!tempStart || !tempEnd"
                             :class="{ 'opacity-50 cursor-not-allowed': !tempStart || !tempEnd }">Apply</button>
                 </div>

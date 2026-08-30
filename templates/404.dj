@@ -1,13 +1,14 @@
-{% extends 'components/layouts/auth_layout.dj' %}
-{% load static %}
+{% extends "components/errors/base.dj" %}
 
-{% block body %}
-  <div class="relative flex min-h-screen items-center justify-center overflow-hidden">
-    <div class="px-6 py-16 text-center font-semibold before:container before:absolute before:left-1/2 before:-translate-x-1/2 before:rounded-full before:bg-[linear-gradient(180deg,#4361EE_0%,rgba(67,97,238,0)_50.73%)] before:aspect-square before:opacity-10 md:py-20">
-      <div class="relative">
-        <p class="mt-5 text-base dark:text-white">The page you requested was not found!</p>
-        <a href="/" class="btn btn-gradient mx-auto mt-7! w-max border-0 uppercase shadow-none">Home</a>
-      </div>
-    </div>
-  </div>
+{% block code %}404 — Page not found{% endblock %}
+{% block bigcode %}404{% endblock %}
+{% block eyebrow %}Page not found{% endblock %}
+{% block heading %}This page has shipped elsewhere{% endblock %}
+{% block message %}
+  The link may be broken, or the page may have been moved. Check the address, or
+  head back to your dashboard.
+{% endblock %}
+{% block actions %}
+  <a class="btn btn--primary" href="/">Back to dashboard</a>
+  <a class="btn btn--ghost" href="/track-shipment/">Track a shipment</a>
 {% endblock %}

@@ -13,7 +13,7 @@ twrun:
 	uv run manage.py tailwind start
 
 task:
-	uv run celery -A idiotship worker -l info -P solo
+	uv run celery -A swiftcourier worker -l info -P solo
 
 run:
 	uv run manage.py runserver
@@ -68,8 +68,8 @@ sys:
 	sudo systemctl restart gunicorn
 
 sync_static:
-	aws s3 sync /home/ubuntu/project/idiotship/static_prod/ s3://shipee-static-media-storage/static/
-	aws s3 sync /home/ubuntu/project/idiotship/media/ s3://shipee-static-media-storage/media/
+	aws s3 sync /home/ubuntu/project/swiftcourier/static_prod/ s3://shipee-static-media-storage/static/
+	aws s3 sync /home/ubuntu/project/swiftcourier/media/ s3://shipee-static-media-storage/media/
 
 ready:
 	git pull

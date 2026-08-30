@@ -1,0 +1,575 @@
+<style>
+    .serviceability-shell {
+        width: 100%;
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 2px;
+        color: #1f2937;
+    }
+
+    .serviceability-shell > * + * {
+        margin-top: 26px;
+    }
+
+    .serviceability-header h1 {
+        margin: 0;
+        color: #111827;
+        font-size: 24px;
+        font-weight: 800;
+        line-height: 1.15;
+    }
+
+    .serviceability-header p {
+        margin: 5px 0 0;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .serviceability-card {
+        border: 1px solid #e6eaf1;
+        border-radius: 8px;
+        background: #ffffff;
+    }
+
+    .serviceability-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 24px;
+    }
+
+    .serviceability-stat-card {
+        min-height: 130px;
+        padding: 26px 28px 22px;
+    }
+
+    .serviceability-stat-icon {
+        margin-bottom: 15px;
+        color: #ef6a23;
+        line-height: 0;
+    }
+
+    .serviceability-stat-value {
+        color: #1f2937;
+        font-size: 23px;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .serviceability-stat-label {
+        margin-top: 8px;
+        color: #5b6574;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .serviceability-filter-card {
+        padding: 20px 24px;
+    }
+
+    .serviceability-filter-grid {
+        display: grid;
+        grid-template-columns: 1.22fr 1.12fr 1.22fr 1.22fr 160px 56px;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .serviceability-field {
+        min-width: 0;
+    }
+
+    .serviceability-select-wrap {
+        position: relative;
+    }
+
+    .serviceability-select-icon {
+        position: absolute;
+        top: 50%;
+        right: 12px;
+        color: #99a2b1;
+        pointer-events: none;
+        transform: translateY(-50%);
+    }
+
+    .serviceability-input {
+        height: 44px;
+        width: 100%;
+        border-radius: 6px;
+        border: 1px solid #e5e9f0;
+        background: #f5f7fb;
+        padding: 0 13px;
+        font-size: 13px;
+        color: #374151;
+        transition: border-color 150ms ease, background-color 150ms ease;
+    }
+
+    select.serviceability-input {
+        padding-right: 36px;
+        cursor: pointer;
+    }
+
+    .serviceability-input:focus {
+        border-color: #d6dbe5;
+        background: #ffffff;
+        outline: none;
+    }
+
+    .serviceability-label {
+        margin-bottom: 6px;
+        display: block;
+        color: #8b94a3;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .serviceability-search-btn {
+        height: 44px;
+        width: 100%;
+        border: 0;
+        border-radius: 6px;
+        background: #ed6a23;
+        color: #ffffff;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        transition: background-color 150ms ease;
+    }
+
+    .serviceability-search-btn:hover {
+        background: #de5e1b;
+    }
+
+    .serviceability-reset-btn {
+        display: flex;
+        width: 44px;
+        height: 44px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e5e9f0;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #7e8796;
+        cursor: pointer;
+        transition: background-color 150ms ease;
+    }
+
+    .serviceability-reset-btn:hover {
+        background: #f7f9fc;
+    }
+
+    .serviceability-error {
+        margin-top: 12px;
+        color: #dc2626;
+        font-size: 13px;
+    }
+
+    .serviceability-table-card {
+        overflow: hidden;
+    }
+
+    .serviceability-table-scroll {
+        overflow-x: auto;
+    }
+
+    .serviceability-table {
+        width: 100%;
+        min-width: 820px;
+        border-collapse: collapse;
+    }
+
+    .serviceability-table th {
+        border-bottom: 1px solid #e7ebf2;
+        background: #f6f8fb;
+        padding: 13px 24px;
+        color: #5f6b7c;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        line-height: 1;
+        text-align: left;
+        text-transform: uppercase;
+    }
+
+    .serviceability-table th:nth-child(n+3),
+    .serviceability-table td:nth-child(n+3) {
+        text-align: center;
+    }
+
+    .serviceability-table tbody tr + tr {
+        border-top: 1px solid #edf1f6;
+    }
+
+    .serviceability-table td {
+        padding: 15px 24px;
+        color: #4b5563;
+        font-size: 13px;
+    }
+
+    .serviceability-empty {
+        display: flex;
+        min-height: 384px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 48px 24px;
+        text-align: center;
+    }
+
+    .serviceability-empty-icon {
+        display: flex;
+        width: 64px;
+        height: 64px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 18px;
+        border-radius: 12px;
+        background: #eff2f7;
+    }
+
+    .serviceability-empty-title {
+        margin: 0 0 10px;
+        color: #1f2937;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .serviceability-empty-copy {
+        max-width: 360px;
+        margin: 0;
+        color: #717b8c;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .serviceability-empty-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+        color: #a0a9b7;
+        font-size: 11px;
+    }
+
+    .serviceability-empty-dot {
+        width: 4px;
+        height: 4px;
+        border-radius: 999px;
+        background: #c2cad7;
+    }
+
+    .serviceability-toggle {
+        position: relative;
+        display: inline-flex;
+        width: 36px;
+        height: 20px;
+        border: 0;
+        border-radius: 999px;
+        background: #d5dbea;
+        cursor: pointer;
+        transition: background-color 150ms ease;
+    }
+
+    .serviceability-toggle[aria-checked="true"] {
+        background: #18b97a;
+    }
+
+    .serviceability-toggle-knob {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        border-radius: 999px;
+        background: #ffffff;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.18);
+        transition: transform 150ms ease;
+    }
+
+    .serviceability-toggle[aria-checked="true"] .serviceability-toggle-knob {
+        transform: translateX(16px);
+    }
+
+    .serviceability-zone {
+        display: inline-flex;
+        width: 24px;
+        height: 24px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .serviceability-courier-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .serviceability-courier-mark {
+        display: flex;
+        width: 28px;
+        height: 28px;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        background: #fff2ea;
+        color: #ef6a23;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .serviceability-courier-name {
+        color: #1f2937;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .serviceability-bottom-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+    }
+
+    .serviceability-routing-card {
+        overflow: hidden;
+    }
+
+    .serviceability-routing-inner {
+        display: grid;
+        min-height: 220px;
+        grid-template-columns: 2.1fr 1fr;
+    }
+
+    .serviceability-routing-copy {
+        background: #ef640f;
+        padding: 42px 40px;
+        color: #ffffff;
+    }
+
+    .serviceability-routing-copy h2 {
+        margin: 0;
+        font-size: 25px;
+        font-weight: 800;
+        line-height: 1.15;
+    }
+
+    .serviceability-routing-copy p {
+        max-width: 520px;
+        margin: 16px 0 0;
+        color: #fff3ea;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.55;
+    }
+
+    .serviceability-learn-btn {
+        display: inline-flex;
+        margin-top: 26px;
+        border-radius: 4px;
+        background: #ffffff;
+        padding: 10px 18px;
+        color: #ea650f;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+    }
+
+    .serviceability-routing-art {
+        position: relative;
+        overflow: hidden;
+        background: #c65313;
+    }
+
+    .serviceability-routing-art img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 28px;
+        opacity: 0.7;
+    }
+
+    .serviceability-routing-art::after {
+        position: absolute;
+        inset: 0;
+        background: rgba(181, 73, 16, 0.3);
+        content: "";
+    }
+
+    .serviceability-accuracy-card {
+        padding: 34px 30px;
+    }
+
+    .serviceability-accuracy-icon {
+        display: flex;
+        width: 36px;
+        height: 36px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 28px;
+        border-radius: 6px;
+        background: #fff3ea;
+        color: #ef6a23;
+    }
+
+    .serviceability-accuracy-card h3 {
+        margin: 0;
+        color: #111827;
+        font-size: 20px;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+
+    .serviceability-accuracy-card p {
+        margin: 12px 0 0;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .serviceability-rule {
+        height: 1px;
+        margin: 24px 0;
+        background: #eceff4;
+    }
+
+    .serviceability-doc-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #ef6a23;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    @keyframes serviceabilityFadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes serviceabilitySlideUp {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes serviceabilitySkeleton {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.42; }
+    }
+
+    .serviceability-fade-in {
+        animation: serviceabilityFadeIn 0.35s ease-out both;
+    }
+
+    .serviceability-slide-up {
+        animation: serviceabilitySlideUp 0.35s ease-out both;
+    }
+
+    .serviceability-skeleton {
+        animation: serviceabilitySkeleton 1.4s ease-in-out infinite;
+    }
+
+    .dark .serviceability-shell {
+        color: #f8fafc;
+    }
+
+    .dark .serviceability-card {
+        border-color: #243247;
+        background: #0e1726;
+    }
+
+    .dark .serviceability-header h1,
+    .dark .serviceability-stat-value,
+    .dark .serviceability-empty-title,
+    .dark .serviceability-courier-name,
+    .dark .serviceability-accuracy-card h3 {
+        color: #ffffff;
+    }
+
+    .dark .serviceability-input {
+        border-color: #243247;
+        background: #111c2e;
+        color: #e5e7eb;
+    }
+
+    .dark .serviceability-table th {
+        border-color: #243247;
+        background: #111c2e;
+    }
+
+    .dark .serviceability-table tbody tr + tr {
+        border-color: #243247;
+    }
+
+    .dark .serviceability-empty-icon {
+        background: #111c2e;
+    }
+
+    .dark .serviceability-empty-copy,
+    .dark .serviceability-header p,
+    .dark .serviceability-accuracy-card p {
+        color: #cbd5e1;
+    }
+
+    .dark .serviceability-reset-btn {
+        border-color: #243247;
+        background: #0e1726;
+    }
+
+    .dark .serviceability-rule {
+        background: #243247;
+    }
+
+    @media (max-width: 1180px) {
+        .serviceability-filter-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .serviceability-search-btn {
+            width: 160px;
+        }
+    }
+
+    @media (max-width: 980px) {
+        .serviceability-stats-grid,
+        .serviceability-bottom-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .serviceability-bottom-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .serviceability-stats-grid,
+        .serviceability-filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .serviceability-routing-inner {
+            grid-template-columns: 1fr;
+        }
+
+        .serviceability-routing-art {
+            display: none;
+        }
+
+        .serviceability-search-btn,
+        .serviceability-reset-btn {
+            width: 100%;
+        }
+    }
+</style>

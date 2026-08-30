@@ -135,7 +135,7 @@ def parcelx_request(
         url=url,
         headers=headers,
         data=payload if request_method.upper() != "GET" else None,
-    )
+        timeout=(5, 30),    )
     res_json = res.json()
     logger.info(f"parcelx Response: {res_json}")
     if (

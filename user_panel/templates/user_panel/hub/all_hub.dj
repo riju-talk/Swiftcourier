@@ -12,13 +12,13 @@
 {% block body %}
     <div x-data="basic">
         <div class="panel mt-6">
-            <h5 class="font-semibold text-lg dark:text-white-light">Warehouse List</h5>
+            <h5 class="text-[22px] font-bold tracking-tight text-neutral-900 dark:text-white">Warehouse List</h5>
             <div class="flex justify-end">
                 <div class="flex flex-wrap gap-3">
 
                     <!-- + New Warehouse Button -->
                     <a href="{% url 'user_panel:add-hub' %}"
-                       class="px-4 py-2 rounded-lg border text-blue-600 dark:text-blue-400 border-blue-500 bg-transparent hover:bg-blue-100 dark:hover:bg-blue-900/20 focus:outline-hidden focus:ring-2 focus:ring-blue-400 transition">
+                       class="px-4 py-2 rounded-lg border text-red-600 dark:text-red-400 border-red-500 bg-transparent hover:bg-red-100 dark:hover:bg-red-900/20 focus:outline-hidden focus:ring-2 focus:ring-red-400 transition">
                         + New Warehouse
                     </a>
 
@@ -56,15 +56,15 @@
                 '{{ hub.name }}', // CHANNEL
                 `<div class="leading-tight">
                     <span>{{ hub.contact_person }}</span><br>
-                    <span class="text-gray-600">{{ hub.phone }}</span><br>
-                    <span class="text-gray-600">{{ hub.email }}</span>
+                    <span class="text-neutral-600">{{ hub.phone }}</span><br>
+                    <span class="text-neutral-600">{{ hub.email }}</span>
                 </div>
                 `, // ORDER ID
                                 `<div class="leading-tight">
                     <span>{{ hub.address_line1 }}</span><br>
-                    <span class="text-gray-600">{{ hub.address_line2 }}</span><br>
-                    <span class="text-gray-600">{{ hub.city }}</span>
-                    <span class="text-gray-600">{{ hub.pin_code }}</span>
+                    <span class="text-neutral-600">{{ hub.address_line2 }}</span><br>
+                    <span class="text-neutral-600">{{ hub.city }}</span>
+                    <span class="text-neutral-600">{{ hub.pin_code }}</span>
                 </div>
                 `, // DATE
                                 `<div class="flex gap-4">
@@ -75,7 +75,7 @@
                     </a>
 
                     <!-- Make Primary Button -->
-                    {# Check if the hub is already primary #}
+                    {# Check if the hub is already the primary pickup hub #}
                     {% if hub.is_primary %}
                         <button class="px-4 py-2 rounded-lg text-white bg-green-600 transition font-medium" disabled>
                             Primary
@@ -200,7 +200,7 @@
                 },
 
                 randomColor() {
-                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    const c = ['#dc2626', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
                     return c[Math.floor(Math.random() * c.length)];
                 },
 

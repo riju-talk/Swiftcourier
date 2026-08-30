@@ -8,7 +8,7 @@ import sys
 import django
 
 # Setup Django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "idiotship.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "swiftcourier.settings")
 django.setup()
 
 from random import randint

@@ -11,6 +11,8 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.timezone import now
 from django.views import View
+from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 from django.urls import reverse
 
 """
@@ -34,6 +36,7 @@ from utils.safe_url import is_safe_url
 logger = logging.getLogger("my-logger")
 
 
+@never_cache
 def signin(request):
     if request.user.is_authenticated:
         messages.info(request, "You are already logged in. Please sign out first.")
@@ -44,7 +47,10 @@ def signin(request):
 
         email = data.get("email", "").strip().lower()
         passwd = data.get("password", "").strip()
-        role = data.get("user_role", "user").strip()
+        # signin.dj posts <select name="role">; keep "user_role" as a legacy
+        # fallback. Reading the wrong key here silently forced every login to
+        # role="user", locking admins out of the shared sign-in page.
+        role = (data.get("role") or data.get("user_role") or "user").strip()
 
         if role not in User.AVAILABLE_ROLES:
             messages.warning(request, "Role is not valid")
@@ -107,6 +113,7 @@ def signin(request):
     return render(request, "account/signin.dj")
 
 
+@never_cache
 def superadmin_signin(request):
     if request.user.is_authenticated:
         messages.info(request, "You are already logged in. Please sign out first.")
@@ -157,6 +164,7 @@ class Signout(View):
         return redirect("account:signin")
 
 
+@method_decorator(never_cache, name="dispatch")
 class Signup(View):
     def get(self, request):
         if request.user.is_authenticated:
@@ -501,27 +509,37 @@ class ForgetPassword(View):
 
 
 class ResetPassword(View):
+    @staticmethod
+    def _lookup(id, token):
+        """Match a PasswordReset by user + token, tolerating a malformed token
+        (PasswordReset.token is a UUIDField - a junk value in the URL must not
+        500)."""
+        import uuid as _uuid
+
+        try:
+            _uuid.UUID(str(token))
+        except (ValueError, TypeError, AttributeError):
+            return None
+        return PasswordReset.objects.filter(user_id=id, token=token).first()
+
     def get(self, request, id: int, token: str):
         # Check if the provided user ID and token match a record in PasswordReset
-        if pswdrst := PasswordReset.objects.filter(
-            user=User.objects.get(id=id), token=token
-        ).first():
+        if pswdrst := self._lookup(id, token):
             # Render the password reset page if a matching record is found
             return render(
                 request,
                 "account/set_password.dj",
                 {"password_reset": pswdrst, "user": pswdrst.user},
             )
-        # Redirect to login if the record is not found
+        # Redirect to login if the record is not found / link is bad
+        messages.warning(request, "That password-reset link is invalid or has expired.")
         return redirect("account:signin")
 
     def post(self, request, id: int, token: str):
         data = request.POST
 
         # Find the PasswordReset record matching the user ID and token
-        pswdrst = PasswordReset.objects.filter(
-            user=User.objects.get(id=id), token=token
-        ).first()
+        pswdrst = self._lookup(id, token)
 
         if pswdrst is None:
             # If no matching record is found, show a warning message

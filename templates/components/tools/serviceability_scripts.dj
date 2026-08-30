@@ -1,0 +1,262 @@
+<script>
+    (() => {
+        const ZONES = ["A", "B", "C", "D", "E"];
+        const ZONE_CLASSES = {
+            A: "background:#d1fae5;color:#047857",
+            B: "background:#dbeafe;color:#1d4ed8",
+            C: "background:#fef3c7;color:#b45309",
+            D: "background:#ede9fe;color:#7c3aed",
+            E: "background:#fce7f3;color:#be185d",
+        };
+
+        const shipmentType = document.getElementById("shipmentType");
+        const expressType = document.getElementById("expressType");
+        const pickupPincode = document.getElementById("pickupPincode");
+        const destinationPincode = document.getElementById("destinationPincode");
+        const serviceTable = document.getElementById("serviceTable");
+        const serviceError = document.getElementById("serviceError");
+        const searchBtn = document.getElementById("searchBtn");
+        const resetBtn = document.getElementById("resetBtn");
+        const defaultSearchLabel = searchBtn.textContent.trim();
+
+        function isValidPincode(value) {
+            return /^\d{6}$/.test(value || "");
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;",
+            }[char]));
+        }
+
+        function formatNumber(value) {
+            if (typeof value !== "number") {
+                return value ?? "--";
+            }
+            return value.toLocaleString("en-IN");
+        }
+
+        function setError(message) {
+            serviceError.textContent = message || "";
+        }
+
+        function setLoading(isLoading) {
+            searchBtn.disabled = isLoading;
+            resetBtn.disabled = isLoading;
+            searchBtn.textContent = isLoading ? "Searching..." : defaultSearchLabel;
+
+            if (isLoading) {
+                renderSkeletonRows();
+            }
+        }
+
+        function renderSkeletonRows() {
+            const cellStyle = 'style="height:16px;border-radius:6px;background:#e8edf4"';
+            let rowsHtml = "";
+
+            for (let i = 0; i < 5; i += 1) {
+                rowsHtml += "<tr>";
+                rowsHtml += `<td><div class="serviceability-skeleton" ${cellStyle}></div></td>`;
+                rowsHtml += `<td><div class="serviceability-skeleton" ${cellStyle}></div></td>`;
+                for (let j = 0; j < 5; j += 1) {
+                    rowsHtml += `<td><div class="serviceability-skeleton" style="width:40px;height:20px;margin:0 auto;border-radius:999px;background:#e8edf4"></div></td>`;
+                }
+                rowsHtml += `<td><div class="serviceability-skeleton" style="width:24px;height:16px;margin:0 auto;border-radius:6px;background:#e8edf4"></div></td>`;
+                rowsHtml += "</tr>";
+            }
+
+            serviceTable.innerHTML = rowsHtml;
+        }
+
+        function renderEmptyState() {
+            serviceTable.innerHTML = `
+                <tr>
+                    <td colspan="8">
+                        <div class="serviceability-empty serviceability-fade-in">
+                            <div class="serviceability-empty-icon">
+                                <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-hidden="true">
+                                    <circle cx="14" cy="14" r="7" stroke="#94a3b8" stroke-width="1.8" />
+                                    <path d="M19.1 19.1L24.8 24.8" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" />
+                                    <circle cx="11" cy="20.8" r="4.5" fill="#d5dbea" />
+                                    <path d="M9 20.8h4M11 18.8v4" stroke="#7f8da7" stroke-width="1.5" stroke-linecap="round" />
+                                </svg>
+                            </div>
+                            <p class="serviceability-empty-title">No data available</p>
+                            <p class="serviceability-empty-copy">
+                                Please enter source and destination pincodes to check for available courier services in our network.
+                            </p>
+                            <div class="serviceability-empty-meta">
+                                <span class="serviceability-empty-dot"></span>
+                                <span>Real-time verification</span>
+                                <span class="serviceability-empty-dot"></span>
+                                <span>Priority routing</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function buildToggleCell(checked) {
+            return `
+                <td>
+                    <div style="display:flex;justify-content:center">
+                        <button class="serviceability-toggle" role="switch" aria-checked="${checked ? "true" : "false"}" data-toggle="true" type="button">
+                            <span class="serviceability-toggle-knob"></span>
+                        </button>
+                    </div>
+                </td>
+            `;
+        }
+
+        function mapCouriersToRows(response, destination) {
+            const couriers = Array.isArray(response.serviceable_couriers)
+                ? response.serviceable_couriers
+                : [];
+
+            return couriers.map((courier, idx) => {
+                const courierType = String(courier.type || "surface").toLowerCase();
+                const zone = courier.zone || ZONES[idx % ZONES.length];
+                return {
+                    courier: courier.name || "Unknown",
+                    destination: `${destination} - ${String(courier.aggregator || "NA").toUpperCase()}`,
+                    pickup: courier.pickup !== undefined ? courier.pickup : true,
+                    reverse: courier.reverse !== undefined ? courier.reverse : false,
+                    prepaid: courier.prepaid !== undefined ? courier.prepaid : true,
+                    cod: courier.cod !== undefined ? courier.cod : courierType !== "air",
+                    ndd: courier.ndd !== undefined ? courier.ndd : courierType === "air",
+                    zone,
+                };
+            });
+        }
+
+        function renderRows(rows) {
+            if (!rows.length) {
+                renderEmptyState();
+                return;
+            }
+
+            let rowsHtml = "";
+            rows.forEach((row, idx) => {
+                const courier = escapeHtml(row.courier);
+                const zoneLabel = escapeHtml(row.zone || "-");
+                const zoneStyle = ZONE_CLASSES[row.zone] || "background:#f3f4f6;color:#4b5563";
+                const zoneHtml = row.zone
+                    ? `<span class="serviceability-zone" style="${zoneStyle}">${zoneLabel}</span>`
+                    : '<span style="color:#94a3b8;font-size:11px">-</span>';
+
+                rowsHtml += `
+                    <tr class="serviceability-slide-up" style="animation-delay:${idx * 45}ms">
+                        <td>
+                            <div class="serviceability-courier-cell">
+                                <span class="serviceability-courier-mark">${courier.slice(0, 2).toUpperCase()}</span>
+                                <span class="serviceability-courier-name">${courier}</span>
+                            </div>
+                        </td>
+                        <td>${escapeHtml(row.destination)}</td>
+                        ${buildToggleCell(row.pickup)}
+                        ${buildToggleCell(row.reverse)}
+                        ${buildToggleCell(row.prepaid)}
+                        ${buildToggleCell(row.cod)}
+                        ${buildToggleCell(row.ndd)}
+                        <td>${zoneHtml}</td>
+                    </tr>
+                `;
+            });
+
+            serviceTable.innerHTML = rowsHtml;
+        }
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch("/api/serviceability/dashboard-data/", { credentials: "same-origin" });
+                if (!response.ok) {
+                    return;
+                }
+
+                const data = await response.json();
+                document.getElementById("activeCouriers").textContent = formatNumber(data.active_couriers);
+                document.getElementById("pincodesCovered").textContent = formatNumber(data.pincodes_covered);
+                document.getElementById("codAvailable").textContent = formatNumber(data.cod_available);
+                document.getElementById("nddZones").textContent = formatNumber(data.ndd_zones);
+            } catch (error) {
+                console.warn("Failed to load serviceability dashboard", error);
+            }
+        }
+
+        async function runServiceability() {
+            const pickup = pickupPincode.value.trim();
+            const destination = destinationPincode.value.trim();
+
+            setError("");
+
+            if (!isValidPincode(pickup)) {
+                setError("Please enter a valid 6-digit source pincode.");
+                return;
+            }
+
+            if (!isValidPincode(destination)) {
+                setError("Please enter a valid 6-digit destination pincode.");
+                return;
+            }
+
+            const params = new URLSearchParams({
+                pickup_pincode: pickup,
+                destination_pincode: destination,
+                shipment_type: shipmentType.value,
+                express_type: expressType.value,
+            });
+
+            setLoading(true);
+
+            try {
+                const response = await fetch(`/api/serviceability/check-serviceability/?${params.toString()}`, {
+                    credentials: "same-origin",
+                });
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    setError(data.detail || data.error || "Serviceability check failed.");
+                    renderEmptyState();
+                    return;
+                }
+
+                renderRows(mapCouriersToRows(data, destination));
+            } catch (error) {
+                console.error(error);
+                setError("Unable to check serviceability.");
+                renderEmptyState();
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function handleReset() {
+            shipmentType.value = "forward";
+            expressType.value = "air";
+            pickupPincode.value = "";
+            destinationPincode.value = "";
+            setError("");
+            renderEmptyState();
+        }
+
+        searchBtn.addEventListener("click", runServiceability);
+        resetBtn.addEventListener("click", handleReset);
+        serviceTable.addEventListener("click", (event) => {
+            const button = event.target.closest("button[data-toggle]");
+            if (!button) {
+                return;
+            }
+
+            const checked = button.getAttribute("aria-checked") === "true";
+            button.setAttribute("aria-checked", checked ? "false" : "true");
+        });
+
+        loadDashboard();
+        renderEmptyState();
+    })();
+</script>

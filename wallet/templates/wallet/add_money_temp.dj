@@ -19,7 +19,7 @@
 {% endblock %}
 
 {% block body %}
-  <image src="{% static 'images/shipzee_upi_qr_codejpeg.png' %}" alt="IdiotShip UPI QR Code" class="qr-image" />
+  <image src="{% static 'images/shipzee_upi_qr_codejpeg.png' %}" alt="SwiftCourier UPI QR Code" class="qr-image" />
 {% endblock %}
 
 {% block js %}

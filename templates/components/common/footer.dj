@@ -1,4 +1,3 @@
-<div class="dark:text-white-dark text-center sm:ltr:text-left sm:rtl:text-right p-6 mt-auto">
-    © <span id="footer-year">2025</span>.
-    Idiotship All rights reserved.
+<div class="mt-auto border-t border-neutral-200 p-6 text-center text-xs text-neutral-400 dark:border-white/10 dark:text-neutral-500 sm:ltr:text-left sm:rtl:text-right">
+    &copy; <span id="footer-year">2025</span> <span class="font-semibold text-neutral-500 dark:text-neutral-400">Swift<span class="text-red-600">Courier</span></span>. All rights reserved.
 </div>

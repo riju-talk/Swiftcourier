@@ -38,7 +38,7 @@
 {% endblock css %}
 
 {% block body %}
-    <section class="bg-white dark:bg-gray-900 shadow-sm rounded-xl p-6 md:p-8 w-full max-w-4xl mx-auto">
+    <section class="bg-white dark:bg-[#0e1726] shadow-sm rounded-xl p-6 md:p-8 w-full max-w-4xl mx-auto">
         <!-- Header -->
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-bold text-gray-800 dark:text-white">Recent Activity</h2>
@@ -47,12 +47,12 @@
         <!-- Activity Items -->
         <div class="space-y-5">
             {% for act in activities %}
-                <div class="fade-slide-in hover-border flex items-start gap-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg transition delay-{{ forloop.counter0|add:'1' }}00">
+                <div class="fade-slide-in hover-border flex items-start gap-4 bg-gray-50 dark:bg-[#12151f] p-4 rounded-lg transition delay-{{ forloop.counter0|add:'1' }}00">
                     <!-- Icon -->
                     <div class="mt-1.5 w-6 h-6 shrink-0">
                         {% if act.activity_type == 'login' %}
                             <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="w-6 h-6 text-blue-500"
+                                 class="w-6 h-6 text-red-500"
                                  fill="none"
                                  viewBox="0 0 24 24"
                                  stroke="currentColor">
@@ -84,7 +84,7 @@
                             </svg>
                         {% elif act.activity_type == 'email_change' %}
                             <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="w-6 h-6 text-purple-500"
+                                 class="w-6 h-6 text-red-500"
                                  fill="none"
                                  viewBox="0 0 24 24"
                                  stroke="currentColor">
@@ -100,7 +100,7 @@
                             </svg>
                         {% elif act.activity_type == 'label_setting_update' %}
                             <svg xmlns="http://www.w3.org/2000/svg"
-                                 class="w-6 h-6 text-indigo-500"
+                                 class="w-6 h-6 text-red-500"
                                  fill="none"
                                  viewBox="0 0 24 24"
                                  stroke="currentColor">
@@ -122,7 +122,7 @@
                         <div class="flex justify-between items-center">
                             <p class="font-medium text-gray-800 dark:text-white capitalize">{{ act.get_activity_type_display }}</p>
                             {% if act.ip_address %}
-                                <span class="inline-block text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full ring-1 ring-gray-300 dark:ring-gray-600">
+                                <span class="inline-block text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-white/[0.06] px-2 py-0.5 rounded-full ring-1 ring-gray-300 dark:ring-gray-600">
                                     IP: {{ act.ip_address }}
                                 </span>
                             {% endif %}
@@ -141,14 +141,14 @@
 
         <!-- Pagination -->
         {% if activities.paginator.count > 5 %}
-            <div class="mt-6 p-4 border-t dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="mt-6 p-4 border-t dark:border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <!-- Page Size Dropdown -->
                 <div class="flex items-center gap-2 text-sm">
                     <span class="text-gray-700 dark:text-gray-300">Show:</span>
                     <form method="get">
                         <select name="per_page"
                                 onchange="this.form.submit()"
-                                class="px-2 py-1 border rounded-sm text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                                class="px-2 py-1 border rounded-sm text-sm dark:bg-white/[0.06] dark:border-white/10 dark:text-gray-100">
                             {% for option in per_page_options %}
                                 <option value="{{ option }}"
                                         {% if activities.paginator.per_page == option %}selected{% endif %}>{{ option }}</option>
@@ -162,23 +162,23 @@
                 <div class="flex gap-1 flex-wrap text-sm">
                     {% if activities.has_previous %}
                         <a href="?page={{ activities.previous_page_number }}&per_page={{ activities.paginator.per_page }}"
-                           class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm dark:text-gray-100">Previous</a>
+                           class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-white/[0.06] dark:hover:bg-gray-600 rounded-sm dark:text-gray-100">Previous</a>
                     {% endif %}
 
                     {% for num in activities.paginator.page_range %}
                         {% if num >= activities.number|add:"-2" and num <= activities.number|add:"2" %}
                             {% if num == activities.number %}
-                                <span class="px-3 py-1 rounded-sm bg-blue-600 text-white font-semibold shadow-sm">{{ num }}</span>
+                                <span class="px-3 py-1 rounded-sm bg-red-600 text-white font-semibold shadow-sm">{{ num }}</span>
                             {% else %}
                                 <a href="?page={{ num }}&per_page={{ activities.paginator.per_page }}"
-                                   class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm dark:text-gray-100">{{ num }}</a>
+                                   class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-white/[0.06] dark:hover:bg-gray-600 rounded-sm dark:text-gray-100">{{ num }}</a>
                             {% endif %}
                         {% endif %}
                     {% endfor %}
 
                     {% if activities.has_next %}
                         <a href="?page={{ activities.next_page_number }}&per_page={{ activities.paginator.per_page }}"
-                           class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm dark:text-gray-100">Next</a>
+                           class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-white/[0.06] dark:hover:bg-gray-600 rounded-sm dark:text-gray-100">Next</a>
                     {% endif %}
                 </div>
             </div>

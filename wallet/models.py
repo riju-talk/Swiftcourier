@@ -1,5 +1,8 @@
+from decimal import Decimal
+
 from django.db import models
 from account.models import MyModel, Notification
+from account.money import to_money
 
 
 # Create your models here.
@@ -30,8 +33,10 @@ class Transaction(MyModel):
 
     transaction_type = models.CharField(max_length=6, choices=TRANSACTION_TYPES)
     # amount is stored in rupees
-    amount = models.FloatField()
-    closing_amount = models.FloatField(default=0)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    closing_amount = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal("0.00")
+    )
     desc = models.CharField(
         max_length=255,
         blank=True,
@@ -62,7 +67,7 @@ class Transaction(MyModel):
     ) -> "Transaction":
         return Transaction.objects.create(
             merchant_transaction_id=str(user.id) + merchant_txn_id,
-            amount=amount_rs,
+            amount=to_money(amount_rs),
             status="PENDING",
             user=user,
             transaction_type=transaction_type,

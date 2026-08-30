@@ -57,7 +57,7 @@ All Users
                                     '10001',
                                     'USA',
                                     'Active',
-                                    `<a href="/admin_panel/user/demo" class="bg-blue-600 text-white px-2 py-1 rounded-sm hover:bg-blue-700">See More</a>`  
+                                    `<a href="/admin_panel/user/demo" class="bg-red-600 text-white px-2 py-1 rounded-sm hover:bg-red-700">See More</a>`  
                                 ],
                                 [
                                     '',
@@ -70,7 +70,7 @@ All Users
                                     'NW1 6XE',
                                     'UK',
                                     'Pending',
-                                    `<a href="/admin_panel/user/demo" class="bg-blue-600 text-white px-2 py-1 rounded-sm hover:bg-blue-700">See More</a>`
+                                    `<a href="/admin_panel/user/demo" class="bg-red-600 text-white px-2 py-1 rounded-sm hover:bg-red-700">See More</a>`
                                 ],
                                 [
                                     '',
@@ -83,7 +83,7 @@ All Users
                                     '54000',
                                     'Pakistan',
                                     'Suspended',
-                                    `<a href="/admin_panel/user/demo" class="bg-blue-600 text-white px-2 py-1 rounded-sm hover:bg-blue-700">See More</a>`
+                                    `<a href="/admin_panel/user/demo" class="bg-red-600 text-white px-2 py-1 rounded-sm hover:bg-red-700">See More</a>`
                                 ],
                                 [
                                     '',
@@ -96,7 +96,7 @@ All Users
                                     '2000',
                                     'Australia',
                                     'Active',
-                                    `<a href="/admin_panel/user/demo" class="bg-blue-600 text-white px-2 py-1 rounded-sm hover:bg-blue-700">See More</a>`
+                                    `<a href="/admin_panel/user/demo" class="bg-red-600 text-white px-2 py-1 rounded-sm hover:bg-red-700">See More</a>`
                                 ],
                                 [
                                     '',
@@ -109,7 +109,7 @@ All Users
                                     '01000',
                                     'Mexico',
                                     'Inactive',
-                                    `<a href="/admin_panel/user/demo" class="bg-blue-600 text-white px-2 py-1 rounded-sm hover:bg-blue-700">See More</a>`
+                                    `<a href="/admin_panel/user/demo" class="bg-red-600 text-white px-2 py-1 rounded-sm hover:bg-red-700">See More</a>`
                                 ]
                             ]
                         },
@@ -206,7 +206,7 @@ All Users
                 },
 
                 randomColor() {
-                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    const c = ['#dc2626', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
                     return c[Math.floor(Math.random() * c.length)];
                 },
 

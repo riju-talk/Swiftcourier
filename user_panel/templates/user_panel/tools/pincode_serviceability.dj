@@ -1,0 +1,17 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+    Pincode Serviceability
+{% endblock title %}
+
+{% block css %}
+    {% include "components/tools/serviceability_styles.dj" %}
+{% endblock css %}
+
+{% block body %}
+    {% include "components/tools/serviceability_content.dj" %}
+{% endblock body %}
+
+{% block js %}
+    {% include "components/tools/serviceability_scripts.dj" %}
+{% endblock js %}

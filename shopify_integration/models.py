@@ -7,6 +7,16 @@ from django.utils.timezone import localdate
 from django.conf import settings
 
 
+def _default_shopify_api_token():
+    """App-wide Shopify API key, used as the per-store default at creation time."""
+    return settings.SHOPIFY_API_KEY
+
+
+def _default_shopify_api_secret():
+    """App-wide Shopify API secret, used as the per-store default at creation time."""
+    return settings.SHOPIFY_API_SECRET
+
+
 class ShopifyStore(MyModel):
     user = models.ForeignKey(
         "account.User", on_delete=models.CASCADE, related_name="shopify_stores"
@@ -25,11 +35,11 @@ class ShopifyStore(MyModel):
     )
     shopify_api_token = models.CharField(
         max_length=100,
-        default=settings.SHOPIFY_API_KEY,
+        default=_default_shopify_api_token,
     )
     shopify_api_secret = models.CharField(
         max_length=100,
-        default=settings.SHOPIFY_API_SECRET,
+        default=_default_shopify_api_secret,
     )
     shopify_installed_at = models.DateTimeField(
         null=True, blank=True, default=None, verbose_name="Shopify App Installed At"

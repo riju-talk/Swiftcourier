@@ -6,13 +6,13 @@
 {% block body %}
 <div>
             <button onclick="history.back()"
-                    class="border border-blue-500 hover:bg-blue-700 text-blue-500 hover:text-white font-bold py-2 px-4 rounded-sm">
+                    class="border border-red-500 hover:bg-red-700 text-red-500 hover:text-white font-bold py-2 px-4 rounded-sm">
                 Back
             </button>
         </div>
-<div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center px-4 py-10 transition-colors duration-200">
-  <div class="w-full max-w-3xl bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
-    <h2 class="text-3xl font-bold text-center text-indigo-600 dark:text-indigo-400">
+<div class="min-h-screen bg-gray-100 dark:bg-[#0e1726] flex items-center justify-center px-4 py-10 transition-colors duration-200">
+  <div class="w-full max-w-3xl bg-white dark:bg-[#12151f] rounded-2xl shadow-xl p-8 space-y-6">
+    <h2 class="text-3xl font-bold text-center text-red-600 dark:text-red-400">
       Assign Admin
     </h2>
 
@@ -34,7 +34,7 @@
           <select id="user_ids"
                   name="user_ids"
                   multiple
-                  class="tom-select-users w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-xs focus:ring-indigo-500 focus:border-indigo-500">
+                  class="tom-select-users w-full rounded-md border-gray-300 dark:border-white/10 bg-white dark:bg-white/[0.06] text-gray-800 dark:text-gray-200 shadow-xs focus:ring-red-500 focus:border-red-500">
             {% for user in users %}
               <option value="{{ user.id }}">{{ user.full_name }} ({{ user.email }})</option>
             {% endfor %}
@@ -54,7 +54,7 @@
         <select id="admin_id"
                 name="admin_id"
                 required
-                class="tom-select-admin w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-xs focus:ring-indigo-500 focus:border-indigo-500">
+                class="tom-select-admin w-full rounded-md border-gray-300 dark:border-white/10 bg-white dark:bg-white/[0.06] text-gray-800 dark:text-gray-200 shadow-xs focus:ring-red-500 focus:border-red-500">
           <option value="">-- Choose an Admin --</option>
           {% for admin in admins %}
             <option value="{{ admin.id }}">{{ admin.full_name }} ({{ admin.email }})</option>
@@ -63,7 +63,7 @@
       </div>
 
       <button type="submit"
-              class="w-full py-2 px-4 bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white font-semibold rounded-lg shadow-md transition-transform duration-300 transform hover:scale-105">
+              class="w-full py-2 px-4 bg-red-600 dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-600 text-white font-semibold rounded-lg shadow-md transition-transform duration-300 transform hover:scale-105">
         Assign Admin to User{% if not is_single %}s{% endif %}
       </button>
     </form>
@@ -102,10 +102,10 @@
       userSelect.getValue().forEach(val => {
         const label = userSelect.options[val]?.text || val;
         const tag = document.createElement('span');
-        tag.className = 'bg-indigo-100 dark:bg-indigo-700 text-indigo-800 dark:text-indigo-200 text-sm font-medium px-3 py-1 rounded-full flex items-center gap-2';
+        tag.className = 'bg-red-100 dark:bg-red-700 text-red-800 dark:text-red-200 text-sm font-medium px-3 py-1 rounded-full flex items-center gap-2';
         tag.innerHTML = `
           ${label}
-          <button onclick="userSelect.removeItem('${val}')" class="text-indigo-600 dark:text-indigo-300 hover:text-red-500 font-bold ml-2">&times;</button>
+          <button onclick="userSelect.removeItem('${val}')" class="text-red-600 dark:text-red-300 hover:text-red-500 font-bold ml-2">&times;</button>
         `;
         container.appendChild(tag);
       });

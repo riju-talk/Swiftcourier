@@ -1,0 +1,159 @@
+<div class="rate-shell">
+    <div class="rate-header">
+        <h1>Rate Calculator</h1>
+        <p>Compare courier pricing by pincode, weight, and payment mode.</p>
+    </div>
+
+    <div class="rate-card rate-form-card">
+        <div class="rate-grid">
+            <div class="rate-field">
+                <label for="pickupPincode">Pickup Pincode</label>
+                <div class="rate-input-wrap">
+                    <span class="rate-input-icon" aria-hidden="true">
+                        <svg width="13" height="13" viewBox="0 0 15 15" fill="none">
+                            <path d="M7.5 13c2-2.15 3.4-4.23 3.4-6.1a3.4 3.4 0 10-6.8 0c0 1.87 1.4 3.95 3.4 6.1z" stroke="currentColor" stroke-width="1.4" />
+                            <circle cx="7.5" cy="6.6" r="1.25" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <input id="pickupPincode" class="rate-input" type="text" inputmode="numeric" maxlength="6" placeholder="e.g. 110001" />
+                </div>
+            </div>
+
+            <div class="rate-field">
+                <label for="hubSelect">Hub (Optional)</label>
+                <div class="rate-select-wrap">
+                    <span class="rate-input-icon" aria-hidden="true">
+                        <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                            <path d="M2.5 6.5h11v6h-11v-6z" stroke="currentColor" stroke-width="1.2" />
+                            <path d="M4 6.5V4.6L8 2l4 2.6v1.9" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                    <select id="hubSelect" class="rate-select rate-has-left-icon">
+                        <option value="">Select Hub</option>
+                    </select>
+                    <span class="rate-select-icon" aria-hidden="true">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                </div>
+            </div>
+
+            <div class="rate-field">
+                <label for="destinationPincode">Destination Pincode</label>
+                <div class="rate-input-wrap">
+                    <span class="rate-input-icon" aria-hidden="true">
+                        <svg width="13" height="13" viewBox="0 0 15 15" fill="none">
+                            <path d="M7.5 13c2-2.15 3.4-4.23 3.4-6.1a3.4 3.4 0 10-6.8 0c0 1.87 1.4 3.95 3.4 6.1z" stroke="currentColor" stroke-width="1.4" />
+                            <circle cx="7.5" cy="6.6" r="1.25" fill="currentColor" />
+                        </svg>
+                    </span>
+                    <input id="destinationPincode" class="rate-input" type="text" inputmode="numeric" maxlength="6" placeholder="e.g. 400001" />
+                </div>
+            </div>
+
+            <div class="rate-field">
+                <label for="weightKg">Weight (KG)</label>
+                <div class="rate-input-wrap">
+                    <span class="rate-input-icon" aria-hidden="true">
+                        <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                            <path d="M5 6V4.8a3 3 0 116 0V6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+                            <rect x="3" y="6" width="10" height="7" rx="1.4" stroke="currentColor" stroke-width="1.2" />
+                        </svg>
+                    </span>
+                    <input id="weightKg" class="rate-input" type="number" min="0" step="0.1" placeholder="0.5" />
+                </div>
+            </div>
+
+            <div class="rate-field rate-dimensions-field">
+                <div class="rate-dimensions-label">Dimensions (CM)</div>
+                <div class="rate-dimensions-row">
+                    <input id="lengthCm" class="rate-input rate-no-icon" type="number" min="0" step="0.1" placeholder="L" aria-label="Length in centimeters" />
+                    <input id="widthCm" class="rate-input rate-no-icon" type="number" min="0" step="0.1" placeholder="W" aria-label="Width in centimeters" />
+                    <input id="heightCm" class="rate-input rate-no-icon" type="number" min="0" step="0.1" placeholder="H" aria-label="Height in centimeters" />
+                </div>
+            </div>
+
+            <div class="rate-field">
+                <label for="paymentMethod">Payment Method</label>
+                <div class="rate-select-wrap">
+                    <select id="paymentMethod" class="rate-select">
+                        <option value="prepaid">Prepaid</option>
+                        <option value="cod">COD</option>
+                    </select>
+                    <span class="rate-select-icon" aria-hidden="true">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                </div>
+            </div>
+
+            <div class="rate-field">
+                <label for="orderValue">Order Value (₹)</label>
+                <input id="orderValue" class="rate-input rate-no-icon" type="number" min="0" step="1" placeholder="Value for COD" />
+            </div>
+
+            <div class="rate-field">
+                <label for="sortBy">Sort By</label>
+                <div class="rate-select-wrap">
+                    <select id="sortBy" class="rate-select">
+                        <option value="cheapest">Best Price</option>
+                        <option value="fastest">Fastest</option>
+                    </select>
+                    <span class="rate-select-icon" aria-hidden="true">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                </div>
+            </div>
+
+            <div class="rate-actions">
+                <button id="calculateBtn" type="button" class="rate-calculate-btn">Calculate Rates&nbsp; -></button>
+                <button id="resetBtn" type="button" class="rate-reset-btn">Reset</button>
+            </div>
+        </div>
+        <span id="rateError" class="rate-error"></span>
+    </div>
+
+    <section>
+        <div class="rate-results-header">
+            <h2>Courier Rates</h2>
+            <span id="routeNote" class="rate-route-note"></span>
+        </div>
+
+        <div class="rate-card rate-table-card">
+            <div class="rate-table-scroll">
+                <table class="rate-table">
+                    <thead>
+                        <tr>
+                            <th>Courier</th>
+                            <th>Service</th>
+                            <th>Chargeable Wt</th>
+                            <th>ETA</th>
+                            <th>Base</th>
+                            <th>Additional</th>
+                            <th>COD</th>
+                            <th>GST (18%)</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rateTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="rate-footnote">
+            <span class="rate-footnote-icon" aria-hidden="true">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="5.8" stroke="currentColor" stroke-width="1.2" />
+                    <path d="M8 7.4v3.4M8 5.2v.1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                </svg>
+            </span>
+            <span>
+                * Prices shown are estimates and subject to fuel surcharges and additional remote area fees where applicable. Final chargeable weight is the greater of actual weight or volumetric weight (L*W*H/5000).
+            </span>
+        </div>
+    </section>
+</div>

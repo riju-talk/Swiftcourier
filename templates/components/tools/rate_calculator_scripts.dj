@@ -1,0 +1,221 @@
+<script>
+    (() => {
+        const rateTable = document.getElementById("rateTable");
+        const rateError = document.getElementById("rateError");
+        const routeNote = document.getElementById("routeNote");
+
+        const pickupPincode = document.getElementById("pickupPincode");
+        const hubSelect = document.getElementById("hubSelect");
+        const destinationPincode = document.getElementById("destinationPincode");
+        const weightKg = document.getElementById("weightKg");
+        const lengthCm = document.getElementById("lengthCm");
+        const widthCm = document.getElementById("widthCm");
+        const heightCm = document.getElementById("heightCm");
+        const paymentMethod = document.getElementById("paymentMethod");
+        const orderValue = document.getElementById("orderValue");
+        const sortBy = document.getElementById("sortBy");
+        const calculateBtn = document.getElementById("calculateBtn");
+        const resetBtn = document.getElementById("resetBtn");
+
+        let lastResults = [];
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) {
+                return parts.pop().split(";").shift();
+            }
+            return "";
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;",
+            }[char]));
+        }
+
+        function setError(message) {
+            rateError.textContent = message || "";
+        }
+
+        function clearTable() {
+            rateTable.innerHTML = "";
+            routeNote.textContent = "";
+        }
+
+        function formatNumber(value) {
+            return Number(value || 0).toFixed(2);
+        }
+
+        function formatCurrency(value) {
+            return `₹ ${formatNumber(value)}`;
+        }
+
+        function etaClass(days) {
+            const number = Number(days || 0);
+            if (number <= 2) return "rate-eta-fast";
+            if (number <= 4) return "rate-eta-medium";
+            return "rate-eta-slow";
+        }
+
+        function serviceLabel(value) {
+            const normalized = String(value || "").trim().toLowerCase();
+            if (normalized === "air") return "Air Express";
+            if (normalized === "surface") return "Surface Standard";
+            return normalized ? normalized.replace(/\b\w/g, (c) => c.toUpperCase()) : "-";
+        }
+
+        function sortedResults() {
+            const rows = [...lastResults];
+            if (sortBy.value === "fastest") {
+                rows.sort((a, b) => (a.estimated_days || 99) - (b.estimated_days || 99));
+            } else {
+                rows.sort((a, b) => (a.rate.total || 0) - (b.rate.total || 0));
+            }
+            return rows;
+        }
+
+        function renderRows(pickupLabel, destination) {
+            const rates = sortedResults();
+            if (!rates.length) {
+                rateTable.innerHTML = '<tr><td colspan="9" class="rate-empty">No couriers available for this route on your rate cards.</td></tr>';
+                routeNote.textContent = "";
+                return;
+            }
+
+            routeNote.textContent = `Showing ${rates.length} result${rates.length === 1 ? "" : "s"} for ${pickupLabel} → ${destination}`;
+
+            rateTable.innerHTML = rates.map((item) => {
+                const days = Number(item.estimated_days || 0);
+                return `
+                    <tr>
+                        <td><div class="rate-courier-cell"><span>${escapeHtml(item.courier)}</span></div></td>
+                        <td>${escapeHtml(serviceLabel(item.service_type))}</td>
+                        <td>${formatNumber(item.chargeable_weight)} KG</td>
+                        <td><span class="rate-eta-pill ${etaClass(days)}">${days || "-"} Days</span></td>
+                        <td>${formatCurrency(item.rate.base)}</td>
+                        <td>${formatCurrency(item.rate.additional)}</td>
+                        <td>${formatCurrency(item.rate.cod)}</td>
+                        <td>${formatCurrency(item.rate.gst)}</td>
+                        <td class="rate-total">${formatCurrency(item.rate.total)}</td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        async function loadHubs() {
+            try {
+                const response = await fetch("/api/serviceability/warehouses/", { credentials: "same-origin" });
+                if (!response.ok) return;
+                const data = await response.json();
+                (data.warehouses || []).forEach((hub) => {
+                    const option = document.createElement("option");
+                    option.value = hub.hub_id;
+                    option.textContent = `${hub.name} (${hub.pincode})`;
+                    hubSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.warn("Failed to load hubs", error);
+            }
+        }
+
+        async function calculateRates() {
+            setError("");
+            clearTable();
+
+            const pickup = pickupPincode.value.trim();
+            const hubId = hubSelect.value;
+            const destination = destinationPincode.value.trim();
+            const weight = Number(weightKg.value);
+
+            if (!/^\d{6}$/.test(destination)) {
+                setError("Please enter a valid 6-digit destination pincode.");
+                return;
+            }
+            if (!hubId && !/^\d{6}$/.test(pickup)) {
+                setError("Please enter a valid pickup pincode or choose a hub.");
+                return;
+            }
+            if (!weight || weight < 0.5) {
+                setError("Weight must be at least 0.5 KG.");
+                return;
+            }
+            if (paymentMethod.value === "cod" && Number(orderValue.value) <= 0) {
+                setError("Order value is required for COD.");
+                return;
+            }
+
+            const payload = {
+                destination_pincode: destination,
+                weight: weight,
+                length: Number(lengthCm.value || 0) || null,
+                width: Number(widthCm.value || 0) || null,
+                height: Number(heightCm.value || 0) || null,
+                payment_method: paymentMethod.value,
+                order_value: Number(orderValue.value || 0),
+            };
+            if (hubId) {
+                payload.hub_id = Number(hubId);
+            } else {
+                payload.pickup_pincode = pickup;
+            }
+
+            calculateBtn.disabled = true;
+            calculateBtn.textContent = "Calculating...";
+
+            try {
+                const response = await fetch("/api/calculator/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCookie("csrftoken"),
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify(payload),
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok || !data.success) {
+                    setError(data.error || "Failed to calculate rates.");
+                    return;
+                }
+                lastResults = data.data || [];
+                renderRows(hubId ? "selected hub" : pickup, destination);
+            } catch (error) {
+                console.error(error);
+                setError("Unable to fetch rates. Please try again.");
+            } finally {
+                calculateBtn.disabled = false;
+                calculateBtn.textContent = "Calculate Rates  ->";
+            }
+        }
+
+        function resetForm() {
+            [pickupPincode, destinationPincode, weightKg, lengthCm, widthCm, heightCm, orderValue].forEach((el) => { el.value = ""; });
+            hubSelect.value = "";
+            paymentMethod.value = "prepaid";
+            sortBy.value = "cheapest";
+            pickupPincode.disabled = false;
+            lastResults = [];
+            setError("");
+            clearTable();
+        }
+
+        calculateBtn.addEventListener("click", calculateRates);
+        resetBtn.addEventListener("click", resetForm);
+        sortBy.addEventListener("change", () => {
+            if (lastResults.length) {
+                renderRows(hubSelect.value ? "selected hub" : pickupPincode.value.trim(), destinationPincode.value.trim());
+            }
+        });
+        hubSelect.addEventListener("change", () => {
+            pickupPincode.disabled = Boolean(hubSelect.value);
+            if (hubSelect.value) pickupPincode.value = "";
+        });
+
+        loadHubs();
+    })();
+</script>

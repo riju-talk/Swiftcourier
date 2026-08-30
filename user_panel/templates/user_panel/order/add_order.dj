@@ -69,7 +69,7 @@
 
             <!-- Single Order Form -->
             <div x-show="tab === 'single'" x-cloak>
-                <form class="space-y-8 p-6 bg-white dark:bg-dark/40 rounded-xl shadow-md"
+                <form class="space-y-8 p-6 bg-white dark:bg-white/5 rounded-xl border border-neutral-200 dark:border-white/10 shadow-md"
                       id="single_order_form"
                       action="{% url 'order_manager:save-single-order' %}?action={{ request.GET.action }}"
                       method="post">
@@ -86,7 +86,7 @@
                                 <a href="javascript:;"
                                    @click="go(1)"
                                    :class="{ 'bg-info! text-white': activeTab === 1 }"
-                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:bg-info! hover:text-white hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)] transition-all duration-300">
+                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:bg-info! hover:text-white hover: transition-all duration-300">
 
                                     <svg fill="#000000"
                                          version="1.1"
@@ -112,7 +112,7 @@
                                 <a href="javascript:;"
                                    @click="go(2)"
                                    :class="{ 'bg-info! text-white': activeTab === 2 }"
-                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:bg-info! hover:text-white hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)] transition-all duration-300">
+                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:bg-info! hover:text-white hover: transition-all duration-300">
                                     <svg height="20"
                                          width="20"
                                          viewBox="0 0 1024 1024"
@@ -139,7 +139,7 @@
                                 <a href="javascript:;"
                                    @click="go(3)"
                                    :class="{ 'bg-info! text-white': activeTab === 3 }"
-                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:bg-info! hover:text-white hover:shadow-[0_5px_15px_0_rgba(0,0,0,0.30)] transition-all duration-300">
+                                   class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-[#f1f2f3] dark:bg-[#191e3a] hover:bg-info! hover:text-white hover: transition-all duration-300">
                                     <svg height="20"
                                          width="20"
                                          viewBox="0 0 24 24"
@@ -160,17 +160,17 @@
                             <h2 class="text-xl font-bold text-gray-800 dark:text-white border-b pb-2 mb-4">Consignee Details</h2>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         Name <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text"
                                            required
                                            placeholder="Enter Name"
                                            name="consignee_name"
-                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
                                 <div x-data="{ phone: '', error: '' }">
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         Phone Number <span class="text-red-500">*</span>
                                     </label>
 
@@ -183,7 +183,7 @@
                                            x-on:keydown.enter.prevent="if (error) { $event.preventDefault(); }"
                                            x-on:keydown.tab="if (error) { $event.preventDefault(); }"
                                            placeholder="XXXXXXXXXX"
-                                           class="w-full px-4 py-2 rounded-xl border focus:outline-hidden transition shadow-xs bg-white dark:bg-dark/40 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary"
+                                           class="w-full px-4 py-2 rounded-xl border border-neutral-200 dark:border-white/10 border focus:outline-hidden transition bg-white dark:bg-white/5 border-neutral-300 dark:border-white/10 focus:ring-2 focus:ring-red-600/20"
                                            :class="error ? 'border-red-500 focus:ring-red-500' : ''"
                                            required />
 
@@ -194,22 +194,22 @@
 
 
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                        Alt. Number <span class="text-gray-400 text-sm">(Optional)</span>
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
+                                        Alt. Number <span class="text-neutral-400 text-sm">(Optional)</span>
                                     </label>
                                     <input type="tel"
                                            placeholder="Enter Alt. Number"
                                            name="consignee_alt_phone"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                        Email <span class="text-gray-400 text-sm">(Optional)</span>
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
+                                        Email <span class="text-neutral-400 text-sm">(Optional)</span>
                                     </label>
                                     <input type="email"
                                            placeholder="Enter Email"
                                            name="consignee_email"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
                             </div>
 
@@ -218,7 +218,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Address (Required) -->
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         Address <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text"
@@ -226,46 +226,46 @@
                                            placeholder="Enter Address"
                                            id="address"
                                            name="address"
-                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
 
                                 <!-- Address 2 (Optional) -->
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                        Address 2 <span class="text-gray-400 text-sm">(Optional)</span>
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
+                                        Address 2 <span class="text-neutral-400 text-sm">(Optional)</span>
                                     </label>
                                     <input type="text"
                                            placeholder="Apartment, Suite, etc."
                                            id="address2"
                                            name="address2"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
                                 <!-- Landmark (Optional) -->
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                        Landmark <span class="text-gray-400 text-sm">(Optional)</span>
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
+                                        Landmark <span class="text-neutral-400 text-sm">(Optional)</span>
                                     </label>
                                     <input type="text"
                                            placeholder="Nearby place or landmark"
                                            id="landmark"
                                            name="landmark"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
 
                                 <!-- Company Name (Optional) -->
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                        Company Name <span class="text-gray-400 text-sm">(Optional)</span>
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
+                                        Company Name <span class="text-neutral-400 text-sm">(Optional)</span>
                                     </label>
                                     <input type="text"
                                            placeholder="Company or Organization"
                                            id="company_name"
                                            name="company_name"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
 
                                 <div x-data="{ pin: '', error: '', validate() { this.error = ''; let val = this.pin.toString(); if (!/^\d{6}$/.test(val)) { this.error = 'PIN code must be exactly 6 digits'; return false; } return true; }, moveFocus(event) { if (this.validate()) { let formElements = Array.from(document.querySelectorAll('input, select, textarea, button')); let index = formElements.indexOf(event.target); if (index !== -1 && index + 1 < formElements.length) { try{formElements[index + 1].focus();} catch (error) {} } } else { event.preventDefault(); } } }">
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         PIN Code <span class="text-red-500">*</span>
                                     </label>
 
@@ -278,7 +278,7 @@
                                            x-on:keydown.enter.prevent="if (error) { $event.preventDefault(); }"
                                            x-on:keydown.tab="if (error) { $event.preventDefault(); }"
                                            placeholder="Enter Pin Code"
-                                           class="w-full px-4 py-2 rounded-xl border focus:outline-hidden transition shadow-xs bg-white dark:bg-dark/40 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary"
+                                           class="w-full px-4 py-2 rounded-xl border border-neutral-200 dark:border-white/10 border focus:outline-hidden transition bg-white dark:bg-white/5 border-neutral-300 dark:border-white/10 focus:ring-2 focus:ring-red-600/20"
                                            :class="error ? 'border-red-500 focus:ring-red-500' : ''"
                                            required
                                            id="pin_code" />
@@ -290,7 +290,7 @@
 
 
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         City <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text"
@@ -298,10 +298,10 @@
                                            placeholder="Enter City"
                                            id="city_name"
                                            name="city"
-                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         State <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text"
@@ -309,10 +309,10 @@
                                            placeholder="Enter State"
                                            id="state_name"
                                            name="state"
-                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         Country <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text"
@@ -320,7 +320,7 @@
                                            placeholder="Enter Country"
                                            id="country"
                                            name="country"
-                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="input-required-1 w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
                             </div>
                         </section>
@@ -335,30 +335,30 @@
                             </h2>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         Order ID <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text"
                                            required
                                            placeholder="Enter Order ID"
                                            name="order_id"
-                                           class="input-required-2 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="input-required-2 w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                        Channel <span class="text-gray-400 text-sm">(Optional)</span>
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
+                                        Channel <span class="text-neutral-400 text-sm">(Optional)</span>
                                     </label>
                                     <input type="text"
                                            name="channel"
                                            value="Single"
                                            readonly
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-dark/40 shadow-xs text-gray-500 cursor-not-allowed focus:outline-hidden" />
+                                           class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-neutral-100 dark:bg-white/5 shadow-xs text-neutral-500 cursor-not-allowed focus:outline-hidden" />
                                 </div>
 
                             </div>
                             <!-- Product Details -->
                             <h2 class="text-xl font-bold text-gray-800 dark:text-white border-b pb-2 mb-4 mt-10">
-                                Product Details <span class="text-sm text-gray-500">(What does the order contain?)</span>
+                                Product Details <span class="text-sm text-neutral-500">(What does the order contain?)</span>
                             </h2>
 
                             <div id="product-container" class="space-y-4">
@@ -371,19 +371,19 @@
                                             <input type="hidden" name="product_id" name="product_id">
                                             <!-- Product Name -->
                                             <div class="md:col-span-2">
-                                                <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                                <label class="block mb-2 font-semibold text-black dark:text-white">
                                                     Product Name <span class="text-red-500">*</span>
                                                 </label>
                                                 <input type="text"
                                                        placeholder="Product Name"
                                                        required
                                                        name="product_name"
-                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                             </div>
 
                                             <!-- Quantity -->
                                             <div>
-                                                <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                                <label class="block mb-2 font-semibold text-black dark:text-white">
                                                     Quantity <span class="text-red-500">*</span>
                                                 </label>
                                                 <input type="number"
@@ -391,12 +391,12 @@
                                                        placeholder="Qty"
                                                        required
                                                        name="quantity"
-                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                             </div>
 
                                             <!-- Total Price -->
                                             <div>
-                                                <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                                <label class="block mb-2 font-semibold text-black dark:text-white">
                                                     Total Price <span class="text-red-500">*</span>
                                                 </label>
                                                 <input type="number"
@@ -405,19 +405,19 @@
                                                        placeholder="Total Price"
                                                        required
                                                        name="total_price"
-                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                                       class="input-required-2 px-4 py-2 w-full rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                             </div>
 
                                             <!-- SKU Code -->
                                             <div class="md:col-span-2">
-                                                <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                                    SKU Code <span class="text-gray-400 text-sm">(optional)</span>
+                                                <label class="block mb-2 font-semibold text-black dark:text-white">
+                                                    SKU Code <span class="text-neutral-400 text-sm">(optional)</span>
                                                 </label>
                                                 <div class="flex items-center gap-2">
                                                     <input type="text"
                                                            placeholder="SKU Code"
                                                            name="sku_code"
-                                                           class="px-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                                           class="px-4 py-2 w-full rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                                     <!-- Remove button - hidden for first row -->
                                                     <button type="button" class="remove-btn hidden" title="Remove product">×</button>
                                                 </div>
@@ -432,7 +432,7 @@
 
                             <button type="button"
                                     onclick="addProductRow()"
-                                    class="flex items-center px-6 py-2 mt-4 bg-primary text-white rounded-xl shadow-sm hover:bg-primary-dark transition">
+                                    class="flex items-center px-6 py-2 mt-4 bg-red-600 text-white rounded-xl shadow-sm hover:bg-primary-dark transition">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      class="h-5 w-5 mr-1"
                                      viewBox="0 0 20 20"
@@ -454,13 +454,13 @@
                                  x-data="{ paymentMethod: 'prepaid' }">
                                 <!-- Payment Method Dropdown -->
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         Payment Method <span class="text-red-500">*</span>
                                     </label>
                                     <select id="payment-method"
                                             x-model="paymentMethod"
                                             name="payment_method"
-                                            class="input-required-2 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition">
+                                            class="input-required-2 w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition">
                                         <option value="prepaid" selected>Prepaid</option>
                                         <option value="cod">COD</option>
                                     </select>
@@ -468,21 +468,21 @@
 
                                 <!-- Shipping Charges -->
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         Shipping
                                         Charges
-                                        <span class="text-gray-400 text-sm">(Optional)</span>
+                                        <span class="text-neutral-400 text-sm">(Optional)</span>
                                     </label>
                                     <input type="number"
                                            min="0"
                                            placeholder="0"
                                            name="shipping_charges"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
 
                                 <!-- COD Charges -->
                                 <div class="mt-4">
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         COD Charges <span class="text-red-500">*</span>
                                     </label>
                                     <input type="number"
@@ -491,63 +491,63 @@
                                            name="cod_charges"
                                            x-bind:disabled="paymentMethod === 'prepaid'"
                                            x-bind:value="paymentMethod === 'prepaid' ? 0 : undefined"
-                                           class="input-required-2 w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="input-required-2 w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
 
                                 <!-- Discounts -->
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         Discounts
-                                        <span class="text-gray-400 text-sm">(Optional)</span>
+                                        <span class="text-neutral-400 text-sm">(Optional)</span>
                                     </label>
                                     <input type="number"
                                            min="0"
                                            placeholder="0"
                                            name="discounts"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
 
                                 <!-- Gift Wrap -->
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         Gift
                                         Wrap
-                                        <span class="text-gray-400 text-sm">(Optional)</span>
+                                        <span class="text-neutral-400 text-sm">(Optional)</span>
                                     </label>
                                     <input type="number"
                                            min="0"
                                            placeholder="0"
                                            name="gift_wrap"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
 
                                 <!-- Other Charges -->
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         Other
                                         Charges
-                                        <span class="text-gray-400 text-sm">(Optional)</span>
+                                        <span class="text-neutral-400 text-sm">(Optional)</span>
                                     </label>
                                     <input type="number"
                                            min="0"
                                            placeholder="0"
                                            name="other_charges"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
 
                                 <!-- Tax (percent) -->
                                 <div>
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         Tax
                                         (Percent)
-                                        <span class="text-gray-400 text-sm">(Optional)</span>
+                                        <span class="text-neutral-400 text-sm">(Optional)</span>
                                     </label>
                                     <input type="number"
                                            min="0"
                                            step="0.01"
                                            placeholder="0"
                                            name="tax_percent"
-                                           class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
                             </div>
                         </section>
@@ -559,7 +559,7 @@
                             <h2 class="text-xl font-bold text-gray-800 dark:text-white border-b pb-2 mt-6">Package Details</h2>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
                                 <div x-data="{ weight: '', error: '', validate() { this.error = ''; let val = parseFloat(this.weight); if (isNaN(val) || val < 0.01) { this.error = 'Weight must be at least 0.01 kg'; return false; } else if (val > 20) { this.error = 'Weight cannot exceed 20 kg'; return false; } return true; }, moveFocus(event) { if (this.validate()) { let formElements = Array.from(document.querySelectorAll('input, select, textarea, button')); let index = formElements.indexOf(event.target); if (index !== -1 && index + 1 < formElements.length) { try{formElements[index + 1].focus();} catch(error){} } } else { event.preventDefault(); } } }">
-                                    <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                    <label class="block mb-2 font-semibold text-black dark:text-white">
                                         Weight (in kg) <span class="text-red-500">*</span>
                                     </label>
 
@@ -575,7 +575,7 @@
                                            x-on:keydown.enter.prevent="if (error) { $event.preventDefault(); }"
                                            x-on:keydown.tab="if (error) { $event.preventDefault(); }"
                                            x-on:blur="let val = parseFloat(weight); if (val < 0.01) weight = '0.01'; if (val > 20) weight = '20';"
-                                           class="w-full px-4 py-2 rounded-xl border focus:outline-hidden transition shadow-xs bg-white dark:bg-dark/40 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary"
+                                           class="w-full px-4 py-2 rounded-xl border border-neutral-200 dark:border-white/10 border focus:outline-hidden transition bg-white dark:bg-white/5 border-neutral-300 dark:border-white/10 focus:ring-2 focus:ring-red-600/20"
                                            :class="error ? 'border-red-500 focus:ring-red-500' : ''" />
 
                                         <template x-if="error">
@@ -588,7 +588,7 @@
 
                                     <!-- Length -->
                                     <div>
-                                        <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        <label class="block mb-2 font-semibold text-black dark:text-white">
                                             Length (cm) <span class="text-red-500">*</span>
                                         </label>
                                         <input type="number"
@@ -598,13 +598,13 @@
                                                name="length"
                                                oninput="checkDimension(this)"
                                                data-label="Length"
-                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                         <p id="length-error" class="text-red-500 text-sm mt-1 hidden"></p>
                                     </div>
 
                                     <!-- Breadth -->
                                     <div>
-                                        <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        <label class="block mb-2 font-semibold text-black dark:text-white">
                                             Breadth (cm) <span class="text-red-500">*</span>
                                         </label>
                                         <input type="number"
@@ -614,13 +614,13 @@
                                                name="breadth"
                                                oninput="checkDimension(this)"
                                                data-label="Breadth"
-                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                         <p id="breadth-error" class="text-red-500 text-sm mt-1 hidden"></p>
                                     </div>
 
                                     <!-- Height -->
                                     <div>
-                                        <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
+                                        <label class="block mb-2 font-semibold text-black dark:text-white">
                                             Height (cm) <span class="text-red-500">*</span>
                                         </label>
                                         <input type="number"
@@ -630,7 +630,7 @@
                                                oninput="checkDimension(this)"
                                                data-label="Height"
                                                name="height"
-                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                               class="dimension-input w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                         <p id="height-error" class="text-red-500 text-sm mt-1 hidden"></p>
                                     </div>
 
@@ -647,7 +647,7 @@
                                         x-show="activeTab > 1"
                                         x-cloak
                                         @click="prev()"
-                                        class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg shadow-sm hover:bg-gray-300 transition mr-4">
+                                        class="px-4 py-2 bg-white dark:bg-white/[0.06] text-gray-800 dark:text-white rounded-lg shadow-sm hover:bg-neutral-300 transition mr-4">
                                     Back
                                 </button>
 
@@ -684,7 +684,7 @@
                                   method="post"
                                   enctype="multipart/form-data">
                                 {% csrf_token %}
-                                <label class="block mb-2 font-medium text-gray-700">Upload Bulk Order File (CSV)*</label>
+                                <label class="block mb-2 font-medium text-black">Upload Bulk Order File (CSV)*</label>
                                 <input name="bulk_order_file"
                                        type="file"
                                        accept=".csv, .xlsx"
@@ -692,14 +692,14 @@
 
                                 <!-- Buttons -->
                                 <div class="flex flex-wrap gap-4">
-                                    <button type="submit" class="btn btn-primary">Upload</button>
+                                    <button type="submit" class="btn btn-red-600">Upload</button>
                                     <button type="reset"
                                             class="btn border border-red-500 text-red-500 hover:bg-red-100">
                                         Cancel
                                     </button>
                                     <a href="{% static 'assets/bulk_order_sample.xlsx' %}"
                                        download
-                                       class="btn border border-gray-300 text-gray-700 hover:bg-gray-100">
+                                       class="btn border border-neutral-300 text-black hover:bg-neutral-100">
                                         Download Sample File
                                     </a>
                                 </div>
@@ -707,9 +707,9 @@
                         </div>
 
                         <!-- Right Section: Instructions -->
-                        <div class="bg-white dark:bg-dark/40 border border-gray-200 dark:border-gray-600 rounded-xl p-6 shadow-md">
+                        <div class="bg-white dark:bg-white/5 border border-white dark:border-white/10 rounded-xl border border-neutral-200 dark:border-white/10 p-6 shadow-md">
                             <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Bulk Upload Instructions</h2>
-                            <ol class="list-decimal list-inside space-y-3 text-gray-700 dark:text-gray-300">
+                            <ol class="list-decimal list-inside space-y-3 text-black dark:text-neutral-300">
                                 <li>
                                     <strong class="text-gray-900 dark:text-white">Step 1:</strong>
                                     Add warehouse by inputting the pickup details to generate warehouse ID.
@@ -722,7 +722,7 @@
                                 <li>
                                     <strong class="text-gray-900 dark:text-white">Step 3:</strong>
                                     Fill all the relevant fields required in the appropriate format and upload the file in
-                                    <strong class="text-primary">CSV</strong> format.
+                                    <strong class="text-red-600">CSV</strong> format.
                                 </li>
                             </ol>
                         </div>

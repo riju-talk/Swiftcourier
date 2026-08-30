@@ -223,7 +223,10 @@ class Command(BaseCommand):
 
         # Client() defaults to Host: testserver, which isn't in ALLOWED_HOSTS
         # outside of an actual `manage.py test` run - pin it to a host that is.
-        client = Client(SERVER_NAME=(settings.ALLOWED_HOSTS or ["127.0.0.1"])[0])
+        # A bare "*" in ALLOWED_HOSTS means allow-all but is not itself a valid
+        # Host header (fails RFC 1034/1035), so fall back to localhost then.
+        allowed = [h for h in settings.ALLOWED_HOSTS if h not in ("*", "")]
+        client = Client(SERVER_NAME=(allowed or ["127.0.0.1"])[0])
         response = client.post(url, data=body, content_type="application/json", **headers)
 
         style = self.style.SUCCESS if response.status_code < 400 else self.style.ERROR

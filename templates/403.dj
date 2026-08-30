@@ -1,0 +1,14 @@
+{% extends "components/errors/base.dj" %}
+
+{% block code %}403 — Access denied{% endblock %}
+{% block bigcode %}403{% endblock %}
+{% block eyebrow %}Access denied{% endblock %}
+{% block heading %}You don&rsquo;t have access to this{% endblock %}
+{% block message %}
+  Your account role doesn&rsquo;t permit this page. If you think this is a
+  mistake, contact your account administrator.
+{% endblock %}
+{% block actions %}
+  <a class="btn btn--primary" href="/">Back to dashboard</a>
+  <a class="btn btn--ghost" href="/account/signin/">Sign in as another user</a>
+{% endblock %}

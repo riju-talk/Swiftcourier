@@ -555,7 +555,7 @@
                         This is computer generated document, hence does not required signature.
                     </div>
                     {% if order.user.label_setting.show_powered_by %}
-                        <div class="footer-powered">Powered By Idiotship</div>
+                        <div class="footer-powered">Powered By SwiftCourier</div>
                     {% endif %}
                 </div>
                 </div>

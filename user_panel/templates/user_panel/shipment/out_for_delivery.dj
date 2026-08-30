@@ -38,15 +38,15 @@
         }
 
         ::-webkit-scrollbar-track {
-            @apply bg-gray-100 dark:bg-gray-700;
+            @apply bg-neutral-100 dark:bg-white/[0.06];
         }
 
         ::-webkit-scrollbar-thumb {
-            @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+            @apply bg-neutral-300 dark:bg-neutral-600 rounded-full;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            @apply bg-gray-400 dark:bg-gray-500;
+            @apply bg-neutral-400 dark:bg-gray-500;
         }
     </style>
 
@@ -58,19 +58,19 @@
     {% include "user_panel/components/common/shipment_navbar.dj" %}
 
 
-    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xs">
+    <div class="max-w-7xl mx-auto bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-white/10">
         <!-- Header Section -->
-        <div class="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b dark:border-gray-700 gap-4">
+        <div class="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b border-neutral-200 dark:border-white/10 gap-4">
             <!-- Left: Title + Search -->
             <div class="flex items-center gap-4 w-full sm:w-auto">
-                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">{{ status_display }}</h2>
+                <h2 class="text-xl font-semibold text-black dark:text-white whitespace-nowrap">{{ status_display }}</h2>
                 <input type="text"
                        id="searchInput"
                        name="q"
                        placeholder="Search Order"
                        value="{{ request.GET.q }}"
                        onenter="handleSearch(this.value)"
-                       class="w-48 px-3 py-1.5 border rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400">
+                       class="w-48 px-3 py-1.5 border rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-red-500 dark:bg-white/[0.06] dark:border-white/10 dark:text-gray-100 dark:placeholder-neutral-400">
             </div>
 
             <!-- Right: Buttons -->
@@ -87,36 +87,36 @@
                              class="absolute right-0 top-full bg-white shadow-lg rounded-md border hidden z-50 w-44">
 
                             <button onclick="downloadLabelOfSelectedOrders()"
-                                    class="block w-full text-left pl-4 pr-0 py-2 hover:bg-gray-100 text-sm">
+                                    class="block w-full text-left pl-4 pr-0 py-2 hover:bg-neutral-100 text-sm">
                                 Download Labels
                             </button>
 
                             <button onclick="downloadManifestOfSelectedOrders()"
-                                    class="block w-full text-left pl-4 pr-0 py-2 hover:bg-gray-100 text-sm">
+                                    class="block w-full text-left pl-4 pr-0 py-2 hover:bg-neutral-100 text-sm">
                                 Download Manifests
                             </button>
 
                             <button onclick="downloadInvoiceOfSelectedOrders()"
-                                    class="block w-full text-left pl-4 pr-0 py-2 hover:bg-gray-100 text-sm">
+                                    class="block w-full text-left pl-4 pr-0 py-2 hover:bg-neutral-100 text-sm">
                                 Download Invoices
                             </button>
                         </div>
                     </div>
                 </div>
                 <button id="filterToggleBtn"
-                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-xs"
+                        class="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-neutral-300 bg-white hover:bg-neutral-50 dark:border-white/15 dark:bg-transparent"
                         title="Filter Orders">
                     <!-- Original filter icon -->
-                    <svg class="w-5 h-5 text-indigo-600"
+                    <svg class="w-5 h-5 text-red-600"
                          fill="none"
                          stroke="currentColor"
                          stroke-width="2"
                          viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 019 17v-3.586L3.293 6.707A1 1 0 013 6V4z" />
                     </svg>
-                    <span id="filterToggleText" class="text-indigo-600 font-semibold">Filter</span>
+                    <span id="filterToggleText" class="text-red-600 font-semibold">Filter</span>
                 </button>
-                <button class="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm"
+                <button class="px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white text-sm"
                         id="exportOrderButton">Export</button>
             </div>
         </div>
@@ -124,60 +124,60 @@
         {% include "components/common/user_panel_filter.dj" %}
 
         <!-- Table -->
-        <div class="overflow-y-auto max-h-[600px] border border-gray-200 dark:border-gray-700 rounded-lg">
+        <div class="overflow-y-auto max-h-[600px] border border-white dark:border-white/10 rounded-lg">
             <table class="w-full">
-                <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
+                <thead class="bg-gray-50 dark:bg-white/[0.06] sticky top-0 z-10">
                     <tr>
                         <th class="px-2 py-1 text-left text-center align-middle">
                             <div class="flex items-center">
                                 <input type="checkbox"
                                        id="selectAll"
-                                       class="w-4 h-4 rounded-sm border-gray-300 dark:bg-gray-600 dark:border-gray-500">
+                                       class="w-4 h-4 rounded-sm border-neutral-300 dark:bg-neutral-600 dark:border-white/10-500">
                             </div>
                         </th>
-                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">CHANNEL</th>
-                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">ORDER ID</th>
-                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">ORDER NUMBER</th>
-                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">DATE</th>
-                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">CUSTOMER</th>
-                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">PRODUCTS</th>
-                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">QTY</th>
-                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">AMT</th>
-                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">WT</th>
-                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">AWB</th>
-                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">STATUS</th>
-                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-gray-600 dark:text-gray-300">ACTION</th>
+                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-neutral-600 dark:text-neutral-300">CHANNEL</th>
+                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-neutral-600 dark:text-neutral-300">ORDER ID</th>
+                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-neutral-600 dark:text-neutral-300">ORDER NUMBER</th>
+                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-neutral-600 dark:text-neutral-300">DATE</th>
+                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-neutral-600 dark:text-neutral-300">CUSTOMER</th>
+                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-neutral-600 dark:text-neutral-300">PRODUCTS</th>
+                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-neutral-600 dark:text-neutral-300">QTY</th>
+                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-neutral-600 dark:text-neutral-300">AMT</th>
+                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-neutral-600 dark:text-neutral-300">WT</th>
+                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-neutral-600 dark:text-neutral-300">AWB</th>
+                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-neutral-600 dark:text-neutral-300">STATUS</th>
+                        <th class="px-2 py-1 text-left text-center text-xs font-normal text-neutral-600 dark:text-neutral-300">ACTION</th>
 
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     <!-- Sample Data -->
                     {% for order in page_obj %}
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <tr class="hover:bg-gray-50 dark:hover:bg-black">
                             <td class="px-2 py-1">
                                 <input type="checkbox"
                                        value="{{ order.id }}"
-                                       class="ship-order-ids row-checkbox rounded-sm border-gray-300 dark:bg-gray-600">
+                                       class="ship-order-ids row-checkbox rounded-sm border-neutral-300 dark:bg-neutral-600">
                             </td>
-                            <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">{{ order.get_channel_display }}</td>
-                            <td class="px-1 py-0.5 text-xs text-center font-medium text-gray-900 dark:text-gray-100">IS{{ order.id }}</td>
-                            <td class="px-1 py-0.5 text-xs text-center font-medium text-blue-600 hover:underline dark:text-blue-400">
+                            <td class="px-1 py-0.5 text-xs text-center text-black dark:text-neutral-300">{{ order.get_channel_display }}</td>
+                            <td class="px-1 py-0.5 text-xs text-center font-medium text-black dark:text-white">{{ order.get_order_id }}</td>
+                            <td class="px-1 py-0.5 text-xs text-center font-medium text-red-600 hover:underline dark:text-red-400">
                                 <a href="{% url 'user_panel:order-details' id=order.id %}">{{ order.order_number }}</a>
                             </td>
-                            <td class="px-1 py-0.5 text-xs text-center text-center text-gray-700 dark:text-gray-300">
+                            <td class="px-1 py-0.5 text-xs text-center text-center text-black dark:text-neutral-300">
                                 <p>{{ order.created_at|date:"M d, Y" }}</p>
                                 <p>
-                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-white dark:bg-white/[0.06] text-black dark:text-white">
                                         {{ order.placed_at|date:"h:i A" }}
                                     </span>
                                 </p>
                             </td>
-                            <td class="px-1 py-0.5 text-xs text-center text-center text-gray-700 dark:text-gray-300">
+                            <td class="px-1 py-0.5 text-xs text-center text-center text-black dark:text-neutral-300">
                                 <div class="group relative inline-block w-full">
                                     <span class="truncate max-w-[100px] inline-block rounded-md px-1 py-0.5">
                                         <p>{{ order.shipping_address.name|truncatechars:15 }}</p>
                                         <p>
-                                            <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                            <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-white dark:bg-white/[0.06] text-black dark:text-white">
                                                 {{ order.shipping_address.phone|default:"No phone" }}
                                             </span>
                                         </p>
@@ -190,37 +190,37 @@
 
 
                             {# Product name with tooltip - rounded and efficient #}
-                            <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">
+                            <td class="px-1 py-0.5 text-xs text-center text-black dark:text-neutral-300">
                                 <div class="group relative inline-block w-full">
                                     <span class="truncate max-w-[120px] inline-block rounded-md px-1 py-0.5">
-                                        {{ order.items.first.product.name|truncatechars:20 }}
+                                        {{ order.items.all.0.product.name|truncatechars:20 }}
                                     </span>
                                     <span class="tooltip rounded-md shadow-lg px-2 py-1 bg-gray-800 text-white text-xs absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-50 max-w-xs">
-                                        {{ order.items.first.product.name }}
+                                        {{ order.items.all.0.product.name }}
                                     </span>
                                 </div>
                             </td>
-                            <td class="px-1 py-0.5 text-xs text-center text-gray-700 dark:text-gray-300">{{ order.items.first.quantity }}</td>
-                            <td class="px-1 py-0.5 text-xs text-center text-center text-gray-700 dark:text-gray-300">
+                            <td class="px-1 py-0.5 text-xs text-center text-black dark:text-neutral-300">{{ order.items.all.0.quantity }}</td>
+                            <td class="px-1 py-0.5 text-xs text-center text-center text-black dark:text-neutral-300">
                                 ₹ {{ order.total_amount|floatformat:0 }}
                                 <p>
-                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-white dark:bg-white/[0.06] text-black dark:text-white">
                                         {{ order.payment.method|upper }}
                                     </span>
                                 </p>
                             </td>
-                            <td class="px-1 py-0.5 text-xs text-center text-center text-gray-700 dark:text-gray-300">
+                            <td class="px-1 py-0.5 text-xs text-center text-center text-black dark:text-neutral-300">
                                 {{ order.shipment.package_weight_kg }}kg
                                 <p>
-                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-white dark:bg-white/[0.06] text-black dark:text-white">
                                         {{ order.shipment.package_length_cm }}x{{ order.shipment.package_width_cm }}x{{ order.shipment.package_height_cm }}cm
                                     </span>
                                 </p>
                             </td>
-                            <td class="px-1 py-0.5 text-xs text-center text-center text-gray-700 dark:text-gray-300">
+                            <td class="px-1 py-0.5 text-xs text-center text-center text-black dark:text-neutral-300">
                                 <a href="{% url 'track-shipment' %}?awb_number={{ order.awb_number }}" target="_blank">{{ order.awb_number }}</a>
                                 <p>
-                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                    <span class="ml-1 text-[10px] px-1 py-0.5 rounded-sm bg-white dark:bg-white/[0.06] text-black dark:text-white">
                                         {{ order.logistic_partner.name|default:"N/A" }}
                                     </span>
                                 </p>
@@ -233,21 +233,21 @@
 
                             <td class="px-1 py-0.5">
                                 <div class="relative">
-                                    <button class="action-btn p-0.5 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg">⋮</button>
-                                    <div class="action-menu hidden absolute right-0 mt-1 w-32 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg py-1 z-50">
+                                    <button class="action-btn p-0.5 hover:bg-neutral-100 dark:hover:bg-neutral-600 rounded-lg">⋮</button>
+                                    <div class="action-menu hidden absolute right-0 mt-1 w-32 bg-white dark:bg-neutral-900 border dark:border-white/10 rounded-lg shadow-lg py-1 z-50">
                                         <a href="#"
-                                           class="block px-3 py-2 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-100">Clone</a>
+                                           class="block px-3 py-2 text-xs hover:bg-neutral-100 dark:hover:bg-black dark:text-gray-100">Clone</a>
                                         <a href="#"
                                            onclick="downloadLabelById('{{ order.id }}'); return false;"
-                                           class="block px-3 py-2 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-100">Download Label</a>
+                                           class="block px-3 py-2 text-xs hover:bg-neutral-100 dark:hover:bg-black dark:text-gray-100">Download Label</a>
                                         <a href="{% url 'order_manager:download-manifest' %}?order_id={{ order.id }}"
                                            target="_blank"
-                                           class="block px-3 py-2 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-100">
+                                           class="block px-3 py-2 text-xs hover:bg-neutral-100 dark:hover:bg-black dark:text-gray-100">
                                             Download Manifest
                                         </a>
                                         <a href="{% url 'user_panel:download-invoice' %}?order_id={{ order.id }}"
                                            target="_blank"
-                                           class="block px-3 py-2 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-100">
+                                           class="block px-3 py-2 text-xs hover:bg-neutral-100 dark:hover:bg-black dark:text-gray-100">
                                             Download Invoice
                                         </a>
                                     </div>
@@ -258,7 +258,7 @@
                     {% empty %}
                         <tr>
                             <td colspan="11"
-                                class="text-center py-4 text-gray-500 dark:text-gray-400">
+                                class="text-center py-4 text-neutral-500 dark:text-neutral-400">
                                 <div class="flex justify-center items-center h-full">
                                     <svg class="w-5 h-5 mr-2"
                                          fill="none"
@@ -283,16 +283,16 @@
     <!-- Modal -->
     <div id="shipModal"
          class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-96 p-6 mx-4 transform -translate-y-1/2 -translate-x-1/2 top-1/2 left-1/2 fixed">
+        <div class="bg-white dark:bg-neutral-900 rounded-lg shadow-lg w-96 p-6 mx-4 transform -translate-y-1/2 -translate-x-1/2 top-1/2 left-1/2 fixed">
             <h2 class="text-lg font-bold mb-4 dark:text-gray-100">Ship Selected Orders</h2>
             <form id="shipForm"
                   action="{% url 'order_manager:ship-order' %}"
                   method="post">
                 {% csrf_token %}
                 <input type="hidden" name="order_ids" value="">
-                <label class="block mb-2 text-sm text-gray-700 dark:text-gray-300">Courier Partner</label>
+                <label class="block mb-2 text-sm text-black dark:text-neutral-300">Courier Partner</label>
                 <select name="courier"
-                        class="w-full mb-4 px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                        class="w-full mb-4 px-3 py-2 border rounded-lg dark:bg-white/[0.06] dark:border-white/10 dark:text-gray-100">
                     <option disabled>Select Courier</option>
                     <option>Xpressbees</option>
                     <option>Delhivery</option>
@@ -301,12 +301,12 @@
                 <div class="flex justify-end gap-2">
                     <button type="button"
                             onclick="closeModal()"
-                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm dark:text-gray-100">
+                            class="px-4 py-2 bg-white hover:bg-neutral-300 dark:bg-white/[0.06] dark:hover:bg-neutral-600 rounded-sm dark:text-gray-100">
                         Cancel
                     </button>
                     <button type="submit"
                             onclick="shipSelectedOrders()"
-                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-sm">Submit</button>
+                            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-sm">Submit</button>
                 </div>
             </form>
         </div>

@@ -33,15 +33,19 @@ module.exports = {
                 'colors': 'background-color, border-color, color, fill, stroke'
             },
             colors: {
+                // Brand: red/black/white "enterprise" system, matched to the
+                // sign-in page (account/templates/account/signin.dj). `primary`
+                // is the single red accent used for links, active nav, focus
+                // rings and primary buttons across every dashboard.
                 primary: {
-                    DEFAULT: '#4361ee',
-                    light: '#eaf1ff',
-                    'dark-light': 'rgba(67,97,238,.15)',
+                    DEFAULT: '#dc2626', // red-600
+                    light: '#fef2f2', // red-50
+                    'dark-light': 'rgba(220,38,38,.15)',
                 },
                 secondary: {
-                    DEFAULT: '#805dca',
-                    light: '#ebe4f7',
-                    'dark-light': 'rgb(128 93 202 / 15%)',
+                    DEFAULT: '#111827', // near-black (was purple) - used for
+                    light: '#f3f4f6', // secondary buttons / neutral emphasis
+                    'dark-light': 'rgb(17 24 39 / 15%)',
                 },
                 success: {
                     DEFAULT: '#00ab55',
@@ -80,7 +84,8 @@ module.exports = {
                 },
             },
             fontFamily: {
-                nunito: ['Nunito', 'sans-serif'],
+                nunito: ['"Plus Jakarta Sans"', 'Nunito', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                display: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'sans-serif'],
             },
             spacing: {
                 4.5: '18px',

@@ -1,14 +1,20 @@
 
-// 1) When Alpine initializes, force the store’s menu to "collapsible-vertical"
-//    and override toggleMenu() so it can never switch away.
+// SwiftCourier uses a permanent, always-expanded vertical sidebar (see the
+// Stitch redesign). VRISTO persists the menu mode in localStorage under
+// "_x_menu"; Alpine's $persist plugin reads that key while the store is being
+// created, which is AFTER "alpine:init" fires - so setting the store property in
+// an alpine:init handler gets clobbered by the persisted value. We fix it at the
+// source: overwrite the persisted key now (this script runs before the deferred
+// alpine bundle), then also pin the store and neutralise toggleMenu so nothing
+// can switch back to the collapsing icon-rail.
+try {
+    localStorage.setItem('_x_menu', JSON.stringify('vertical'));
+} catch (e) { /* private mode / storage disabled - the alpine:init pin still runs */ }
+
 document.addEventListener('alpine:init', () => {
     const appStore = Alpine.store('app');
-
-    // Immediately set it, in case anything else tries to read it later:
-    appStore.menu = 'collapsible-vertical';
-
-    // Override toggleMenu so it always re-assigns "collapsible-vertical":
-    appStore.toggleMenu = function (_val) {
-        this.menu = 'collapsible-vertical';
+    appStore.menu = 'vertical';
+    appStore.toggleMenu = function () {
+        this.menu = 'vertical';
     };
 });

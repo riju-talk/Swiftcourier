@@ -9,7 +9,7 @@
 
 {% block body %}
     <div class="p-4">
-        <h1 class="text-xl font-semibold mb-3 text-gray-900 dark:text-gray-100">Rate Card for {{ user.email }}</h1>
+        <h1 class="text-xl font-semibold mb-3 text-black dark:text-white">Rate Card for {{ user.email }}</h1>
 
         <form method="post"
               action="{% url 'superadmin_panel:delete-rate-card' 0 %}"

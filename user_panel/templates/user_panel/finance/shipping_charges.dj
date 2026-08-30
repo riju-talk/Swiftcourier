@@ -9,166 +9,62 @@
 {% endblock title %}
 
 
-{% block css %}
-    <style>
-        .page-container {
-            width: 100%;
-            padding: 16px;
-        }
-
-        .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            background-color: var(--bg-color, #ffffff);
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-            table-layout: auto;
-            /* auto ensures responsive equal spacing */
-        }
-
-        thead {
-            background-color: var(--thead-bg, #f9fafb);
-        }
-
-        th,
-        td {
-            padding: 10px 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color, #e5e7eb);
-            white-space: nowrap;
-        }
-
-        th {
-            font-weight: 600;
-            color: var(--th-color, #374151);
-        }
-
-        td {
-            color: var(--td-color, #111827);
-        }
-
-        .header-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .header-actions h2 {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--header-color, #111827);
-        }
-
-        .header-actions input {
-            border: 1px solid var(--border-color, #d1d5db);
-            border-radius: 6px;
-            padding: 6px 10px;
-            font-size: 14px;
-        }
-
-        .header-actions button {
-            background: #2563eb;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .no-orders {
-            text-align: center;
-            padding: 30px;
-            color: var(--text-muted, #6b7280);
-        }
-
-        /* Sticky header */
-        .table-wrapper thead th {
-            position: sticky;
-            top: 0;
-            z-index: 2;
-        }
-
-        /* Dark theme */
-        body.dark-theme {
-            --bg-color: #111827;
-            --thead-bg: #1f2937;
-            --border-color: #374151;
-            --th-color: #e5e7eb;
-            --td-color: #d1d5db;
-            --header-color: #f9fafb;
-            --text-muted: #9ca3af;
-        }
-    </style>
-{% endblock css %}
-
-
 {% block body %}
-    <div class="page-container">
-        <!-- Header -->
-        <div class="header-actions">
-            <h2>Shipping Charges</h2>
-            <div class="flex gap-2">
-                <input type="text" placeholder="Search Order" id="searchOrder" />
-                <button id="exportOrderButton">Export</button>
+    <div class="space-y-6">
+
+        <div class="flex flex-wrap items-end justify-between gap-3">
+            <div>
+                <h1 class="text-[22px] font-bold leading-tight tracking-tight text-neutral-900 dark:text-white">Shipping Charges</h1>
+                <p class="mt-0.5 text-[13px] text-neutral-500 dark:text-neutral-400">Freight, RTO and GST billed per shipment.</p>
             </div>
+            <button id="exportOrderButton" class="inline-flex h-9 items-center gap-1.5 rounded-lg border border-neutral-300 bg-white px-4 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-50 dark:border-white/15 dark:bg-transparent dark:text-neutral-200">Export CSV</button>
         </div>
 
-        <!-- Table -->
-        <div class="table-wrapper">
-            <table id="ordersTable">
-                <thead>
-                    <tr>
-                        <th>S.No</th>
-                        <th>Order ID</th>
-                        <th>Idiotship ID</th>
-                        <th>Date</th>
-                        <th>AWB</th>
-                        <th>Courier</th>
-                        <th>Status</th>
-                        <th>Freight charges</th>
-                        <th>RTO charges</th>
-                        <th>GST Amount</th>
-                        <th>Total Freight</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if orders_with_freight %}
-                        {% for item in orders_with_freight %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ item.order.order_number }}</td>
-                                <td>{{ item.order.get_order_id }}</td>
-                                <td>{{ item.order.placed_at|date:"d M Y" }}</td>
-                                <td>{{ item.order.awb_number }}</td>
-                                <td>
-                                    {% if item.order.logistic_partner %}
-                                        {{ item.order.logistic_partner.name }}
-                                    {% else %}
-                                        N/A
-                                    {% endif %}
-                                </td>
-                                <td>{{ item.order.get_status_display }}</td>
-                                <td>{{ item.freight|floatformat:2 }}</td>
-                                <td>{{ item.rto_charges|default:"-" }}</td>
-                                <td>{{ item.freight_gst|floatformat:2 }}</td>
-                                <td>{{ item.total_freight|floatformat:2 }}</td>
-                            </tr>
-                        {% endfor %}
-                    {% else %}
+        <div class="overflow-hidden rounded-xl border border-neutral-200/80 bg-white dark:border-white/10 dark:bg-neutral-950">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200/80 px-5 py-4 dark:border-white/10">
+                <h2 class="text-sm font-bold text-neutral-900 dark:text-white">Charged shipments</h2>
+                <input type="text" placeholder="Search order or AWB…" id="searchOrder"
+                       class="h-9 w-64 rounded-lg border border-neutral-300 px-3 text-sm focus:outline-hidden focus:ring-2 focus:ring-red-500 dark:border-white/10 dark:bg-white/[0.06] dark:text-gray-100 dark:placeholder-neutral-400" />
+            </div>
+
+            <div class="overflow-x-auto">
+                <table id="ordersTable" class="w-full whitespace-nowrap">
+                    <thead>
                         <tr>
-                            <td colspan="10" class="no-orders">No orders found.</td>
+                            <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-neutral-500">S.No</th>
+                            <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-neutral-500">Order ID</th>
+                            <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-neutral-500">SwiftCourier ID</th>
+                            <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-neutral-500">Date</th>
+                            <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-neutral-500">AWB</th>
+                            <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-neutral-500">Courier</th>
+                            <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-neutral-500">Status</th>
+                            <th class="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-neutral-500">Freight</th>
+                            <th class="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-neutral-500">RTO</th>
+                            <th class="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-neutral-500">GST</th>
+                            <th class="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-neutral-500">Total Freight</th>
                         </tr>
-                    {% endif %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for item in orders_with_freight %}
+                            <tr class="border-t border-neutral-100 hover:bg-neutral-50 dark:border-white/5 dark:hover:bg-white/[0.03]">
+                                <td class="px-4 py-3 text-[13px] text-neutral-400">{{ forloop.counter }}</td>
+                                <td class="px-4 py-3 text-[13px] font-medium text-neutral-900 dark:text-white">{{ item.order.order_number }}</td>
+                                <td class="px-4 py-3 font-mono text-[12px] text-neutral-500 dark:text-neutral-400">{{ item.order.get_order_id }}</td>
+                                <td class="px-4 py-3 text-[13px] text-neutral-600 dark:text-neutral-300">{{ item.order.placed_at|date:"d M Y" }}</td>
+                                <td class="px-4 py-3 font-mono text-[12px] text-neutral-500 dark:text-neutral-400">{{ item.order.awb_number }}</td>
+                                <td class="px-4 py-3 text-[13px] text-neutral-600 dark:text-neutral-300">{{ item.order.logistic_partner.name|default:"N/A" }}</td>
+                                <td class="px-4 py-3">{% include "components/ui/status_pill.dj" with status=item.order.status label=item.order.get_status_display %}</td>
+                                <td class="px-4 py-3 text-right text-[13px] tabular-nums text-neutral-700 dark:text-neutral-200">₹{{ item.freight|floatformat:2 }}</td>
+                                <td class="px-4 py-3 text-right text-[13px] tabular-nums text-neutral-500">{{ item.rto_charges|default:"—" }}</td>
+                                <td class="px-4 py-3 text-right text-[13px] tabular-nums text-neutral-500">₹{{ item.freight_gst|floatformat:2 }}</td>
+                                <td class="px-4 py-3 text-right text-[13px] font-semibold tabular-nums text-neutral-900 dark:text-white">₹{{ item.total_freight|floatformat:2 }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="11" class="px-4 py-12 text-center text-sm text-neutral-400">No charged shipments yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

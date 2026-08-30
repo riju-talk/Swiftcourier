@@ -2,6 +2,7 @@ import json
 import logging
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from order_manager.webhook_events import log_carrier_webhook
 
 from order_manager.models import Order
 
@@ -11,6 +12,7 @@ logger = logging.getLogger("my-logger")
 
 # Create your views here.
 @csrf_exempt
+@log_carrier_webhook("tci_express")
 def webhook(request):
     if request.method != "POST":
         return JsonResponse(

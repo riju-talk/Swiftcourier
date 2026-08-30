@@ -26,7 +26,7 @@
         }
 
         ::-webkit-scrollbar-track {
-            @apply bg-gray-100 dark:bg-gray-700;
+            @apply bg-gray-100 dark:bg-white/[0.06];
         }
 
         ::-webkit-scrollbar-thumb {
@@ -57,20 +57,20 @@
 
 {% block body %}
 
-    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xs">
+    <div class="max-w-7xl mx-auto bg-white dark:bg-[#12151f] rounded-lg border border-neutral-200 dark:border-white/10">
 
         <!-- Header Section -->
-        <div class="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b dark:border-gray-700 gap-4">
+        <div class="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b border-neutral-200 dark:border-white/10 gap-4">
             <!-- Left: Title + Search -->
             <div class="flex items-center gap-4 w-full sm:w-auto">
-                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">All Users</h2>
+                <h2 class="text-xl font-semibold text-black dark:text-white whitespace-nowrap">All Users</h2>
                 <input type="text"
                        id="searchInput"
                        name="q"
                        placeholder="Search Users"
                        value="{{ request.GET.q }}"
                        onenter="handleSearch(this.value)"
-                       class="w-48 px-3 py-1.5 border rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400">
+                       class="w-48 px-3 py-1.5 border rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-red-500 dark:bg-white/[0.06] dark:border-white/10 dark:text-gray-100 dark:placeholder-gray-400">
             </div>
 
             <!-- Right: Buttons -->
@@ -84,12 +84,12 @@
         <!-- Client Table Section -->
         <div class="overflow-x-auto">
             <table class="w-full">
-                <thead class="bg-gray-50 dark:bg-gray-700">
+                <thead class="bg-gray-50 dark:bg-white/[0.06]">
                     <tr>
                         <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">S No</th>
                         <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">EMAIL ID</th>
                         <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">MOBILE NO</th>
-                        <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">IDIOTSHIP CODE</th>
+                        <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">SWIFTCOURIER CODE</th>
                         <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">ACTION</th>
                     </tr>
                 </thead>
@@ -104,7 +104,7 @@
 
                             <td class="px-2 py-1">
                                 <a href="{% url 'superadmin_panel:add-admin' %}"
-                                   class="inline-block px-2 py-1 text-xs text-white bg-blue-600 rounded-sm hover:bg-blue-700 transition">
+                                   class="inline-block px-2 py-1 text-xs text-white bg-red-600 rounded-sm hover:bg-red-700 transition">
                                     Add Admin
                                 </a>
                             </td>
@@ -127,13 +127,13 @@
 
 
         <!-- Pagination -->
-        <div class="p-4 border-t dark:border-gray-700">
+        <div class="p-4 border-t dark:border-white/10">
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-4">
                     <span class="text-sm text-gray-700 dark:text-gray-300">Show:</span>
                     <select id="pageSize"
                             onchange="updatePageSize(this.value)"
-                            class="px-2 py-1 border rounded-sm text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                            class="px-2 py-1 border rounded-sm text-sm dark:bg-white/[0.06] dark:border-white/10 dark:text-gray-100">
                         <option value="10" {% if page_size == 10 %}selected{% endif %}>10</option>
                         <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
                         <option value="100" {% if page_size == 100 %}selected{% endif %}>100</option>
@@ -144,12 +144,12 @@
 
                 <div class="flex gap-1 flex-wrap">
                     <button onclick="navigatePage('prev')"
-                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100"
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-white/[0.06] dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100"
                             {% if not page_obj.has_previous %}disabled{% endif %}>Previous</button>
 
                     {% if page_obj.number > 3 %}
                         <button onclick="navigatePage(1)"
-                                class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100">
+                                class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-white/[0.06] dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100">
                             1
                         </button>
                         <span class="px-2 text-gray-500 dark:text-gray-300">...</span>
@@ -160,9 +160,9 @@
                             <button onclick="navigatePage({{ num }})"
                                     class="px-3 py-1
                                            {% if num == page_obj.number %}
-                                               bg-blue-100 text-blue-600
+                                               bg-red-100 text-red-600
                                            {% else %}
-                                               bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600
+                                               bg-gray-100 hover:bg-gray-200 dark:bg-white/[0.06] dark:hover:bg-gray-600
                                            {% endif %}
                                            rounded text-sm dark:text-gray-100">{{ num }}</button>
                         {% endif %}
@@ -171,13 +171,13 @@
                     {% if page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
                         <span class="px-2 text-gray-500 dark:text-gray-300">...</span>
                         <button onclick="navigatePage({{ page_obj.paginator.num_pages }})"
-                                class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100">
+                                class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-white/[0.06] dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100">
                             {{ page_obj.paginator.num_pages }}
                         </button>
                     {% endif %}
 
                     <button onclick="navigatePage('next')"
-                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100"
+                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-white/[0.06] dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100"
                             {% if not page_obj.has_next %}disabled{% endif %}>Next</button>
                 </div>
 

@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>{% block code %}Error{% endblock %} &middot; SwiftCourier</title>
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon/favicon.ico' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  {# Self-contained on purpose: an error page (esp. 500) must render even if the
+     compiled stylesheet, the DB, or a context processor is unavailable. #}
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--red:#dc2626;--ink:#0a0a0a;--paper:#ffffff}
+    html{-webkit-text-size-adjust:100%}
+    body{
+      font-family:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+      background:var(--ink);color:#fff;min-height:100vh;min-height:100dvh;
+      display:flex;align-items:center;justify-content:center;
+      padding:2rem 1.25rem;overflow:hidden;position:relative;
+      -webkit-font-smoothing:antialiased;letter-spacing:-.011em;
+    }
+    .glow{position:absolute;border-radius:9999px;filter:blur(90px);pointer-events:none;z-index:0}
+    .glow--a{width:32rem;height:32rem;left:-12rem;top:-16rem;background:rgba(220,38,38,.20)}
+    .glow--b{width:26rem;height:26rem;right:-10rem;bottom:-14rem;background:rgba(185,28,28,.12)}
+    .wrap{position:relative;z-index:1;width:100%;max-width:30rem;text-align:center}
+    .brand{display:inline-flex;align-items:center;gap:.55rem;font-weight:800;font-size:1.15rem;letter-spacing:-.02em}
+    .brand .mk{display:flex;height:1.9rem;width:1.9rem;align-items:center;justify-content:center;border-radius:.6rem;background:#fff;color:#000;font-size:.9rem}
+    .brand .accent{color:#f87171}
+    .code{
+      margin-top:2.75rem;font-weight:800;line-height:1;
+      font-size:clamp(4.5rem,22vw,7.5rem);letter-spacing:-.05em;
+      background:linear-gradient(180deg,#ffffff 0%,rgba(255,255,255,.28) 100%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      font-variant-numeric:tabular-nums;
+    }
+    .eyebrow{margin-top:.25rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.28em;color:rgba(255,255,255,.4)}
+    h1{margin-top:1.4rem;font-size:1.6rem;font-weight:700;letter-spacing:-.02em}
+    p.lead{margin-top:.7rem;font-size:.95rem;line-height:1.6;color:rgba(255,255,255,.6)}
+    .actions{margin-top:2rem;display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
+      height:2.7rem;padding:0 1.35rem;border-radius:.7rem;
+      font-size:.875rem;font-weight:600;text-decoration:none;cursor:pointer;border:1px solid transparent;
+      transition:background-color .18s ease,border-color .18s ease,transform .18s ease,color .18s ease;
+    }
+    .btn:active{transform:scale(.97)}
+    .btn--primary{background:#fff;color:#000}
+    .btn--primary:hover{background:var(--red);color:#fff}
+    .btn--ghost{border-color:rgba(255,255,255,.16);color:rgba(255,255,255,.8)}
+    .btn--ghost:hover{border-color:rgba(255,255,255,.35);color:#fff}
+    .ref{margin-top:2.25rem;font-size:.72rem;color:rgba(255,255,255,.32);letter-spacing:.02em}
+    .ref code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:rgba(255,255,255,.5)}
+    @media (prefers-reduced-motion:reduce){.btn{transition:none}}
+  </style>
+</head>
+<body>
+  <div class="glow glow--a"></div>
+  <div class="glow glow--b"></div>
+
+  <div class="wrap">
+    <span class="brand">
+      <span class="mk">S</span>
+      <span>Swift<span class="accent">Courier</span></span>
+    </span>
+
+    <div class="code">{% block bigcode %}{% endblock %}</div>
+    <div class="eyebrow">{% block eyebrow %}Error{% endblock %}</div>
+
+    <h1>{% block heading %}Something went wrong{% endblock %}</h1>
+    <p class="lead">{% block message %}An unexpected error occurred.{% endblock %}</p>
+
+    <div class="actions">
+      {% block actions %}
+        <a class="btn btn--primary" href="/">Back to dashboard</a>
+      {% endblock %}
+    </div>
+
+    {% block ref %}{% endblock %}
+  </div>
+</body>
+</html>

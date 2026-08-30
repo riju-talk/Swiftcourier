@@ -1,0 +1,14 @@
+{% comment %}
+Status pill — normalises the many bare status strings across list pages.
+Usage:  {% include "components/ui/status_pill.dj" with status=trxn.status %}
+        {% include "components/ui/status_pill.dj" with status=order.status label=order.get_status_display %}
+{% endcomment %}
+{% with s=status|lower %}
+<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide whitespace-nowrap
+  {% if s == 'success' or s == 'delivered' or s == 'completed' or s == 'paid' or s == 'active' or s == 'credit' %}bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400
+  {% elif s == 'pending' or s == 'processing' or s == 'in_transit' or s == 'initiated' or s == 'partial' %}bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400
+  {% elif s == 'failed' or s == 'cancelled' or s == 'rejected' or s == 'rto' or s == 'debit' or s == 'expired' %}bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400
+  {% else %}bg-neutral-100 text-neutral-500 dark:bg-white/5 dark:text-neutral-400{% endif %}">
+  {{ label|default:status }}
+</span>
+{% endwith %}

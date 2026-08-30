@@ -5,12 +5,10 @@
          class="sidebar fixed min-h-screen h-full top-0 bottom-0 w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] z-50 transition-all duration-300">
         <div class="bg-white dark:bg-black h-full">
             <div class="flex justify-between items-center px-4 py-3">
-                <a href=""
-                   class="main-logo flex items-center shrink-0">
-                    <img class="w-8 ml-[5px] flex-none"
-                         src="{% static 'images/logo/shipnick_logo.png' %}"
-                         alt="image" />
-                    <span class="text-2xl ltr:ml-1.5 rtl:mr-1.5  font-semibold  align-middle lg:inline dark:text-white-light">Idiotship</span>
+                <a href="/"
+                   class="main-logo flex items-center shrink-0 gap-2">
+                    <span class="flex h-8 w-8 flex-none items-center justify-center rounded-lg bg-black text-sm font-extrabold text-white dark:bg-white dark:text-black">S</span>
+                    <span class="text-2xl font-extrabold tracking-tight align-middle lg:inline text-black dark:text-white">Swift<span class="text-red-600">Courier</span></span>
                 </a>
                 <a href="javascript:;"
                    class="collapse-icon w-8 h-8 rounded-full flex items-center hover:bg-gray-500/10 dark:hover:bg-dark-light/10 dark:text-white-light transition duration-300 rtl:rotate-180"
@@ -45,7 +43,7 @@
                     </a>
                 </li>
 
-                <h2 class="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark/[0.08] -mx-4 mb-1">
+                <h2 class="mt-4 mb-1 px-3 flex items-center text-[11px] font-bold uppercase tracking-[0.15em] text-neutral-400 dark:text-neutral-500">
 
                     <svg class="w-4 h-5 flex-none hidden"
                          viewBox="0 0 24 24"
@@ -105,7 +103,7 @@
                                     <a href="{% url 'superadmin_panel:api-integration' %}">API Integration</a>
                                 </li>
                                 <li>
-                                    <a href="#">Rate Card</a>
+                                    <a href="{% url 'superadmin_panel:rate-card' %}">Rate Card</a>
                                 </li>
                                 <li>
                                     <a href="{% url 'superadmin_panel:send_notification' %}">Send Notification</a>
@@ -118,7 +116,7 @@
                     </ul>
                 </li>
 
-                <h2 class="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark/[0.08] -mx-4 mb-1">
+                <h2 class="mt-4 mb-1 px-3 flex items-center text-[11px] font-bold uppercase tracking-[0.15em] text-neutral-400 dark:text-neutral-500">
 
                     <svg class="w-4 h-5 flex-none hidden"
                          viewBox="0 0 24 24"
@@ -182,7 +180,7 @@
                     </ul>
                 </li>
 
-                <h2 class="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark/[0.08] -mx-4 mb-1">
+                <h2 class="mt-4 mb-1 px-3 flex items-center text-[11px] font-bold uppercase tracking-[0.15em] text-neutral-400 dark:text-neutral-500">
                     <svg class="w-4 h-5 flex-none hidden"
                          viewBox="0 0 24 24"
                          stroke="currentColor"
@@ -238,47 +236,34 @@
                         {% comment %} <li>
                             <a href="{% url 'superadmin_panel:assign-admin' %}">Assign Admin</a>
                         </li> {% endcomment %}
-                    </li>
-                </ul>
-            </li>
+                    </ul>
+                </li>
 
-            <h2 class="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark/[0.08] -mx-4 mb-1">
+                <h2 class="mt-4 mb-1 px-3 flex items-center text-[11px] font-bold uppercase tracking-[0.15em] text-neutral-400 dark:text-neutral-500">
+                    <span>Pincode</span>
+                </h2>
+                <li class="menu nav-item">
+                    <a href="{% url 'superadmin_panel:manage_pincode' %}" class="nav-link group">
+                        <div class="flex items-center">
+                            <svg class="group-hover:text-primary! shrink-0"
+                                 width="20"
+                                 height="20"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <g id="style=bulk">
+                                <g id="location">
+                                <path id="vector (Stroke)" fill-rule="evenodd" clip-rule="evenodd" d="M8.9461 21.1315L8.89129 21.0787L8.89035 21.0778C8.81273 21.0023 8.73386 20.9254 8.65394 20.8471C7.2824 19.5029 5.57222 17.7231 4.34999 15.6268C3.12314 13.5227 2.35382 11.04 2.96276 8.32592C5.09133 -1.11519 18.9197 -1.10413 21.0372 8.33595C21.6639 11.1292 20.831 13.6741 19.5403 15.8149C18.2545 17.9477 16.4747 19.7455 15.0992 21.0783C14.0956 22.0555 13.1259 22.7323 12.0296 22.7449C10.9283 22.7576 9.95462 22.098 8.95039 21.1357L8.9461 21.1315Z" fill="currentColor" opacity="0.5" />
+                                <path id="ellipse (Stroke)" fill-rule="evenodd" clip-rule="evenodd" d="M8.75 9.5C8.75 7.70507 10.2051 6.25 12 6.25C13.7949 6.25 15.25 7.70507 15.25 9.5C15.25 11.2949 13.7949 12.75 12 12.75C10.2051 12.75 8.75 11.2949 8.75 9.5Z" fill="currentColor" />
+                                </g>
+                                </g>
+                            </svg>
+                            <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Pincode Manage</span>
+                        </div>
+                    </a>
+                </li>
 
-                <svg class="w-4 h-5 flex-none hidden"
-                     viewBox="0 0 24 24"
-                     stroke="currentColor"
-                     stroke-width="1.5"
-                     fill="none"
-                     stroke-linecap="round"
-                     stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                <span>Pincode</span>
-            </h2>
-            <li class="menu nav-item">
-                <a href="{% url 'superadmin_panel:manage_pincode' %}" class="nav-link group">
-                    <div class="flex items-center">
-                        <svg class="group-hover:text-primary! shrink-0"
-                             width="20"
-                             height="20"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             xmlns="http://www.w3.org/2000/svg">
-                            <g id="style=bulk">
-                            <g id="location">
-                            <path id="vector (Stroke)" fill-rule="evenodd" clip-rule="evenodd" d="M8.9461 21.1315L8.89129 21.0787L8.89035 21.0778C8.81273 21.0023 8.73386 20.9254 8.65394 20.8471C7.2824 19.5029 5.57222 17.7231 4.34999 15.6268C3.12314 13.5227 2.35382 11.04 2.96276 8.32592C5.09133 -1.11519 18.9197 -1.10413 21.0372 8.33595C21.6639 11.1292 20.831 13.6741 19.5403 15.8149C18.2545 17.9477 16.4747 19.7455 15.0992 21.0783C14.0956 22.0555 13.1259 22.7323 12.0296 22.7449C10.9283 22.7576 9.95462 22.098 8.95039 21.1357L8.9461 21.1315Z" fill="currentColor" opacity="0.5" />
-                            <path id="ellipse (Stroke)" fill-rule="evenodd" clip-rule="evenodd" d="M8.75 9.5C8.75 7.70507 10.2051 6.25 12 6.25C13.7949 6.25 15.25 7.70507 15.25 9.5C15.25 11.2949 13.7949 12.75 12 12.75C10.2051 12.75 8.75 11.2949 8.75 9.5Z" fill="currentColor" />
-                            </g>
-                            </g>
-                        </svg>
-
-
-                        <span class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Pincode Manage</span>
-                    </div>
-                </a>
-            </li>
-
-        </ul>
+            </ul>
     </div>
 </nav>
 </div>

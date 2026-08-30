@@ -41,6 +41,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.utils.timezone import now, make_aware, localtime
 
 
@@ -69,9 +70,13 @@ def statistics(request):
     start_of_year = today.replace(month=1, day=1)
     last_7_days = today - timedelta(days=6)
 
+    # Tenant isolation: this dashboard shows the requesting merchant's own
+    # numbers only. `own_orders` is the base queryset for every aggregate below.
+    own_orders = Order.objects.filter(user=request.user)
+
     # 1. Revenue Data - Monthly
     monthly_data = (
-        Order.objects.filter(created_at__date__gte=start_of_year)
+        own_orders.filter(created_at__date__gte=start_of_year)
         .annotate(month=TruncMonth("created_at"))
         .values("month")
         .annotate(
@@ -107,7 +112,7 @@ def statistics(request):
         expenses_data[month_idx] = expenses
 
     sales_by_courier = (
-        Order.objects.filter(logistic_partner__isnull=False)
+        own_orders.filter(logistic_partner__isnull=False)
         .values("logistic_partner__name")
         .annotate(total=Count("id"))
         .order_by("-total")
@@ -118,7 +123,7 @@ def statistics(request):
 
     # 3. Daily Sales - This Week
     daily_data = (
-        Order.objects.filter(created_at__date__gte=last_7_days)
+        own_orders.filter(created_at__date__gte=last_7_days)
         .annotate(day=TruncDay("created_at"))
         .values("day")
         .annotate(sales=Sum("total_amount"))
@@ -133,13 +138,11 @@ def statistics(request):
         daily_sales_data[weekday] = float(entry["sales"] or 0)
 
     # 4. Total Orders Summary
-    total_orders = Order.objects.count()
-    recent_orders_qs = Order.objects.select_related("user").order_by("-created_at")[:5]
+    total_orders = own_orders.count()
+    recent_orders_qs = own_orders.select_related("user").order_by("-created_at")[:5]
 
     total_order_series = list(
-        Order.objects.order_by("-created_at").values_list("total_amount", flat=True)[
-            :10
-        ]
+        own_orders.order_by("-created_at").values_list("total_amount", flat=True)[:10]
     )
 
     # 5. Summary
@@ -242,8 +245,6 @@ def dashboard(request):
 
     data = request.GET
 
-    date_from = data.get("date_from")
-    date_to = data.get("date_to")
     payment_method = data.get("method")
     courier = data.get("courier")
     show_notice = data.get("show_notice")
@@ -251,6 +252,14 @@ def dashboard(request):
     # date times
     today = timezone.now().date()
     yesterday = today - timedelta(days=1)
+
+    # Default the range to the last 30 days (M/D/Y, matching the picker + the
+    # strptime format below) so the input never shows a hard-coded window that
+    # doesn't reflect what's actually on screen.
+    default_from = (today - timedelta(days=29)).strftime("%m/%d/%Y")
+    default_to = today.strftime("%m/%d/%Y")
+    date_from = data.get("date_from") or default_from
+    date_to = data.get("date_to") or default_to
 
     # ---------------------------------------------------
     # Base Querysets
@@ -265,32 +274,25 @@ def dashboard(request):
     # ---------------------------------------------------
     # Date Filter + Previous Period
     # ---------------------------------------------------
-    if date_from and date_to:
-        try:
-            start_date = datetime.strptime(date_from, "%m/%d/%Y")
-            end_date = datetime.strptime(date_to, "%m/%d/%Y")
+    try:
+        start_date = datetime.strptime(date_from, "%m/%d/%Y")
+        end_date = datetime.strptime(date_to, "%m/%d/%Y")
+    except (ValueError, TypeError):
+        # bad input in the query string - fall back to the 30-day default and
+        # show it in the picker
+        date_from, date_to = default_from, default_to
+        start_date = datetime.strptime(default_from, "%m/%d/%Y")
+        end_date = datetime.strptime(default_to, "%m/%d/%Y")
 
-            # Current Period
-            current_orders = current_orders.filter(
-                created_at__date__range=(start_date, end_date)
-            )
-
-            # Previous Period
-            days = (end_date - start_date).days + 1
-
-            prev_end = start_date - timedelta(days=1)
-            prev_start = prev_end - timedelta(days=days - 1)
-
-            previous_orders = previous_orders.filter(
-                created_at__date__range=(prev_start, prev_end)
-            )
-
-        except Exception as e:
-            logger.exception(e)
-    else:
-        current_orders = current_orders.filter(
-            created_at__date__gte=now().date() - timedelta(days=7)
-        )
+    current_orders = current_orders.filter(
+        created_at__date__range=(start_date, end_date)
+    )
+    days = (end_date - start_date).days + 1
+    prev_end = start_date - timedelta(days=1)
+    prev_start = prev_end - timedelta(days=days - 1)
+    previous_orders = previous_orders.filter(
+        created_at__date__range=(prev_start, prev_end)
+    )
 
     # ---------------------------------------------------
     # Payment Filter
@@ -307,49 +309,51 @@ def dashboard(request):
         previous_orders = previous_orders.filter(logistic_partner__id=courier)
 
     # ---------------------------------------------------
-    # Total Shipments
+    # All status buckets in TWO aggregate queries instead of ~40 .count() calls.
     # ---------------------------------------------------
-    total_current = current_orders.count()
-    total_previous = previous_orders.count()
+    _status_buckets = {
+        "total": Count("id"),
+        "delivered": Count("id", filter=Q(status="delivered")),
+        "in_transit": Count("id", filter=Q(status="in_transit")),
+        "out_for_delivery": Count("id", filter=Q(status="out_for_delivery")),
+        "pending_pickup": Count("id", filter=Q(status="pending_pickup")),
+        "ready_to_ship": Count("id", filter=Q(status="ready_to_ship")),
+        "cancelled": Count("id", filter=Q(status="cancelled")),
+        "rto": Count("id", filter=Q(status__startswith="rto")),
+        "lost": Count("id", filter=Q(status="lost")),
+        "failed_delivery": Count("id", filter=Q(status__in=["ndr", "exception"])),
+    }
+    cur = current_orders.aggregate(**_status_buckets)
+    prev = previous_orders.aggregate(**_status_buckets)
+    # ready_to_ship / cancelled tiles show the lifetime total, not the windowed one
+    lifetime = Order.objects.filter(user=request.user).aggregate(
+        ready_to_ship=Count("id", filter=Q(status="ready_to_ship")),
+        cancelled=Count("id", filter=Q(status="cancelled")),
+    )
 
+    total_current = cur["total"]
+    total_previous = prev["total"]
     shipment_growth = calculate_growth(total_current, total_previous)
 
-    # ---------------------------------------------------
-    # Delivered + Delivery Rate
-    # ---------------------------------------------------
-    delivered_current = current_orders.filter(status="delivered").count()
-    delivered_previous = previous_orders.filter(status="delivered").count()
-
+    delivered_current = cur["delivered"]
     delivery_rate_current = (
         (delivered_current / total_current) * 100 if total_current else 0
     )
-
     delivery_rate_previous = (
-        (delivered_previous / total_current) * 100 if total_current else 0
+        (prev["delivered"] / total_current) * 100 if total_current else 0
     )
-
     delivery_rate_growth = calculate_growth(
         delivery_rate_current, delivery_rate_previous
     )
 
-    # ---------------------------------------------------
-    # In Transit
-    # ---------------------------------------------------
-    in_transit_current = current_orders.filter(status="in_transit").count()
-    in_transit_previous = previous_orders.filter(status="in_transit").count()
+    in_transit_current = cur["in_transit"]
+    in_transit_growth = calculate_growth(in_transit_current, prev["in_transit"])
 
-    in_transit_growth = calculate_growth(in_transit_current, in_transit_previous)
-
-    # ---------------------------------------------------
-    # RTO Rate
-    # ---------------------------------------------------
-    rto_current = current_orders.filter(status__startswith="rto").count()
-    rto_previous = previous_orders.filter(status__startswith="rto").count()
-
+    rto_current = cur["rto"]
     rto_rate_current = (rto_current / total_current) * 100 if total_current else 0
-
-    rto_rate_previous = (rto_previous / total_previous) * 100 if total_previous else 0
-
+    rto_rate_previous = (
+        (prev["rto"] / total_previous) * 100 if total_previous else 0
+    )
     rto_rate_growth = calculate_growth(rto_rate_current, rto_rate_previous)
 
     # ---------------------------------------------------
@@ -389,70 +393,39 @@ def dashboard(request):
     status_summary = {
         "placed": {
             "value": today_shipment,
-            "growth": calculate_growth(
-                today_shipment,
-                previous_orders.filter(status="pending_pickup").count(),
-            ),
+            "growth": calculate_growth(today_shipment, prev["pending_pickup"]),
         },
         "ready_to_ship": {
-            "value": Order.objects.filter(
-                user=request.user, status="ready_to_ship"
-            ).count(),
-            "growth": calculate_growth(
-                current_orders.filter(status="ready_to_ship").count(),
-                previous_orders.filter(status="ready_to_ship").count(),
-            ),
+            "value": lifetime["ready_to_ship"],
+            "growth": calculate_growth(cur["ready_to_ship"], prev["ready_to_ship"]),
         },
         "in_transit": {
-            "value": current_orders.filter(status="in_transit").count(),
-            "growth": calculate_growth(
-                current_orders.filter(status="in_transit").count(),
-                previous_orders.filter(status="in_transit").count(),
-            ),
+            "value": cur["in_transit"],
+            "growth": calculate_growth(cur["in_transit"], prev["in_transit"]),
         },
         "out_for_delivery": {
-            "value": current_orders.filter(status="out_for_delivery").count(),
-            "growth": calculate_growth(
-                current_orders.filter(status="out_for_delivery").count(),
-                previous_orders.filter(status="out_for_delivery").count(),
-            ),
+            "value": cur["out_for_delivery"],
+            "growth": calculate_growth(cur["out_for_delivery"], prev["out_for_delivery"]),
         },
         "delivered": {
-            "value": current_orders.filter(status="delivered").count(),
-            "growth": calculate_growth(
-                current_orders.filter(status="delivered").count(),
-                previous_orders.filter(status="delivered").count(),
-            ),
+            "value": cur["delivered"],
+            "growth": calculate_growth(cur["delivered"], prev["delivered"]),
         },
         "failed_delivery": {
-            "value": current_orders.filter(status__in=["ndr", "exception"]).count(),
-            "growth": calculate_growth(
-                current_orders.filter(status__in=["ndr", "exception"]).count(),
-                previous_orders.filter(status__in=["ndr", "exception"]).count(),
-            ),
+            "value": cur["failed_delivery"],
+            "growth": calculate_growth(cur["failed_delivery"], prev["failed_delivery"]),
         },
         "cancelled": {
-            "value": Order.objects.filter(
-                user=request.user, status="cancelled"
-            ).count(),
-            "growth": calculate_growth(
-                Order.objects.filter(user=request.user, status="cancelled").count(),
-                previous_orders.filter(status="cancelled").count(),
-            ),
+            "value": lifetime["cancelled"],
+            "growth": calculate_growth(lifetime["cancelled"], prev["cancelled"]),
         },
         "rto": {
-            "value": current_orders.filter(status__startswith="rto").count(),
-            "growth": calculate_growth(
-                current_orders.filter(status__startswith="rto").count(),
-                previous_orders.filter(status__startswith="rto").count(),
-            ),
+            "value": cur["rto"],
+            "growth": calculate_growth(cur["rto"], prev["rto"]),
         },
         "lost": {
-            "value": current_orders.filter(status="lost").count(),
-            "growth": calculate_growth(
-                current_orders.filter(status="lost").count(),
-                previous_orders.filter(status="lost").count(),
-            ),
+            "value": cur["lost"],
+            "growth": calculate_growth(cur["lost"], prev["lost"]),
         },
     }
 
@@ -461,23 +434,29 @@ def dashboard(request):
     # ---------------------------------------------------
     couriers = Courier.objects.filter(orders__user=request.user).distinct()
 
-    last_5_days = []
-    for i in range(4, -1, -1):
-        day = today - timedelta(days=i)
-
-        orders_count = (
-            Order.objects.filter(user=request.user, shipment__booked_at__date=day)
+    # last 5 booked-order days - one grouped query, not one per day
+    _by_day = {
+        row["d"]: row["c"]
+        for row in (
+            Order.objects.filter(
+                user=request.user,
+                shipment__booked_at__date__gte=today - timedelta(days=4),
+                shipment__booked_at__date__lte=today,
+            )
             .exclude(status__in=["cancelled", "ready_to_ship"])
-            .count()
+            .annotate(d=TruncDate("shipment__booked_at"))
+            .values("d")
+            .annotate(c=Count("id"))
         )
-
-        last_5_days.append(
-            {
-                "day": day.strftime("%a"),
-                "date": day.strftime("%d/%m/%Y"),
-                "orders": orders_count,
-            }
-        )
+    }
+    last_5_days = [
+        {
+            "day": (today - timedelta(days=i)).strftime("%a"),
+            "date": (today - timedelta(days=i)).strftime("%d/%m/%Y"),
+            "orders": _by_day.get(today - timedelta(days=i), 0),
+        }
+        for i in range(4, -1, -1)
+    ]
 
     # ---------------------------------------------------
     # Top 5 Couriers
@@ -519,18 +498,16 @@ def dashboard(request):
     # ---------------------------------------------------
     # Pickup Completion
     # ---------------------------------------------------
-    completed_pickups = Order.objects.filter(
-        user=request.user,
-        shipment__booked_at__date=now().date(),
-        status="in_transit",
-    ).count()
-
-    total_pickups = Order.objects.filter(
-        user=request.user,
-        shipment__booked_at__date=now().date(),
-    ).count()
-
-    pickup_completion = {"completed": completed_pickups, "total_pickups": total_pickups}
+    _pickup = Order.objects.filter(
+        user=request.user, shipment__booked_at__date=now().date()
+    ).aggregate(
+        total=Count("id"),
+        completed=Count("id", filter=Q(status="in_transit")),
+    )
+    pickup_completion = {
+        "completed": _pickup["completed"],
+        "total_pickups": _pickup["total"],
+    }
 
     # ---------------------------------------------------
     # Total Shipments
@@ -554,10 +531,44 @@ def dashboard(request):
         )
 
     # ---------------------------------------------------
+    # Status Breakdown rows (presentation-ready for the dashboard panel)
+    # ---------------------------------------------------
+    _ico = lambda d: mark_safe(
+        f'<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">'
+        f'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="{d}"/></svg>'
+    )
+    _NEUTRAL, _BLUE, _AMBER, _EMERALD, _RED = "neutral", "blue", "amber", "emerald", "red"
+
+    _status_meta = [
+        ("placed", "ORDER PLACED", "Order Placed / Manifested", _NEUTRAL, "M4 7h16M4 12h16M4 17h10"),
+        ("ready_to_ship", "READY TO SHIP", "Packed & Ready", _NEUTRAL, "M3 8.5 12 4l9 4.5v7L12 20l-9-4.5v-7Z"),
+        ("in_transit", "IN TRANSIT", "On the way", _BLUE, "M3 7h11v10H3zM14 10h4l3 3v4h-7M6.5 20a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm11 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"),
+        ("out_for_delivery", "OUT FOR DELIVERY", "With the courier", _AMBER, "M3 7a1 1 0 011-1h9v11H4a1 1 0 01-1-1zM13 9h4l3 3v4h-7M7 20a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z"),
+        ("delivered", "DELIVERED", "Successfully delivered", _EMERALD, "M20 6 9 17l-5-5"),
+        ("failed_delivery", "FAILED DELIVERY", "NDR / undelivered", _RED, "M10.3 3.9 1.8 18a2 2 0 001.7 3h16.9a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0ZM12 9v4m0 4h.01"),
+        ("cancelled", "CANCELLED", "Customer cancelled", _RED, "M6 6l12 12M18 6 6 18"),
+        ("rto", "RTO", "Returned to origin", _RED, "M9 14 4 9l5-5M4 9h11a5 5 0 010 10H9"),
+        ("lost", "LOST", "Potentially lost / damaged", _NEUTRAL, "M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 001.7 3h16.9a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0Z"),
+    ]
+    status_rows = [
+        {
+            "label": label,
+            "sub": sub,
+            "tone": tone,
+            "icon": _ico(path),
+            "value": status_summary.get(key, {}).get("value", 0),
+            "growth": status_summary.get(key, {}).get("growth", 0),
+        }
+        for key, label, sub, tone, path in _status_meta
+    ]
+
+    # ---------------------------------------------------
     # Context
     # ---------------------------------------------------
     ctx = {
         "couriers": couriers,
+        "date_from": date_from,
+        "date_to": date_to,
         "total_shipments": total_shipments.count(),
         "shipment_growth": shipment_growth,
         "delivery_rate": round(delivery_rate_current, 2),
@@ -569,6 +580,7 @@ def dashboard(request):
         "avg_tat": tat_current if tat_current > 0 else 0,
         "tat_growth": tat_growth if tat_growth > 0 else 0,
         "status_summary": status_summary,
+        "status_rows": status_rows,
         "total_daily_orders": last_5_days,
         "top_5_couriers": top_5_couriers,
         "cod_vs_prepaid": cod_vs_prepaid,
@@ -938,7 +950,11 @@ def failed_order(request):
 def order_details(request, id: int):
     order = get_object_or_404(Order, id=id, user=request.user)
 
-    return render(request, "user_panel/order/order_details.dj", {"order": order})
+    return render(
+        request,
+        "user_panel/order/order_details.dj",
+        {"order": order, "summary": order.invoice_summary()},
+    )
 
 
 @user_required
@@ -953,9 +969,12 @@ def cancelled_order(request):
     data = request.GET
     is_export = data.get("exportOrders", "false").lower() == "true"
 
-    order, page_obj, page_size = filter_orders(
+    order, page_obj, page_size, err = filter_orders(
         request, data, status, Order.objects.filter(status=status, user=request.user)
     )
+    if err:
+        messages.error(request, "Could not load cancelled orders.")
+        return redirect("user_panel:dashboard")
 
     if is_export:
         return generate_bulk_export_response(order)
@@ -987,6 +1006,11 @@ def shipment(request, status: str):
         return redirect("user_panel:dashboard")
 
     data = request.GET
+
+    # Self-heal: if the async ship task died, don't leave orders stranded in
+    # `processing` forever - bounce the stale ones back to Ready to Ship.
+    if status == "processing":
+        Order.reclaim_stuck_processing(request.user)
 
     order, page_obj, page_size, err = filter_orders(request, data, status)
     if err:
@@ -1056,8 +1080,8 @@ def add_hub(request):
         email = data.get("email", "")
         gstin = data.get("gstin", "")
 
-        if Hub.objects.filter(name=name).exists():
-            messages.warning(request, "Hub name already taken")
+        if Hub.objects.filter(user=request.user, name=name).exists():
+            messages.warning(request, "You already have a hub with this name")
             return redirect("user_panel:add-hub")
 
         if name and len(name) > 20:
@@ -1254,15 +1278,25 @@ def analytics(request):
         last_day_last_month = first_day_this_month - timedelta(days=1)
         first_day_last_month = last_day_last_month.replace(day=1)
 
+        _buckets = dict(
+            total=Count("id"),
+            in_transit=Count("id", filter=Q(status="in_transit")),
+            delivered=Count("id", filter=Q(status="delivered")),
+            rto=Count("id", filter=Q(status="rto")),
+            pending_pickup=Count("id", filter=Q(status="pending_pickup")),
+            out_for_delivery=Count("id", filter=Q(status="out_for_delivery")),
+        )
+        _this = orders_queryset.filter(
+            created_at__date__gte=first_day_this_month, created_at__date__lte=today
+        ).aggregate(**_buckets)
+        _last = orders_queryset.filter(
+            created_at__date__gte=first_day_last_month,
+            created_at__date__lte=last_day_last_month,
+        ).aggregate(**_buckets)
+
         def get_count(status=None, start=None, end=None):
-            qs = orders_queryset
-            if status:
-                qs = qs.filter(status=status)
-            if start:
-                qs = qs.filter(created_at__date__gte=start)
-            if end:
-                qs = qs.filter(created_at__date__lte=end)
-            return qs.count()
+            win = _last if start == first_day_last_month else _this
+            return win.get(status or "total", 0)
 
         statistics = {
             "total_orders": {
@@ -1339,45 +1373,60 @@ def analytics(request):
             .annotate(total=Count("id"))
             .order_by("-total")[:2]
         )
-        for c in couriers:
-            name = c["logistic_partner__name"]
-            courier_status[name.lower()] = {
-                "total": Order.objects.filter(
-                    user=user, logistic_partner__name=name
-                ).count(),
-                "unshipped": Order.objects.filter(
-                    user=user, logistic_partner__name=name, status="pending_pickup"
-                ).count(),
-                "pending": Order.objects.filter(
-                    user=user, logistic_partner__name=name, status="pending_pickup"
-                ).count(),
-                "in_transit": Order.objects.filter(
-                    user=user, logistic_partner__name=name, status="in_transit"
-                ).count(),
-                "delivered": Order.objects.filter(
-                    user=user, logistic_partner__name=name, status="delivered"
-                ).count(),
-                "rto": Order.objects.filter(
-                    user=user, logistic_partner__name=name, status="rto"
-                ).count(),
-            }
-            cn = courier_status[name.lower()]
-            cn["delivered"] = (
-                f"{cn['delivered']} ({int((cn['delivered'] / cn['total']) * 100)})"
+        _top_names = [c["logistic_partner__name"] for c in couriers if c["logistic_partner__name"]]
+        if _top_names:
+            _cw = (
+                Order.objects.filter(user=user, logistic_partner__name__in=_top_names)
+                .values("logistic_partner__name")
+                .annotate(
+                    total=Count("id"),
+                    pending=Count("id", filter=Q(status="pending_pickup")),
+                    in_transit=Count("id", filter=Q(status="in_transit")),
+                    delivered=Count("id", filter=Q(status="delivered")),
+                    rto=Count("id", filter=Q(status__startswith="rto")),
+                )
             )
+            for row in _cw:
+                total = row["total"] or 0
+                pct = int((row["delivered"] / total) * 100) if total else 0
+                courier_status[row["logistic_partner__name"].lower()] = {
+                    "total": total,
+                    "unshipped": row["pending"],
+                    "pending": row["pending"],
+                    "in_transit": row["in_transit"],
+                    "delivered": f"{row['delivered']} ({pct})",
+                    "rto": row["rto"],
+                }
 
-        # Date wise summary (last 7 days)
+        # Date wise summary (last 7 days) - one grouped query
         date_wise_summary = {}
+        _seven_ago = today - timedelta(days=6)
+        _dw = {
+            row["d"]: row
+            for row in (
+                Order.objects.filter(
+                    user=user, created_at__date__gte=_seven_ago, created_at__date__lte=today
+                )
+                .annotate(d=TruncDate("created_at"))
+                .values("d")
+                .annotate(
+                    no_of_packets=Count("id"),
+                    pickup_pending=Count("id", filter=Q(status="pending_pickup")),
+                    in_transit=Count("id", filter=Q(status="in_transit")),
+                    delivered=Count("id", filter=Q(status="delivered")),
+                    rto=Count("id", filter=Q(status__startswith="rto")),
+                )
+            )
+        }
         for i in range(7):
             day = today - timedelta(days=i)
-            key = day.strftime("%d_%b").lower()
-            orders_day = Order.objects.filter(user=user, created_at__date=day)
-            date_wise_summary[key] = {
-                "no_of_packets": orders_day.count(),
-                "pickup_pending": orders_day.filter(status="pending_pickup").count(),
-                "in_transit": orders_day.filter(status="in_transit").count(),
-                "delivered": orders_day.filter(status="delivered").count(),
-                "rto": orders_day.filter(status="rto").count(),
+            row = _dw.get(day)
+            date_wise_summary[day.strftime("%d_%b").lower()] = {
+                "no_of_packets": row["no_of_packets"] if row else 0,
+                "pickup_pending": row["pickup_pending"] if row else 0,
+                "in_transit": row["in_transit"] if row else 0,
+                "delivered": row["delivered"] if row else 0,
+                "rto": row["rto"] if row else 0,
             }
 
         def get_category_data():
@@ -1744,8 +1793,9 @@ def ndr(request):
         return redirect("user_panel:ndr")
 
     # Checkbox CHANNEL ORDER ID DATE CUSTOMER PRODUCTS QTY AMT STATUS ACTION
-    orders = Order.objects.all()[:5]
-    # orders = Order.objects.filter(status="ndr", user=request.user)[:5]
+    orders = Order.objects.filter(user=request.user, status="ndr").order_by(
+        "-created_at"
+    )[:50]
     orders_list: list[list] = []
     for order in orders:
         prep_data = [
@@ -1766,6 +1816,20 @@ def ndr(request):
     ctx = {"orders": json.dumps(orders_list), "total_orders": len(orders_list)}
 
     return render(request, "user_panel/ndr.dj", ctx)
+
+
+@user_required
+def tool_rate_calculator(request):
+    """Rate Calculator tool page. The form POSTs to /api/calculator/ (see
+    rate_calculator.api.views) via fetch; this view just renders the shell."""
+    return render(request, "user_panel/tools/rate_calculator.dj")
+
+
+@user_required
+def tool_pincode_serviceability(request):
+    """Pincode Serviceability tool page. Talks to
+    /api/serviceability/{check-serviceability,warehouses,dashboard-data}/."""
+    return render(request, "user_panel/tools/pincode_serviceability.dj")
 
 
 @user_required
@@ -2055,6 +2119,17 @@ def wallet_history(request):
     # Get all transactions for the logged-in user
     history = Transaction.objects.filter(user=request.user).order_by("-created_at")
 
+    _agg = history.aggregate(
+        credited=Sum("amount", filter=Q(transaction_type="credit", status="SUCCESS")),
+        debited=Sum("amount", filter=Q(transaction_type="debit", status="SUCCESS")),
+    )
+    wallet_stats = {
+        "balance": request.user.balance,
+        "credited": _agg["credited"] or 0,
+        "debited": _agg["debited"] or 0,
+        "count": history.count(),
+    }
+
     # Get query params with defaults
     try:
         page_size = int(request.GET.get("page_size", 10))  # default 10 items per page
@@ -2071,7 +2146,7 @@ def wallet_history(request):
     page_obj = paginator.get_page(page_number)
 
     # Pass paginated data to template
-    ctx = {"page_obj": page_obj, "page_size": page_size}
+    ctx = {"page_obj": page_obj, "page_size": page_size, "wallet_stats": wallet_stats}
     return render(request, "user_panel/finance/wallet_history.dj", ctx)
 
 

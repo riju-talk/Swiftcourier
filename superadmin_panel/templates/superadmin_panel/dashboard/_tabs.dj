@@ -1,0 +1,16 @@
+{% comment %}
+  Shared dashboard tab bar.
+  Usage:  {% include "superadmin_panel/dashboard/_tabs.dj" with active="overview" %}
+  active is one of: overview | client | courier_partner | courier_performance
+  Enterprise theme: solid black active pill, quiet neutral inactive pills.
+{% endcomment %}
+<div class="mb-6 flex flex-wrap gap-2">
+  <a href="{% url 'superadmin_panel:dashboard' %}"
+     class="rounded-lg px-4 py-2 text-sm font-semibold transition-colors {% if active == 'overview' %}bg-black text-white dark:bg-white dark:text-black{% else %}bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-black dark:bg-white/5 dark:text-neutral-300 dark:hover:bg-white/10{% endif %}">Overview</a>
+  <a href="{% url 'superadmin_panel:dashboard-client' %}"
+     class="rounded-lg px-4 py-2 text-sm font-semibold transition-colors {% if active == 'client' %}bg-black text-white dark:bg-white dark:text-black{% else %}bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-black dark:bg-white/5 dark:text-neutral-300 dark:hover:bg-white/10{% endif %}">Client</a>
+  <a href="{% url 'superadmin_panel:dashboard-courier-partner' %}"
+     class="rounded-lg px-4 py-2 text-sm font-semibold transition-colors {% if active == 'courier_partner' %}bg-black text-white dark:bg-white dark:text-black{% else %}bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-black dark:bg-white/5 dark:text-neutral-300 dark:hover:bg-white/10{% endif %}">Courier Partner</a>
+  <a href="{% url 'superadmin_panel:dashboard-courier-performance' %}"
+     class="rounded-lg px-4 py-2 text-sm font-semibold transition-colors {% if active == 'courier_performance' %}bg-black text-white dark:bg-white dark:text-black{% else %}bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-black dark:bg-white/5 dark:text-neutral-300 dark:hover:bg-white/10{% endif %}">Courier Performance</a>
+</div>

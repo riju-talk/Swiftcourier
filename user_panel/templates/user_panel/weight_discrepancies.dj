@@ -20,23 +20,23 @@
 {% block body %}
     <div x-data="basic">
         <div class="panel mt-6">
-            <h5 class="font-semibold text-lg dark:text-white-light">Weight Discrepancies</h5>
+            <h5 class="text-[22px] font-bold tracking-tight text-neutral-900 dark:text-white">Weight Discrepancies</h5>
 
 
 
             <!-- Filter Toggle Icon with Label -->
             <div class="flex justify-end mb-6">
                 <button id="filterToggleBtn"
-                        class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-xs"
+                        class="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-neutral-300 bg-white hover:bg-neutral-50 dark:border-white/15 dark:bg-transparent"
                         title="Filter Orders">
-                    <svg class="w-5 h-5 text-indigo-600"
+                    <svg class="w-5 h-5 text-red-600"
                          fill="none"
                          stroke="currentColor"
                          stroke-width="2"
                          viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 019 17v-3.586L3.293 6.707A1 1 0 013 6V4z" />
                     </svg>
-                    <span id="filterToggleText" class="text-indigo-600 font-semibold">Filter</span>
+                    <span id="filterToggleText" class="text-red-600 font-semibold">Filter</span>
                 </button>
             </div>
 
@@ -44,18 +44,18 @@
             <form id="filterForm" action="#" method="get">
                 <input type="hidden" name="status" value="{{ request.GET.status }}" />
                 <div id="filterSection"
-                     class="hidden mb-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                     class="hidden mb-6 bg-white dark:bg-neutral-900 rounded-2xl shadow-lg border border-white dark:border-white/10 p-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
                         <!-- Date Range -->
                         <div>
                             <label for="filter-date-range"
-                                   class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                   class="block text-sm font-medium text-black dark:text-white mb-2">
                                 Date Range
                             </label>
                             <select name="date_range"
                                     id="filter-date-range"
-                                    class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                    class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-white/10 focus:outline-hidden focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500 bg-white dark:bg-white/[0.06] text-black dark:text-white">
                                 <option value="today">Today</option>
                                 <option value="7days">Last 7 Days</option>
                                 <option value="thismonth">This Month</option>
@@ -67,41 +67,41 @@
                                 <input type="date"
                                        name="start_date"
                                        id="filter-start-date"
-                                       class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden" />
+                                       class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/[0.06] text-black dark:text-white focus:outline-hidden" />
                                 <input type="date"
                                        name="end_date"
                                        id="filter-end-date"
-                                       class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden" />
+                                       class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/[0.06] text-black dark:text-white focus:outline-hidden" />
                             </div>
                         </div>
 
                         <!-- Order ID(s) -->
                         {% comment %} <div>
-                            <label for="order-ids" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                            <label for="order-ids" class="block text-sm font-medium text-black dark:text-white mb-2">
                                 Order ID(s)
                             </label>
-                            <input type="text" id="order-ids" name="order_ids" placeholder="ORD-00123, ORD-00124" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                            <input type="text" id="order-ids" name="order_ids" placeholder="ORD-00123, ORD-00124" class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/[0.06] text-black dark:text-white">
                         </div> {% endcomment %}
 
                         <!-- AWB No(s) -->
                         <div>
                             <label for="awb-nos"
-                                   class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                   class="block text-sm font-medium text-black dark:text-white mb-2">
                                 AWB No(s)
                             </label>
                             <input type="text"
                                    id="awb-nos"
                                    name="awb_nos"
                                    placeholder="AWB12345, AWB12346"
-                                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                   class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/[0.06] text-black dark:text-white">
                         </div>
 
                         <!-- Method -->
                         {% comment %} <div>
-                            <label for="method" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                            <label for="method" class="block text-sm font-medium text-black dark:text-white mb-2">
                                 Method
                             </label>
-                            <select id="method" name="method" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                            <select id="method" name="method" class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/[0.06] text-black dark:text-white">
                                 <option value="prepaid">Prepaid</option>
                                 <option value="cod">COD</option>
                             </select>
@@ -109,10 +109,10 @@
 
                         <!-- Attempts -->
                         {% comment %} <div>
-                            <label for="attempts" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                            <label for="attempts" class="block text-sm font-medium text-black dark:text-white mb-2">
                                 Attempts
                             </label>
-                            <select id="attempts" name="attempts" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                            <select id="attempts" name="attempts" class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/[0.06] text-black dark:text-white">
                                 <option value="1">Attempt 1</option>
                                 <option value="2">Attempt 2</option>
                                 <option value="3">Attempt 3</option>
@@ -121,10 +121,10 @@
 
                         <!-- Channel -->
                         {% comment %} <div class="md:col-span-2">
-                            <label for="channel" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                            <label for="channel" class="block text-sm font-medium text-black dark:text-white mb-2">
                                 Channel
                             </label>
-                            <select id="channel" name="channel" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                            <select id="channel" name="channel" class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/[0.06] text-black dark:text-white">
                                 <option value="email">Email</option>
                                 <option value="social">Social</option>
                                 <option value="website">Website</option>
@@ -135,25 +135,25 @@
                         <!-- Product Name -->
                         <div>
                             <label for="product-name"
-                                   class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                   class="block text-sm font-medium text-black dark:text-white mb-2">
                                 Product Name
                             </label>
                             <input type="text"
                                    id="product-name"
                                    name="product_name"
                                    placeholder="Example: T-Shirt, Mug"
-                                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
+                                   class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/[0.06] text-black dark:text-white focus:outline-hidden focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500" />
                         </div>
 
                         <!-- Courier -->
                         <div>
                             <label for="courier"
-                                   class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                   class="block text-sm font-medium text-black dark:text-white mb-2">
                                 Courier
                             </label>
                             <select id="courier"
                                     name="courier"
-                                    class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500">
+                                    class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/[0.06] text-black dark:text-white focus:outline-hidden focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500">
                                 <option value="">Select Courier</option>
                                 <option value="delhivery">Delhivery</option>
                                 <option value="ekart">Ekart</option>
@@ -185,17 +185,17 @@
 
             <div x-data="{ activeTab: (new URLSearchParams(window.location.search)).get('status') || 'action-required', navigate(status) { this.activeTab = status; window.location.href = `?status=${status}`; } }"
                  class="w-full">
-                <ul class="flex border-b border-gray-200 dark:border-gray-700">
+                <ul class="flex border-b border-white dark:border-white/10">
                     <template x-for="(tab, index) in [ { id: 'all', label: 'All' }, { id: 'action-required', label: 'Action Required' }, { id: 'accepted', label: 'Accepted' }, { id: 'open-disputes', label: 'Open Disputes' }, { id: 'closed-disputes', label: 'Closed Disputes' } ]"
                               :key="index">
                         <li class="mr-4">
                             <a href="#"
                                @click.prevent="navigate(tab.id)"
-                               :class="activeTab === tab.id ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'"
+                               :class="activeTab === tab.id ? 'border-red-500 text-red-600 dark:text-red-400' : 'text-neutral-500 hover:text-black dark:text-neutral-400 dark:hover:text-white'"
                                class="inline-block py-3 px-4 font-medium text-sm relative transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-t-lg before:absolute before:bottom-0 before:left-0 before:w-full before:h-0.5 before:transition-all before:duration-300"
                                :style="activeTab === tab.id ? 'border-bottom: 2px solid;' : 'border-bottom-color: transparent;'">
                                 <span x-text="tab.label"></span>
-                                <span :class="activeTab === tab.id ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                                <span :class="activeTab === tab.id ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100' : 'bg-neutral-100 text-gray-800 dark:bg-white/[0.06] dark:text-neutral-300"
                                       class="ml-2 py-1 px-2 rounded-full text-xs">
                                     <span x-text="tab.label.match(/\\(\\d+\\)/)[0]"></span>
                                 </span>
@@ -207,10 +207,10 @@
 
             <!-- Modal -->
             {% comment %} <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                <div @click.away="closeModal" class="bg-white dark:bg-gray-800 p-4 rounded-sm shadow-sm w-full max-w-sm">
+                <div @click.away="closeModal" class="bg-white dark:bg-neutral-900 p-4 rounded-sm shadow-sm w-full max-w-sm">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-lg font-semibold">NDR Submit Form</h2>
-                        <button @click="closeModal" class="text-gray-500 hover:text-gray-800 text-lg">&times;</button>
+                        <button @click="closeModal" class="text-neutral-500 hover:text-gray-800 text-lg">&times;</button>
                     </div>
 
                     <form @submit.prevent="submitNDR">
@@ -243,7 +243,7 @@
 
                                         <div class="text-right">
                                     <button type="submit"
-                                            class="bg-blue-600 text-white px-4 py-2 rounded-sm hover:bg-blue-700">Submit</button>
+                                            class="bg-red-600 text-white px-4 py-2 rounded-sm hover:bg-red-700">Submit</button>
                         </div>
                     </form>
                 </div>
@@ -400,7 +400,7 @@
                 },
 
                 randomColor() {
-                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    const c = ['#dc2626', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
                     return c[Math.floor(Math.random() * c.length)];
                 },
 

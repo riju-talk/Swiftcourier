@@ -41,39 +41,39 @@
 
             <div class="flex items-center justify-between mb-6">
                 <!-- Left: Title -->
-                <h5 class="font-semibold text-lg dark:text-white-light">Failed Orders</h5>
+                <h5 class="text-[22px] font-bold tracking-tight text-neutral-900 dark:text-white">Failed Orders</h5>
 
                 <!-- Right: Buttons (unchanged SVGs) -->
                 <div class="flex items-center space-x-4">
                     <a href="#"
                        id="exportOrderBtn"
-                       class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-xs"
+                       class="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-neutral-300 bg-white hover:bg-neutral-50 dark:border-white/15 dark:bg-transparent"
                        title="Export Orders">
                         <!-- Original download/export icon -->
-                        <svg class="w-5 h-5 text-blue-600"
+                        <svg class="w-5 h-5 text-red-600"
                              fill="none"
                              stroke="currentColor"
                              stroke-width="2"
                              viewBox="0 0 24 24">
-                            <path d="M9.31995 6.49994L11.8799 3.93994L14.4399 6.49994" stroke="#1D4ED8" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M11.88 14.18V4.01001" stroke="#1D4ED8" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M4 12C4 16.42 7 20 12 20C17 20 20 16.42 20 12" stroke="#1D4ED8" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M9.31995 6.49994L11.8799 3.93994L14.4399 6.49994" stroke="#b91c1c" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M11.88 14.18V4.01001" stroke="#b91c1c" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M4 12C4 16.42 7 20 12 20C17 20 20 16.42 20 12" stroke="#b91c1c" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                        <span id="exportOrderText" class="text-indigo-600 font-semibold">Export Orders</span>
+                        <span id="exportOrderText" class="text-red-600 font-semibold">Export Orders</span>
                     </a>
 
                     <button id="filterToggleBtn"
-                            class="flex items-center space-x-2 px-4 py-2 rounded-2xl bg-indigo-50 hover:bg-indigo-100 shadow-xs"
+                            class="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-neutral-300 bg-white hover:bg-neutral-50 dark:border-white/15 dark:bg-transparent"
                             title="Filter Orders">
                         <!-- Original filter icon -->
-                        <svg class="w-5 h-5 text-indigo-600"
+                        <svg class="w-5 h-5 text-red-600"
                              fill="none"
                              stroke="currentColor"
                              stroke-width="2"
                              viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-1.447.894l-4-2A1 1 0 019 17v-3.586L3.293 6.707A1 1 0 013 6V4z" />
                         </svg>
-                        <span id="filterToggleText" class="text-indigo-600 font-semibold">Filter</span>
+                        <span id="filterToggleText" class="text-red-600 font-semibold">Filter</span>
                     </button>
                 </div>
             </div>
@@ -82,27 +82,27 @@
             <!-- Collapsible Filter Section -->
             <form id="filterForm" action="#" method="get">
                 <div id="filterSection"
-                     class="hidden mb-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                     class="hidden mb-6 bg-white dark:bg-neutral-900 rounded-2xl shadow-lg border border-white dark:border-white/10 p-6">
 
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
 
                         <div x-data="dateRangePicker()">
                             <label for="dateRangeInput"
-                                   class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                   class="block text-sm font-medium text-black dark:text-white mb-2">
                                 Date Range
                             </label>
                             <!-- Input Box -->
                             <input type="text"
                                    id="dateRangeInput"
-                                   class="w-full px-4 py-2 border rounded-sm cursor-pointer bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                                   class="w-full px-4 py-2 border rounded-sm cursor-pointer bg-white dark:bg-neutral-900 border-neutral-300 dark:border-white/10 text-black dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500"
                                    readonly
                                    x-model="displayDateRange"
                                    @click="showDropdown = true"
                                    placeholder="Select Date Range">
 
                             <!-- Dropdown -->
-                            <div class="absolute z-50 w-[700px] bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg shadow-lg mt-1 transition-all duration-200 ease-out origin-top"
+                            <div class="absolute z-50 w-[700px] bg-white dark:bg-neutral-900 border dark:border-white/10 rounded-lg shadow-lg mt-1 transition-all duration-200 ease-out origin-top"
                                  x-show="showDropdown"
                                  x-transition:enter="transition ease-out duration-200"
                                  x-transition:enter-start="opacity-0 scale-95"
@@ -114,12 +114,12 @@
                                  x-cloak>
                                 <div class="flex">
                                     <!-- Presets -->
-                                    <div class="w-48 p-4 border-r dark:border-gray-700">
-                                        <h3 class="mb-2 font-semibold dark:text-gray-200">Presets</h3>
+                                    <div class="w-48 p-4 border-r dark:border-white/10">
+                                        <h3 class="mb-2 font-semibold dark:text-white">Presets</h3>
                                         <template x-for="preset in presets">
                                             <button @click="setPreset(preset)"
-                                                    class="w-full text-left px-2 py-1 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm date-transition"
-                                                    :class="{ 'bg-blue-100 dark:bg-blue-900/50': preset.active, 'font-semibold text-blue-600 dark:text-blue-400': preset.label === 'Custom Range' && isCustomRange, 'text-gray-700 dark:text-gray-300': !preset.active }">
+                                                    class="w-full text-left px-2 py-1 text-sm hover:bg-neutral-100 dark:hover:bg-black rounded-sm date-transition"
+                                                    :class="{ 'bg-red-100 dark:bg-red-900/50': preset.active, 'font-semibold text-red-600 dark:text-red-400': preset.label === 'Custom Range' && isCustomRange, 'text-black dark:text-neutral-300': !preset.active }">
                                                 <span x-text="preset.label"></span>
                                             </button>
                                         </template>
@@ -132,7 +132,7 @@
                                             <div class="flex-1">
                                                 <div class="flex items-center justify-between mb-2">
                                                     <button @click="prevMonth('start')"
-                                                            class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full date-transition text-gray-700 dark:text-gray-300">
+                                                            class="p-1 hover:bg-neutral-100 dark:hover:bg-black rounded-full date-transition text-black dark:text-neutral-300">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
                                                              class="h-5 w-5"
                                                              viewBox="0 0 20 20"
@@ -140,10 +140,10 @@
                                                             <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                                                         </svg>
                                                     </button>
-                                                    <h3 class="font-semibold text-center dark:text-gray-200"
+                                                    <h3 class="font-semibold text-center dark:text-white"
                                                         x-text="startCalendar.monthYear"></h3>
                                                     <button @click="nextMonth('start')"
-                                                            class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full date-transition text-gray-700 dark:text-gray-300">
+                                                            class="p-1 hover:bg-neutral-100 dark:hover:bg-black rounded-full date-transition text-black dark:text-neutral-300">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
                                                              class="h-5 w-5"
                                                              viewBox="0 0 20 20"
@@ -154,12 +154,12 @@
                                                 </div>
                                                 <div class="grid grid-cols-7 gap-1 text-sm">
                                                     <template x-for="day in startCalendar.days" :key="day">
-                                                        <div class="text-center text-gray-500 dark:text-gray-400" x-text="day"></div>
+                                                        <div class="text-center text-neutral-500 dark:text-neutral-400" x-text="day"></div>
                                                     </template>
                                                     <template x-for="date in startCalendar.dates">
                                                         <button @click="setTempStart(date.date)"
                                                                 class="p-1 text-center rounded-sm date-transition relative"
-                                                                :class="{ 'bg-blue-500 text-white': date.isSelectedStart, 'text-gray-400 dark:text-gray-500': !date.isCurrentMonth, 'hover:bg-gray-100 dark:hover:bg-gray-700': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-blue-100 dark:bg-blue-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-gray-900 dark:text-gray-100': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
+                                                                :class="{ 'bg-red-500 text-white': date.isSelectedStart, 'text-neutral-400 dark:text-neutral-500': !date.isCurrentMonth, 'hover:bg-neutral-100 dark:hover:bg-black': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-red-100 dark:bg-red-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-black dark:text-white': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
                                                                 :disabled="!date.isSelectable">
                                                             <span x-text="date.day"></span>
                                                         </button>
@@ -171,7 +171,7 @@
                                             <div class="flex-1">
                                                 <div class="flex items-center justify-between mb-2">
                                                     <button @click="prevMonth('end')"
-                                                            class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full date-transition text-gray-700 dark:text-gray-300">
+                                                            class="p-1 hover:bg-neutral-100 dark:hover:bg-black rounded-full date-transition text-black dark:text-neutral-300">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
                                                              class="h-5 w-5"
                                                              viewBox="0 0 20 20"
@@ -179,10 +179,10 @@
                                                             <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                                                         </svg>
                                                     </button>
-                                                    <h3 class="font-semibold text-center dark:text-gray-200"
+                                                    <h3 class="font-semibold text-center dark:text-white"
                                                         x-text="endCalendar.monthYear"></h3>
                                                     <button @click="nextMonth('end')"
-                                                            class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full date-transition text-gray-700 dark:text-gray-300">
+                                                            class="p-1 hover:bg-neutral-100 dark:hover:bg-black rounded-full date-transition text-black dark:text-neutral-300">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
                                                              class="h-5 w-5"
                                                              viewBox="0 0 20 20"
@@ -193,12 +193,12 @@
                                                 </div>
                                                 <div class="grid grid-cols-7 gap-1 text-sm">
                                                     <template x-for="day in endCalendar.days" :key="day">
-                                                        <div class="text-center text-gray-500 dark:text-gray-400" x-text="day"></div>
+                                                        <div class="text-center text-neutral-500 dark:text-neutral-400" x-text="day"></div>
                                                     </template>
                                                     <template x-for="date in endCalendar.dates">
                                                         <button @click="setTempEnd(date.date)"
                                                                 class="p-1 text-center rounded-sm date-transition relative"
-                                                                :class="{ 'bg-blue-500 text-white': date.isSelectedEnd, 'text-gray-400 dark:text-gray-500': !date.isCurrentMonth, 'hover:bg-gray-100 dark:hover:bg-gray-700': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-blue-100 dark:bg-blue-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-gray-900 dark:text-gray-100': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
+                                                                :class="{ 'bg-red-500 text-white': date.isSelectedEnd, 'text-neutral-400 dark:text-neutral-500': !date.isCurrentMonth, 'hover:bg-neutral-100 dark:hover:bg-black': date.isSelectable, 'opacity-50 cursor-not-allowed': !date.isSelectable, 'bg-red-100 dark:bg-red-900/30': date.isInRange && !date.isSelectedStart && !date.isSelectedEnd, 'rounded-l-full': date.isSelectedStart || (date.isInRange && date.isFirstDayOfMonth), 'rounded-r-full': date.isSelectedEnd || (date.isInRange && date.isLastDayOfMonth), 'text-black dark:text-white': date.isCurrentMonth && !date.isSelectedStart && !date.isSelectedEnd }"
                                                                 :disabled="!date.isSelectable">
                                                             <span x-text="date.day"></span>
                                                         </button>
@@ -210,11 +210,11 @@
                                         <!-- Action Buttons -->
                                         <div class="flex justify-end gap-2 mt-4">
                                             <button @click="cancel()"
-                                                    class="px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-sm date-transition">
+                                                    class="px-4 py-2 text-sm text-black dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-black rounded-sm date-transition">
                                                 Cancel
                                             </button>
                                             <button @click="apply()"
-                                                    class="px-4 py-2 text-sm text-white bg-blue-500 hover:bg-blue-600 rounded-sm date-transition"
+                                                    class="px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded-sm date-transition"
                                                     :disabled="!tempStart || !tempEnd"
                                                     :class="{ 'opacity-50 cursor-not-allowed': !tempStart || !tempEnd }">
                                                 Apply
@@ -227,12 +227,12 @@
                         <!-- Order Type -->
                         <div>
                             <label for="filter-order-type"
-                                   class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                   class="block text-sm font-medium text-black dark:text-white mb-2">
                                 Order Type
                             </label>
                             <select name="order_type"
                                     id="filter-order-type"
-                                    class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                    class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-white/10 focus:outline-hidden focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500 bg-white dark:bg-white/[0.06] text-black dark:text-white">
                                 <option value="prepaid">Prepaid</option>
                                 <option value="cod">COD</option>
                             </select>
@@ -241,12 +241,12 @@
                         <!-- Warehouse -->
                         <div>
                             <label for="filter-warehouse"
-                                   class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                   class="block text-sm font-medium text-black dark:text-white mb-2">
                                 Warehouse
                             </label>
                             <select name="warehouse"
                                     id="filter-warehouse"
-                                    class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                                    class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-white/10 focus:outline-hidden focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500 bg-white dark:bg-white/[0.06] text-black dark:text-white">
                                 <option value="HUB00012">HUB00012</option>
                                 <option value="HUB00034">HUB00034</option>
                             </select>
@@ -255,27 +255,27 @@
                         <!-- Order ID -->
                         <div>
                             <label for="filter-order-id"
-                                   class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                   class="block text-sm font-medium text-black dark:text-white mb-2">
                                 Order ID
                             </label>
                             <input type="text"
                                    name="order_id"
                                    id="filter-order-id"
                                    placeholder="ORD-00124"
-                                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
+                                   class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/[0.06] text-black dark:text-white focus:outline-hidden focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500" />
                         </div>
 
                         <!-- Product Name -->
                         <div>
                             <label for="filter-product-name"
-                                   class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                                   class="block text-sm font-medium text-black dark:text-white mb-2">
                                 Product Name
                             </label>
                             <input type="text"
                                    name="product_name"
                                    id="filter-product-name"
                                    placeholder="T-Shirt"
-                                   class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
+                                   class="w-full px-3 py-2 rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/[0.06] text-black dark:text-white focus:outline-hidden focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500" />
                         </div>
                     </div>
                     <!-- Submit & Cancel Buttons -->
@@ -313,12 +313,12 @@
     <script>
         let mydata = [
             [
-                '', 'Email', `<a href="{% url 'user_panel:order-details' 12 %}" class="text-primary hover:underline">ORD-00123</a>`, `<div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative inline-block">
+                '', 'Email', `<a href="{% url 'user_panel:order-details' 12 %}" class="text-red-600 hover:underline">ORD-00123</a>`, `<div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative inline-block">
                     <!-- trigger -->
                     <a href="#"">2025-04-15</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Time: 9:35 AM</p>
 
                         <!-- arrow -->
@@ -330,7 +330,7 @@
                     <a href="#"">Rahul Kumar</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Name: John Doe</p>
                         <p class="mt-1">Phone: +1 234 567 8901</p>
                         <p class="mt-1">Address: 123 Main St, Springfield, USA</p>
@@ -347,7 +347,7 @@
                     </a>
 
                     <!-- popover (fixed-width, wraps, light / dark) -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Name: Awesome Widget</p>
                         <p class="mt-1">SKU: AW-12345</p>
                         <p class="mt-1">Price: $19.99</p>
@@ -361,26 +361,26 @@
                 3, '₹75.00', 'Standard', 'Low Balance',
 
                 `<div class="relative inline-block text-left">
-  <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-gray-700 hover:text-black" onclick="toggleDropdown(this, event)">
+  <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-black hover:text-black" onclick="toggleDropdown(this, event)">
     ⋮
   </button>
   <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black/5">
-    <div class="py-1 text-sm text-gray-700">
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Clone Order</a>
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Edit Order</a>
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Re-Ship</a>
+    <div class="py-1 text-sm text-black">
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Clone Order</a>
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Edit Order</a>
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Re-Ship</a>
     </div>
   </div>
 </div>
 `
             ],
             [
-                '', 'Email', `<a href="{% url 'user_panel:order-details' 12 %}" class="text-primary hover:underline">ORD-00123</a>`, `<div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative inline-block">
+                '', 'Email', `<a href="{% url 'user_panel:order-details' 12 %}" class="text-red-600 hover:underline">ORD-00123</a>`, `<div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative inline-block">
                     <!-- trigger -->
                     <a href="#"">2025-04-15</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Time: 9:35 AM</p>
 
                         <!-- arrow -->
@@ -392,7 +392,7 @@
                     <a href="#"">Rahul Kumar</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Name: John Doe</p>
                         <p class="mt-1">Phone: +1 234 567 8901</p>
                         <p class="mt-1">Address: 123 Main St, Springfield, USA</p>
@@ -409,7 +409,7 @@
                     </a>
 
                     <!-- popover (fixed-width, wraps, light / dark) -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Name: Awesome Widget</p>
                         <p class="mt-1">SKU: AW-12345</p>
                         <p class="mt-1">Price: $19.99</p>
@@ -423,26 +423,26 @@
                 3, '₹75.00', 'Standard', 'Low Balance',
 
                 `<div class="relative inline-block text-left">
-  <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-gray-700 hover:text-black" onclick="toggleDropdown(this, event)">
+  <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-black hover:text-black" onclick="toggleDropdown(this, event)">
     ⋮
   </button>
   <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black/5">
-    <div class="py-1 text-sm text-gray-700">
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Clone Order</a>
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Edit Order</a>
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Re-Ship</a>
+    <div class="py-1 text-sm text-black">
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Clone Order</a>
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Edit Order</a>
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Re-Ship</a>
     </div>
   </div>
 </div>
 `
             ],
             [
-                '', 'Email', `<a href="{% url 'user_panel:order-details' 12 %}" class="text-primary hover:underline">ORD-00123</a>`, `<div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative inline-block">
+                '', 'Email', `<a href="{% url 'user_panel:order-details' 12 %}" class="text-red-600 hover:underline">ORD-00123</a>`, `<div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative inline-block">
                     <!-- trigger -->
                     <a href="#"">2025-04-15</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Time: 9:35 AM</p>
 
                         <!-- arrow -->
@@ -454,7 +454,7 @@
                     <a href="#"">Rahul Kumar</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Name: John Doe</p>
                         <p class="mt-1">Phone: +1 234 567 8901</p>
                         <p class="mt-1">Address: 123 Main St, Springfield, USA</p>
@@ -471,7 +471,7 @@
                     </a>
 
                     <!-- popover (fixed-width, wraps, light / dark) -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Name: Awesome Widget</p>
                         <p class="mt-1">SKU: AW-12345</p>
                         <p class="mt-1">Price: $19.99</p>
@@ -485,26 +485,26 @@
                 3, '₹75.00', 'Standard', 'Low Balance',
 
                 `<div class="relative inline-block text-left">
-  <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-gray-700 hover:text-black" onclick="toggleDropdown(this, event)">
+  <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-black hover:text-black" onclick="toggleDropdown(this, event)">
     ⋮
   </button>
   <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black/5">
-    <div class="py-1 text-sm text-gray-700">
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Clone Order</a>
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Edit Order</a>
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Re-Ship</a>
+    <div class="py-1 text-sm text-black">
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Clone Order</a>
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Edit Order</a>
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Re-Ship</a>
     </div>
   </div>
 </div>
 `
             ],
             [
-                '', 'Email', `<a href="{% url 'user_panel:order-details' 12 %}" class="text-primary hover:underline">ORD-00123</a>`, `<div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative inline-block">
+                '', 'Email', `<a href="{% url 'user_panel:order-details' 12 %}" class="text-red-600 hover:underline">ORD-00123</a>`, `<div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative inline-block">
                     <!-- trigger -->
                     <a href="#"">2025-04-15</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Time: 9:35 AM</p>
 
                         <!-- arrow -->
@@ -516,7 +516,7 @@
                     <a href="#"">Rahul Kumar</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Name: John Doe</p>
                         <p class="mt-1">Phone: +1 234 567 8901</p>
                         <p class="mt-1">Address: 123 Main St, Springfield, USA</p>
@@ -533,7 +533,7 @@
                     </a>
 
                     <!-- popover (fixed-width, wraps, light / dark) -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Name: Awesome Widget</p>
                         <p class="mt-1">SKU: AW-12345</p>
                         <p class="mt-1">Price: $19.99</p>
@@ -547,26 +547,26 @@
                 3, '₹75.00', 'Standard', 'Low Balance',
 
                 `<div class="relative inline-block text-left">
-  <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-gray-700 hover:text-black" onclick="toggleDropdown(this, event)">
+  <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-black hover:text-black" onclick="toggleDropdown(this, event)">
     ⋮
   </button>
   <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black/5">
-    <div class="py-1 text-sm text-gray-700">
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Clone Order</a>
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Edit Order</a>
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Re-Ship</a>
+    <div class="py-1 text-sm text-black">
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Clone Order</a>
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Edit Order</a>
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Re-Ship</a>
     </div>
   </div>
 </div>
 `
             ],
             [
-                '', 'Email', `<a href="{% url 'user_panel:order-details' 12 %}" class="text-primary hover:underline">ORD-00123</a>`, `<div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative inline-block">
+                '', 'Email', `<a href="{% url 'user_panel:order-details' 12 %}" class="text-red-600 hover:underline">ORD-00123</a>`, `<div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative inline-block">
                     <!-- trigger -->
                     <a href="#"">2025-04-15</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Time: 9:35 AM</p>
 
                         <!-- arrow -->
@@ -578,7 +578,7 @@
                     <a href="#"">Rahul Kumar</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Name: John Doe</p>
                         <p class="mt-1">Phone: +1 234 567 8901</p>
                         <p class="mt-1">Address: 123 Main St, Springfield, USA</p>
@@ -595,7 +595,7 @@
                     </a>
 
                     <!-- popover (fixed-width, wraps, light / dark) -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Name: Awesome Widget</p>
                         <p class="mt-1">SKU: AW-12345</p>
                         <p class="mt-1">Price: $19.99</p>
@@ -609,26 +609,26 @@
                 3, '₹75.00', 'Standard', 'Low Balance',
 
                 `<div class="relative inline-block text-left">
-  <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-gray-700 hover:text-black" onclick="toggleDropdown(this, event)">
+  <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-black hover:text-black" onclick="toggleDropdown(this, event)">
     ⋮
   </button>
   <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black/5">
-    <div class="py-1 text-sm text-gray-700">
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Clone Order</a>
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Edit Order</a>
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Re-Ship</a>
+    <div class="py-1 text-sm text-black">
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Clone Order</a>
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Edit Order</a>
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Re-Ship</a>
     </div>
   </div>
 </div>
 `
             ],
             [
-                '', 'Email', `<a href="{% url 'user_panel:order-details' 12 %}" class="text-primary hover:underline">ORD-00123</a>`, `<div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative inline-block">
+                '', 'Email', `<a href="{% url 'user_panel:order-details' 12 %}" class="text-red-600 hover:underline">ORD-00123</a>`, `<div x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" class="relative inline-block">
                     <!-- trigger -->
                     <a href="#"">2025-04-15</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Time: 9:35 AM</p>
 
                         <!-- arrow -->
@@ -640,7 +640,7 @@
                     <a href="#"">Rahul Kumar</a>
 
                     <!-- popover -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Name: John Doe</p>
                         <p class="mt-1">Phone: +1 234 567 8901</p>
                         <p class="mt-1">Address: 123 Main St, Springfield, USA</p>
@@ -657,7 +657,7 @@
                     </a>
 
                     <!-- popover (fixed-width, wraps, light / dark) -->
-                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-gray-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 z-50" style="display: none;">
+                    <div x-cloak x-show="open" x-transition class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 max-w-xs p-4 bg-white border border-neutral-300 text-sm text-gray-800 rounded-lg shadow-lg whitespace-normal wrap-break-word dark:bg-neutral-900 dark:border-white/10 dark:text-white z-50" style="display: none;">
                         <p class="font-medium">Name: Awesome Widget</p>
                         <p class="mt-1">SKU: AW-12345</p>
                         <p class="mt-1">Price: $19.99</p>
@@ -671,14 +671,14 @@
                 3, '₹75.00', 'Standard', 'Low Balance',
 
                 `<div class="relative inline-block text-left">
-  <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-gray-700 hover:text-black" onclick="toggleDropdown(this, event)">
+  <button type="button" class="inline-flex justify-center w-full px-2 py-1 text-sm font-medium text-black hover:text-black" onclick="toggleDropdown(this, event)">
     ⋮
   </button>
   <div class="dropdown-menu hidden absolute right-0 z-10 mt-1 w-40 origin-top-right rounded-md shadow-lg bg-white ring-1 ring-black/5">
-    <div class="py-1 text-sm text-gray-700">
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Clone Order</a>
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Edit Order</a>
-      <a href="#" class="block px-4 py-2 hover:bg-gray-100">Re-Ship</a>
+    <div class="py-1 text-sm text-black">
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Clone Order</a>
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Edit Order</a>
+      <a href="#" class="block px-4 py-2 hover:bg-neutral-100">Re-Ship</a>
     </div>
   </div>
 </div>
@@ -1027,7 +1027,7 @@
                 },
 
                 randomColor() {
-                    const c = ['#4361ee', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
+                    const c = ['#dc2626', '#805dca', '#00ab55', '#e7515a', '#e2a03f', '#2196f3'];
                     return c[Math.floor(Math.random() * c.length)];
                 }
             }));

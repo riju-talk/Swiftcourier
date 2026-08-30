@@ -81,8 +81,8 @@
     }
     
     .tab-btn.active {
-      color: #3b82f6;
-      border-bottom-color: #3b82f6;
+      color: #ef4444;
+      border-bottom-color: #ef4444;
     }
     
     .page-title {
@@ -108,13 +108,13 @@
     }
     
     .btn-primary {
-      background-color: #3b82f6;
+      background-color: #ef4444;
       color: white;
       border: none;
     }
     
     .btn-primary:hover {
-      background-color: #2563eb;
+      background-color: #dc2626;
     }
     
     .btn-outline {
@@ -239,7 +239,7 @@
     .form-group input:focus,
     .form-group select:focus {
       outline: none;
-      border-color: #3b82f6;
+      border-color: #ef4444;
     }
     
     .form-group input.error {
@@ -439,13 +439,13 @@
     }
 
     .drop-zone:hover {
-      border-color: #3b82f6;
-      background-color: #eff6ff;
+      border-color: #ef4444;
+      background-color: #fef2f2;
     }
 
     .drop-zone.dragover {
-      border-color: #3b82f6;
-      background-color: #eff6ff;
+      border-color: #ef4444;
+      background-color: #fef2f2;
     }
 
     .drop-zone-icon {
@@ -471,7 +471,7 @@
     .drop-zone-btn {
       display: inline-block;
       padding: 10px 24px;
-      background-color: #3b82f6;
+      background-color: #ef4444;
       color: white;
       border-radius: 8px;
       font-size: 14px;
@@ -481,7 +481,7 @@
     }
 
     .drop-zone-btn:hover {
-      background-color: #2563eb;
+      background-color: #dc2626;
     }
 
     .file-input {
@@ -533,7 +533,6 @@
       font-size: 12px;
       border: none;
       border-radius: 6px;
-      background: #007bff;
       color: white;
       cursor: pointer;
       display: inline-flex;
@@ -542,11 +541,13 @@
       height: 28px;
       line-height: 1;
       z-index: 2;
+      background: #0e1726;
+      transition: background-color .15s ease;
     }
 
     .generate-btn svg { display: block; }
 
-    .generate-btn:hover { background: #0056b3; }
+    .generate-btn:hover { background: #dc2626; }
 
     /* Bulk Upload Styles */
     .bulk-instructions {
@@ -596,25 +597,25 @@
       content: "•";
       position: absolute;
       left: 6px;
-      color: #3b82f6;
+      color: #ef4444;
     }
 
     .template-link {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      color: #3b82f6;
+      color: #ef4444;
       font-size: 14px;
       font-weight: 500;
       text-decoration: none;
       padding: 8px 16px;
       border-radius: 8px;
-      background-color: #eff6ff;
+      background-color: #fef2f2;
       transition: background-color 0.2s;
     }
 
     .template-link:hover {
-      background-color: #dbeafe;
+      background-color: #fee2e2;
     }
 
     .bulk-instructions-actions {
@@ -665,9 +666,9 @@
       width: 40px;
       height: 40px;
       padding: 8px;
-      background-color: #dbeafe;
+      background-color: #fee2e2;
       border-radius: 8px;
-      color: #3b82f6;
+      color: #ef4444;
     }
 
     .file-details {
@@ -813,7 +814,7 @@
     .product-form-group input:focus,
     .product-form-group select:focus {
       outline: none;
-      border-color: #3b82f6;
+      border-color: #ef4444;
     }
 
     .product-form-group input::placeholder {
@@ -966,7 +967,7 @@
     &.is-dark .product-form-group input:focus,
     &.is-dark .product-form-group select:focus,
     &.is-dark .product-dimensions input:focus {
-      border-color: #60a5fa;
+      border-color: #f87171;
       box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.2);
     }
 
@@ -990,8 +991,8 @@
     }
 
     &.is-dark .tab-btn.active {
-      color: #60a5fa;
-      border-bottom-color: #60a5fa;
+      color: #f87171;
+      border-bottom-color: #f87171;
     }
 
     &.is-dark thead {
@@ -1011,21 +1012,21 @@
     &.is-dark .drop-zone:hover,
     &.is-dark .drop-zone.dragover {
       background-color: #1b2e4b;
-      border-color: #60a5fa;
+      border-color: #f87171;
     }
 
     &.is-dark .template-link {
       background-color: #1e3a8a;
-      color: #dbeafe;
+      color: #fee2e2;
     }
 
     &.is-dark .template-link:hover {
-      background-color: #1d4ed8;
+      background-color: #b91c1c;
     }
 
     &.is-dark .file-icon {
       background-color: #1e3a8a;
-      color: #bfdbfe;
+      color: #fecaca;
     }
 
     &.is-dark .product-number {

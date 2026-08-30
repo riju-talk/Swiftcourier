@@ -87,11 +87,14 @@ def checkout(request):
 
 @csrf_exempt
 def payment_redirect(request, merchant_txn_id: str):
-    try:
-        t = Transaction.objects.get(
-            merchant_transaction_id=merchant_txn_id, user=request.user
-        )
-    except Transaction.DoesNotExist:
+    # The gateway redirects the customer back here with a top-level GET. The
+    # session cookie is usually present (SameSite=Lax) but not guaranteed, and
+    # the merchant_transaction_id is unguessable and already embeds the user id,
+    # so look it up on that alone rather than crashing on AnonymousUser.
+    t = Transaction.objects.filter(
+        merchant_transaction_id=merchant_txn_id
+    ).first()
+    if t is None:
         messages.error(request, "Transaction not found")
         return redirect("index")
 

@@ -8,7 +8,7 @@ from barcode.writer import ImageWriter
 from django.utils.text import slugify
 from django.utils.timezone import now
 from django.core.files import File
-from django.db import models, transaction
+from django.db import models, transaction, IntegrityError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth import get_user_model
 from account.models import Courier, MyModel, Notification, RateCard
@@ -19,7 +19,7 @@ from django.utils.timezone import localdate
 
 from utils.payout_date import get_next_payout_date
 
-from idiotship import settings
+from django.conf import settings
 from wallet.models import Transaction
 
 
@@ -40,7 +40,7 @@ class Hub(MyModel):
     Represents a pickup hub with contact and address details.
     """
 
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     contact_person = models.CharField(max_length=100, blank=True)
     address_line1 = models.CharField(max_length=255)
     address_line2 = models.CharField(max_length=255, blank=True)
@@ -56,6 +56,15 @@ class Hub(MyModel):
     is_primary = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     json = models.JSONField(default=dict)
+
+    class Meta(MyModel.Meta):
+        # a hub name only needs to be unique *within* a merchant's account -
+        # two merchants may both have a "Main Warehouse".
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "name"], name="uniq_hub_name_per_user"
+            )
+        ]
 
     def __str__(self):
         return self.name
@@ -83,7 +92,7 @@ class Hub(MyModel):
             "line1": self.address_line1,
             "line2": self.address_line2,
             "landmark": "Office",
-            "company_name": "IdiotShip",
+            "company_name": "SwiftCourier",
             "city": self.city,
             "state": self.state,
             "pin_code": self.pin_code,
@@ -302,6 +311,17 @@ class Order(MyModel):
     """
     json = models.JSONField(default=dict)
 
+    class Meta(MyModel.Meta):
+        indexes = [
+            # dashboard / shipment-tab counts + list filtering
+            models.Index(fields=["user", "status", "-created_at"], name="order_user_status_created"),
+            models.Index(fields=["user", "-created_at"], name="order_user_created"),
+            models.Index(fields=["status"], name="order_status"),
+            # search / lookups
+            models.Index(fields=["awb_number"], name="order_awb"),
+            models.Index(fields=["order_number"], name="order_number_idx"),
+        ]
+
     # def lock_order(self):
     #     """Deprecated (Build processing tab)
     #     Lock the order to prevent punching."""
@@ -336,9 +356,62 @@ class Order(MyModel):
                 failed_ids.append(oid)
 
         if ready_ids:
-            Order.objects.filter(id__in=ready_ids).update(status="processing")
+            # bump updated_at too - .update() skips auto_now, and reclaim_stuck_processing
+            # needs an accurate "entered processing at" timestamp.
+            Order.objects.filter(id__in=ready_ids).update(
+                status="processing", updated_at=now()
+            )
 
         return ready_ids, failed_ids
+
+    @staticmethod
+    def reclaim_stuck_processing(user, older_than_minutes: int = 30) -> int:
+        """Move this user's orders that have been genuinely stranded in
+        `processing` back to `ready_to_ship` (the async ship task died / never
+        ran, or the worker is down). Returns how many were reclaimed.
+
+        An order is only reclaimed if it has been in `processing` past the
+        cutoff AND has NOT been shipped or charged yet - i.e. it has no
+        `awb_number` and no SUCCESS shipping-charge transaction. That guard stops
+        this (which runs on every load of the Processing list) from yanking
+        orders out from under a slow-but-alive worker mid-ship.
+        """
+        from wallet.models import Transaction
+
+        cutoff = now() - timedelta(minutes=older_than_minutes)
+        candidates = Order.objects.filter(
+            user=user, status="processing", updated_at__lt=cutoff
+        ).exclude(awb_number__gt="")  # awb set -> carrier already booked it
+
+        charged_order_ids = set(
+            Transaction.objects.filter(
+                user=user, desc="shipping_charges", status="SUCCESS",
+                merchant_transaction_id__startswith=f"{user.id}_shipping_charges_",
+            ).values_list("merchant_transaction_id", flat=True)
+        )
+
+        ids = []
+        for oid in candidates.values_list("id", flat=True):
+            key = f"{user.id}_shipping_charges_{oid}_"
+            if any(m.startswith(key) for m in charged_order_ids):
+                continue  # already paid for -> mid-ship, leave it
+            ids.append(oid)
+
+        if not ids:
+            return 0
+        Order.objects.filter(id__in=ids).update(
+            status="ready_to_ship", updated_at=now()
+        )
+        try:
+            Notification.objects.create(
+                user=user,
+                category="warning",
+                msg=f"{len(ids)} order(s) were stuck processing and have been "
+                "returned to Ready to Ship. Please try shipping them again.",
+            )
+        except Exception:
+            pass
+        return len(ids)
 
     @classmethod
     def total_cod_collected(cls, user):
@@ -400,38 +473,10 @@ class Order(MyModel):
         if "generate_barcode" in kwargs:
             del kwargs["generate_barcode"]
 
-        if my_order and "rto" not in old_status and self.status.startswith("rto"):
-            rto_charges = self.payment.price_breakup.get("rto_charges", 0)
-            if rto_charges:
-                trxn = Transaction.create_transaction(
-                    self.user,
-                    merchant_txn_id=f"{self.id}_rto_charges_{str(rto_charges).replace('.', '_')}_{uuid.uuid4()}",
-                    amount_rs=rto_charges,
-                    desc="rto_charges",
-                    transaction_type="debit",
-                )
-                if not trxn.debit(forcefully=True, awb_number=self.awb_number):
-                    Notification.objects.create(
-                        user=self.user,
-                        msg=f"Failed to debit ₹{rto_charges} for RTO charges",
-                        category="error",
-                    )
-
-            # Handle COD reversal if order is RTO and payment method is COD
-            # if self.payment.method == "cod":
-            #     trxn = Transaction.create_transaction(
-            #         self.user,
-            #         merchant_txn_id=f"{self.id}_cod_reversal_{uuid.uuid4()}",
-            #         amount_rs=self.total_amount,
-            #         desc="reverse_cod",
-            #         transaction_type="credit",
-            #     )
-            #     if not trxn.credit(forcefully=True, awb_number=self.awb_number):
-            #         Notification.objects.create(
-            #             user=self.user,
-            #             msg=f"Failed to credit ₹{self.total_amount} for COD reversal",
-            #             category="error",
-            #         )
+        # NOTE: the RTO wallet debit that used to live here has moved into
+        # update_status() (see _charge_rto_charges). Order.save() must not have
+        # financial side effects - it bypasses the wallet service's locking and
+        # idempotency, and fires on every save() including unrelated writes.
 
         super().save(*args, **kwargs)
 
@@ -482,9 +527,55 @@ class Order(MyModel):
         self.calculate_total()
         return self.total_amount * settings.GST_ON_SHIPMENT
 
+    def invoice_summary(self) -> dict:
+        """A reconciled breakdown for the customer order-details / invoice view.
+
+        ``items_subtotal`` is the sum of the line items; charges and discount come
+        off ``payment`` (all default 0 when there is no Payment row). ``tax_amount``
+        is computed from ``tax_percent`` against the items subtotal. ``grand_total``
+        stays the authoritative ``order.total_amount`` the merchant declared - if
+        the parts don't add up to it (a manual override) ``adjustment`` carries the
+        difference so the column still balances.
+        """
+        pay = getattr(self, "payment", None)
+
+        def _f(name):
+            return float(getattr(pay, name, 0) or 0) if pay else 0.0
+
+        items_subtotal = round(
+            sum(float(i.total_price or 0) for i in self.items.all()), 2
+        )
+        tax_percent = _f("tax_percent")
+        tax_amount = round(items_subtotal * tax_percent / 100, 2)
+        shipping = _f("shipping_charges")
+        cod = _f("cod_charges")
+        gift_wrap = _f("gift_wrap_charges")
+        other = _f("other_charges")
+        discount = _f("discount")
+        grand_total = round(float(self.total_amount or 0), 2)
+
+        computed = round(
+            items_subtotal + tax_amount + shipping + cod + gift_wrap + other - discount,
+            2,
+        )
+        adjustment = round(grand_total - computed, 2)
+
+        return {
+            "items_subtotal": items_subtotal,
+            "tax_percent": tax_percent,
+            "tax_amount": tax_amount,
+            "shipping_charges": shipping,
+            "cod_charges": cod,
+            "gift_wrap_charges": gift_wrap,
+            "other_charges": other,
+            "discount": discount,
+            "adjustment": adjustment,
+            "grand_total": grand_total,
+        }
+
     def get_order_id(self):
-        """Returns a formatted order ID string."""
-        return f"IS{self.id}"
+        """Returns a formatted order ID string (SwiftCourier reference)."""
+        return f"SC{self.id}"
 
     def get_order_id_for_aggregator(self):
         """Returns the order ID that will be used for downstream aggregator processing."""
@@ -504,53 +595,263 @@ class Order(MyModel):
         if new_status not in self.ALL_ORDER_STATUS:
             return False
 
+        previous_status = self.status
+
+        # A carrier that re-sends the same status must be a cheap no-op, not a
+        # re-run of every side effect (extra saves, duplicate notifications).
+        if new_status == previous_status:
+            return True
+
         # ---- if order is completed or cancelled, remove barcode ----
         if new_status in ["delivered", "cancelled", "rto_delivered"]:
             if self.barcode:
                 self.barcode.delete(save=False)  # deletes from S3 + DB
                 self.barcode = None
 
-        if self.status != "pending_pickup" and new_status == "pending_pickup":
-            self.shipment.booked_at = now()
+        # Shipment is a reverse OneToOne - a webhook can fire for an order that
+        # never got one. Touch its timestamps only if it exists; never let a
+        # missing Shipment 500 the status transition.
+        shipment = getattr(self, "shipment", None)
+        if shipment is not None:
+            stamp = {
+                "pending_pickup": "booked_at",
+                "in_transit": "shipped_at",
+                "delivered": "delivered_at",
+                "rto": "rto_at",
+                "rto_delivered": "rto_delivered_at",
+            }.get(new_status)
+            if stamp and getattr(shipment, stamp, None) is None:
+                setattr(shipment, stamp, now())
+            if tracking_history is not None and isinstance(tracking_history, list):
+                shipment.tracking_history = tracking_history
+            shipment.save()
+        elif tracking_history is not None:
+            logger.warning("Order #%s: status webhook but no Shipment row", self.id)
 
-        if self.status != "in_transit" and new_status in ["in_transit"]:
-            self.shipment.shipped_at = now()
-
-        if self.status != "delivered" and new_status == "delivered":
-            self.shipment.delivered_at = now()
-
-        if self.status != "rto" and new_status == "rto":
-            self.shipment.rto_at = now()
-
-        if self.status != "rto_delivered" and new_status == "rto_delivered":
-            self.shipment.rto_delivered_at = now()
-
-        if self.status != "cancelled" and new_status == "cancelled":
+        if new_status == "cancelled":
             try:
                 awb = str(self.awb_number)
                 if awb:
                     self.cancel_data[awb] = {
-                        "cancelled_at": timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "cancelled_at": now().strftime("%Y-%m-%dT%H:%M:%SZ"),
                         "courier": (
                             f"{self.logistic_partner.name} ({self.logistic_partner.abbreviation})"
                             if self.logistic_partner
                             else "N/A"
                         ),
-                        "refund_amount": self.payment.amount if self.payment else 0.0,
+                        "refund_amount": (
+                            float(self.payment.shipping_charges)
+                            if getattr(self, "payment", None)
+                            else 0.0
+                        ),
                         "done_by": "update_status_method",
                     }
-            except Exception as e:
+            except Exception:
                 logger.exception(f"Error updating cancel_data for Order #{self.id}: ")
 
-        if tracking_history is not None and isinstance(tracking_history, list):
-            self.shipment.tracking_history = tracking_history
-
-        self.shipment.save()
-
         self.status = new_status
-        self.save(update_fields=["status", "barcode", "cancel_data"])
+        self.updated_at = now()  # update_fields skips auto_now
+        self.save(update_fields=["status", "barcode", "cancel_data", "updated_at"])
+
+        # RTO leg entered -> charge RTO freight once (moved out of Order.save,
+        # §9.2.1). Deterministic idempotency key so a replayed webhook / retried
+        # task cannot double-debit.
+        if "rto" not in previous_status and new_status.startswith("rto"):
+            self._charge_rto_charges()
+
+        if previous_status != new_status:
+            self._dispatch_status_notifications(new_status, previous_status)
 
         return True
+
+    def _dispatch_status_notifications(self, new_status: str, old_status: str) -> None:
+        """Queue customer WhatsApp/SMS notifications for this status change.
+
+        No-op unless settings.CUSTOMER_NOTIFICATIONS_ENABLED is on. Even then the
+        tasks themselves are gated per-merchant (WhatsAppSettings.enabled /
+        SMSSettings.enabled, both default False) and skip silently when the
+        status has no configured template. Never raises - a broker outage or an
+        import error must not break the status transition.
+        """
+        from django.conf import settings
+
+        if not getattr(settings, "CUSTOMER_NOTIFICATIONS_ENABLED", False):
+            return
+        try:
+            from whatsapp_integration.tasks import send_whatsapp_notification
+            from SMS_integration.tasks import send_sms_notification
+        except Exception:
+            logger.exception("Order #%s: notification tasks unavailable", self.id)
+            return
+        for task in (send_whatsapp_notification, send_sms_notification):
+            try:
+                task.delay(self.id, new_status, old_status)
+            except Exception:
+                logger.exception(
+                    "Order #%s: could not queue %s", self.id, getattr(task, "name", task)
+                )
+
+    def _charge_rto_charges(self) -> None:
+        """Debit the RTO freight for this order, exactly once.
+
+        Called from update_status on the transition into an rto* state. Uses a
+        deterministic merchant_transaction_id so duplicate transitions are
+        no-ops at the DB unique-constraint level rather than double-debits.
+        """
+        try:
+            rto_charges = (self.payment.price_breakup or {}).get("rto_charges", 0)
+        except Exception:
+            logger.exception(f"Order #{self.id}: could not read rto_charges")
+            return
+        if not rto_charges:
+            return
+
+        # merchant_transaction_id is stored as str(user.id) + this value and is
+        # unique. Cheap pre-check for the common replayed-webhook case, plus a
+        # try/except to close the race - wrapped in its own atomic() so a failed
+        # INSERT never poisons an outer transaction if a caller adds one later.
+        mtid = f"{self.user_id}_rto_charges_order_{self.id}"
+        if Transaction.objects.filter(merchant_transaction_id=mtid).exists():
+            logger.info(f"Order #{self.id}: RTO charge already posted, skipping")
+            return
+        try:
+            with transaction.atomic():
+                trxn = Transaction.create_transaction(
+                    self.user,
+                    merchant_txn_id=f"_rto_charges_order_{self.id}",
+                    amount_rs=rto_charges,
+                    desc="rto_charges",
+                    transaction_type="debit",
+                )
+        except IntegrityError:
+            logger.info(f"Order #{self.id}: RTO charge already posted, skipping")
+            return
+
+        if not trxn.debit(forcefully=True, awb_number=self.awb_number):
+            Notification.objects.create(
+                user=self.user,
+                msg=f"Failed to debit ₹{rto_charges} for RTO charges",
+                category="error",
+            )
+
+    def charge_shipping(self, amount: float) -> "Transaction | None":
+        """Debit shipping charges for this order exactly once *per AWB*.
+
+        The merchant_transaction_id is deterministic (order id + current AWB), so
+        a retried ship task or a double-clicked "Ship" button reuses the same
+        transaction instead of debiting twice. A re-ship after cancellation gets
+        a fresh AWB, so it legitimately charges again.
+
+        Returns the SUCCESS Transaction, or None if the debit could not go
+        through (caller should roll the order back to ready_to_ship). The wallet
+        move itself is row-locked inside Transaction.debit -> User.debit.
+        """
+        amount = float(amount or 0)
+        if amount <= 0:
+            # 0 = nothing to charge; < 0 = a broken rate card / price_breakup -
+            # never let that credit the wallet.
+            if amount < 0:
+                logger.error(
+                    "Order #%s: refusing negative shipping charge %s", self.id, amount
+                )
+            return None
+
+        key = f"_shipping_charges_{self.id}_{self.awb_number or 'noawb'}"
+        mtid = f"{self.user_id}{key}"
+
+        trxn = Transaction.objects.filter(merchant_transaction_id=mtid).first()
+        if trxn is None:
+            try:
+                with transaction.atomic():
+                    trxn = Transaction.create_transaction(
+                        self.user,
+                        merchant_txn_id=key,
+                        amount_rs=amount,
+                        desc="shipping_charges",
+                        transaction_type="debit",
+                    )
+            except IntegrityError:
+                trxn = Transaction.objects.filter(merchant_transaction_id=mtid).first()
+
+        if trxn is None:
+            logger.error(f"Order #{self.id}: could not create shipping-charge txn")
+            return None
+        if trxn.status == "SUCCESS":
+            return trxn  # already charged for this AWB - idempotent no-op
+
+        if trxn.debit(awb_number=self.awb_number):
+            return trxn
+        return None
+
+    def refund_shipping(
+        self, amount: float | None = None, desc: str = "cancelled_order"
+    ) -> "Transaction | None":
+        """Credit the shipping charge back for this order exactly once *per AWB*.
+
+        Mirror of charge_shipping: the merchant_transaction_id is deterministic
+        (order id + current AWB), so a double-clicked "Cancel" button or a
+        retried cancel task refunds only once. A re-ship + re-cancel gets a
+        fresh AWB and refunds again, correctly.
+
+        `amount` defaults to exactly what `charge_shipping` debited for the
+        current AWB (found via its deterministic transaction id), falling back to
+        `payment.shipping_charges` only if no charge is on record. Returns the
+        SUCCESS Transaction, or None if there was nothing to credit back.
+        """
+        if amount is None:
+            charge_mtid = (
+                f"{self.user_id}_shipping_charges_{self.id}_"
+                f"{self.awb_number or 'noawb'}"
+            )
+            charged = (
+                Transaction.objects.filter(
+                    merchant_transaction_id=charge_mtid,
+                    status="SUCCESS",
+                    transaction_type="debit",
+                )
+                .values_list("amount", flat=True)
+                .first()
+            )
+            if charged is not None:
+                amount = charged
+            else:
+                amount = getattr(self.payment, "shipping_charges", 0) or 0
+        amount = float(amount or 0)
+        if amount <= 0:
+            if amount < 0:
+                logger.error(
+                    "Order #%s: refusing negative refund %s", self.id, amount
+                )
+            return None
+
+        key = f"_cancel_refund_{self.id}_{self.awb_number or 'noawb'}"
+        mtid = f"{self.user_id}{key}"
+
+        trxn = Transaction.objects.filter(merchant_transaction_id=mtid).first()
+        if trxn is None:
+            try:
+                with transaction.atomic():
+                    trxn = Transaction.create_transaction(
+                        self.user,
+                        merchant_txn_id=key,
+                        amount_rs=amount,
+                        desc=desc,
+                        transaction_type="credit",
+                    )
+            except IntegrityError:
+                trxn = Transaction.objects.filter(
+                    merchant_transaction_id=mtid
+                ).first()
+
+        if trxn is None:
+            logger.error(f"Order #{self.id}: could not create refund txn")
+            return None
+        if trxn.status == "SUCCESS":
+            return trxn  # already refunded for this AWB - idempotent no-op
+
+        if trxn.credit(awb_number=self.awb_number):
+            return trxn
+        return None
 
     @staticmethod
     def delete_non_required_barcode() -> int:
@@ -667,7 +968,7 @@ class Shipment(MyModel):
     tracking_number = models.CharField(max_length=100)
     status = models.CharField(max_length=20, choices=SHIPMENT_STATUS, default="booked")
 
-    booked_at = models.DateTimeField(null=True, blank=True)
+    booked_at = models.DateTimeField(null=True, blank=True, db_index=True)
     shipped_at = models.DateTimeField(null=True, blank=True)
     delivered_at = models.DateTimeField(null=True, blank=True)
     rto_at = models.DateTimeField(null=True, blank=True)
@@ -1165,3 +1466,53 @@ class CODRemittance(MyModel):
             )
 
         return summary
+
+
+class CarrierWebhookEvent(MyModel):
+    """Raw inbound carrier webhook, persisted before any business processing.
+
+    This is the single reliable source for debugging and replaying a carrier
+    integration after the fact (PRD 6.7.3, 7.4.1). It is deliberately separate
+    from any outgoing merchant-webhook records - one table never serves both.
+    """
+
+    PROCESSING_CHOICES = [
+        ("received", "Received"),
+        ("ignored", "Ignored"),
+        ("processed", "Processed"),
+        ("failed", "Failed"),
+        ("duplicate", "Duplicate"),
+    ]
+
+    carrier = models.CharField(max_length=40, db_index=True)
+    received_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    request_path = models.CharField(max_length=255, default="")
+    request_method = models.CharField(max_length=10, default="POST")
+    headers = models.JSONField(default=dict, help_text="Redacted request headers")
+    raw_body = models.TextField(default="", help_text="Raw request body (redacted)")
+    body_sha256 = models.CharField(max_length=64, default="", db_index=True)
+    parsed_payload = models.JSONField(null=True, blank=True, default=None)
+    external_event_id = models.CharField(max_length=120, default="", blank=True, db_index=True)
+    awb_number = models.CharField(max_length=40, default="", blank=True, db_index=True)
+    external_status = models.CharField(max_length=80, default="", blank=True)
+    mapped_status = models.CharField(max_length=40, default="", blank=True)
+    # None  = no signature mechanism / not checked (log-only rollout)
+    # True  = signature verified
+    # False = signature verification failed
+    signature_valid = models.BooleanField(null=True, default=None)
+    processing_status = models.CharField(
+        max_length=12, choices=PROCESSING_CHOICES, default="received", db_index=True
+    )
+    processing_attempts = models.PositiveIntegerField(default=0)
+    last_error = models.TextField(default="", blank=True)
+    order = models.ForeignKey(
+        "Order", null=True, blank=True, on_delete=models.SET_NULL, related_name="webhook_events"
+    )
+    correlation_id = models.CharField(max_length=64, default="", db_index=True)
+
+    class Meta:
+        ordering = ["-received_at"]
+        indexes = [models.Index(fields=["carrier", "received_at"])]
+
+    def __str__(self):
+        return f"{self.carrier} webhook @ {self.received_at:%Y-%m-%d %H:%M:%S} ({self.processing_status})"

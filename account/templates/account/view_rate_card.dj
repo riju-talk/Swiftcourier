@@ -62,8 +62,8 @@
         }
 
         .surface-badge {
-            background-color: #dbeafe;
-            color: #1d4ed8;
+            background-color: #fee2e2;
+            color: #b91c1c;
         }
 
         .air-badge {
@@ -83,7 +83,7 @@
 
         .dark .surface-badge {
             background-color: #1e3a8a;
-            color: #dbeafe;
+            color: #fee2e2;
         }
 
         .dark .air-badge {
@@ -195,7 +195,7 @@
 {% block body %}
     <div>
         <button onclick="history.back()"
-                class="border border-blue-500 hover:bg-blue-700 text-blue-500 hover:text-white font-bold py-2 px-4 rounded-sm">
+                class="border border-red-500 hover:bg-red-700 text-red-500 hover:text-white font-bold py-2 px-4 rounded-sm">
             Back
         </button>
     </div>
@@ -210,15 +210,15 @@
             </div>
 
             <!-- Card Container -->
-            <div class="card bg-white dark:bg-gray-800 p-4 md:p-6">
+            <div class="card bg-white dark:bg-[#12151f] p-4 md:p-6">
                 <!-- Filters Section -->
-                <div class="flex flex-wrap gap-4 justify-between items-center mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex flex-wrap gap-4 justify-between items-center mb-6 pb-4 border-b border-gray-200 dark:border-white/10">
                     <div class="flex flex-wrap gap-4">
                         <!-- Mode Filter -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mode / Type</label>
                             <div class="relative">
-                                <select class="w-44 px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-primary-600">
+                                <select class="w-44 px-3 py-2.5 border border-gray-300 dark:border-white/10 rounded-xl bg-white dark:bg-[#12151f] text-sm text-black dark:text-white focus:outline-hidden focus:ring-2 focus:ring-primary-600">
                                     <option value="">All Types</option>
                                     <option value="Surface">Surface</option>
                                     <option value="Air">Air</option>
@@ -235,7 +235,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Weight</label>
                             <div class="relative">
-                                <select class="w-44 px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-primary-600">
+                                <select class="w-44 px-3 py-2.5 border border-gray-300 dark:border-white/10 rounded-xl bg-white dark:bg-[#12151f] text-sm text-black dark:text-white focus:outline-hidden focus:ring-2 focus:ring-primary-600">
                                     <option value="">All Weights</option>
                                     <option value="0.5kg">0.5 KG</option>
                                     <option value="1kg">1 KG</option>
@@ -253,7 +253,7 @@
                         <div class="relative">
                             <input type="text"
                                    placeholder="Search couriers"
-                                   class="pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-sm w-64 focus:outline-hidden focus:ring-2 focus:ring-primary-600">
+                                   class="pl-10 pr-4 py-2.5 border border-gray-300 dark:border-white/10 rounded-xl bg-white dark:bg-[#12151f] text-sm w-64 focus:outline-hidden focus:ring-2 focus:ring-primary-600">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-search text-gray-400"></i>
                             </div>
@@ -265,7 +265,7 @@
                 <div class="responsive-table overflow-x-auto rounded-xl">
                     <table class="w-full text-sm">
                         <thead>
-                            <tr class="table-header bg-gray-100 dark:bg-gray-800">
+                            <tr class="table-header bg-gray-100 dark:bg-[#12151f]">
                                 <th class="px-4 py-4 text-left font-semibold text-gray-700 dark:text-gray-300">Courier</th>
                                 <th class="px-4 py-4 text-left font-semibold text-gray-700 dark:text-gray-300">Mode</th>
                                 <th class="px-4 py-4 text-center font-semibold text-gray-700 dark:text-gray-300">
@@ -294,12 +294,12 @@
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                             <!-- Surface Row -->
-                            <tr class="table-row bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                            <tr class="table-row bg-white dark:bg-[#12151f] hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="px-4 py-4 font-medium align-top">
                                     <div class="flex items-start space-x-3">
                                         <!-- Icon for Xpressbees -->
-                                        <div class="courier-icon bg-blue-100 dark:bg-blue-900 p-2 rounded-sm">
-                                            <i class="fas fa-shipping-fast text-blue-600 dark:text-blue-400"></i>
+                                        <div class="courier-icon bg-red-100 dark:bg-red-900 p-2 rounded-sm">
+                                            <i class="fas fa-shipping-fast text-red-600 dark:text-red-400"></i>
                                         </div>
 
                                         <!-- Courier Info -->
@@ -373,12 +373,12 @@
                             </tr>
 
                             <!-- Air Row -->
-                            <tr class="table-row bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                            <tr class="table-row bg-white dark:bg-[#12151f] hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="px-4 py-4 font-medium align-top">
                                     <div class="flex items-start space-x-3">
                                         <!-- Icon for Xpressbees -->
-                                        <div class="courier-icon bg-blue-100 dark:bg-blue-900 p-2 rounded-sm">
-                                            <i class="fas fa-shipping-fast text-blue-600 dark:text-blue-400"></i>
+                                        <div class="courier-icon bg-red-100 dark:bg-red-900 p-2 rounded-sm">
+                                            <i class="fas fa-shipping-fast text-red-600 dark:text-red-400"></i>
                                         </div>
 
                                         <!-- Courier Info -->
@@ -457,10 +457,10 @@
 
                 <!-- Info Section -->
                 <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="card bg-white dark:bg-gray-800 p-5">
+                    <div class="card bg-white dark:bg-[#12151f] p-5">
                         <div class="flex items-start">
-                            <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg mr-4">
-                                <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 text-xl"></i>
+                            <div class="bg-red-100 dark:bg-red-900 p-3 rounded-lg mr-4">
+                                <i class="fas fa-info-circle text-red-600 dark:text-red-400 text-xl"></i>
                             </div>
                             <div>
                                 <h3 class="font-semibold text-lg mb-1">Zone Definitions</h3>
@@ -479,7 +479,7 @@
                         </div>
                     </div>
 
-                    <div class="card bg-white dark:bg-gray-800 p-5">
+                    <div class="card bg-white dark:bg-[#12151f] p-5">
                         <div class="flex items-start">
                             <div class="bg-green-100 dark:bg-green-900 p-3 rounded-lg mr-4">
                                 <i class="fas fa-percentage text-green-600 dark:text-green-400 text-xl"></i>
@@ -500,7 +500,7 @@
 
                 
             <!-- Terms & Conditions -->
-            <div class="card bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow mt-8">
+            <div class="card bg-white dark:bg-[#12151f] p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow mt-8">
                 <div class="flex items-start space-x-4">
 
                     <!-- Icon -->
@@ -510,7 +510,7 @@
 
                     <!-- Content -->
                     <div class="flex-1">
-                        <h3 class="font-bold text-xl mb-4 text-gray-800 dark:text-gray-100">Terms & Conditions</h3>
+                        <h3 class="font-bold text-xl mb-4 text-black dark:text-white">Terms & Conditions</h3>
 
                         <ul class="space-y-3 text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
                             <li class="flex items-start">
@@ -559,11 +559,11 @@
 
             <!-- Footer Note -->
             <div class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-                <p>IdiotShip Rate card .</p>
+                <p>SwiftCourier Rate card .</p>
             </div>
         </div>
     {% else %}
-        <section class="min-h-screen flex items-center justify-center px-4 py-16 bg-gray-100 dark:bg-gray-900">
+        <section class="min-h-screen flex items-center justify-center px-4 py-16 bg-gray-100 dark:bg-[#0e1726]">
             <style>
                 .custom-btn {
                     background: linear-gradient(to right, #667eea, #764ba2);
@@ -583,7 +583,7 @@
                 }
             </style>
 
-            <div class="flex flex-col items-center justify-center gap-6 py-20 px-10 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg max-w-xl w-full">
+            <div class="flex flex-col items-center justify-center gap-6 py-20 px-10 bg-gray-50 dark:bg-[#12151f] rounded-xl shadow-lg max-w-xl w-full">
                 <div class="text-7xl text-gray-300 dark:text-gray-600">
                     <i class="fas fa-box-open"></i>
                 </div>

@@ -21,8 +21,10 @@ from django.conf.urls.static import static
 from .views import contact_us, index, subscribe_newsletter, track_shipment
 
 
-handler404 = "idiotship.views.custom_404"
-handler500 = "idiotship.views.custom_500"
+handler400 = "swiftcourier.views.custom_400"
+handler403 = "swiftcourier.views.custom_403"
+handler404 = "swiftcourier.views.custom_404"
+handler500 = "swiftcourier.views.custom_500"
 
 
 urlpatterns = [
@@ -55,6 +57,12 @@ urlpatterns = [
     path("smartship-integration/", include("smartship_integration.urls")),
     path("bdl-integration/", include("bdl_integration.urls")),
     path("zippyy-integration/", include("zippyy_integration.urls")),
+    # serviceability + rate calculator
+    path("api/serviceability/", include("serviceability.core.urls")),
+    path("api/", include("rate_calculator.api.urls")),
+    # customer notifications (Twilio delivery-status webhooks etc.)
+    path("whatsapp-integration/", include("whatsapp_integration.urls")),
+    path("sms-integration/", include("SMS_integration.urls")),
 ]
 
 if settings.DEBUG:

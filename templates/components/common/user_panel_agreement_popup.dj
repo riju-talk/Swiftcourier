@@ -20,7 +20,7 @@
 
             <!-- Accept Now -->
             <button id="acceptNowBtn"
-                    class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">Accept Now</button>
+                    class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">Accept Now</button>
         </div>
     </div>
 </div>
@@ -32,9 +32,9 @@
         const acceptBtn = document.getElementById("acceptNowBtn");
 
         const params = new URLSearchParams(window.location.search);
-        const show = params.get("show_agreement_accept_popup").toLowerCase();
+        const show = (params.get("show_agreement_accept_popup") || "").toLowerCase();
 
-        if (show === "true") {
+        if (show === "true" && overlay && box) {
             // Show overlay
             overlay.classList.remove("hidden");
             overlay.classList.add("flex");
@@ -51,12 +51,12 @@
         }
 
         // Close popup
-        remindBtn.addEventListener("click", () => {
+        remindBtn && remindBtn.addEventListener("click", () => {
             overlay.classList.add("hidden");
         });
 
         // Accept now → Redirect
-        acceptBtn.addEventListener("click", () => {
+        acceptBtn && acceptBtn.addEventListener("click", () => {
             window.location.href = "/user_panel/setting/kyc/#other"; // Change URL here
         });
     });

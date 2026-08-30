@@ -1,5 +1,5 @@
-# 🚚 Idiotship – Courier Aggregator Platform
-**Idiotship** is a powerful courier aggregation platform that enables businesses to seamlessly manage, optimize, and automate their shipping operations across multiple courier partners from a single interface.
+# 🚚 SwiftCourier – Courier Aggregator Platform
+**SwiftCourier** is a powerful courier aggregation platform that enables businesses to seamlessly manage, optimize, and automate their shipping operations across multiple courier partners from a single interface.
 
 ---
 
@@ -41,8 +41,8 @@ Make sure the following are installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/shipnick/idiotship.git
-cd idiotship
+git clone https://github.com/shipnick/swiftcourier.git
+cd swiftcourier
 ```
 
 ---
@@ -99,14 +99,14 @@ uv run manage.py tailwind start
 ## 🔄 Running Celery
 Start Celery worker:
 ```bash
-uv run celery -A idiotship worker -l info -P solo
+uv run celery -A swiftcourier worker -l info -P solo
 ```
 
 ---
 
 ## 📄 PDF Generation (WeasyPrint)
 
-Idiotship uses **WeasyPrint** for generating:
+SwiftCourier uses **WeasyPrint** for generating:
 
 * Shipping labels
 * Invoices
@@ -132,5 +132,5 @@ If you face issues:
 
 ---
 
-## 💡 About Idiotship
-Idiotship simplifies logistics by bridging businesses with multiple courier providers, enabling faster, smarter, and more reliable deliveries.
+## 💡 About SwiftCourier
+SwiftCourier simplifies logistics by bridging businesses with multiple courier providers, enabling faster, smarter, and more reliable deliveries.

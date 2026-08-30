@@ -24,7 +24,7 @@
 
         <!-- Hub Name -->
         <div>
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                 Hub Name <span class="text-red-500">*</span>
             </label>
             <input type="text"
@@ -34,12 +34,12 @@
                    min="5"
                    max="20"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
         </div>
 
         <!-- PIN Code -->
         <div>
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                 PIN Code <span class="text-red-500">*</span>
             </label>
             <input type="text"
@@ -49,12 +49,12 @@
                    placeholder="PIN Code"
                    min="6"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
         </div>
 
         <!-- Mobile Number -->
         <div>
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                 Mobile Number <span class="text-red-500">*</span>
             </label>
             <input type="tel"
@@ -63,22 +63,22 @@
                    min="10"
                    placeholder="Mobile Number"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
         </div>
 
         <!-- Alternate Mobile Number -->
         <div>
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Alternate Mobile Number</label>
+            <label class="block text-sm font-semibold text-black dark:text-white mb-2">Alternate Mobile Number</label>
             <input type="tel"
                    name="alt_phone"
                    value="{{ hub.alt_phone }}"
                    placeholder="Alternate Mobile Number"
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
         </div>
 
         <!-- Address -->
         <div class="md:col-span-2">
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                 Address <span class="text-red-500">*</span>
             </label>
             <textarea name="address_line1"
@@ -86,18 +86,18 @@
                       min="5"
                       rows="2"
                       required
-                      class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition">{{ hub.address_line1 }}</textarea>
+                      class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition">{{ hub.address_line1 }}</textarea>
         </div>
 
         <!-- Address2 -->
         {% comment %} <div class="md:col-span-2">
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Address 2</label>
-            <textarea name="address_line2" placeholder="Apartment, suite, unit, building, floor, etc." rows="2" class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition">{{ hub.address_line2 }}</textarea>
+            <label class="block text-sm font-semibold text-black dark:text-white mb-2">Address 2</label>
+            <textarea name="address_line2" placeholder="Apartment, suite, unit, building, floor, etc." rows="2" class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition">{{ hub.address_line2 }}</textarea>
         </div> {% endcomment %}
 
         <!-- Contact Person Name -->
         <div>
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                 Contact Person Name <span class="text-red-500">*</span>
             </label>
             <input type="text"
@@ -106,12 +106,12 @@
                    value="{{ hub.contact_person }}"
                    placeholder="Contact Person"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
         </div>
 
         <!-- Email -->
         <div>
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                 Email <span class="text-red-500">*</span>
             </label>
             <input type="email"
@@ -119,12 +119,12 @@
                    value="{{ hub.email }}"
                    placeholder="name@example.com"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
         </div>
 
         <!-- City -->
         <div>
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                 City <span class="text-red-500">*</span>
             </label>
             <input type="text"
@@ -133,12 +133,12 @@
                    value="{{ hub.city }}"
                    placeholder="City"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
         </div>
 
         <!-- State -->
         <div>
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                 State <span class="text-red-500">*</span>
             </label>
             <input type="text"
@@ -147,12 +147,12 @@
                    value="{{ hub.state }}"
                    placeholder="State"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
         </div>
 
         <!-- Country -->
         <div>
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                 Country <span class="text-red-500">*</span>
             </label>
             <input type="text"
@@ -161,21 +161,21 @@
                    value="{{ hub.country }}"
                    placeholder="Country"
                    required
-                   class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                   class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
         </div>
 
         <!-- GSTIN -->
         {% comment %} <div>
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                 GSTIN <span class="text-red-500">*</span>
             </label>
-            <input type="text" name="gstin" value="{{ hub.gstin }}" placeholder="GSTIN" required class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+            <input type="text" name="gstin" value="{{ hub.gstin }}" placeholder="GSTIN" required class="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
         </div> {% endcomment %}
 
         <!-- Submit Button -->
         <div class="md:col-span-2 text-right mt-4">
             <button type="submit"
-                    class="px-6 py-2 bg-primary text-white font-semibold rounded-xl shadow-sm hover:bg-primary-dark transition">
+                    class="px-6 py-2 bg-red-600 text-white font-semibold rounded-xl shadow-sm hover:bg-primary-dark transition">
                 Submit
             </button>
         </div>

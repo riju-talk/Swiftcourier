@@ -1,0 +1,13 @@
+{% extends "components/errors/base.dj" %}
+
+{% block code %}400 — Bad request{% endblock %}
+{% block bigcode %}400{% endblock %}
+{% block eyebrow %}Bad request{% endblock %}
+{% block heading %}We couldn&rsquo;t process that request{% endblock %}
+{% block message %}
+  The request was malformed or incomplete. Reload the page and try again &mdash;
+  if it keeps happening, clear the form and start over.
+{% endblock %}
+{% block actions %}
+  <a class="btn btn--primary" href="/">Back to dashboard</a>
+{% endblock %}

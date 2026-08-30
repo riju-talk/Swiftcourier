@@ -47,7 +47,7 @@ def fetch_location(pincode: str) -> Tuple[str, str]:
     Fetch and return (city, state) for a given PIN code using India Post API.
     """
     url = f"https://api.postalpincode.in/pincode/{pincode}"
-    resp = requests.get(url)
+    resp = requests.get(url, timeout=(5, 15))
     data = resp.json()
     if not data or data[0].get("Status") != "Success":
         raise ValueError(f"Invalid PIN code or API failure: {pincode}")
@@ -168,6 +168,17 @@ def calculate_and_debit_shipping_charges(
     }
     total_order_count = orders.count()
     for order in orders:
+        # An order can reach here without a shipping address (Address deleted ->
+        # SET_NULL) or without a Shipment row. Fail just that order cleanly
+        # instead of raising and killing the whole batch.
+        shipment = getattr(order, "shipment", None)
+        if order.shipping_address is None or shipment is None:
+            result["failed"].append(
+                (order.id, "Order is missing a shipping address or package details")
+            )
+            order.update_status("ready_to_ship")
+            continue
+
         zone = detect_zone_from_pincodes(
             pickup_pin=hub.pin_code,
             dest_pin=order.shipping_address.pin_code,
@@ -176,7 +187,7 @@ def calculate_and_debit_shipping_charges(
         order.save()
 
         # Calculate weight in kg
-        package_weight_kg = order.shipment.package_weight_kg
+        package_weight_kg = order.shipment.package_weight_kg or 0
         try:
             volutmetric_weight_in_kg = (
                 order.shipment.package_length_cm
@@ -261,9 +272,17 @@ def calculate_and_debit_shipping_charges(
             order.update_status("ready_to_ship")
             continue
 
-        weight_bracket_in_gm = float(weight_bracket) * 1000
+        weight_bracket_in_gm = float(weight_bracket or 0) * 1000
         additional_weight = max(0, package_weight_grams - base_weight_in_gm)
-        additional_units = math.ceil(additional_weight / weight_bracket_in_gm)
+        if weight_bracket_in_gm > 0:
+            additional_units = math.ceil(additional_weight / weight_bracket_in_gm)
+        else:
+            # rate card has no incremental-weight step -> only the base slab applies
+            logger.warning(
+                "Order #%s: rate card %s has a zero additional-weight bracket",
+                order.id, rate_card.id,
+            )
+            additional_units = 0
 
         cod_charge = 0
         if order.payment.method == "cod":
@@ -317,15 +336,9 @@ def calculate_and_debit_shipping_charges(
         except Exception:
             pass
 
-        trsn = Transaction.create_transaction(
-            user=user,
-            merchant_txn_id=str(order.id) + "_" + str(uuid.uuid4()),
-            amount_rs=total_shipping_charges,
-            desc="shipping_charges",
-            transaction_type="debit",
-        )
         logger.debug("Transaction init...")
-        if not trsn.debit(awb_number=order.awb_number):
+        trsn = order.charge_shipping(total_shipping_charges)
+        if not trsn:
             logger.error("Transaction failed...")
             result["failed"].append(
                 (
@@ -433,14 +446,9 @@ def bulk_cancel_orders(order_ids: list[int], user_id: int):
 def _refund_and_prepare_cancel(order: Order) -> bool:
     """Return Error"""
     # -------- Transaction (cannot bulk, keep as-is) --------
-    tr = Transaction.create_transaction(
-        user=order.user,
-        merchant_txn_id=f"{order.id}_cancel_{uuid.uuid4()}",
-        amount_rs=order.payment.shipping_charges,
-        desc="cancelled_order",
-        transaction_type="credit",
-    )
-    if not tr.credit(awb_number=order.awb_number):
+    # idempotent per-AWB refund - a re-run of the bulk cancel handler will not
+    # double-credit an order it already refunded.
+    if order.refund_shipping() is None and order.payment.shipping_charges:
         return ValueError("Failed to credit amount")
 
     # -------- Avoid repeated dict writes --------

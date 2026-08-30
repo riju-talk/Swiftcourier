@@ -1,89 +1,134 @@
 {% extends "components/layouts/auth_layout.dj" %}
-
-{% block title %}
-    Sign In
-{% endblock title %}
-
 {% load static %}
 
-{% block css %}
-    <!-- Optional: Add this in your <head> or Tailwind config -->
-    <style>
-        @keyframes fade-in-up {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in-up {
-            animation: fade-in-up 0.6s ease-out;
-        }
-    </style>
-{% endblock css %}
+{% block title %}Admin Console{% endblock title %}
 
 {% block body %}
-    <div class="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-100 via-blue-200 to-blue-300 px-4 py-10 sm:px-6 lg:px-8">
-        <div class="relative w-full max-w-md space-y-8">
-            <!-- Skewed background -->
-            <div class="absolute inset-0 bg-linear-to-r from-blue-400 to-blue-600 shadow-xl transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl">
-            </div>
+<div class="min-h-screen w-full bg-black lg:grid lg:grid-cols-2">
 
-            <!-- Login Card -->
-            <div class="relative bg-white shadow-xl rounded-3xl px-8 py-10 sm:p-12">
-                <div class="text-center">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Welcome Back</h2>
-                    <p class="text-gray-500">Login to your account</p>
+    <!-- Brand panel -->
+    <div class="relative hidden overflow-hidden bg-black px-10 py-12 lg:flex lg:flex-col lg:justify-between xl:px-16 xl:py-16">
+        <div class="pointer-events-none absolute -left-24 -top-32 h-96 w-96 rounded-full bg-red-600/20 blur-3xl"></div>
+        <div class="pointer-events-none absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-red-700/10 blur-3xl"></div>
+
+        <div class="relative">
+            <span class="text-2xl font-extrabold tracking-tight text-white">
+                Swift<span class="text-red-500">Courier</span>
+            </span>
+            <p class="mt-1 text-xs font-semibold uppercase tracking-[0.3em] text-white/40">Logistics Platform</p>
+        </div>
+
+        <div class="relative mt-16 max-w-md">
+            <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/60">
+                <span class="h-1.5 w-1.5 rounded-full bg-red-500"></span> Super Admin
+            </span>
+            <h1 class="mt-5 text-3xl font-bold leading-tight text-white xl:text-4xl">
+                The command centre for the whole network.
+            </h1>
+            <p class="mt-4 text-base leading-relaxed text-white/60">
+                Manage merchants, courier partners, rate cards, wallets and pincode
+                serviceability &mdash; every account and every shipment, from one console.
+            </p>
+
+            <dl class="mt-10 grid grid-cols-3 gap-6 border-t border-white/10 pt-6">
+                <div>
+                    <dt class="text-xs uppercase tracking-wide text-white/40">Merchants</dt>
+                    <dd class="mt-1 text-xl font-bold text-white">Unlimited</dd>
                 </div>
+                <div>
+                    <dt class="text-xs uppercase tracking-wide text-white/40">Couriers</dt>
+                    <dd class="mt-1 text-xl font-bold text-white">15+</dd>
+                </div>
+                <div>
+                    <dt class="text-xs uppercase tracking-wide text-white/40">Control</dt>
+                    <dd class="mt-1 text-xl font-bold text-white">Full</dd>
+                </div>
+            </dl>
+        </div>
 
-                <form class="mt-8 space-y-6 animate-fade-in-up"
-                      method="post"
-                      action="{% url 'account:superadmin_signin' %}">
-                    {% csrf_token %}
-                    <div class="relative">
-                        <input type="email"
-                               name="email"
-                               id="email"
-                               placeholder="Email"
-                               autocomplete="off"
-                               required
-                               class="peer w-full px-4 pt-6 pb-2 text-sm text-gray-900 placeholder-transparent border border-gray-300 rounded-md focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition" />
-                        <label for="email"
-                               class="absolute left-3 top-2.5 text-sm text-gray-500 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500">
-                            Email Address
-                        </label>
-                    </div>
-
-                    <div class="relative">
-                        <input type="password"
-                               name="password"
-                               id="password"
-                               placeholder="Password"
-                               autocomplete="off"
-                               required
-                               class="peer w-full px-4 pt-6 pb-2 text-sm text-gray-900 placeholder-transparent border border-gray-300 rounded-md focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition" />
-                        <label for="password"
-                               class="absolute left-3 top-2.5 text-sm text-gray-500 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2.5 peer-focus:text-sm peer-focus:text-blue-500">
-                            Password
-                        </label>
-                    </div>
-
-                    <div>
-                        <button type="submit"
-                                class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-semibold rounded-md text-white bg-blue-500 hover:bg-blue-600 transition focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
-                            Sign In
-                        </button>
-                    </div>
-                </form>
-            </div>
+        <div class="relative mt-16">
+            <p class="text-xs leading-relaxed text-white/40">
+                Restricted access. This console is for authorised platform administrators
+                only &mdash; all sign-ins are logged.
+            </p>
         </div>
     </div>
+
+    <!-- Sign-in form panel -->
+    <div class="flex min-h-screen items-center justify-center bg-white px-6 py-12 sm:px-10">
+        <div class="w-full max-w-sm">
+            <span class="text-xl font-extrabold tracking-tight text-black lg:hidden">Swift<span class="text-red-600">Courier</span></span>
+
+            <div class="mt-8 flex items-center gap-2">
+                <h2 class="text-2xl font-bold text-black">Admin Console</h2>
+                <span class="rounded bg-black px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">Super&nbsp;Admin</span>
+            </div>
+            <p class="mt-1 text-sm text-neutral-500">Sign in to manage the platform</p>
+
+            <form class="mt-8 space-y-5" action="{% url 'account:superadmin_signin' %}" method="post">
+                {% csrf_token %}
+
+                <div>
+                    <label for="Email" class="mb-1.5 block text-sm font-medium text-black">Email</label>
+                    <input id="Email"
+                           name="email"
+                           type="email"
+                           placeholder="admin@company.com"
+                           autocomplete="off"
+                           required
+                           class="block w-full rounded-lg border border-neutral-300 px-3.5 py-2.5 text-sm text-black placeholder:text-neutral-400 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-600/20" />
+                </div>
+
+                <div>
+                    <label for="Password" class="mb-1.5 block text-sm font-medium text-black">Password</label>
+                    <div class="relative">
+                        <input id="Password"
+                               name="password"
+                               type="password"
+                               placeholder="Enter password"
+                               autocomplete="off"
+                               required
+                               class="block w-full rounded-lg border border-neutral-300 px-3.5 py-2.5 pr-10 text-sm text-black placeholder:text-neutral-400 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-600/20" />
+                        <button type="button"
+                                id="togglePasswordEye"
+                                aria-label="Show password"
+                                class="absolute inset-y-0 right-0 flex items-center pr-3 text-neutral-400 hover:text-black">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit"
+                        class="w-full rounded-lg bg-black px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-600">
+                    Sign in to console
+                </button>
+            </form>
+
+            <p class="mt-6 text-center text-sm text-neutral-500">
+                Not an administrator?
+                <a href="{% url 'account:signin' %}" class="font-semibold text-red-600 hover:text-red-700">Merchant sign in</a>
+            </p>
+        </div>
+    </div>
+</div>
 {% endblock body %}
 
 {% block js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var passwordInput = document.getElementById('Password');
+    var toggleBtn = document.getElementById('togglePasswordEye');
+    if (passwordInput && toggleBtn) {
+        toggleBtn.addEventListener('click', function () {
+            var showing = passwordInput.type === 'password';
+            passwordInput.type = showing ? 'text' : 'password';
+            toggleBtn.classList.toggle('text-black', showing);
+            toggleBtn.classList.toggle('text-neutral-400', !showing);
+        });
+    }
+});
+</script>
 {% endblock js %}

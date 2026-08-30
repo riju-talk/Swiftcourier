@@ -17,7 +17,7 @@
                            value="{{ request.GET.order_id }}"
                            id="filter-order-id"
                            placeholder="ORD-00123"
-                           class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
+                           class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500" />
                 </div>
             </div>
 
@@ -27,7 +27,7 @@
                            class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Courier</label>
                     <select name="courier_partner"
                             id="filter-courier-partners"
-                            class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                            class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                         <option value="">Select Courier</option>
                         {% for i, j in request.user.rate_cards.first.get_couriers_available_for_user.items %}
                             <option value="{{ i }}">{{ j.name }}</option>
@@ -46,7 +46,7 @@
                                value="{{ request.GET.awb_number }}"
                                id="awb-number"
                                placeholder="456546"
-                               class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
+                               class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500" />
                     </div>
                 </div>
             {% endif %}
@@ -61,7 +61,7 @@
                        class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Payment Method</label>
                 <select name="payment_method"
                         id="filter-payment-method"
-                        class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                        class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                     <option value="">Select Payment Method</option>
                     {% for i, j in request.user.orders.first.payment.PAYMENT_METHODS %}
                         <option value="{{ i }}">{{ j }}</option>
@@ -76,7 +76,7 @@
                            class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Warehouse</label>
                     <select name="warehouse"
                             id="filter-warehouse"
-                            class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                            class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                         <option value="">Select Warehouse</option>
                         {% for hub in request.user.hubs.all %}<option value="{{ hub.id }}">{{ hub.name }}</option>{% endfor %}
                     </select>
@@ -89,7 +89,7 @@
                        class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Channel</label>
                 <select name="channel"
                         id="filter-channel"
-                        class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                        class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-hidden focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
                     <option value="">Select Channel</option>
                     {% for i, j in request.user.orders.first.CHANNEL_CHOICES %}<option value="{{ i }}">{{ j }}</option>{% endfor %}
                 </select>
@@ -104,7 +104,7 @@
                        value="{{ request.GET.product_name }}"
                        id="filter-product-name"
                        placeholder="T-Shirt"
-                       class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500" />
+                       class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500" />
             </div>
         </div>
         <!-- Submit & Cancel Buttons -->

@@ -24,15 +24,15 @@
         }
 
         ::-webkit-scrollbar-track {
-            @apply bg-gray-100 dark:bg-gray-700;
+            @apply bg-neutral-100 dark:bg-white/[0.06];
         }
 
         ::-webkit-scrollbar-thumb {
-            @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+            @apply bg-neutral-300 dark:bg-neutral-600 rounded-full;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            @apply bg-gray-400 dark:bg-gray-500;
+            @apply bg-neutral-400 dark:bg-gray-500;
         }
 
         /* Optimized tooltip styling */
@@ -53,66 +53,88 @@
 
 
 {% block body %}
-    <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xs">
-        <!-- Header Section -->
-        <div class="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 border-b dark:border-gray-700 gap-4">
-            <!-- Left: Title + Search -->
-            <div class="flex items-center gap-4 w-full sm:w-auto">
-                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 whitespace-nowrap">
-                    Wallet History
-                </h2>
-                <input type="text"
-                       id="searchInput"
-                       name="q"
-                       placeholder="Search..."
-                       value="{{ request.GET.q }}"
-                       onenter="handleSearch(this.value)"
-                       class="w-48 px-3 py-1.5 border rounded-lg text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400">
+    <div class="space-y-6">
+
+        <!-- page header -->
+        <div class="flex flex-wrap items-end justify-between gap-3">
+            <div>
+                <h1 class="text-[22px] font-bold leading-tight tracking-tight text-neutral-900 dark:text-white">Wallet History</h1>
+                <p class="mt-0.5 text-[13px] text-neutral-500 dark:text-neutral-400">Every credit and debit on your shipping wallet.</p>
             </div>
+            <a href="{% url 'wallet:add-money' %}" class="inline-flex h-9 items-center gap-1.5 rounded-lg bg-neutral-900 px-4 text-sm font-semibold text-white transition-colors hover:bg-red-600 dark:bg-white dark:text-black dark:hover:bg-red-600 dark:hover:text-white">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14m7-7H5"/></svg>
+                Add Money
+            </a>
         </div>
 
+        <!-- stat strip -->
+        <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+            {% include "components/ui/stat_tile.dj" with label="Current Balance" value=wallet_stats.balance|floatformat:2 prefix="₹" %}
+            {% include "components/ui/stat_tile.dj" with label="Total Credited" value=wallet_stats.credited|floatformat:2 prefix="₹" tone="good" %}
+            {% include "components/ui/stat_tile.dj" with label="Total Debited" value=wallet_stats.debited|floatformat:2 prefix="₹" tone="bad" %}
+            {% include "components/ui/stat_tile.dj" with label="Transactions" value=wallet_stats.count %}
+        </div>
 
-        <!-- Table Section -->
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50 dark:bg-gray-700">
-                    <tr>
-                        <th class="px-2 py-1 text-left text-xs font-normal text-gray-600 dark:text-gray-300">#</th>
-                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">Date</th>
-                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">Transaction ID</th>
-                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">Transaction Type</th>
-                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">Amount</th>
-                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">Closing Amount</th>
-                        <th class="px-2 py-1 text-center text-xs font-normal text-gray-600 dark:text-gray-300">Reason</th>
-                        <th class="px-2 py-1 text-right text-xs font-normal text-gray-600 dark:text-gray-300">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                    {% for trxn in page_obj %}
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                            <td class="px-2 py-1 text-xs text-left text-gray-700 dark:text-gray-300">{{ forloop.counter }}</td>
-                            <td class="px-2 py-1 text-xs text-center text-gray-700 dark:text-gray-300">{{ trxn.created_at }}</td>
-                            <td class="px-2 py-1 text-xs text-center text-gray-700 dark:text-gray-300">{{ trxn.merchant_transaction_id }}</td>
-                            <td class="px-2 py-1 text-xs text-center text-gray-700 dark:text-gray-300">{{ trxn.get_transaction_type_display }}</td>
-                            <td class="px-2 py-1 text-xs text-center text-gray-700 dark:text-gray-300">{{ trxn.amount }}</td>
-                            <td class="px-2 py-1 text-xs text-center text-gray-700 dark:text-gray-300">{{ trxn.closing_amount }}</td>
-                            <td class="px-2 py-1 text-xs text-center text-gray-700 dark:text-gray-300">{{ trxn.get_desc_display }}</td>
-                            <td class="px-2 py-1 text-xs text-right text-gray-700 dark:text-gray-300">{{ trxn.status }}</td>
+        <!-- table panel -->
+        <div class="overflow-hidden rounded-xl border border-neutral-200/80 bg-white dark:border-white/10 dark:bg-neutral-950">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200/80 px-5 py-4 dark:border-white/10">
+                <h2 class="text-sm font-bold text-neutral-900 dark:text-white">Ledger</h2>
+                <input type="text" id="searchInput" name="q" placeholder="Search transaction, reason…" value="{{ request.GET.q }}" onenter="handleSearch(this.value)"
+                       class="h-9 w-64 rounded-lg border border-neutral-300 px-3 text-sm focus:outline-hidden focus:ring-2 focus:ring-red-500 dark:border-white/10 dark:bg-white/[0.06] dark:text-gray-100 dark:placeholder-neutral-400">
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-neutral-500">#</th>
+                            <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-neutral-500">Date</th>
+                            <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-neutral-500">Transaction ID</th>
+                            <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-neutral-500">Type</th>
+                            <th class="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-neutral-500">Amount</th>
+                            <th class="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-neutral-500">Closing</th>
+                            <th class="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-neutral-500">Reason</th>
+                            <th class="px-4 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-neutral-500">Status</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        {% for trxn in page_obj %}
+                        <tr class="border-t border-neutral-100 hover:bg-neutral-50 dark:border-white/5 dark:hover:bg-white/[0.03]">
+                            <td class="px-4 py-3 text-[13px] text-neutral-400">{{ forloop.counter }}</td>
+                            <td class="px-4 py-3 text-[13px] text-neutral-600 dark:text-neutral-300">{{ trxn.created_at }}</td>
+                            <td class="px-4 py-3 font-mono text-[12px] text-neutral-500 dark:text-neutral-400">{{ trxn.merchant_transaction_id }}</td>
+                            <td class="px-4 py-3">
+                                {% if trxn.transaction_type == "credit" %}
+                                    <span class="inline-flex items-center gap-1 text-[13px] font-semibold text-emerald-600 dark:text-emerald-400">&uarr; Credit</span>
+                                {% else %}
+                                    <span class="inline-flex items-center gap-1 text-[13px] font-semibold text-red-600 dark:text-red-400">&darr; Debit</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-3 text-right text-[13px] font-semibold tabular-nums {% if trxn.transaction_type == 'credit' %}text-emerald-600 dark:text-emerald-400{% else %}text-red-600 dark:text-red-400{% endif %}">
+                                {% if trxn.transaction_type == "credit" %}+{% else %}&minus;{% endif %}₹{{ trxn.amount|floatformat:2 }}
+                            </td>
+                            <td class="px-4 py-3 text-right text-[13px] tabular-nums text-neutral-600 dark:text-neutral-300">₹{{ trxn.closing_amount|floatformat:2 }}</td>
+                            <td class="px-4 py-3 text-[13px] text-neutral-600 dark:text-neutral-300">{{ trxn.get_desc_display }}</td>
+                            <td class="px-4 py-3 text-right">
+                                {% include "components/ui/status_pill.dj" with status=trxn.status %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="8" class="px-4 py-12 text-center text-sm text-neutral-400">No transactions yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
 
         <!-- Pagination -->
-        <div class="p-4 border-t dark:border-gray-700">
+        <div class="p-4 border-t border-neutral-200/80 dark:border-white/10">
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-4">
-                    <span class="text-sm text-gray-700 dark:text-gray-300">Show:</span>
+                    <span class="text-sm text-black dark:text-neutral-300">Show:</span>
                     <select id="pageSize"
                             onchange="updatePageSize(this.value)"
-                            class="px-2 py-1 border rounded-sm text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100">
+                            class="px-2 py-1 border rounded-sm text-sm dark:bg-white/[0.06] dark:border-white/10 dark:text-gray-100">
                         <option value="10" {% if page_size == 10 %}selected{% endif %}>10</option>
                         <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
                         <option value="100" {% if page_size == 100 %}selected{% endif %}>100</option>
@@ -123,15 +145,15 @@
 
                 <div class="flex gap-1 flex-wrap">
                     <button onclick="navigatePage('prev')"
-                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100"
+                            class="px-3 py-1 bg-neutral-100 hover:bg-white dark:bg-white/[0.06] dark:hover:bg-neutral-600 rounded-sm text-sm dark:text-gray-100"
                             {% if not page_obj.has_previous %}disabled{% endif %}>Previous</button>
 
                     {% if page_obj.number > 3 %}
                         <button onclick="navigatePage(1)"
-                                class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100">
+                                class="px-3 py-1 bg-neutral-100 hover:bg-white dark:bg-white/[0.06] dark:hover:bg-neutral-600 rounded-sm text-sm dark:text-gray-100">
                             1
                         </button>
-                        <span class="px-2 text-gray-500 dark:text-gray-300">...</span>
+                        <span class="px-2 text-neutral-500 dark:text-neutral-300">...</span>
                     {% endif %}
 
                     {% for num in page_obj.paginator.page_range %}
@@ -139,28 +161,29 @@
                             <button onclick="navigatePage({{ num }})"
                                     class="px-3 py-1
                                            {% if num == page_obj.number %}
-                                               bg-blue-100 text-blue-600
+                                               bg-red-100 text-red-600
                                            {% else %}
-                                               bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600
+                                               bg-neutral-100 hover:bg-white dark:bg-white/[0.06] dark:hover:bg-neutral-600
                                            {% endif %}
                                            rounded text-sm dark:text-gray-100">{{ num }}</button>
                         {% endif %}
                     {% endfor %}
 
                     {% if page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
-                        <span class="px-2 text-gray-500 dark:text-gray-300">...</span>
+                        <span class="px-2 text-neutral-500 dark:text-neutral-300">...</span>
                         <button onclick="navigatePage({{ page_obj.paginator.num_pages }})"
-                                class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100">
+                                class="px-3 py-1 bg-neutral-100 hover:bg-white dark:bg-white/[0.06] dark:hover:bg-neutral-600 rounded-sm text-sm dark:text-gray-100">
                             {{ page_obj.paginator.num_pages }}
                         </button>
                     {% endif %}
 
                     <button onclick="navigatePage('next')"
-                            class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-sm text-sm dark:text-gray-100"
+                            class="px-3 py-1 bg-neutral-100 hover:bg-white dark:bg-white/[0.06] dark:hover:bg-neutral-600 rounded-sm text-sm dark:text-gray-100"
                             {% if not page_obj.has_next %}disabled{% endif %}>Next</button>
                 </div>
 
             </div>
+        </div>
         </div>
     </div>
 {% endblock body %}

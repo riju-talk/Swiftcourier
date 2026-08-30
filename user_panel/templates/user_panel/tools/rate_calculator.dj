@@ -1,0 +1,17 @@
+{% extends "components/layouts/layout.dj" %}
+
+{% block title %}
+    Rate Calculator
+{% endblock title %}
+
+{% block css %}
+    {% include "components/tools/rate_calculator_styles.dj" %}
+{% endblock css %}
+
+{% block body %}
+    {% include "components/tools/rate_calculator_content.dj" %}
+{% endblock body %}
+
+{% block js %}
+    {% include "components/tools/rate_calculator_scripts.dj" %}
+{% endblock js %}

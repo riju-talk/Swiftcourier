@@ -3,6 +3,11 @@ import os
 XPRESSBEES_API_KEY = ""
 LASTMILES_API_KEY = ""
 
+# NimbusPost bearer token - obtained at runtime by
+# nimbuspost_integration.nimbuspost.generate_token() and refreshed in place
+# whenever the API reports it as missing/expired.
+NIMBUSPOST_API_KEY = ""
+
 ZIPPYY_API_KEY = ""
 
 SHIPROCKET_ATS_500GM_API_KEY = ""

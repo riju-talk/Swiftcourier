@@ -969,7 +969,9 @@ def assign_commission(request):
                 messages.error(request, "Admin not found.")
             except ValueError:
                 messages.error(request, "Invalid commission value.")
-    return render(request, "superadmin_panel/assign_commission.dj")
+        else:
+            messages.error(request, "admin_id and commission are required.")
+    return redirect("superadmin_panel:list-admin")
 
 
 @superadmin_required
@@ -980,6 +982,7 @@ def manage_pincode(request):
     )
 
 
+@superadmin_required
 def block_pincodes(request):
     if request.method == "POST":
         data = request.POST
@@ -1000,16 +1003,17 @@ def block_pincodes(request):
 
         messages.success(request, f"{count} pincodes blocked successfully.")
 
-        return redirect("superadmin_panel:manage_pincode")
+    return redirect("superadmin_panel:manage_pincode")
 
 
+@superadmin_required
 def unblock_pincodes(request):
     if request.method == "POST":
         pincodes = request.POST.getlist("remove_pincodes")
-        print(request.POST)
         BlockedPincode.unblock_pincodes(pincodes=pincodes)
         messages.success(request, f"{len(pincodes)} pincodes unblocked successfully.")
-        return redirect("superadmin_panel:manage_pincode")
+
+    return redirect("superadmin_panel:manage_pincode")
 
 
 @superadmin_required

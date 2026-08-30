@@ -6,6 +6,7 @@ import logging
 
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from order_manager.webhook_events import log_carrier_webhook
 from django.http import HttpResponse, JsonResponse
 
 from account.models import Courier
@@ -18,6 +19,7 @@ logger = logging.getLogger("my-logger")
 
 
 @csrf_exempt
+@log_carrier_webhook("xpressbees")
 def webhook(request):
     if request.method != "POST":
         logger.debug(f"XpressBees Webhook:: Invalid request method: {request.method}")

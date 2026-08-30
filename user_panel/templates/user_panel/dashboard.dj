@@ -24,7 +24,7 @@
                     <h5 class="font-semibold text-lg">Revenue</h5>
                 </div>
                 <p class="text-lg dark:text-white-light/90">
-                    Total Profit <span class="text-primary ml-2">₹{{ summary.prepaid.amount|default:0|add:summary.cod.amount|default:0 }}</span>
+                    Total Profit <span class="text-red-600 ml-2">₹{{ summary.prepaid.amount|default:0|add:summary.cod.amount|default:0 }}</span>
                 </p>
                 <div class="relative overflow-hidden">
                     <div id="revenue-chart"
@@ -34,7 +34,7 @@
             <!-- Sales By Category -->
             <div class="panel h-full">
                 <div class="flex items-center mb-5">
-                    <h5 class="font-semibold text-lg dark:text-white-light">Sales By Category</h5>
+                    <h5 class="text-[22px] font-bold tracking-tight text-neutral-900 dark:text-white">Sales By Category</h5>
                 </div>
                 <div class="overflow-hidden">
                     <div id="category-chart"
@@ -47,7 +47,7 @@
             <!-- Daily Sales -->
             <div class="panel h-full sm:col-span-2 xl:col-span-1">
                 <div class="flex items-center mb-5">
-                    <h5 class="font-semibold text-lg dark:text-white-light">
+                    <h5 class="text-[22px] font-bold tracking-tight text-neutral-900 dark:text-white">
                         Daily Sales <span class="block text-white-dark text-sm font-normal">Go to columns for details.</span>
                     </h5>
                 </div>
@@ -153,7 +153,7 @@
                             <div class="flex items-center py-1.5 relative group">
                                 <div class="bg-{{ activity.type }} w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
                                 <div class="flex-1 truncate">{{ activity.content }}</div>
-                                <div class="ltr:ml-auto rtl:mr-auto text-xs text-white-dark dark:text-gray-500">{{ activity.time }}</div>
+                                <div class="ltr:ml-auto rtl:mr-auto text-xs text-white-dark dark:text-neutral-500">{{ activity.time }}</div>
                                 <span class="badge badge-outline-{{ activity.type }} absolute ltr:right-0 rtl:left-0 text-xs bg-{{ activity.type }}-light dark:bg-black opacity-0 group-hover:opacity-100">{{ activity.badge }}</span>
                             </div>
                         {% empty %}
@@ -163,7 +163,7 @@
                 </div>
                 <div class="border-t border-white-light dark:border-white/10">
                     <a href="javascript:;"
-                       class="font-semibold group hover:text-primary p-4 flex items-center justify-center group">
+                       class="font-semibold group hover:text-red-600 p-4 flex items-center justify-center group">
                         View All
                         <svg class="w-4 h-4 rtl:rotate-180 group-hover:translate-x-1 group-hover:rtl:-translate-x-1 transition duration-300 ltr:ml-1 rtl:mr-1"
                              viewBox="0 0 24 24"
@@ -193,7 +193,7 @@
                                 </span>
                                 <div class="px-3 flex-1">
                                     <div class="truncate font-medium">{{ txn.title }}</div>
-                                    <div class="text-xs text-white-dark dark:text-gray-500">{{ txn.time }}</div>
+                                    <div class="text-xs text-white-dark dark:text-neutral-500">{{ txn.time }}</div>
                                 </div>
                                 <div class="ltr:ml-auto rtl:mr-auto text-right">
                                     <span class="text-
@@ -221,7 +221,7 @@
 
             <!-- Wallet Balance -->
             <div class="panel h-full p-0 border-0 overflow-hidden">
-                <div class="p-6 bg-linear-to-r from-[#4361ee] to-[#160f6b] min-h-[190px]">
+                <div class="p-6 bg-linear-to-r from-[#dc2626] to-[#160f6b] min-h-[190px]">
                     <div class="flex justify-between items-center mb-6">
                         <div class="bg-black/50 rounded-full p-1 ltr:pr-3 rtl:pl-3 flex items-center text-white font-semibold">
                             <img class="w-8 h-8 rounded-full border-2 border-white/50 block object-cover ltr:mr-1 rtl:ml-1"
@@ -262,7 +262,7 @@
         <div class="grid lg:grid-cols-2 grid-cols-1 gap-6">
             <div class="panel h-full w-full">
                 <div class="flex items-center justify-between mb-5">
-                    <h5 class="font-semibold text-lg dark:text-white-light">Recent Orders</h5>
+                    <h5 class="text-[22px] font-bold tracking-tight text-neutral-900 dark:text-white">Recent Orders</h5>
                 </div>
                 <div class="table-responsive">
                     <table>
@@ -285,7 +285,7 @@
                                             <span class="whitespace-nowrap truncate">{{ order.customer_name|default:"N/A" }}</span>
                                         </div>
                                     </td>
-                                    <td class="text-primary truncate">{{ order.product|default:"N/A" }}</td>
+                                    <td class="text-red-600 truncate">{{ order.product|default:"N/A" }}</td>
                                     <td>₹{{ order.price|default:0 }}</td>
                                     <td>
                                         <span class="badge bg-{{ order.status_class|default:'secondary' }} shadow-md dark:group-hover:bg-transparent">{{ order.status|default:"N/A" }}</span>
@@ -302,7 +302,7 @@
             </div>
             <div class="panel h-full w-full">
                 <div class="flex items-center justify-between mb-5">
-                    <h5 class="font-semibold text-lg dark:text-white-light">Top Selling Product</h5>
+                    <h5 class="text-[22px] font-bold tracking-tight text-neutral-900 dark:text-white">Top Selling Product</h5>
                 </div>
                 <div class="table-responsive">
                     <table>
@@ -325,7 +325,7 @@
                                                  alt="avatar" />
                                             <p class="whitespace-nowrap">
                                                 <span class="truncate">{{ product.name|default:"N/A" }}</span>
-                                                <span class="text-primary block text-xs">{{ product.category|default:"N/A" }}</span>
+                                                <span class="text-red-600 block text-xs">{{ product.category|default:"N/A" }}</span>
                                             </p>
                                         </div>
                                     </td>

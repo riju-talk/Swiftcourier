@@ -379,7 +379,7 @@
 
         <div class="powered-by">
           {% if order.user.label_setting.show_powered_by %}
-            <span>Powered by IdiotShip</span>
+            <span>Powered by SwiftCourier</span>
           {% endif %}
         </div>
       </div>

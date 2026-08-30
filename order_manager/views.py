@@ -869,16 +869,37 @@ def ship_order(request):
         for batch in batches
     )
 
-    result = job.apply_async()
-    result.save()
+    try:
+        result = job.apply_async()
+        result.save()
+    except Exception:
+        # broker unreachable (RabbitMQ/Redis down) - don't 500 the merchant and
+        # don't leave the orders stranded in `processing`. Roll them straight
+        # back to ready_to_ship so they can retry.
+        logger.exception("ship_order: could not queue ship batch")
+        Order.objects.filter(id__in=ready_order_ids, user=request.user).update(
+            status="ready_to_ship", updated_at=timezone.now()
+        )
+        messages.error(
+            request,
+            "Shipping is temporarily unavailable - your orders were not shipped "
+            "and are back under Ready to Ship. Please try again in a few minutes.",
+        )
+        return redirect("user_panel:shipment", "ready_to_ship")
     # ─────────────────────────────────────────────────────────────────────────
 
     messages.info(
         request,
-        f"Orders are being processed for shipping in {len(batches)} batch(es).",
+        f"Shipping {len(ready_order_ids)} order(s) in {len(batches)} batch(es). "
+        "They are listed under Processing and move to Ready for Pickup once the "
+        "carrier confirms (this page refreshes on its own).",
     )
 
-    return redirect("user_panel:shipment", "pending_pickup")
+    # Land the user on Processing, not Pending Pickup: the orders are in
+    # `processing` right now and only flip to `pending_pickup` after the async
+    # ship task gets an AWB back from the carrier. Redirecting to pending_pickup
+    # made freshly-shipped orders look like they had vanished.
+    return redirect("user_panel:shipment", "processing")
 
 
 @user_required
@@ -889,55 +910,71 @@ def cancel_order(request, order_id):
 
     try:
         order = Order.objects.get(id=order_id, user=request.user)
-        if order.status != "cancelled":
-            if order.status == "ready_to_ship":
-                order.update_status("cancelled")
-
-            elif order.status == "pending_pickup":
-                try:
-                    res = get_courier_handler(order.logistic_partner).cancel_shipment(
-                        order.awb_number
-                    )
-                    if res.status_code != 200:
-                        messages.error(
-                            request,
-                            f"Failed to cancel order #{order.id} with courier: {res.text}",
-                        )
-                        return redirect(next_url)
-                except AttributeError:
-                    messages.error(
-                        request,
-                        f"Courier handler not found for cancelling order #{order.id}.",
-                    )
-                    return redirect(next_url)
-
-                order.update_status("ready_to_ship")
-                tr = Transaction.create_transaction(
-                    user=request.user,
-                    merchant_txn_id=str(order.id) + "_cancel_" + str(uuid.uuid4()),
-                    amount_rs=order.payment.shipping_charges,
-                    desc="cancelled_order",
-                    transaction_type="credit",
-                )
-                tr.credit(awb_number=order.awb_number)
-
-                order.cancel_data[str(order.awb_number)] = {
-                    "cancelled_at": timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    "courier": (
-                        f"{order.logistic_partner.name} ({order.logistic_partner.abbreviation})"
-                        if order.logistic_partner
-                        else "N/A"
-                    ),
-                    "refund_amount": order.payment.amount,
-                }
-
-            order.save()
-            messages.success(request, f"Order #{order.id} has been cancelled.")
-        else:
-            messages.info(request, f"Order #{order.id} was already cancelled.")
     except Order.DoesNotExist:
         messages.error(request, "Invalid or unauthorized order ID.")
+        return redirect(next_url)
 
+    if order.status == "cancelled":
+        messages.info(request, f"Order #{order.id} was already cancelled.")
+        return redirect(next_url)
+
+    if order.status == "ready_to_ship":
+        order.update_status("cancelled")
+        messages.success(request, f"Order #{order.id} has been cancelled.")
+        return redirect(next_url)
+
+    if order.status == "pending_pickup":
+        try:
+            res = get_courier_handler(order.logistic_partner).cancel_shipment(
+                order.awb_number
+            )
+            if res.status_code != 200:
+                messages.error(
+                    request,
+                    f"Failed to cancel order #{order.id} with courier: {res.text}",
+                )
+                return redirect(next_url)
+        except AttributeError:
+            messages.error(
+                request,
+                f"Courier handler not found for cancelling order #{order.id}.",
+            )
+            return redirect(next_url)
+
+        # carrier booking cancelled -> refund the shipping charge (idempotent
+        # per-AWB) and put the order back in Ready to Ship so it can be
+        # re-shipped or cancelled outright.
+        refund = order.refund_shipping()
+        order.cancel_data[str(order.awb_number)] = {
+            "cancelled_at": timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "courier": (
+                f"{order.logistic_partner.name} ({order.logistic_partner.abbreviation})"
+                if order.logistic_partner
+                else "N/A"
+            ),
+            "refund_amount": (
+                float(refund.amount)
+                if refund
+                else (order.payment.shipping_charges if order.payment else 0)
+            ),
+        }
+        order.update_status("ready_to_ship")
+        order.save(update_fields=["cancel_data"])
+        messages.success(
+            request,
+            f"Shipment for order #{order.id} was cancelled with the carrier"
+            + (f" and ₹{refund.amount} refunded" if refund else "")
+            + ". The order is back under Ready to Ship.",
+        )
+        return redirect(next_url)
+
+    # in_transit / out_for_delivery / delivered / rto* / etc. - not cancellable
+    # from here, and we must not pretend it was.
+    messages.error(
+        request,
+        f"Order #{order.id} is {order.get_status_display()} and can't be "
+        "cancelled here. Raise an NDR or contact support.",
+    )
     return redirect(next_url)
 
 
@@ -1044,10 +1081,15 @@ def download_manifest(request):
 
     try:
         next_url = data.get("next_url", "/")
+        # Tenant isolation: restrict to the requesting merchant's own orders so
+        # arbitrary ids in ?order_id= cannot expose another merchant's manifest.
         orders = (
-            Order.objects.filter(id__in=order_ids)
+            Order.objects.filter(id__in=order_ids, user=request.user)
             .exclude(logistic_partner__isnull=True)
-            .select_related("logistic_partner")
+            .select_related(
+                "logistic_partner", "shipping_address", "payment", "shipment", "hub"
+            )
+            .prefetch_related("items__product")
         )
     except Exception:
         messages.error(request, "Invalid order IDs")

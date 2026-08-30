@@ -1,10 +1,19 @@
 from datetime import datetime, timedelta
 from django.shortcuts import redirect
+from django.utils import timezone
 from account.models import Courier
-from order_manager.models import Hub, Order, Payment
+from order_manager.models import Hub, Order, OrderItem, Payment
 from django.contrib import messages
-from django.db.models import Q, QuerySet
+from django.db.models import Prefetch, Q, QuerySet
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage, Page
+
+
+def _aware(dt):
+    """strptime() gives a naive datetime; comparing it against a tz-aware column
+    makes Django guess the zone and warn. Anchor it to the active timezone."""
+    if dt is not None and timezone.is_naive(dt):
+        return timezone.make_aware(dt)
+    return dt
 
 
 def filter_orders(
@@ -115,10 +124,11 @@ def filter_orders(
             # Expect format "Mon DD, YYYY - Mon DD, YYYY"
             parts = [p.strip() for p in date_range.split("-")]
             if len(parts) == 2:
-                start = datetime.strptime(parts[0], "%b %d, %Y")
+                start = _aware(datetime.strptime(parts[0], "%b %d, %Y"))
                 # include entire end day
-                end = datetime.strptime(parts[1], "%b %d, %Y") + timedelta(
-                    hours=23, minutes=59, seconds=59
+                end = _aware(
+                    datetime.strptime(parts[1], "%b %d, %Y")
+                    + timedelta(hours=23, minutes=59, seconds=59)
                 )
                 # Validate order of dates
                 if end < start:
@@ -159,15 +169,30 @@ def filter_orders(
     if date_range and "_" in date_range:
         try:
             start_str, end_str = date_range.split("_")
-            start_date = datetime.strptime(start_str, "%d-%m-%Y")
-            end_date = datetime.strptime(end_str, "%d-%m-%Y").replace(
-                hour=23, minute=59, second=59
+            start_date = _aware(datetime.strptime(start_str, "%d-%m-%Y"))
+            end_date = _aware(
+                datetime.strptime(end_str, "%d-%m-%Y").replace(
+                    hour=23, minute=59, second=59
+                )
             )
             order_queryset = order_queryset.filter(
                 created_at__range=(start_date, end_date)
             )
         except ValueError:
             messages.error(request, "Invalid date range format")
+
+    # Pull every relation the shipment/order tables render per row in one shot,
+    # instead of a query per cell per row (was ~450 queries for a 50-row page).
+    order_queryset = order_queryset.select_related(
+        "shipping_address",
+        "billing_address",
+        "payment",
+        "shipment",
+        "logistic_partner",
+        "hub",
+    ).prefetch_related(
+        Prefetch("items", queryset=OrderItem.objects.select_related("product"))
+    )
 
     paginator = Paginator(order_queryset, page_size)
     page_number = data.get("page", 1)

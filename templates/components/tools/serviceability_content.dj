@@ -1,0 +1,171 @@
+{% load static %}
+
+<div class="serviceability-shell">
+    <div class="serviceability-header">
+        <h1>Serviceability Checker</h1>
+        <p>
+            Instantly verify courier availability, transit times, and service zones across your global network.
+        </p>
+    </div>
+
+    <div class="serviceability-stats-grid">
+        <div class="serviceability-card serviceability-stat-card">
+            <div class="serviceability-stat-icon">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+                    <circle cx="5" cy="4" r="2" stroke="currentColor" stroke-width="1.4" />
+                    <path d="M1.5 11.5c0-1.85 1.55-3.25 3.5-3.25s3.5 1.4 3.5 3.25" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                    <path d="M9.3 4.2h4.2M9.3 7h4.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                </svg>
+            </div>
+            <div id="activeCouriers" class="serviceability-stat-value">--</div>
+            <div class="serviceability-stat-label">Active Couriers</div>
+        </div>
+
+        <div class="serviceability-card serviceability-stat-card">
+            <div class="serviceability-stat-icon">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+                    <path d="M7.5 13c2-2.15 3.4-4.23 3.4-6.1a3.4 3.4 0 10-6.8 0c0 1.87 1.4 3.95 3.4 6.1z" stroke="currentColor" stroke-width="1.4" />
+                    <circle cx="7.5" cy="6.6" r="1.25" fill="currentColor" />
+                </svg>
+            </div>
+            <div id="pincodesCovered" class="serviceability-stat-value">--</div>
+            <div class="serviceability-stat-label">Pincodes Covered</div>
+        </div>
+
+        <div class="serviceability-card serviceability-stat-card">
+            <div class="serviceability-stat-icon">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+                    <rect x="1.5" y="3.4" width="12" height="8.2" rx="1.8" stroke="currentColor" stroke-width="1.4" />
+                    <circle cx="7.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.2" />
+                </svg>
+            </div>
+            <div id="codAvailable" class="serviceability-stat-value">--</div>
+            <div class="serviceability-stat-label">COD Available</div>
+        </div>
+
+        <div class="serviceability-card serviceability-stat-card">
+            <div class="serviceability-stat-icon">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+                    <path d="M8.8 1.6L3.9 8.1h3l-.7 5.3 4.9-6.5h-3l.7-5.3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+                </svg>
+            </div>
+            <div id="nddZones" class="serviceability-stat-value">--</div>
+            <div class="serviceability-stat-label">NDD Zones</div>
+        </div>
+    </div>
+
+    <div class="serviceability-card serviceability-filter-card">
+        <div class="serviceability-filter-grid">
+            <div class="serviceability-field">
+                <label class="serviceability-label" for="shipmentType">Select Type</label>
+                <div class="serviceability-select-wrap">
+                    <select id="shipmentType" class="serviceability-input">
+                        <option value="forward">Forward Shipment</option>
+                        <option value="reverse">Reverse Shipment</option>
+                        <option value="exchange">Exchange Shipment</option>
+                    </select>
+                    <span class="serviceability-select-icon">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                </div>
+            </div>
+
+            <div class="serviceability-field">
+                <label class="serviceability-label" for="expressType">Express Type</label>
+                <div class="serviceability-select-wrap">
+                    <select id="expressType" class="serviceability-input">
+                        <option value="surface">Surface</option>
+                        <option value="air">Air</option>
+                        <option value="priority">Priority Express</option>
+                    </select>
+                    <span class="serviceability-select-icon">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                </div>
+            </div>
+
+            <div class="serviceability-field">
+                <label class="serviceability-label" for="pickupPincode">Source Pincode</label>
+                <input id="pickupPincode" type="text" inputmode="numeric" maxlength="6" placeholder="e.g. 110001" class="serviceability-input" />
+            </div>
+
+            <div class="serviceability-field">
+                <label class="serviceability-label" for="destinationPincode">Destination Pincode</label>
+                <input id="destinationPincode" type="text" inputmode="numeric" maxlength="6" placeholder="e.g. 400001" class="serviceability-input" />
+            </div>
+
+            <button id="searchBtn" type="button" class="serviceability-search-btn">
+                Search
+            </button>
+
+            <button id="resetBtn" type="button" class="serviceability-reset-btn" aria-label="Reset filters">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M3 8a5 5 0 1 0 2-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                    <path d="M3 4v3h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+        </div>
+        <div id="serviceError" class="serviceability-error"></div>
+    </div>
+
+    <div class="serviceability-card serviceability-table-card">
+        <div class="serviceability-table-scroll">
+            <table class="serviceability-table">
+                <thead>
+                    <tr>
+                        <th>Courier</th>
+                        <th>Destination</th>
+                        <th>Pickup</th>
+                        <th>Reverse</th>
+                        <th>Prepaid</th>
+                        <th>COD</th>
+                        <th>NDD</th>
+                        <th>Zone</th>
+                    </tr>
+                </thead>
+                <tbody id="serviceTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="serviceability-bottom-grid">
+        <div class="serviceability-card serviceability-routing-card">
+            <div class="serviceability-routing-inner">
+                <div class="serviceability-routing-copy">
+                    <h2>Enterprise Routing Engine</h2>
+                    <p>
+                        Our proprietary logic automatically selects the optimal courier based on cost, speed, and reliability history for every single pincode.
+                    </p>
+                    <button type="button" class="serviceability-learn-btn">
+                        Learn More
+                    </button>
+                </div>
+                <div class="serviceability-routing-art">
+                    <img src="{% static 'images/courier_bg_removed.png' %}" alt="" />
+                </div>
+            </div>
+        </div>
+
+        <div class="serviceability-card serviceability-accuracy-card">
+            <div class="serviceability-accuracy-icon">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M8 2l1.45 1.54 2.15-.15.84 1.99 1.9 1-.84 1.99.84 1.99-1.9 1-.84 1.99-2.15-.15L8 14l-1.45-1.54-2.15.15-.84-1.99-1.9-1 .84-1.99-.84-1.99 1.9-1 .84-1.99 2.15.15L8 2z" stroke="currentColor" stroke-width="1.2" />
+                    <circle cx="8" cy="8" r="2.2" stroke="currentColor" stroke-width="1.2" />
+                </svg>
+            </div>
+            <h3>Accuracy Guaranteed</h3>
+            <p>
+                Data updated every 15 minutes across all partner carriers to ensure zero shipment failures.
+            </p>
+            <div class="serviceability-rule"></div>
+            <a href="/api/serviceability/health/" class="serviceability-doc-link">
+                View API Documentation
+                <span aria-hidden="true">-&gt;</span>
+            </a>
+        </div>
+    </div>
+</div>

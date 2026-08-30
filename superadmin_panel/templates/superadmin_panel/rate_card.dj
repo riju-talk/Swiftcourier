@@ -10,7 +10,9 @@
 
 {% block css %}
     <script>
-        tailwind.config = {
+        // this page was authored against the Tailwind Play CDN; the app compiles
+        // Tailwind instead, so only apply the inline config if the CDN is loaded.
+        if (typeof tailwind !== 'undefined') tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
@@ -113,8 +115,8 @@
         }
 
         .surface-badge {
-            background-color: #dbeafe;
-            color: #1d4ed8;
+            background-color: #fee2e2;
+            color: #b91c1c;
         }
 
         .air-badge {
@@ -134,7 +136,7 @@
 
         .dark .surface-badge {
             background-color: #1e3a8a;
-            color: #dbeafe;
+            color: #fee2e2;
         }
 
         .dark .air-badge {
@@ -219,7 +221,7 @@
 {% block body %}
     <div>
         <button onclick="history.back()"
-                class="border border-blue-500 hover:bg-blue-700 text-blue-500 hover:text-white font-bold py-2 px-4 rounded-sm">
+                class="border border-red-500 hover:bg-red-700 text-red-500 hover:text-white font-bold py-2 px-4 rounded-sm">
             Back
         </button>
     </div>
@@ -232,22 +234,22 @@
                     <p class="text-gray-600 dark:text-gray-400 mt-1">Manage shipping rates across different couriers and zones</p>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button class="px-4 py-2 bg-gray-800 dark:bg-gray-700 text-white rounded-lg flex items-center">
+                    <button class="px-4 py-2 bg-gray-800 dark:bg-white/[0.06] text-white rounded-lg flex items-center">
                         <i class="fas fa-download mr-2"></i> Export
                     </button>
                 </div>
             </div>
 
             <!-- Card Container -->
-            <div class="card bg-white dark:bg-gray-800 p-6">
+            <div class="card bg-white dark:bg-[#12151f] p-6">
                 <!-- Filters Section -->
-                <div class="flex flex-wrap gap-4 justify-between items-center mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex flex-wrap gap-4 justify-between items-center mb-6 pb-4 border-b border-gray-200 dark:border-white/10">
                     <div class="flex flex-wrap gap-4">
                         <!-- Mode Filter -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mode / Type</label>
                             <div class="relative">
-                                <select class="w-44 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-primary-500">
+                                <select class="w-44 px-3 py-2 border border-gray-300 dark:border-white/10 rounded-lg bg-white dark:bg-[#12151f] text-sm text-black dark:text-white focus:outline-hidden focus:ring-2 focus:ring-primary-500">
                                     <option value="">All Types</option>
                                     <option value="Surface">Surface</option>
                                     <option value="Air">Air</option>
@@ -264,7 +266,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Weight</label>
                             <div class="relative">
-                                <select class="w-44 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-100 focus:outline-hidden focus:ring-2 focus:ring-primary-500">
+                                <select class="w-44 px-3 py-2 border border-gray-300 dark:border-white/10 rounded-lg bg-white dark:bg-[#12151f] text-sm text-black dark:text-white focus:outline-hidden focus:ring-2 focus:ring-primary-500">
                                     <option value="">All Weights</option>
                                     <option value="0.5kg">0.5 KG</option>
                                     <option value="1kg">1 KG</option>
@@ -282,7 +284,7 @@
                         <div class="relative">
                             <input type="text"
                                    placeholder="Search couriers"
-                                   class="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-sm w-64 focus:outline-hidden focus:ring-2 focus:ring-primary-500">
+                                   class="pl-10 pr-4 py-2 border border-gray-300 dark:border-white/10 rounded-lg bg-white dark:bg-[#12151f] text-sm w-64 focus:outline-hidden focus:ring-2 focus:ring-primary-500">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-search text-gray-400"></i>
                             </div>
@@ -291,10 +293,13 @@
                 </div>
 
                 <!-- Table Section -->
-                <form action="{% url 'superadmin_panel:assign-rate-card' %}" method="post">
+                {# rate-card assignment is done per-merchant via
+                   superadmin_panel:assign-courier-and-rates; this static preview
+                   form is inert. #}
+                <form action="" method="post">
                     {% csrf_token %}
                     <input hidden name="courier_id" value="{{ courier.id }}">
-                    <div class="responsive-table overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div class="responsive-table overflow-x-auto rounded-lg border border-gray-200 dark:border-white/10">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="table-header">
@@ -311,11 +316,11 @@
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 <!-- Xpressbees Row -->
-                                <tr class="table-row bg-white dark:bg-gray-800">
+                                <tr class="table-row bg-white dark:bg-[#12151f]">
                                     <td class="px-4 py-3 font-medium whitespace-nowrap align-top">
                                         <div class="flex items-center">
-                                            <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-3">
-                                                <i class="fas fa-shipping-fast text-blue-600 dark:text-blue-400"></i>
+                                            <div class="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mr-3">
+                                                <i class="fas fa-shipping-fast text-red-600 dark:text-red-400"></i>
                                             </div>
                                             Xpressbees
                                         </div>
@@ -517,7 +522,7 @@
                                 <input id="user-search"
                                        type="text"
                                        placeholder="Search users..."
-                                       class="w-full border rounded-lg px-4 py-2 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                                       class="w-full border rounded-lg px-4 py-2 focus:outline-hidden focus:ring-2 focus:ring-red-500"
                                        autocomplete="off" />
                                 <ul id="suggestions"
                                     class="absolute z-20 w-full bg-white border rounded-b-lg shadow-sm max-h-60 overflow-y-auto hidden">
@@ -538,11 +543,11 @@
                         </div>
                         <div class="flex space-x-3">
                             <button type="reset"
-                                    class="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                    class="px-6 py-2 border border-gray-300 dark:border-white/10 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                                 Reset Changes
                             </button>
                             <button type="submit"
-                                    class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition flex items-center">
+                                    class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg shadow-sm transition flex items-center">
                                 <i class="fas fa-save mr-2"></i> Save Rates
                             </button>
 
@@ -553,10 +558,10 @@
 
             <!-- Info Section -->
             <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="card bg-white dark:bg-gray-800 p-5">
+                <div class="card bg-white dark:bg-[#12151f] p-5">
                     <div class="flex items-start">
-                        <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg mr-4">
-                            <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 text-xl"></i>
+                        <div class="bg-red-100 dark:bg-red-900 p-3 rounded-lg mr-4">
+                            <i class="fas fa-info-circle text-red-600 dark:text-red-400 text-xl"></i>
                         </div>
                         <div>
                             <h3 class="font-semibold text-lg mb-1">Zone Definitions</h3>
@@ -575,7 +580,7 @@
                     </div>
                 </div>
 
-                <div class="card bg-white dark:bg-gray-800 p-5">
+                <div class="card bg-white dark:bg-[#12151f] p-5">
                     <div class="flex items-start">
                         <div class="bg-green-100 dark:bg-green-900 p-3 rounded-lg mr-4">
                             <i class="fas fa-percentage text-green-600 dark:text-green-400 text-xl"></i>
@@ -596,7 +601,7 @@
 
             
             <!-- Terms & Conditions -->
-            <div class="card bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow mt-8">
+            <div class="card bg-white dark:bg-[#12151f] p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow mt-8">
                 <div class="flex items-start space-x-4">
 
                     <!-- Icon -->
@@ -606,7 +611,7 @@
 
                     <!-- Content -->
                     <div class="flex-1">
-                        <h3 class="font-bold text-xl mb-4 text-gray-800 dark:text-gray-100">Terms & Conditions</h3>
+                        <h3 class="font-bold text-xl mb-4 text-black dark:text-white">Terms & Conditions</h3>
 
                         <ul class="space-y-3 text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
                             <li class="flex items-start">
@@ -669,7 +674,7 @@
 
                 const selectedTags = document.getElementById('selected-tags');
                 selectedTags.innerHTML = `
-                    <div class="flex items-center bg-blue-600 text-white px-3 py-1 rounded-full">
+                    <div class="flex items-center bg-red-600 text-white px-3 py-1 rounded-full">
                         <span>User ID: ${userId}</span>
                     </div>
                 `;
@@ -713,7 +718,7 @@
                 $tags.innerHTML = '';
                 for (let [id, name] of selected) {
                     const tag = document.createElement('div');
-                    tag.className = 'flex items-center bg-blue-600 text-white px-3 py-1 rounded-full';
+                    tag.className = 'flex items-center bg-red-600 text-white px-3 py-1 rounded-full';
                     tag.innerHTML = `
         <span class="truncate max-w-xs">${name}</span>
         <button type="button" class="ml-2 text-white" data-id="${id}">&times;</button>
@@ -751,7 +756,7 @@
             function highlightActive() {
                 const items = $sugg.querySelectorAll('li');
                 items.forEach((li, i) => {
-                    li.classList.toggle('bg-blue-100', i === activeIndex);
+                    li.classList.toggle('bg-red-100', i === activeIndex);
                 });
             }
 
@@ -821,23 +826,17 @@
     </script>
 
     <script>
-        // Theme toggle functionality
+        // Theme toggle functionality (this template carries its own toggle; the
+        // shared layout already handles theming, so only wire it if present).
         const themeToggle = document.getElementById('theme-toggle');
         const html = document.documentElement;
 
-        // Check for saved theme preference or respect OS setting
-        if (localStorage.getItem('theme') === 'light' ||
-            (!('theme' in localStorage) &&
-                window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('light');
-        } else {
-            html.classList.remove('light');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                html.classList.toggle('dark');
+                localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+            });
         }
-
-        themeToggle.addEventListener('click', () => {
-            html.classList.toggle('dark');
-            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-        });
 
         // Input formatting
         document.querySelectorAll('.input-compact').forEach(input => {

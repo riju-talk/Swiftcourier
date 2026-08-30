@@ -34,7 +34,7 @@ def lastmiles_request(
         url=url,
         headers=headers,
         data=payload if request_method.upper() != "GET" else None,
-    )
+        timeout=(5, 30),    )
 
     try:
         res_json = res.json()

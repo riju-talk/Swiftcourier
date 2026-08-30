@@ -70,7 +70,7 @@
     }
     .calendar-header select:focus {
       outline: none;
-      border-color: #3b82f6;
+      border-color: #ef4444;
     }
     @media (prefers-color-scheme: dark) {
       .calendar-header {
@@ -154,12 +154,12 @@
       }
     }
     .day.selected {
-      background-color: #3b82f6;
+      background-color: #ef4444;
       color: white;
       font-weight: 600;
     }
     .day.in-range {
-      background-color: #dbeafe;
+      background-color: #fee2e2;
       color: #0284c7;
     }
     @media (prefers-color-scheme: dark) {
@@ -235,7 +235,7 @@
     
     .calendar-header select:focus {
       outline: none;
-      border-color: #3b82f6;
+      border-color: #ef4444;
     }
     
     @media (prefers-color-scheme: dark) {
@@ -334,13 +334,13 @@
     }
     
     .day.selected {
-      background-color: #3b82f6;
+      background-color: #ef4444;
       color: white;
       font-weight: 600;
     }
     
     .day.in-range {
-      background-color: #dbeafe;
+      background-color: #fee2e2;
       color: #0284c7;
     }
     
@@ -435,7 +435,7 @@
     .pie-icon {
       width: 32px;
       height: 32px;
-      background-color: #dbeafe;
+      background-color: #fee2e2;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -494,7 +494,7 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background: conic-gradient(#f97316 0% 60%, #3b82f6 60% 100%);
+      background: conic-gradient(#111827 0% 60%, #ef4444 60% 100%);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       cursor: pointer;
     }
@@ -552,7 +552,7 @@
     
     .meter-fill {
       fill: none;
-      stroke: #10b981;
+      stroke: #737373;
       stroke-width: 10;
       stroke-linecap: round;
       transition: stroke-dasharray 1s ease-in-out, filter 0.3s ease;
@@ -567,6 +567,14 @@
       font-weight: bold;
       color: #374151;
     }
+
+    /* dark-mode fixes for the hard-coded chart/card text colours above */
+    .dark .pie-title,
+    .dark .card-title,
+    .dark .meter-text,
+    .dark .calendar-header,
+    .dark .legend-text { color: #f5f5f5 !important; }
+    .dark .pie-content { background-color: rgba(255,255,255,.06); }
   </style>
 {% endblock %}
 
@@ -578,13 +586,13 @@
       <div class="fixed inset-0 bg-black/50"></div>
 
       <!-- Notice Box -->
-      <div class="relative z-10 bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4">
+      <div class="relative z-10 bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
           
           <h2 class="text-xl font-bold text-center mb-4">
               📢 Notices
           </h2>
 
-          <ul class="list-disc list-inside space-y-2 text-gray-700">
+          <ul class="list-disc list-inside space-y-2 text-black">
               {% for notice in notices %}
                   <li>{{ notice.notice }}</li>
               {% endfor %}
@@ -593,7 +601,7 @@
           <div class="mt-6 text-center">
               <button 
                   onclick="this.closest('.fixed').remove()" 
-                  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
               >
                   Close
               </button>
@@ -603,487 +611,304 @@
   </div>
   {% endif %}
 
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-sm z-50">Skip to main content</a>
-  <a href="#navigation" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-32 bg-blue-600 text-white px-4 py-2 rounded-sm z-50">Skip to navigation</a>
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-red-600 text-white px-4 py-2 rounded-sm z-50">Skip to main content</a>
+  <a href="#navigation" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-32 bg-red-600 text-white px-4 py-2 rounded-sm z-50">Skip to navigation</a>
 
-  <div class="rounded-xl">
-    <!-- Top white cards above filter -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <!-- Today Order -->
-      <div class="group relative overflow-visible rounded-xl p-5 border border-gray-100 dark:border-slate-700 bg-linear-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 shadow-xs hover:shadow-lg transition-transform transform hover:-translate-y-1">
-        <h3 class="pie-title text-black dark:text-white"><b>Total Daily Orders</b></h3>
+  <div id="main-content" class="space-y-6">
 
-        <div class="flex gap-1 mt-10 justify-end" id="todayOrdersChart">
-          <div class="text-left mt-15"></div>
+    <!-- ============================ KPI ROW ============================ -->
+    <section aria-label="Headline metrics"
+             class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-5">
 
-          <div class="absolute top-4 right-4 flex items-center justify-center w-10 h-10 rounded-sm bg-emerald-50 text-emerald-600">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-          </div>
-        </div>
-        <div class="text-lg font-bold mb-8" style="margin-top: -8px;">
-          <p class="text-md">Orders</p>
+      <!-- Total Orders -->
+      <div class="rounded-xl border border-neutral-200/80 bg-white p-4 dark:border-white/10 dark:bg-neutral-950 sm:p-5">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.09em] text-neutral-400">Total Orders</p>
+        <p class="mt-2 text-[26px] font-bold leading-none tabular-nums tracking-tight text-neutral-900 dark:text-white">{{ total_shipments }}</p>
+        <div class="mt-3 flex items-center gap-1.5">
+          {% if shipment_growth < 0 %}
+            <span class="inline-flex items-center gap-0.5 rounded-md bg-red-50 px-1.5 py-0.5 text-[11px] font-semibold text-red-600 dark:bg-red-500/10 dark:text-red-400">▼ {{ shipment_growth }}%</span>
+          {% else %}
+            <span class="inline-flex items-center gap-0.5 rounded-md bg-emerald-50 px-1.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">▲ {{ shipment_growth }}%</span>
+          {% endif %}
+          <span class="text-[11px] text-neutral-400">vs last period</span>
         </div>
       </div>
 
-      <!-- Top 5 Couriers -->
-      <div class="group relative overflow-hidden rounded-xl p-5 border border-gray-100 dark:border-slate-700 bg-linear-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 shadow-xs hover:shadow-lg transition-transform transform hover:-translate-y-1">
-        <h3 class="pie-title text-black dark:text-white"><b>Top 5 Couriers</b></h3>
-
-        <div class="absolute top-4 right-4 flex items-center justify-center w-10 h-10 rounded-sm bg-indigo-50 text-indigo-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-        </div>
-        <div class="flex gap-4 mt-8 justify-center relative" style="height: 100px;">
-          {% for courier, value in top_5_couriers.items %}
-          <div class="bar-container" data-day="{{ courier }}" data-orders="{{ value.orders }}" style="position: relative; height: 100%;">
-            <div class="bar bar-bottom bg-red-500" style="height: {{ value.percentage }}px; bottom: 2px;"></div>
-            <span class="bar-label text-xs text-gray-600" style="position: absolute; bottom: -65px; left: 50%; transform: translateX(-50%);">{{ courier }}</span>
-          </div>
-          {% endfor %}
+      <!-- Delivery Rate -->
+      <div class="rounded-xl border border-neutral-200/80 bg-white p-4 dark:border-white/10 dark:bg-neutral-950 sm:p-5">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.09em] text-neutral-400">Delivery Rate</p>
+        <p class="mt-2 text-[26px] font-bold leading-none tabular-nums tracking-tight text-neutral-900 dark:text-white">{{ delivery_rate }}<span class="text-lg text-neutral-400">%</span></p>
+        <div class="mt-3 flex items-center gap-1.5">
+          {% if delivery_rate_growth < 0 %}
+            <span class="inline-flex items-center gap-0.5 rounded-md bg-red-50 px-1.5 py-0.5 text-[11px] font-semibold text-red-600 dark:bg-red-500/10 dark:text-red-400">▼ {{ delivery_rate_growth }}%</span>
+          {% else %}
+            <span class="inline-flex items-center gap-0.5 rounded-md bg-emerald-50 px-1.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">▲ {{ delivery_rate_growth }}%</span>
+          {% endif %}
+          <span class="text-[11px] text-neutral-400">MoM</span>
         </div>
       </div>
 
-      <!-- Driving Hours -->
-      <div class="group relative overflow-hidden rounded-xl p-5 border border-gray-100 dark:border-slate-700 bg-linear-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 shadow-xs hover:shadow-lg transition-transform transform hover:-translate-y-1">
-        <div class="pie-header">
-          <h3 class="pie-title text-black dark:text-white"><b>COD Vs Prepaid</b></h3>
-        </div>
-
-        <div class="absolute top-8 right-4 flex items-center justify-center w-10 h-10 rounded-sm bg-orange-50 text-orange-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l2 2M12 6a6 6 0 100 12 6 6 0 000-12z"></path>
-          </svg>
-        </div>
-        <div class="pie-content">
-          <div class="pie-data"></div>
-          <div class="pie-chart">
-            <div class="donut-chart"></div>
-            <div class="donut-hole"></div>
-          </div>
-        </div>
-        <div class="pie-legend">
-          <div class="legend-item">
-            <div class="legend-dot" style="background-color: #f97316;"></div>
-            <span class="legend-text">COD</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background-color: #3b82f6;"></div>
-            <span class="legend-text">Prepaid</span>
-          </div>
+      <!-- In Transit -->
+      <div class="rounded-xl border border-neutral-200/80 bg-white p-4 dark:border-white/10 dark:bg-neutral-950 sm:p-5">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.09em] text-neutral-400">In Transit</p>
+        <p class="mt-2 text-[26px] font-bold leading-none tabular-nums tracking-tight text-neutral-900 dark:text-white">{{ in_transit }}</p>
+        <div class="mt-3 flex items-center gap-1.5">
+          {% if in_transit_growth < 0 %}
+            <span class="inline-flex items-center gap-0.5 rounded-md bg-red-50 px-1.5 py-0.5 text-[11px] font-semibold text-red-600 dark:bg-red-500/10 dark:text-red-400">▼ {{ in_transit_growth }}%</span>
+          {% else %}
+            <span class="inline-flex items-center gap-0.5 rounded-md bg-emerald-50 px-1.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">▲ {{ in_transit_growth }}%</span>
+          {% endif %}
+          <span class="text-[11px] text-neutral-400">vs prev wk</span>
         </div>
       </div>
-      
-      <div class="group relative overflow-hidden rounded-xl p-5 border border-gray-100 dark:border-slate-700 bg-linear-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 shadow-xs hover:shadow-lg transition-transform transform hover:-translate-y-1">
-        <div class="pie-header">
-          <h3 class="card-title text-lg text-black dark:text-white">
-            <b>Pickup Completion</b>
-          </h3>
-        </div>
 
-        <div class="absolute top-4 right-4 flex items-center justify-center w-10 h-10 rounded-sm bg-blue-50 text-blue-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-          </svg>
-        </div>
-
-        <div class="card-content">
-          <div class="meter-container">
-            <svg class="meter-circle" viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="50" class="meter-bg" />
-              <circle cx="60" cy="60" r="50" class="meter-fill" />
-            </svg>
-            <div class="meter-text text-black dark:text-white">75%</div>
-          </div>
-          <div class="meter-labels">
-            <span>
-              Pickup Completed: <span id="completed-text">75</span>
-            </span>
-            </br>
-            <span>
-              Pickup Pending: <span id="pending-text">25</span>
-            </span>
-          </div>
+      <!-- RTO Rate -->
+      <div class="rounded-xl border border-neutral-200/80 bg-white p-4 dark:border-white/10 dark:bg-neutral-950 sm:p-5">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.09em] text-neutral-400">RTO Rate</p>
+        <p class="mt-2 text-[26px] font-bold leading-none tabular-nums tracking-tight text-neutral-900 dark:text-white">{{ rto_rate }}<span class="text-lg text-neutral-400">%</span></p>
+        <div class="mt-3 flex items-center gap-1.5">
+          {% if rto_rate_growth > 0 %}
+            <span class="inline-flex items-center gap-0.5 rounded-md bg-red-50 px-1.5 py-0.5 text-[11px] font-semibold text-red-600 dark:bg-red-500/10 dark:text-red-400">▲ {{ rto_rate_growth }}%</span>
+          {% else %}
+            <span class="inline-flex items-center gap-0.5 rounded-md bg-emerald-50 px-1.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">▼ {{ rto_rate_growth }}%</span>
+          {% endif %}
+          <span class="text-[11px] text-neutral-400">trend</span>
         </div>
       </div>
-    </div>
 
-    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-xs border border-gray-200 dark:border-slate-700">
-      <div class="px-6 py-5 grid grid-cols-1 md:grid-cols-5 gap-4 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700">
+      <!-- Avg TAT -->
+      <div class="col-span-2 rounded-xl border border-neutral-200/80 bg-white p-4 dark:border-white/10 dark:bg-neutral-950 sm:p-5 lg:col-span-1">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.09em] text-neutral-400">Avg TAT</p>
+        <p class="mt-2 text-[26px] font-bold leading-none tabular-nums tracking-tight text-neutral-900 dark:text-white">{{ avg_tat }}<span class="text-lg text-neutral-400">d</span></p>
+        <div class="mt-3 flex items-center gap-1.5">
+          {% if tat_growth > 0 %}
+            <span class="inline-flex items-center gap-0.5 rounded-md bg-red-50 px-1.5 py-0.5 text-[11px] font-semibold text-red-600 dark:bg-red-500/10 dark:text-red-400">▲ {{ tat_growth }}%</span>
+          {% else %}
+            <span class="inline-flex items-center gap-0.5 rounded-md bg-emerald-50 px-1.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">▼ {{ tat_growth }}%</span>
+          {% endif %}
+          <span class="text-[11px] text-neutral-400">vs last mo</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= FILTER TOOLBAR ========================= -->
+    <div class="overflow-hidden rounded-xl border border-neutral-200/80 bg-white dark:border-white/10 dark:bg-neutral-950">
+      <div class="px-6 py-5 grid grid-cols-1 gap-4 md:grid-cols-5">
         <div class="col-span-1">
-          <label class="block text-gray-700 dark:text-white text-xs font-semibold uppercase tracking-wide mb-2">Date Range</label>
-          <input type="text" id="dateRangeInput" value="09/01/2022 - 01/22/2026" class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 cursor-pointer bg-white dark:bg-slate-600 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" readonly />
+          <label class="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.09em] text-neutral-400">Date Range</label>
+          <input type="text" id="dateRangeInput" value="{{ date_from }} - {{ date_to }}" data-default-range="{{ date_from }} - {{ date_to }}" class="w-full cursor-pointer rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 transition-all focus:border-transparent focus:outline-hidden focus:ring-2 focus:ring-red-500 dark:border-white/10 dark:bg-white/10 dark:text-white" readonly />
         </div>
-
         <div class="col-span-1">
-          <label class="block text-gray-700 dark:text-white text-xs font-semibold uppercase tracking-wide mb-2">Method</label>
-          <select class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-600 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+          <label class="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.09em] text-neutral-400">Method</label>
+          <select class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 transition-all focus:border-transparent focus:outline-hidden focus:ring-2 focus:ring-red-500 dark:border-white/10 dark:bg-white/10 dark:text-white">
             <option value="all" selected>All</option>
             <option value="prepaid">Prepaid</option>
             <option value="cod">COD</option>
           </select>
         </div>
-
         <div class="col-span-1">
-          <label class="block text-gray-700 dark:text-white text-xs font-semibold uppercase tracking-wide mb-2">Courier</label>
-          <select class="w-full border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-gray-900 dark:text-white bg-white dark:bg-slate-600 focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+          <label class="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.09em] text-neutral-400">Courier</label>
+          <select class="w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 transition-all focus:border-transparent focus:outline-hidden focus:ring-2 focus:ring-red-500 dark:border-white/10 dark:bg-white/10 dark:text-white">
             <option value="all" selected>All</option>
             {% for courier in couriers %}
               <option value="{{ courier.id }}">{{ courier.name }}</option>
             {% endfor %}
           </select>
         </div>
-
-        <div class="md:col-span-2 flex items-end gap-3 justify-end">
-          <button id="applyFilters" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-md text-sm transition-colors">Apply</button>
-          <button id="clearFilters" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md text-sm transition-colors">Clear</button>
-          <button id="bulkExport" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-medium rounded-md text-sm transition-colors">Bulk Export</button>
-        </div>
-      </div>
-
-      <!-- Date Range Picker Modal -->
-      <div id="dateModal" class="modal-overlay">
-        <div class="rounded-lg shadow-2xl p-4 sm:p-6 w-full max-w-sm sm:max-w-2xl bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700">
-          <div class="flex justify-between items-center mb-5 pb-4 border-b border-gray-200 dark:border-slate-700">
-            <h2 class="text-lg font-bold text-gray-900 dark:text-white">Select Date Range</h2>
-            <button id="closeModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors text-2xl leading-none">&times;</button>
-          </div>
-
-          <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
-            <!-- Filter Buttons (Left Side) -->
-            <div class="flex sm:flex-col gap-2 overflow-x-auto sm:overflow-visible min-w-max sm:min-w-fit">
-              <p class="text-xs font-bold text-gray-700 dark:text-white uppercase tracking-wider mb-2 sm:block hidden">Quick Select</p>
-              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all shrink-0" data-range="today">Today</button>
-              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all shrink-0" data-range="yesterday">Yesterday</button>
-              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all shrink-0" data-range="last7">Last 7 days</button>
-              <button class="filter-btn px-3 sm:px-4 py-2.5 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-400 text-xs whitespace-nowrap text-left font-medium text-gray-700 dark:text-white transition-all shrink-0" data-range="last30">Last 30 days</button>
-            </div>
-
-            <!-- Calendars (Right Side) -->
-            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto justify-center sm:justify-start overflow-x-auto">
-              <div class="calendar bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md shadow-xs">
-                <div class="calendar-header">
-                  <button id="prevYear" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs">◄◄</button>
-                  <button id="prevMonth" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">&lt;</button>
-                  <span id="currentMonth" class="font-bold text-xs text-gray-900 dark:text-white"></span>
-                  <button id="nextMonth" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">&gt;</button>
-                  <button id="nextYear" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs">►►</button>
-                </div>
-                <div class="calendar-body">
-                  <div class="calendar-days" id="calendarDays"></div>
-                </div>
-              </div>
-
-              <div class="calendar bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-md shadow-xs">
-                <div class="calendar-header">
-                  <button id="prevYear2" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs">◄◄</button>
-                  <button id="prevMonth2" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">&lt;</button>
-                  <span id="currentMonth2" class="font-bold text-xs text-gray-900 dark:text-white"></span>
-                  <button id="nextMonth2" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white">&gt;</button>
-                  <button id="nextYear2" class="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs">►►</button>
-                </div>
-                <div class="calendar-body">
-                  <div class="calendar-days" id="calendarDays2"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="flex gap-3 justify-end mt-6 pt-4 border-t border-gray-200 dark:border-slate-700">
-            <button id="resetDateRange" class="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 font-medium text-sm transition-colors">Reset</button>
-            <button id="cancelModal" class="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 font-medium text-sm transition-colors">Cancel</button>
-            <button id="applyDateRange" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md text-sm transition-colors">Apply</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Main Content Area -->
-      <div class="px-6 py-6">
-        <div id="shipment-summary" class="tab-content">
-          <!-- Top metric cards (dashboard style) with icons and hover effects -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-4 mb-6">
-            <!-- Active Shipments -->
-            <div class="group relative overflow-hidden rounded-lg p-5 border border-gray-100 dark:border-slate-700 bg-linear-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-800 shadow-xs hover:shadow-lg transition-transform transform hover:-translate-y-1">
-              <div class="flex items-start justify-between">
-                <div>
-                  <div class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ total_shipments }}</div>
-                  <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Total Order</div>
-                </div>
-                <div class="flex items-center justify-center w-10 h-10 rounded-sm bg-emerald-50 text-emerald-600">
-                  <!-- truck icon -->
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7h13l4 4v7a1 1 0 01-1 1h-1m-14-12V5a2 2 0 012-2h7m0 0v4m0 0h4" />
-                  </svg>
-                </div>
-              </div>
-              <div class="mt-4 flex items-center gap-2">
-                <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-sm">{{ shipment_growth }}%</span>
-                <span class="text-xs text-gray-500">vs last period</span>
-              </div>
-            </div>
-
-            <!-- Delivery Rate -->
-            <div class="group relative overflow-hidden rounded-lg p-5 border border-gray-100 dark:border-slate-700 bg-linear-to-br from-white to-indigo-50 dark:from-slate-800 dark:to-slate-800 shadow-xs hover:shadow-lg transition-transform transform hover:-translate-y-1">
-              <div class="flex items-start justify-between">
-                <div>
-                  <div class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ delivery_rate }}%</div>
-                  <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Delivery Rate</div>
-                </div>
-                <div class="flex items-center justify-center w-10 h-10 rounded-sm bg-indigo-100 text-indigo-600">
-                  <!-- check icon -->
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414-1.414L8 11.172 4.707 7.879a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-              <div class="mt-4 flex items-center gap-2">
-                <span class="text-xs bg-green-50 text-green-700 px-2 py-1 rounded-sm">{{ delivery_rate_growth }}%</span>
-                <span class="text-xs text-gray-500">MoM</span>
-              </div>
-            </div>
-
-            <!-- In Transit -->
-            <div class="group relative overflow-hidden rounded-lg p-5 border border-gray-100 dark:border-slate-700 bg-linear-to-br from-white to-purple-50 dark:from-slate-800 shadow-xs hover:shadow-lg transition-transform transform hover:-translate-y-1">
-              <div class="flex items-start justify-between">
-                <div>
-                  <div class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ in_transit }}</div>
-                  <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">In Transit</div>
-                </div>
-                <div class="flex items-center justify-center w-10 h-10 rounded-sm bg-purple-100 text-purple-600">
-                  <!-- box icon -->
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M2 6.5V4a2 2 0 012-2h12a2 2 0 012 2v2.5M2 6.5l8 4.5 8-4.5M2 6.5v7.5a2 2 0 002 2h12a2 2 0 002-2V6.5" />
-                  </svg>
-                </div>
-              </div>
-              <div class="mt-4 flex items-center gap-2">
-                <span class="text-xs bg-teal-50 text-teal-700 px-2 py-1 rounded-sm">{{ in_transit_growth }}%</span>
-                <span class="text-xs text-gray-500">vs prev wk</span>
-              </div>
-            </div>
-
-            <!-- RTO Rate -->
-            <div class="group relative overflow-hidden rounded-lg p-5 border border-gray-100 dark:border-slate-700 bg-linear-to-br from-white to-yellow-50 dark:from-slate-800 shadow-xs hover:shadow-lg transition-transform transform hover:-translate-y-1">
-              <div class="flex items-start justify-between">
-                <div>
-                  <div class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ rto_rate }}%</div>
-                  <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">RTO Rate</div>
-                </div>
-                <div class="flex items-center justify-center w-10 h-10 rounded-sm bg-yellow-100 text-yellow-700">
-                  <!-- straight-line return arrow (RTO) -->
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M21 11H6.414l4.293-4.293a1 1 0 10-1.414-1.414l-6 6a1 1 0 000 1.414l6 6a1 1 0 001.414-1.414L6.414 13H21a1 1 0 000-2z" />
-                  </svg>
-                </div>
-              </div>
-              <div class="mt-4 flex items-center gap-2">
-                <span class="text-xs bg-red-50 text-red-700 px-2 py-1 rounded-sm">{{ rto_rate_growth }}%</span>
-                <span class="text-xs text-gray-500">trend</span>
-              </div>
-            </div>
-
-            <!-- Avg TAT -->
-            <div class="group relative overflow-hidden rounded-lg p-5 border border-gray-100 dark:border-slate-700 bg-linear-to-br from-white to-pink-50 dark:from-slate-800 shadow-xs hover:shadow-lg transition-transform transform hover:-translate-y-1">
-              <div class="flex items-start justify-between">
-                <div>
-                  <div class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ avg_tat }}d</div>
-                  <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Avg TAT</div>
-                </div>
-                <div class="flex items-center justify-center w-10 h-10 rounded-sm bg-pink-100 text-pink-600">
-                  <!-- clock icon -->
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l2 2M12 6a6 6 0 100 12 6 6 0 000-12z" />
-                  </svg>
-                </div>
-              </div>
-              <div class="mt-4 flex items-center gap-2">
-                <span class="text-xs bg-red-50 text-red-700 px-2 py-1 rounded-sm">{{ tat_growth }}%</span>
-                <span class="text-xs text-gray-500">vs last mo</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style="border-radius: 8px;">
-            <!-- Order Placed -->
-            <div class="flex items-start gap-4 rounded-lg p-4 border border-yellow-100 dark:border-slate-700 bg-yellow-50 dark:bg-slate-800 shadow-xs hover:shadow-md transition-all">
-              <div class="w-12 h-12 flex items-center justify-center rounded-sm bg-yellow-200 text-yellow-800">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M3 3h14v4H3zM3 11h14v6H3z" />
-                </svg>
-              </div>
-              <div class="flex-1">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <div class="text-sm font-bold text-yellow-900 dark:text-white">ORDER_PLACED</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Order Placed / Manifested</div>
-                  </div>
-                  <div class="text-2xl font-semibold text-yellow-900 dark:text-white">{{ status_summary.placed.value|default:'0' }}</div>
-                </div>
-                <div class="mt-3 text-sm text-yellow-700">{{ status_summary.placed.growth|default:'0' }}%</div>
-              </div>
-            </div>
-
-            <!-- Ready to Ship -->
-            <div class="flex items-start gap-4 rounded-lg p-4 border border-emerald-100 dark:border-slate-700 bg-emerald-50 dark:bg-slate-800 shadow-xs hover:shadow-md transition-all">
-              <div class="w-12 h-12 flex items-center justify-center rounded-sm bg-emerald-200 text-emerald-800">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                  <path d="M3 3h14v2H3V3zm0 4h14v6H3V7zm2 8a1 1 0 100 2 1 1 0 000-2zm10 0a1 1 0 100 2 1 1 0 000-2z" />
-                </svg>
-              </div>
-              <div class="flex-1">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <div class="text-sm font-bold text-emerald-900 dark:text-white">READY_TO_SHIP</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Packed & Ready</div>
-                  </div>
-                  <div class="text-2xl font-semibold text-emerald-900 dark:text-white">{{ status_summary.ready_to_ship.value|default:'0' }}</div>
-                </div>
-                <div class="mt-3 text-sm text-emerald-700">{{ status_summary.ready_to_ship.growth|default:'0' }}%</div>
-              </div>
-            </div>
-
-            <!-- In Transit -->
-            <div class="flex items-start gap-4 rounded-lg p-4 border border-indigo-100 dark:border-slate-700 bg-indigo-50 dark:bg-slate-800 shadow-xs hover:shadow-md transition-all">
-              <div class="w-12 h-12 flex items-center justify-center rounded-sm bg-indigo-200 text-indigo-800">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M3 7h13l4 4v6a1 1 0 01-1 1h-1M3 7V5a2 2 0 012-2h7" />
-                </svg>
-              </div>
-              <div class="flex-1">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <div class="text-sm font-bold text-indigo-900 dark:text-white">INTRANSIT</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">In Transit</div>
-                  </div>
-                  <div class="text-2xl font-semibold text-indigo-900 dark:text-white">{{ status_summary.in_transit.value|default:'0' }}</div>
-                </div>
-                <div class="mt-3 text-sm text-indigo-700">{{ status_summary.in_transit.growth|default:'0' }}%</div>
-              </div>
-            </div>
-
-            <!-- Out for Delivery -->
-            <div class="flex items-start gap-4 rounded-lg p-4 border border-purple-100 dark:border-slate-700 bg-purple-50 dark:bg-slate-800 shadow-xs hover:shadow-md transition-all">
-              <div class="w-12 h-12 flex items-center justify-center rounded-sm bg-purple-200 text-purple-800">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M3 7a1 1 0 011-1h11a1 1 0 01.707.293l3 3A1 1 0 0120 10v5a1 1 0 01-1 1h-1a3 3 0 01-6 0H9a3 3 0 01-6 0H4a1 1 0 01-1-1V7zM7 17a1 1 0 100-2 1 1 0 000 2zm10 0a1 1 0 100-2 1 1 0 000 2z" />
-                </svg>
-              </div>
-              <div class="flex-1">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <div class="text-sm font-bold text-purple-900 dark:text-white">OUT_FOR_DELIVERY</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Shipment Out For Delivery</div>
-                  </div>
-                  <div class="text-2xl font-semibold text-purple-900 dark:text-white">{{ status_summary.out_for_delivery.value|default:'0' }}</div>
-                </div>
-                <div class="mt-3 text-sm text-purple-700">{{ status_summary.out_for_delivery.growth|default:'0' }}%</div>
-              </div>
-            </div>
-
-            <!-- Delivered -->
-            <div class="flex items-start gap-4 rounded-lg p-4 border border-sky-100 dark:border-slate-700 bg-sky-50 dark:bg-slate-800 shadow-xs hover:shadow-md transition-all">
-              <div class="w-12 h-12 flex items-center justify-center rounded-sm bg-sky-200 text-sky-800">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M16.707 5.293a1 1 0 00-1.414-1.414L8 11.172 4.707 7.879a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8z" />
-                </svg>
-              </div>
-              <div class="flex-1">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <div class="text-sm font-bold text-sky-900 dark:text-white">DELIVERED</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Shipment Delivered</div>
-                  </div>
-                  <div class="text-2xl font-semibold text-sky-900 dark:text-white">{{ status_summary.delivered.value|default:'0' }}</div>
-                </div>
-                <div class="mt-3 text-sm text-sky-700">{{ status_summary.delivered.growth|default:'0' }}%</div>
-              </div>
-            </div>
-
-            <!-- Failed Delivery -->
-            <div class="flex items-start gap-4 rounded-lg p-4 border border-rose-100 dark:border-slate-700 bg-rose-50 dark:bg-slate-800 shadow-xs hover:shadow-md transition-all">
-              <div class="w-12 h-12 flex items-center justify-center rounded-sm bg-rose-200 text-rose-800">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 8l4 4M12 8l-4 4" />
-                </svg>
-              </div>
-              <div class="flex-1">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <div class="text-sm font-bold text-rose-900 dark:text-white">FAILED_DELIVERY</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">NDR</div>
-                  </div>
-                  <div class="text-2xl font-semibold text-rose-900 dark:text-white">{{ status_summary.failed_delivery.value|default:'0' }}</div>
-                </div>
-                <div class="mt-3 text-sm text-rose-700">{{ status_summary.failed_delivery.growth|default:'0' }}%</div>
-              </div>
-            </div>
-
-            <!-- Order Canceled -->
-            <div class="flex items-start gap-4 rounded-lg p-4 border border-rose-100 dark:border-slate-700 bg-rose-50 dark:bg-slate-800 shadow-xs hover:shadow-md transition-all">
-              <div class="w-12 h-12 flex items-center justify-center rounded-sm bg-rose-200 text-rose-800">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm2.5-10.5a.75.75 0 10-1.06-1.06L10 8.94 8.56 7.44a.75.75 0 10-1.06 1.06L8.94 10l-1.44 1.44a.75.75 0 101.06 1.06L10 11.06l1.44 1.44a.75.75 0 101.06-1.06L11.06 10l1.44-1.44z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              <div class="flex-1">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <div class="text-sm font-bold text-rose-900 dark:text-white">ORDER_CANCELLED</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Customer Cancelled</div>
-                  </div>
-                  <div class="text-2xl font-semibold text-rose-900 dark:text-white">{{ status_summary.cancelled.value|default:'0' }}</div>
-                </div>
-                <div class="mt-3 text-sm text-rose-700">{{ status_summary.cancelled.growth|default:'0' }}%</div>
-              </div>
-            </div>
-
-            <!-- RTO Delivered -->
-            <div class="flex items-start gap-4 rounded-lg p-4 border border-red-100 dark:border-slate-700 bg-red-50 dark:bg-slate-800 shadow-xs hover:shadow-md transition-all">
-              <div class="w-12 h-12 flex items-center justify-center rounded-sm bg-red-200 text-red-800">
-                <!-- RTO delivered icon (circle with straight arrow) -->
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                </svg>
-              </div>
-              <div class="flex-1">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <div class="text-sm font-bold text-red-900 dark:text-white">RTO</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Returned To Origin</div>
-                  </div>
-                  <div class="text-2xl font-semibold text-red-900 dark:text-white">{{ status_summary.rto.value|default:'0' }}</div>
-                </div>
-                <div class="mt-3 text-sm text-red-700">{{ status_summary.rto.growth|default:'0' }}%</div>
-              </div>
-            </div>
-
-            <!-- Lost -->
-            <div class="flex items-start gap-4 rounded-lg p-4 border border-stone-100 dark:border-slate-700 bg-stone-50 dark:bg-slate-800 shadow-xs hover:shadow-md transition-all">
-              <div class="w-12 h-12 flex items-center justify-center rounded-sm bg-stone-200 text-stone-800">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zM9 7a1 1 0 112 0v1a1 1 0 11-2 0V7zm1 4a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              <div class="flex-1">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <div class="text-sm font-bold text-stone-900 dark:text-white">LOST</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-300 mt-1">Potentially Lost/ Damaged</div>
-                  </div>
-                  <div class="text-2xl font-semibold text-stone-900 dark:text-white">{{ status_summary.lost.value|default:'0' }}</div>
-                </div>
-                <div class="mt-3 text-sm text-stone-700">{{ status_summary.lost.growth|default:'0' }}%</div>
-              </div>
-            </div>
-          </div>
-          <p class="text-xs text-red-500 dark:text-red-300 mt-4">Note: Stats are not real time; there may be a slight delay.</p>
+        <div class="flex items-end justify-end gap-2 md:col-span-2">
+          <button id="applyFilters" class="inline-flex h-9 items-center rounded-lg bg-neutral-900 px-4 text-sm font-semibold text-white transition-colors hover:bg-red-600 dark:bg-white dark:text-black dark:hover:bg-red-600 dark:hover:text-white">Apply</button>
+          <button id="clearFilters" class="inline-flex h-9 items-center rounded-lg px-3 text-sm font-semibold text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-black dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white">Clear</button>
+          <button id="bulkExport" class="inline-flex h-9 items-center rounded-lg border border-neutral-300 bg-white px-4 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-50 dark:border-white/15 dark:bg-transparent dark:text-neutral-200">Export</button>
         </div>
       </div>
     </div>
+
+    <!-- Date Range Picker Modal (unchanged behaviour) -->
+    <div id="dateModal" class="modal-overlay">
+      <div class="w-full max-w-sm rounded-lg border border-neutral-200 bg-white p-4 shadow-2xl dark:border-white/10 dark:bg-black sm:max-w-2xl sm:p-6">
+        <div class="mb-5 flex items-center justify-between border-b border-neutral-200 pb-4 dark:border-white/10">
+          <h2 class="text-lg font-bold text-gray-900 dark:text-white">Select Date Range</h2>
+          <button id="closeModal" class="text-2xl leading-none text-neutral-400 transition-colors hover:text-neutral-600 dark:hover:text-neutral-300">&times;</button>
+        </div>
+        <div class="flex flex-col gap-4 sm:flex-row sm:gap-6">
+          <div class="flex min-w-max gap-2 overflow-x-auto sm:min-w-fit sm:flex-col sm:overflow-visible">
+            <p class="mb-2 hidden text-xs font-bold uppercase tracking-wider text-black dark:text-white sm:block">Quick Select</p>
+            <button class="filter-btn shrink-0 whitespace-nowrap rounded-md border border-neutral-300 px-3 py-2.5 text-left text-xs font-medium text-black transition-all hover:border-red-300 hover:bg-red-50 dark:border-white/10 dark:text-white dark:hover:border-red-400 dark:hover:bg-neutral-700 sm:px-4" data-range="today">Today</button>
+            <button class="filter-btn shrink-0 whitespace-nowrap rounded-md border border-neutral-300 px-3 py-2.5 text-left text-xs font-medium text-black transition-all hover:border-red-300 hover:bg-red-50 dark:border-white/10 dark:text-white dark:hover:border-red-400 dark:hover:bg-neutral-700 sm:px-4" data-range="yesterday">Yesterday</button>
+            <button class="filter-btn shrink-0 whitespace-nowrap rounded-md border border-neutral-300 px-3 py-2.5 text-left text-xs font-medium text-black transition-all hover:border-red-300 hover:bg-red-50 dark:border-white/10 dark:text-white dark:hover:border-red-400 dark:hover:bg-neutral-700 sm:px-4" data-range="last7">Last 7 days</button>
+            <button class="filter-btn shrink-0 whitespace-nowrap rounded-md border border-neutral-300 px-3 py-2.5 text-left text-xs font-medium text-black transition-all hover:border-red-300 hover:bg-red-50 dark:border-white/10 dark:text-white dark:hover:border-red-400 dark:hover:bg-neutral-700 sm:px-4" data-range="last30">Last 30 days</button>
+          </div>
+          <div class="flex w-full justify-center gap-2 overflow-x-auto sm:w-auto sm:justify-start sm:gap-3">
+            <div class="calendar rounded-md border border-neutral-200 bg-white shadow-xs dark:border-white/10 dark:bg-white/5">
+              <div class="calendar-header">
+                <button id="prevYear" class="text-xs text-neutral-600 hover:text-gray-900 dark:text-white dark:hover:text-white">◄◄</button>
+                <button id="prevMonth" class="text-neutral-600 hover:text-gray-900 dark:text-white dark:hover:text-white">&lt;</button>
+                <span id="currentMonth" class="text-xs font-bold text-gray-900 dark:text-white"></span>
+                <button id="nextMonth" class="text-neutral-600 hover:text-gray-900 dark:text-white dark:hover:text-white">&gt;</button>
+                <button id="nextYear" class="text-xs text-neutral-600 hover:text-gray-900 dark:text-white dark:hover:text-white">►►</button>
+              </div>
+              <div class="calendar-body"><div class="calendar-days" id="calendarDays"></div></div>
+            </div>
+            <div class="calendar rounded-md border border-neutral-200 bg-white shadow-xs dark:border-white/10 dark:bg-white/5">
+              <div class="calendar-header">
+                <button id="prevYear2" class="text-xs text-neutral-600 hover:text-gray-900 dark:text-white dark:hover:text-white">◄◄</button>
+                <button id="prevMonth2" class="text-neutral-600 hover:text-gray-900 dark:text-white dark:hover:text-white">&lt;</button>
+                <span id="currentMonth2" class="text-xs font-bold text-gray-900 dark:text-white"></span>
+                <button id="nextMonth2" class="text-neutral-600 hover:text-gray-900 dark:text-white dark:hover:text-white">&gt;</button>
+                <button id="nextYear2" class="text-xs text-neutral-600 hover:text-gray-900 dark:text-white dark:hover:text-white">►►</button>
+              </div>
+              <div class="calendar-body"><div class="calendar-days" id="calendarDays2"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-6 flex justify-end gap-3 border-t border-neutral-200 pt-4 dark:border-white/10">
+          <button id="resetDateRange" class="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-neutral-600">Reset</button>
+          <button id="cancelModal" class="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-neutral-600">Cancel</button>
+          <button id="applyDateRange" class="inline-flex h-9 items-center rounded-lg bg-neutral-900 px-4 text-sm font-semibold text-white transition-colors hover:bg-red-600 dark:bg-white dark:text-black dark:hover:bg-red-600 dark:hover:text-white">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================= CHART ROW =========================== -->
+    <section aria-label="Operational charts"
+             class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
+      <!-- Total Daily Orders -->
+      <div class="flex min-h-[220px] flex-col rounded-xl border border-neutral-200/80 bg-white p-5 dark:border-white/10 dark:bg-neutral-950">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-neutral-900 dark:text-white">Total Daily Orders</h3>
+          <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 dark:bg-white/5">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+          </span>
+        </div>
+        <div class="mt-auto flex items-end justify-end gap-1" id="todayOrdersChart">
+          <div class="text-left"></div>
+        </div>
+        <div class="text-lg font-bold tabular-nums text-neutral-900 dark:text-white" style="margin-top: -8px;">
+          <p class="text-md font-medium text-neutral-400">Orders</p>
+        </div>
+      </div>
+
+      <!-- Top 5 Couriers -->
+      <div class="flex min-h-[220px] flex-col rounded-xl border border-neutral-200/80 bg-white p-5 dark:border-white/10 dark:bg-neutral-950">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-neutral-900 dark:text-white">Top 5 Couriers</h3>
+          <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 dark:bg-white/5">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M4 20V10m6 10V4m6 16v-7m4 7H2" /></svg>
+          </span>
+        </div>
+        {% if top_5_couriers %}
+        <div class="relative mt-auto flex justify-center gap-4" style="height: 100px;">
+          {% for courier, value in top_5_couriers.items %}
+          <div class="bar-container" data-day="{{ courier }}" data-orders="{{ value.orders }}" style="position: relative; height: 100%;">
+            <div class="bar bar-bottom bg-red-500" style="height: {{ value.percentage }}px; bottom: 2px;"></div>
+            <span class="bar-label text-xs text-neutral-500" style="position: absolute; bottom: -65px; left: 50%; transform: translateX(-50%);">{{ courier }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="mt-auto flex flex-1 flex-col items-center justify-center gap-1 py-6 text-center">
+          <span class="text-sm font-semibold text-neutral-400">No courier activity</span>
+          <span class="text-xs text-neutral-400">Ship an order in this range to see the split.</span>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- COD Vs Prepaid -->
+      <div class="flex min-h-[220px] flex-col rounded-xl border border-neutral-200/80 bg-white p-5 dark:border-white/10 dark:bg-neutral-950">
+        <div class="flex items-center justify-between">
+          <h3 class="pie-title text-sm font-bold text-neutral-900 dark:text-white">COD Vs Prepaid</h3>
+          <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 dark:bg-white/5">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 8v4l2 2M12 6a6 6 0 100 12 6 6 0 000-12z" /></svg>
+          </span>
+        </div>
+        <div class="mt-auto flex items-center justify-between gap-3">
+          <div class="pie-legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background-color: #111827;"></div>
+              <span class="legend-text">COD</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background-color: #ef4444;"></div>
+              <span class="legend-text">Prepaid</span>
+            </div>
+          </div>
+          <div class="pie-content">
+            <div class="pie-data"></div>
+            <div class="pie-chart">
+              <div class="donut-chart"></div>
+              <div class="donut-hole"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pickup Completion -->
+      <div class="flex min-h-[220px] flex-col rounded-xl border border-neutral-200/80 bg-white p-5 dark:border-white/10 dark:bg-neutral-950">
+        <div class="flex items-center justify-between">
+          <h3 class="card-title text-sm font-bold text-neutral-900 dark:text-white">Pickup Completion</h3>
+          <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50 text-red-500 dark:bg-red-500/10">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+          </span>
+        </div>
+        <div class="card-content mt-auto">
+          <div class="meter-container">
+            <svg class="meter-circle" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="50" class="meter-bg" />
+              <circle cx="60" cy="60" r="50" class="meter-fill" />
+            </svg>
+            <div class="meter-text text-neutral-900 dark:text-white">75%</div>
+          </div>
+          <div class="meter-labels text-center text-xs text-neutral-500">
+            <span>Pickup Completed: <span id="completed-text" class="font-semibold text-neutral-700 dark:text-neutral-200">75</span></span><br>
+            <span>Pickup Pending: <span id="pending-text" class="font-semibold text-neutral-700 dark:text-neutral-200">25</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== STATUS BREAKDOWN ======================= -->
+    <section id="shipment-summary"
+             class="tab-content overflow-hidden rounded-xl border border-neutral-200/80 bg-white dark:border-white/10 dark:bg-neutral-950">
+      <div class="flex items-center justify-between border-b border-neutral-200/80 px-5 py-4 dark:border-white/10">
+        <h2 class="text-sm font-bold text-neutral-900 dark:text-white">Status Breakdown</h2>
+        <span class="text-[11px] text-neutral-400">Not real-time &middot; slight delay possible</span>
+      </div>
+
+      <div class="grid grid-cols-1 gap-px bg-neutral-200/70 dark:bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
+        {% for row in status_rows %}
+        <div class="flex items-center gap-3.5 bg-white px-5 py-4 dark:bg-neutral-950">
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg
+            {% if row.tone == 'red' %}bg-red-50 text-red-500 dark:bg-red-500/10
+            {% elif row.tone == 'emerald' %}bg-emerald-50 text-emerald-500 dark:bg-emerald-500/10
+            {% elif row.tone == 'amber' %}bg-amber-50 text-amber-500 dark:bg-amber-500/10
+            {% elif row.tone == 'blue' %}bg-blue-50 text-blue-500 dark:bg-blue-500/10
+            {% else %}bg-neutral-100 text-neutral-500 dark:bg-white/5 dark:text-neutral-400{% endif %}">
+            {{ row.icon }}
+          </span>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-baseline justify-between gap-2">
+              <p class="truncate text-[13px] font-bold tracking-wide text-neutral-900 dark:text-white">{{ row.label }}</p>
+              <p class="text-xl font-bold tabular-nums tracking-tight text-neutral-900 dark:text-white">{{ row.value|default:'0' }}</p>
+            </div>
+            <div class="mt-0.5 flex items-center justify-between gap-2">
+              <p class="truncate text-[11px] text-neutral-400">{{ row.sub }}</p>
+              {% if row.growth < 0 %}
+                <span class="shrink-0 text-[11px] font-semibold text-red-500">▼ {{ row.growth }}%</span>
+              {% elif row.growth > 0 %}
+                <span class="shrink-0 text-[11px] font-semibold text-emerald-500">▲ {{ row.growth }}%</span>
+              {% else %}
+                <span class="shrink-0 text-[11px] font-semibold text-neutral-300">0%</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
   </div>
+
 {% endblock %}
 
 {% block js %}
@@ -1385,15 +1210,9 @@
                 }
             })
 
-            // Clear Filters button - resets to default
+            // Clear Filters button - resets to the default (last 30 days)
             document.getElementById('clearFilters').addEventListener('click', () => {
-                document.getElementById('dateRangeInput').value = '09/01/2022 - 01/30/2026'
-                const selects = document.querySelectorAll('.px-6.py-5 select')
-                selects.forEach((select) => (select.value = 'All'))
-                startDate = null
-                endDate = null
-                renderCalendars()
-                alert('Filters cleared! All data displayed.')
+                window.location.href = window.location.pathname
             })
 
 
@@ -1524,7 +1343,7 @@
 
               // Update conic-gradient based on percentages
               const codPercent = parseFloat(codPercentage)
-              donutChart.style.background = `conic-gradient(#f97316 0% ${codPercent}%, #3b82f6 ${codPercent}% 100%)`
+              donutChart.style.background = `conic-gradient(#111827 0% ${codPercent}%, #ef4444 ${codPercent}% 100%)`
 
               // Store data in data attributes for tooltip
               donutChart.setAttribute('data-cod', codCount)
@@ -1594,7 +1413,7 @@
 
                 const last5Days = JSON.parse(document.getElementById('daily-orders-data').textContent);
                 console.log(last5Days);
-                const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500'];
+                const colors = ['bg-red-500', 'bg-red-500', 'bg-green-500', 'bg-neutral-500', 'bg-neutral-500'];
 
                 // Find the position to insert bars (before the icon div)
                 const textLeftDiv = chartContainer.querySelector('.text-left');
@@ -1613,7 +1432,7 @@
                       <div class="bar-background"></div>
                       <div class="bar ${colors[index]}" style="height: ${height}px;"></div>
                       <span class="bar-value hidden absolute top-0 left-1/2 transform -translate-x-1/2 text-xs font-bold text-white">${dayData.orders}</span>
-                      <span class="bar-label text-xs text-gray-600 mt-1">${dayData.day}</span>
+                      <span class="bar-label text-xs text-neutral-600 mt-1">${dayData.day}</span>
                     `;
 
                     // Insert after text-left div
@@ -1699,8 +1518,10 @@
                     { zone: "Zone D", shipments: 590 }
                 ];
 
+                const zonesEl = d3.select("#zonesBarChart").node();
+                if (!zonesEl) return;  // chart target not on this page - nothing to render
                 const margin = { top: 20, right: 20, bottom: 60, left: 80 };
-                const containerWidth = d3.select("#zonesBarChart").node().getBoundingClientRect().width;
+                const containerWidth = zonesEl.getBoundingClientRect().width;
                 const width = Math.max(400, containerWidth - margin.left - margin.right);
                 const height = 300 - margin.top - margin.bottom;
 
@@ -1732,7 +1553,7 @@
                     .attr("width", d => x(d.shipments))
                     .attr("height", y.bandwidth())
                     .attr("fill", (d, i) => {
-                        const colors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
+                        const colors = ["#ef4444", "#737373", "#111827", "#ef4444"];
                         return colors[i % colors.length];
                     })
                     .style("filter", "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))")

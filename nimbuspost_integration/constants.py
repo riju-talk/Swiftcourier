@@ -33,3 +33,23 @@ STATUS_MAPPING = {
 
 AWB_FIELD = "awb_number"
 STATUS_FIELD = "status"
+
+
+# --- Outbound API (partner API, https://documenter.getpostman.com/view/9692837/TW6wHnoz) ---
+# NimbusPost runs the same shipping platform as Xpressbees, so the endpoint
+# surface mirrors xpressbees_integration.xpressbees almost exactly - only the
+# base URL and a couple of path segments differ.
+BASE_URL = "https://api.nimbuspost.com/v1"
+
+# Seconds to wait on any single NimbusPost HTTP call before giving up. Their
+# create-shipment call in particular can be slow (courier allocation happens
+# inline), hence the generous ceiling.
+REQUEST_TIMEOUT = 30
+
+# How many times nimbuspost_request() will transparently re-login and retry
+# after NimbusPost rejects the bearer token.
+MAX_AUTH_RETRIES = 2
+
+# Raw NimbusPost login-response / API-response messages that mean "your token
+# is missing or expired" - matched case-insensitively as substrings.
+AUTH_FAILURE_HINTS = ("token", "unauthenticated", "unauthorized")

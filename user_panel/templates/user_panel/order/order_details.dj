@@ -13,13 +13,13 @@
     <div x-data="orderDetails" class="space-y-6">
 
         <!-- Header Bar -->
-        <div class="flex justify-between items-center flex-wrap gap-4 mb-6 bg-white dark:bg-gray-800 shadow-sm rounded-xl px-6 py-4">
-            <div class="text-2xl font-semibold text-gray-800 dark:text-gray-100">Order Details : {{ order.order_number }}</div>
+        <div class="flex justify-between items-center flex-wrap gap-4 mb-6 bg-white dark:bg-neutral-900 shadow-sm rounded-xl px-6 py-4">
+            <div class="text-2xl font-semibold text-black dark:text-white">Order Details : {{ order.order_number }}</div>
 
             {% if order.status != 'ready_to_ship' %}
                 <button type="button"
                         onclick="downloadLabelById('{{ order.id }}'); return false;"
-                        class="btn btn-primary gap-2">
+                        class="btn btn-red-600 gap-2">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path opacity="0.5" fill-rule="evenodd" clip-rule="evenodd" d="M3 14.25C3.41421 14.25 3.75 14.5858 3.75 15C3.75 16.4354 3.75159 17.4365 3.85315 18.1919C3.9518 18.9257 4.13225 19.3142 4.40901 19.591C4.68577 19.8678 5.07435 20.0482 5.80812 20.1469C6.56347 20.2484 7.56459 20.25 9 20.25H15C16.4354 20.25 17.4365 20.2484 18.1919 20.1469C18.9257 20.0482 19.3142 19.8678 19.591 19.591C19.8678 19.3142 20.0482 18.9257 20.1469 18.1919C20.2484 17.4365 20.25 16.4354 20.25 15C20.25 14.5858 20.5858 14.25 21 14.25C21.4142 14.25 21.75 14.5858 21.75 15V15.0549C21.75 16.4225 21.75 17.5248 21.6335 18.3918C21.5125 19.2919 21.2536 20.0497 20.6517 20.6516C20.0497 21.2536 19.2919 21.5125 18.3918 21.6335C17.5248 21.75 16.4225 21.75 15.0549 21.75H8.94513C7.57754 21.75 6.47522 21.75 5.60825 21.6335C4.70814 21.5125 3.95027 21.2536 3.34835 20.6517C2.74643 20.0497 2.48754 19.2919 2.36652 18.3918C2.24996 17.5248 2.24998 16.4225 2.25 15.0549C2.25 15.0366 2.25 15.0183 2.25 15C2.25 14.5858 2.58579 14.25 3 14.25Z" fill="#1C274C" />
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M12 16.75C12.2106 16.75 12.4114 16.6615 12.5535 16.5061L16.5535 12.1311C16.833 11.8254 16.8118 11.351 16.5061 11.0715C16.2004 10.792 15.726 10.8132 15.4465 11.1189L12.75 14.0682V3C12.75 2.58579 12.4142 2.25 12 2.25C11.5858 2.25 11.25 2.58579 11.25 3V14.0682L8.55353 11.1189C8.27403 10.8132 7.79963 10.792 7.49393 11.0715C7.18823 11.351 7.16698 11.8254 7.44648 12.1311L11.4465 16.5061C11.5886 16.6615 11.7894 16.75 12 16.75Z" fill="#1C274C" />
@@ -35,8 +35,8 @@
             <!-- Top Section -->
             <div class="flex justify-between flex-wrap gap-6 px-4">
                 <div>
-                    <div class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">Ship To:</div>
-                    <div class="text-sm text-gray-700 dark:text-gray-300">
+                    <div class="text-lg font-semibold mb-2 text-black dark:text-white">Ship To:</div>
+                    <div class="text-sm text-black dark:text-neutral-300">
                         <div class="font-bold">{{ order.shipping_address.name|default:"-" }}</div>
                         <div>{{ order.shipping_address.line1 }}</div>
                         <div>{{ order.shipping_address.line2 }}</div>
@@ -49,10 +49,10 @@
                 </div>
                 {% if order.status != 'ready_to_ship' %}
                     <div>
-                        <div class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">Warehouse Details:</div>
-                        <div class="text-sm text-gray-700 dark:text-gray-300">
+                        <div class="text-lg font-semibold mb-2 text-black dark:text-white">Warehouse Details:</div>
+                        <div class="text-sm text-black dark:text-neutral-300">
                             <div>
-                                <strong>Idiotship Order ID:</strong> {{ order.get_order_id }}
+                                <strong>SwiftCourier Order ID:</strong> {{ order.get_order_id }}
                             </div>
                             <div>
                                 <strong>Order Date:</strong> {{ order.order_date|date:"d M Y" }}
@@ -67,10 +67,10 @@
                     </div>
                 {% endif %}
                 <div>
-                    <div class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">Order Info:</div>
-                    <div class="text-sm text-gray-700 dark:text-gray-300">
+                    <div class="text-lg font-semibold mb-2 text-black dark:text-white">Order Info:</div>
+                    <div class="text-sm text-black dark:text-neutral-300">
                         <div>
-                            <strong>Idiotship Order ID:</strong> {{ order.get_order_id }}
+                            <strong>SwiftCourier Order ID:</strong> {{ order.get_order_id }}
                         </div>
                         <div>
                             <strong>Order Date:</strong> {{ order.order_date|date:"d M Y" }}
@@ -86,8 +86,8 @@
 
                 {% if order.status != 'ready_to_ship' %}
                     <div>
-                        <div class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">Shipping Info:</div>
-                        <div class="text-sm text-gray-700 dark:text-gray-300">
+                        <div class="text-lg font-semibold mb-2 text-black dark:text-white">Shipping Info:</div>
+                        <div class="text-sm text-black dark:text-neutral-300">
                             <div>
                                 <strong>Partner:</strong> {{ order.get_logistic_partner_display }}
                             </div>
@@ -108,8 +108,8 @@
 
                 {% if order.hub %}
                     <div>
-                        <div class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">Warehouse Details:</div>
-                        <div class="text-sm text-gray-700 dark:text-gray-300">
+                        <div class="text-lg font-semibold mb-2 text-black dark:text-white">Warehouse Details:</div>
+                        <div class="text-sm text-black dark:text-neutral-300">
                             <div>{{ order.hub.contact_person }}</div>
                             <div>{{ order.hub.phone }}</div>
                             <div>{{ order.hub.address_line1 }}, {{ order.hub.address_line2 }}</div>
@@ -125,7 +125,7 @@
             <!-- Items Table -->
             <div class="table-responsive mt-6">
                 <table class="table table-striped border rounded-md overflow-hidden text-sm">
-                    <thead class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                    <thead class="bg-neutral-100 dark:bg-white/[0.06] text-black dark:text-white">
                         <tr>
                             <th>S.NO</th>
                             <th>Product</th>
@@ -154,38 +154,70 @@
             <div class="grid md:grid-cols-2 gap-6 px-4">
                 <div>
                     {% if order.notes %}
-                        <div class="font-semibold text-gray-800 dark:text-gray-100">Order Notes:</div>
-                        <div class="text-sm text-gray-700 dark:text-gray-300 mt-1">{{ order.notes }}</div>
+                        <div class="font-semibold text-black dark:text-white">Order Notes:</div>
+                        <div class="text-sm text-black dark:text-neutral-300 mt-1">{{ order.notes }}</div>
                     {% endif %}
 
                     {% if order.barcode and order.status != 'ready_to_ship' %}
                         <div class="mt-6">
-                            <div class="font-semibold text-gray-800 dark:text-gray-100">Barcode:</div>
+                            <div class="font-semibold text-black dark:text-white">Barcode:</div>
                             <img src="{{ order.barcode.url }}"
                                  alt="Order Barcode"
-                                 class="mt-2 w-40 border border-gray-300 rounded-sm shadow-sm">
+                                 class="mt-2 w-40 border border-neutral-300 rounded-sm shadow-sm">
                         </div>
                     {% endif %}
                 </div>
 
                 <div class="space-y-2">
                     <div class="flex justify-between text-sm">
-                        <span>Subtotal</span><span>₹{{ order.total_amount }}</span>
+                        <span class="text-neutral-500 dark:text-neutral-400">Items Subtotal</span>
+                        <span>₹{{ summary.items_subtotal|floatformat:2 }}</span>
                     </div>
-                    {% if order.payment %}
+                    {% if summary.discount %}
                         <div class="flex justify-between text-sm">
-                            <span>Shipping Charges</span><span>₹{{ order.payment.shipping_charges }}</span>
+                            <span class="text-neutral-500 dark:text-neutral-400">Discount</span>
+                            <span class="text-green-600 dark:text-green-400">−₹{{ summary.discount|floatformat:2 }}</span>
                         </div>
+                    {% endif %}
+                    {% if summary.gift_wrap_charges %}
                         <div class="flex justify-between text-sm">
-                            <span>COD Charges</span><span>₹{{ order.payment.cod_charges }}</span>
+                            <span class="text-neutral-500 dark:text-neutral-400">Gift Wrap</span>
+                            <span>₹{{ summary.gift_wrap_charges|floatformat:2 }}</span>
                         </div>
+                    {% endif %}
+                    {% if summary.other_charges %}
                         <div class="flex justify-between text-sm">
-                            <span>Tax ({{ order.payment.tax_percent }}%)</span><span>₹{{ order.payment.amount|floatformat:2 }}</span>
+                            <span class="text-neutral-500 dark:text-neutral-400">Other Charges</span>
+                            <span>₹{{ summary.other_charges|floatformat:2 }}</span>
+                        </div>
+                    {% endif %}
+                    {% if summary.shipping_charges %}
+                        <div class="flex justify-between text-sm">
+                            <span class="text-neutral-500 dark:text-neutral-400">Shipping Charges</span>
+                            <span>₹{{ summary.shipping_charges|floatformat:2 }}</span>
+                        </div>
+                    {% endif %}
+                    {% if summary.cod_charges %}
+                        <div class="flex justify-between text-sm">
+                            <span class="text-neutral-500 dark:text-neutral-400">COD Charges</span>
+                            <span>₹{{ summary.cod_charges|floatformat:2 }}</span>
+                        </div>
+                    {% endif %}
+                    {% if summary.tax_percent %}
+                        <div class="flex justify-between text-sm">
+                            <span class="text-neutral-500 dark:text-neutral-400">Tax ({{ summary.tax_percent|floatformat:"-2" }}%)</span>
+                            <span>₹{{ summary.tax_amount|floatformat:2 }}</span>
+                        </div>
+                    {% endif %}
+                    {% if summary.adjustment %}
+                        <div class="flex justify-between text-sm">
+                            <span class="text-neutral-500 dark:text-neutral-400">Adjustment</span>
+                            <span>₹{{ summary.adjustment|floatformat:2 }}</span>
                         </div>
                     {% endif %}
 
-                    <div class="flex justify-between font-bold border-t pt-3 mt-3 text-lg text-gray-800 dark:text-gray-100">
-                        <span>Grand Total</span><span>₹{{ order.total_amount }}</span>
+                    <div class="flex justify-between font-bold border-t pt-3 mt-3 text-lg text-black dark:text-white">
+                        <span>Grand Total</span><span>₹{{ summary.grand_total|floatformat:2 }}</span>
                     </div>
                 </div>
             </div>

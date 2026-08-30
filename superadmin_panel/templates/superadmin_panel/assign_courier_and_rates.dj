@@ -29,7 +29,7 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: white;
             padding: 25px 30px;
         }
@@ -108,22 +108,22 @@
         }
 
         .btn-primary {
-            background: #3B82F6;
+            background: #ef4444;
             color: white;
         }
 
         .btn-primary:hover {
-            background: #2563EB;
+            background: #dc2626;
         }
 
         .btn-outline {
             background: transparent;
-            border: 2px solid #3B82F6;
-            color: #3B82F6;
+            border: 2px solid #ef4444;
+            color: #ef4444;
         }
 
         .btn-outline:hover {
-            background: #eff6ff;
+            background: #fef2f2;
         }
 
         .rate-configuration {
@@ -183,7 +183,7 @@
 
         .input-compact:focus {
             outline: none;
-            border-color: #3B82F6;
+            border-color: #ef4444;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
 
@@ -310,7 +310,7 @@
 {% block body %}
 <div>
             <button onclick="history.back()"
-                    class="border border-blue-500 hover:bg-blue-700 text-blue-500 hover:text-white font-bold py-2 px-4 rounded-sm">
+                    class="border border-red-500 hover:bg-red-700 text-red-500 hover:text-white font-bold py-2 px-4 rounded-sm">
                 Back
             </button>
         </div>
@@ -327,7 +327,7 @@
             <img class="user-avatar" src="{{ user.photo.url }}" alt="{{ user.full_name }}'s Avatar"/>
             <div class="user-info">
                 <h2>{{ user.full_name }}</h2>
-                <p>Idiotship ID: #{{ user.shipzee_code }}</p>
+                <p>SwiftCourier ID: #{{ user.shipzee_code }}</p>
             </div>
         </div>
 

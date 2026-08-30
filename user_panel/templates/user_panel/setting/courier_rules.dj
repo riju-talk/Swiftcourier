@@ -9,7 +9,7 @@
 {% block css %}
     <style>
         .swap-highlight {
-            border: 2px dashed #3b82f6 !important;
+            border: 2px dashed #ef4444 !important;
             background-color: rgba(59, 130, 246, 0.1) !important;
         }
 
@@ -17,16 +17,16 @@
         .drop-line {
             height: 4px;
             border-radius: 2px;
-            background-color: #3b82f6;
-            /* blue-500 */
+            background-color: #ef4444;
+            /* red-500 */
             margin: 6px 0;
         }
 
         /* Dark mode visibility */
         @media (prefers-color-scheme: dark) {
             .drop-line {
-                background-color: #60a5fa;
-                /* blue-400 */
+                background-color: #f87171;
+                /* red-400 */
             }
         }
     </style>
@@ -34,7 +34,7 @@
 
 {% block body %}
     <div x-data="shippingPriority" class="max-w-md mx-auto mt-10 p-4">
-        <h2 class="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-gray-200">🚚 Shipping Partner Priority</h2>
+        <h2 class="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-white">🚚 Shipping Partner Priority</h2>
 
         <!-- FORM -->
         <form id="priorityForm" method="post">
@@ -45,11 +45,11 @@
                 {% for courier in couriers %}
                     <li draggable="true"
                         data-id="{{ courier.id }}"
-                        class="drag-item flex items-center gap-4 bg-gray-50 dark:bg-gray-800 p-4 rounded-xl shadow-sm dark:shadow-gray-900 cursor-grab transition">
+                        class="drag-item flex items-center gap-4 bg-gray-50 dark:bg-neutral-900 p-4 rounded-xl shadow-sm dark:shadow-gray-900 cursor-grab transition">
                         <img src="{{ courier.icon.url }}"
                              alt="{{ courier.name }}"
                              class="w-12 h-12 rounded-md object-cover" />
-                        <span class="font-medium text-gray-800 dark:text-gray-200">{{ courier.name }}</span>
+                        <span class="font-medium text-gray-800 dark:text-white">{{ courier.name }}</span>
                     </li>
                 {% endfor %}
             </ul>
@@ -57,7 +57,7 @@
             <!-- SUBMIT BUTTON -->
             <button type="submit"
                     id="saveButton"
-                    class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl shadow-sm transition dark:shadow-gray-900">
+                    class="w-full mt-6 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl shadow-sm transition dark:shadow-gray-900">
                 Save Priorities
             </button>
         </form>

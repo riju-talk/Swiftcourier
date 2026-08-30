@@ -3,6 +3,7 @@ import logging
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from order_manager.webhook_events import log_carrier_webhook
 
 from order_manager.models import Order
 
@@ -11,6 +12,7 @@ logger = logging.getLogger("my-logger")
 
 
 @csrf_exempt
+@log_carrier_webhook("purple_drone")
 def webhook(request):
     try:
         raw_body = request.body.decode("utf-8")

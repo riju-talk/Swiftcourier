@@ -35,7 +35,7 @@ def shiprocket_get_access_token() -> str:
     }
     headers = {"Content-Type": "application/json"}
 
-    res = requests.post(url, json=payload, headers=headers)
+    res = requests.post(url, json=payload, headers=headers, timeout=(5, 30))
     res.raise_for_status()
     data = res.json()
 
@@ -73,7 +73,7 @@ def shiprocket_request(
         url=url,
         headers=headers,
         data=payload if request_method.upper() != "GET" else None,
-    )
+        timeout=(5, 30),    )
 
     if res.status_code == 401 and retry_count < max_retries:
         return shiprocket_request(

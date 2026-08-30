@@ -29,7 +29,7 @@
                 <!-- Selected Pincodes -->
                 <div class="flex flex-wrap mt-2">
                     <template x-for="(pin, index) in pincodes" :key="index">
-                        <div class="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full mr-2 mb-2">
+                        <div class="flex items-center bg-red-100 text-red-800 px-3 py-1 rounded-full mr-2 mb-2">
                             <span x-text="pin"></span>
                             <button type="button"
                                     class="ml-2 text-red-600 font-bold"
@@ -91,7 +91,7 @@
 
                 {% if blocked_pincodes %}
                     <button type="submit"
-                            class="bg-blue-600 text-white px-4 py-2 rounded-sm hover:bg-blue-700">
+                            class="bg-red-600 text-white px-4 py-2 rounded-sm hover:bg-red-700">
                         Unblock Selected
                     </button>
                 {% endif %}

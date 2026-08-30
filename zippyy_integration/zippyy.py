@@ -142,6 +142,7 @@ def zippyy_request(
         url=url,
         headers=headers,
         json=payload if payload else None,
+        timeout=(5, 30),
     )
 
     # need to regenrate token or not to punch orders
@@ -188,6 +189,7 @@ def generate_token(email: str, password: str) -> Response:
         url=url,
         headers=headers,
         json=payload,
+        timeout=(5, 30),
     )
     try:
         res_json = res.json()

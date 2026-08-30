@@ -1,0 +1,15 @@
+{% comment %}
+Reusable KPI tile — matches the redesigned dashboard.
+Usage:  {% include "components/ui/stat_tile.dj" with label="Balance" value=user.balance prefix="₹" %}
+Params: label (req), value (req), prefix / suffix (opt), hint (opt), tone (opt: "" | "good" | "bad")
+{% endcomment %}
+<div class="rounded-xl border border-neutral-200/80 bg-white p-4 dark:border-white/10 dark:bg-neutral-950 sm:p-5">
+  <p class="text-[11px] font-semibold uppercase tracking-[0.09em] text-neutral-400">{{ label }}</p>
+  <p class="mt-2 text-[22px] font-bold leading-none tabular-nums tracking-tight
+    {% if tone == 'good' %}text-emerald-600 dark:text-emerald-400
+    {% elif tone == 'bad' %}text-red-600 dark:text-red-400
+    {% else %}text-neutral-900 dark:text-white{% endif %}">
+    {% if prefix %}<span class="text-base text-neutral-400">{{ prefix }}</span>{% endif %}{{ value }}{% if suffix %}<span class="text-base text-neutral-400">{{ suffix }}</span>{% endif %}
+  </p>
+  {% if hint %}<p class="mt-2 text-[11px] text-neutral-400">{{ hint }}</p>{% endif %}
+</div>

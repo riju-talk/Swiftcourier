@@ -12,11 +12,11 @@
 
 {% block body %}
     <!-- Center Wrapper -->
-    <div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 transition-colors">
+    <div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-[#0e1726] transition-colors">
 
         <!-- Add Money Box -->
         <div x-data="{ amount: '' }"
-             class="w-full max-w-md p-8 space-y-6 rounded-3xl shadow-xl bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700 transition-colors">
+             class="w-full max-w-md p-8 space-y-6 rounded-3xl shadow-xl bg-white border border-gray-200 dark:bg-[#12151f] dark:border-white/10 transition-colors">
 
                 <!-- Header -->
                 <div class="text-center">
@@ -32,7 +32,7 @@
                            type="number"
                            x-model.number="amount"
                            placeholder="e.g. 1500"
-                           class="w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white transition-colors" />
+                           class="w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-gray-900 focus:outline-hidden focus:ring-2 focus:ring-red-500 dark:border-white/10 dark:bg-white/[0.06] dark:text-white transition-colors" />
                 </div>
 
                 <!-- Preset Buttons -->
@@ -40,7 +40,7 @@
                     <template x-for="preset in [500,1000,2000,5000]" :key="preset">
                         <button type="button"
                                 @click="amount = preset"
-                                :class="amount === preset ? 'bg-blue-600 text-white border-blue-600 shadow-md' : 'bg-gray-200 text-gray-800 border-gray-300 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white'"
+                                :class="amount === preset ? 'bg-red-600 text-white border-red-600 shadow-md' : 'bg-gray-200 text-gray-800 border-gray-300 hover:bg-gray-300 dark:bg-white/[0.06] dark:text-gray-200 dark:border-white/10 dark:hover:bg-gray-600 dark:hover:text-white'"
                                 class="border rounded-xl py-2 font-semibold transition-colors">
                             ₹<span x-text="preset"></span>
                         </button>
@@ -51,7 +51,7 @@
                 <button type="button"
                         id="rzp-button"
                         :disabled="!amount"
-                        class="w-full py-3 rounded-xl font-bold text-lg text-white bg-linear-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-4 focus:outline-hidden focus:ring-blue-400 transition-all">
+                        class="w-full py-3 rounded-xl font-semibold text-lg text-white bg-black hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-hidden focus:ring-2 focus:ring-red-600/20 transition-colors">
                     Add ₹<span x-text="amount || ''"></span>
                 </button>
         </div>
@@ -76,7 +76,7 @@
                     "key": "{{ key_id }}", // Razorpay key ID from backend
                     "amount": order.amount, // Order amount in paise
                     "currency": "INR",
-                    "name": "IdiotShip",
+                    "name": "SwiftCourier",
                     "image": "https://app.idiotship.tech/static/images/logo.png",
                     "description": "Payment for order #" + order.order_id,
                     "prefill": {

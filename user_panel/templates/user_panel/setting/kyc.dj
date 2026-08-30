@@ -44,13 +44,13 @@
 {% block body %}
     <div class="mb-5">
         <div id="kyc-tabs"
-             class="bg-white-light/30 p-4 rounded-lg dark:bg-dark/30 text-sm">
+             class="bg-white dark:bg-black/50 border border-neutral-200 dark:border-white/10 p-6 rounded-lg text-sm">
             <!-- Tab Buttons -->
-            <ul id="tab-list" class="flex flex-wrap gap-2 mb-5">
+            <ul id="tab-list" class="flex flex-wrap gap-2 mb-6 border-b border-neutral-200 dark:border-white/10">
                 <li>
                     <button type="button"
                             data-tab="kyc"
-                            class="tab-btn flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60">
+                            class="tab-btn flex items-center px-4 py-3 rounded-t-lg bg-white dark:bg-black border-b-2 border-red-600 text-black dark:text-white font-semibold hover:text-red-600">
                         <svg class="w-5 h-5 mr-2"
                              fill="none"
                              stroke="currentColor"
@@ -64,7 +64,7 @@
                 <li>
                     <button type="button"
                             data-tab="finance"
-                            class="tab-btn flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60">
+                            class="tab-btn flex items-center px-4 py-3 rounded-t-lg bg-neutral-50 dark:bg-white/5 text-neutral-600 dark:text-neutral-400 font-semibold border-b-2 border-transparent hover:text-red-600 hover:border-red-600 transition">
                         <svg class="w-5 h-5 mr-2"
                              fill="none"
                              stroke="currentColor"
@@ -78,7 +78,7 @@
                 <li>
                     <button type="button"
                             data-tab="other"
-                            class="tab-btn flex items-center p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60">
+                            class="tab-btn flex items-center px-4 py-3 rounded-t-lg bg-neutral-50 dark:bg-white/5 text-neutral-600 dark:text-neutral-400 font-semibold border-b-2 border-transparent hover:text-red-600 hover:border-red-600 transition">
                         <svg class="w-5 h-5 mr-2"
                              fill="none"
                              stroke="currentColor"
@@ -103,35 +103,35 @@
                 <section data-panel="kyc" class="tab-panel">
                     <h4 class="text-xl font-semibold mb-6">KYC Information</h4>
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                Name <span class="text-red-500">*</span>
+                            <label class="block mb-1.5 text-sm font-medium text-black dark:text-white">
+                                Name <span class="text-red-600">*</span>
                             </label>
                             <input required
                                    name="name"
                                    id="name"
                                    type="text"
-                                   placeholder="Enter Name"
+                                   placeholder="Enter your name"
                                    value="{{ request.user.full_name|default:"" }}"
-                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                   class="input-field block w-full rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm text-black dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition" />
                         </div>
 
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                Company Name <span class="text-red-500">*</span>
+                            <label class="block mb-1.5 text-sm font-medium text-black dark:text-white">
+                                Company Name <span class="text-red-600">*</span>
                             </label>
                             <input required
                                    name="company_name"
                                    type="text"
-                                   placeholder="Enter Company Name"
+                                   placeholder="Enter company name"
                                    value="{{ request.user.company_name|default:"" }}"
-                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                   class="input-field block w-full rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm text-black dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition" />
                         </div>
 
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                Phone Number <span class="text-red-500">*</span>
+                            <label class="block mb-1.5 text-sm font-medium text-black dark:text-white">
+                                Phone Number <span class="text-red-600">*</span>
                             </label>
                             <input required
                                    name="phone_number"
@@ -139,39 +139,39 @@
                                    type="tel"
                                    pattern="^\d{10}$"
                                    inputmode="numeric"
-                                   placeholder="XXXXXXXXXX"
+                                   placeholder="10-digit number"
                                    value="{{ request.user.contact_no|default:"" }}"
-                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                   class="input-field block w-full rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm text-black dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition" />
                         </div>
 
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                Email <span class="text-red-500">*</span>
+                            <label class="block mb-1.5 text-sm font-medium text-black dark:text-white">
+                                Email <span class="text-red-600">*</span>
                             </label>
                             <input required
                                    name="email"
                                    type="email"
-                                   placeholder="Enter Email"
+                                   placeholder="you@company.com"
                                    value="{{ request.user.email|default:"" }}"
-                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                   class="input-field block w-full rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm text-black dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition" />
                         </div>
                     </div>
 
                     <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
-                            Full Address (As on Aadhar Card / GST) <span class="text-red-500">*</span>
+                        <label class="block text-sm font-medium text-black dark:text-white mb-1.5">
+                            Full Address (As on Aadhar Card / GST) <span class="text-red-600">*</span>
                         </label>
                         <textarea required
                                   name="full_address"
                                   rows="3"
-                                  placeholder="Street Address, City, State/Province, Zip/Postal Code"
-                                  class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition">{{ request.user.address|default:"" }}</textarea>
+                                  placeholder="Street Address, City, State, Zip Code"
+                                  class="block w-full rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm text-black dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition">{{ request.user.address|default:"" }}</textarea>
                     </div>
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                Pin Code <span class="text-red-500">*</span>
+                            <label class="block mb-1.5 text-sm font-medium text-black dark:text-white">
+                                Pin Code <span class="text-red-600">*</span>
                             </label>
                             <input required
                                    name="pin_code"
@@ -180,68 +180,68 @@
                                    pattern="^\d{6}$"
                                    minlength="6"
                                    maxlength="6"
-                                   placeholder="Enter 6-digit Pin Code"
+                                   placeholder="6-digit pin"
                                    title="Enter a valid 6-digit Pin Code"
                                    value="{{ request.user.pin_code|default:"" }}"
-                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                   class="input-field block w-full rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm text-black dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition" />
                         </div>
 
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                City <span class="text-red-500">*</span>
+                            <label class="block mb-1.5 text-sm font-medium text-black dark:text-white">
+                                City <span class="text-red-600">*</span>
                             </label>
                             <input required
                                    name="city"
                                    type="text"
-                                   placeholder="Enter City"
+                                   placeholder="Enter city"
                                    value="{{ request.user.city|default:"" }}"
-                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                   class="input-field block w-full rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm text-black dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition" />
                         </div>
 
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                State <span class="text-red-500">*</span>
+                            <label class="block mb-1.5 text-sm font-medium text-black dark:text-white">
+                                State <span class="text-red-600">*</span>
                             </label>
                             <input required
                                    name="state"
                                    type="text"
-                                   placeholder="Enter State"
+                                   placeholder="Enter state"
                                    value="{{ request.user.state|default:"" }}"
-                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                   class="input-field block w-full rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm text-black dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition" />
                         </div>
 
                         <div>
-                            <label class="block mb-2 font-semibold text-gray-700 dark:text-gray-200">
-                                Country <span class="text-red-500">*</span>
+                            <label class="block mb-1.5 text-sm font-medium text-black dark:text-white">
+                                Country <span class="text-red-600">*</span>
                             </label>
                             <input required
                                    name="country"
                                    type="text"
-                                   placeholder="Enter Country"
+                                   placeholder="Enter country"
                                    value="{{ request.user.country|default:"" }}"
-                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                   class="input-field block w-full rounded-lg border border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm text-black dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-600/20 transition" />
                         </div>
                     </div>
 
                     <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">GST Number</label>
+                        <label class="block text-sm font-semibold text-black dark:text-white mb-2">GST Number</label>
                         <input name="gst_number"
                                type="text"
                                placeholder="22AAAAA0000A1Z5"
                                value="{{ request.user.gstin|default:"" }}"
-                               class="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                               class="w-full form-input-professional" />
                     </div>
 
                     <!-- Aadhaar (show preview if exists) -->
                     <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
-                            Aadhaar Card <span class="text-gray-400 text-sm">(Required if GST Certificate not uploaded)</span>
+                        <label class="block text-sm font-semibold text-black dark:text-white mb-2">
+                            Aadhaar Card <span class="text-neutral-400 text-sm">(Required if GST Certificate not uploaded)</span>
                         </label>
 
                         {% if request.user.aadhaar_card %}
                             <div id="aadhaar-preview" class="file-preview mb-2">
                                 <div class="flex items-center gap-3">
-                                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200"
+                                    <svg class="w-6 h-6 text-black dark:text-white"
                                          viewBox="0 0 24 24"
                                          fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
@@ -284,27 +284,27 @@
                                        name="aadhaar_card"
                                        id="aadhaar_card"
                                        accept="application/pdf,image/*"
-                                       class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                       class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-red-600 file:text-white border border-neutral-300 dark:border-white/10 rounded-xl bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                             </div>
                         {% else %}
                             <input type="file"
                                    name="aadhaar_card"
                                    id="aadhaar_card"
                                    accept="application/pdf,image/*"
-                                   class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                   class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-red-600 file:text-white border border-neutral-300 dark:border-white/10 rounded-xl bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                         {% endif %}
                     </div>
 
                     <!-- GST Certificate -->
                     <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
-                            GST Certificate <span class="text-gray-400 text-sm">(Required if Aadhaar not uploaded)</span>
+                        <label class="block text-sm font-semibold text-black dark:text-white mb-2">
+                            GST Certificate <span class="text-neutral-400 text-sm">(Required if Aadhaar not uploaded)</span>
                         </label>
 
                         {% if request.user.gst_certificate %}
                             <div id="gst-preview" class="file-preview mb-2">
                                 <div class="flex items-center gap-3">
-                                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200"
+                                    <svg class="w-6 h-6 text-black dark:text-white"
                                          viewBox="0 0 24 24"
                                          fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
@@ -347,27 +347,27 @@
                                        name="gst_certificate"
                                        id="gst_certificate"
                                        accept="application/pdf,image/*"
-                                       class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                       class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-red-600 file:text-white border border-neutral-300 dark:border-white/10 rounded-xl bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                             </div>
                         {% else %}
                             <input type="file"
                                    name="gst_certificate"
                                    id="gst_certificate"
                                    accept="application/pdf,image/*"
-                                   class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                   class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-red-600 file:text-white border border-neutral-300 dark:border-white/10 rounded-xl bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                         {% endif %}
                     </div>
 
                     <!-- PAN Card (required) -->
                     <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                        <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                             PAN Card <span class="text-red-500">*</span>
                         </label>
 
                         {% if request.user.pan_card %}
                             <div id="pan-preview" class="file-preview mb-2">
                                 <div class="flex items-center gap-3">
-                                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-200"
+                                    <svg class="w-6 h-6 text-black dark:text-white"
                                          viewBox="0 0 24 24"
                                          fill="none"
                                          xmlns="http://www.w3.org/2000/svg">
@@ -411,7 +411,7 @@
                                        id="pan_card"
                                        accept="application/pdf,image/*"
                                        required
-                                       class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                       class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-red-600 file:text-white border border-neutral-300 dark:border-white/10 rounded-xl bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                             </div>
                         {% else %}
                             <input type="file"
@@ -419,7 +419,7 @@
                                    id="pan_card"
                                    accept="application/pdf,image/*"
                                    required
-                                   class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 shadow-xs focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                   class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-red-600 file:text-white border border-neutral-300 dark:border-white/10 rounded-xl bg-white dark:bg-white/5 shadow-xs focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                         {% endif %}
                     </div>
 
@@ -431,7 +431,7 @@
 
                     <div class="grid gap-6 mb-6">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                                 Bank Name <span class="text-red-500">*</span>
                             </label>
                             <input name="bank_name"
@@ -439,11 +439,11 @@
                                    required
                                    placeholder="Enter Bank Name"
                                    value="{{ request.user.bank_name|default:"" }}"
-                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                   class="input-field w-full form-input-professional" />
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                                 Account Number <span class="text-red-500">*</span>
                             </label>
                             <input name="bank_account_number"
@@ -451,11 +451,11 @@
                                    required
                                    placeholder="Your account number"
                                    value="{{ request.user.bank_account_number|default:"" }}"
-                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                   class="input-field w-full form-input-professional" />
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                                 IFSC <span class="text-red-500">*</span>
                             </label>
                             <input name="bank_account_ifsc"
@@ -463,16 +463,16 @@
                                    required
                                    placeholder="Please enter IFSC"
                                    value="{{ request.user.bank_account_ifsc|default:"" }}"
-                                   class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                   class="input-field w-full form-input-professional" />
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                                 Account Type <span class="text-red-500">*</span>
                             </label>
                             <select name="bank_account_type"
                                     required
-                                    class="input-field w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition">
+                                    class="input-field w-full form-input-professional">
                                 <option value=""
                                         disabled
                                         {% if not request.user.bank_account_type %}selected{% endif %}>Select account type</option>
@@ -484,13 +484,13 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                            <label class="block text-sm font-semibold text-black dark:text-white mb-2">
                                 Upload Cheque <span class="text-red-500">*</span>
                             </label>
                             {% if request.user.cancel_cheque %}
                                 <div id="cheque-preview" class="file-preview mb-2">
                                     <div class="flex items-center gap-3">
-                                        <svg class="w-6 h-6 text-gray-700 dark:text-gray-200"
+                                        <svg class="w-6 h-6 text-black dark:text-white"
                                              viewBox="0 0 24 24"
                                              fill="none"
                                              xmlns="http://www.w3.org/2000/svg">
@@ -532,13 +532,13 @@
                                     <input type="file"
                                            name="cheque"
                                            accept="application/pdf,image/*"
-                                           class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                           class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-red-600 file:text-white border border-neutral-300 dark:border-white/10 rounded-xl bg-white dark:bg-white/5 focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                                 </div>
                             {% else %}
                                 <input type="file"
                                        name="cheque"
                                        accept="application/pdf,image/*"
-                                       class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-primary file:text-white border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-dark/40 focus:ring-2 focus:ring-primary focus:outline-hidden transition" />
+                                       class="w-full px-4 py-2 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-red-600 file:text-white border border-neutral-300 dark:border-white/10 rounded-xl bg-white dark:bg-white/5 focus:ring-2 focus:ring-red-600/20 focus:outline-hidden transition" />
                             {% endif %}
                         </div>
                     </div>
@@ -548,7 +548,7 @@
                 <section data-panel="other" class="tab-panel hidden">
                     <h4 class="text-xl font-semibold mb-6">Merchant Agreement</h4>
 
-                    <div class="mb-4 border border-gray-300 dark:border-gray-700 rounded-lg overflow-hidden h-64">
+                    <div class="mb-4 border border-neutral-300 dark:border-white/10 rounded-lg overflow-hidden h-64">
                         <iframe src="{% static 'pdf/agreement.pdf' %}" class="w-full h-full"></iframe>
                     </div>
 
@@ -556,9 +556,9 @@
                         <input type="checkbox"
                                id="agree_terms"
                                name="agree_terms"
-                               class="w-4 h-4 text-primary border-gray-300 rounded-sm focus:ring-primary"
+                               class="w-4 h-4 text-red-600 border-neutral-300 rounded-sm focus:ring-red-600/20"
                                {% if request.user.is_agreement_accepted %}checked{% endif %} />
-                        <label for="agree_terms" class="text-sm text-gray-700 dark:text-gray-200">
+                        <label for="agree_terms" class="text-sm text-black dark:text-white">
                             I have read and agree to the Terms & Conditions
                         </label>
                     </div>
@@ -568,7 +568,7 @@
                 <div class="text-right mt-4">
                     <button id="save-btn"
                             type="submit"
-                            class="px-6 py-2 bg-primary text-white font-semibold rounded-xl shadow-sm hover:bg-primary-dark transition">
+                            class="px-6 py-2 bg-red-600 text-white font-semibold rounded-xl shadow-sm hover:bg-primary-dark transition">
                         Save
                     </button>
                 </div>
@@ -611,8 +611,8 @@
                 tabButtons.forEach(btn => {
                     const active = btn.getAttribute('data-tab') === name;
                     btn.classList.toggle('bg-white-light/90', active);
-                    btn.classList.toggle('dark:bg-dark/60', active);
-                    btn.classList.toggle('text-primary', active);
+                    btn.classList.toggle('dark:bg-black/60', active);
+                    btn.classList.toggle('text-red-600', active);
                 });
 
                 panels.forEach(panel => {
@@ -724,3 +724,4 @@
         })();
     </script>
 {% endblock js %}
+

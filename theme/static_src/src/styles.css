@@ -85,8 +85,30 @@
 }
 
 @utility panel {
-  /* Panel */
-  @apply relative rounded-md bg-white p-5 shadow-sm dark:bg-[#0e1726];
+  /* Panel - enterprise theme: bordered white card, no drop shadow */
+  @apply relative rounded-lg border border-neutral-200 bg-white p-5 dark:border-white/10 dark:bg-black;
+}
+
+@utility form-input-professional {
+  /* Professional form input styling - Black/Red/White theme */
+  @apply block w-full rounded-lg border border-neutral-300 dark:border-white/10
+         bg-white dark:bg-white/5 px-3.5 py-2.5 text-sm
+         text-black dark:text-white
+         placeholder:text-neutral-400 dark:placeholder:text-neutral-500
+         focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-600/20
+         transition;
+}
+
+@utility form-button-professional {
+  /* Professional button styling */
+  @apply rounded-lg bg-black px-4 py-2.5 text-sm font-semibold text-white
+         transition-colors hover:bg-red-600
+         focus:outline-none focus:ring-2 focus:ring-red-600/20;
+}
+
+@utility form-label-professional {
+  /* Professional form label styling */
+  @apply block text-sm font-medium text-black dark:text-white mb-1.5;
 }
 
 @utility navbar-sticky {
@@ -754,8 +776,8 @@ hover:text-primary hover:before:bg-primary! ltr:before:mr-2 rtl:before:ml-2 dark
 }
 
 @utility btn {
-  /* Buttons */
-  @apply relative flex items-center justify-center rounded-md border px-5 py-2 text-sm font-semibold shadow-[0_10px_20px_-10px] outline-hidden transition duration-300 hover:shadow-none;
+  /* Buttons - enterprise theme: flat, rounded-lg, no drop shadow */
+  @apply relative flex items-center justify-center rounded-lg border px-5 py-2 text-sm font-semibold outline-hidden transition-colors duration-200;
   &[disabled] {
     @apply cursor-not-allowed opacity-60;
   }
@@ -770,7 +792,8 @@ hover:text-primary hover:before:bg-primary! ltr:before:mr-2 rtl:before:ml-2 dark
 }
 
 @utility btn-primary {
-  @apply border-primary bg-primary text-white shadow-primary/60;
+  /* Signature action: black button, red on hover (matches the sign-in page) */
+  @apply border-black bg-black text-white hover:border-primary hover:bg-primary dark:border-white dark:bg-white dark:text-black dark:hover:border-primary dark:hover:bg-primary dark:hover:text-white;
 }
 
 @utility btn-outline-primary {
@@ -1453,4 +1476,662 @@ hover:text-primary hover:before:bg-primary! ltr:before:mr-2 rtl:before:ml-2 dark
 
 [dir='rtl'] .apexcharts-tooltip-marker {
     @apply mr-0 ml-2.5;
+}
+
+/* ---------------------------------------------------------------------------
+   Layout fix: collapsible-vertical mini-rail alignment.
+   VRISTO's own .main-content rules leave a 260px left margin even when the
+   sidebar is collapsed to the 70px icon rail, producing a large empty gap
+   between the rail and the page content (and pushing content off-screen on
+   the right). Pin the content flush to the 70px rail unless the sidebar is
+   explicitly toggled open. Higher specificity so it wins the cascade.
+--------------------------------------------------------------------------- */
+@media (min-width: 1024px) {
+    .collapsible-vertical:not(.toggle-sidebar) .main-container .main-content {
+        margin-left: 72px;
+        width: calc(100% - 72px);
+    }
+    [dir='rtl'] .collapsible-vertical:not(.toggle-sidebar) .main-container .main-content {
+        margin-left: 0;
+        margin-right: 72px;
+    }
+}
+
+/* ============================================================================
+   SIDEBAR — dark rail (matches the Stitch mockups)
+   Near-black surface, grey nav text, one red accent for the active row.
+   ========================================================================== */
+
+.sidebar {
+    box-shadow: 1px 0 0 rgba(255,255,255,.04), 8px 0 32px -12px rgba(0,0,0,.45) !important;
+    border-right: none !important;
+    transition: width .22s cubic-bezier(.4, 0, .2, 1);
+}
+.sidebar > div { background: #0b0d12; }
+.dark .sidebar > div { background: #0b0d12; }
+
+/* brand row */
+.sidebar .main-logo { padding: .25rem 0; }
+.sidebar .main-logo > span:last-child { transition: opacity .15s ease; color: #fff !important; }
+/* the square brand badge -> solid red on the dark rail */
+.sidebar .main-logo > span:first-child {
+    background: #dc2626 !important;
+    color: #fff !important;
+}
+.sidebar .collapse-icon { color: #6b7280; }
+.sidebar .collapse-icon:hover { color: #d1d5db; background: rgba(255,255,255,.06); }
+/* a hairline under the brand row */
+.sidebar .perfect-scrollbar { border-top: 1px solid rgba(255,255,255,.06); padding-top: .5rem !important; }
+
+/* --- the primary "+ New Shipment" CTA (rendered by the sidebar templates) --- */
+.sidebar .side-cta {
+    display: flex; align-items: center; justify-content: center; gap: .5rem;
+    margin: .5rem .75rem .75rem;
+    height: 2.5rem;
+    border-radius: .7rem;
+    background: #ffffff;
+    color: #0b0d12;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: -.01em;
+    box-shadow: 0 1px 2px rgba(0,0,0,.4);
+    transition: background-color .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+.sidebar .side-cta:hover { background: #dc2626; color: #fff; }
+.sidebar .side-cta:active { transform: scale(.97); }
+.sidebar .side-cta svg { height: 1rem; width: 1rem; }
+
+/* --- nav items --------------------------------------------------------------- */
+.sidebar .nav-item { position: relative; }
+
+.sidebar .nav-item > a,
+.sidebar .nav-item > button {
+    height: 2.5rem;
+    margin-bottom: 2px;
+    padding: 0 .625rem;
+    border-radius: .6rem;
+    color: #9aa1ac;
+    font-weight: 500;
+    font-size: 13px;
+    transition: background-color .15s ease, color .15s ease;
+}
+.sidebar .nav-item > a:hover,
+.sidebar .nav-item > button:hover { background: rgba(255,255,255,.06); color: #fff; }
+
+.sidebar .nav-item > a.active,
+.sidebar .nav-item > button.active {
+    background: rgba(220, 38, 38, .16) !important;
+    color: #fca5a5 !important;
+    font-weight: 600;
+}
+.sidebar .nav-item > a.active::before,
+.sidebar .nav-item > button.active::before {
+    content: "";
+    position: absolute;
+    left: -.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 1.4rem;
+    width: 3px;
+    border-radius: 9999px;
+    background: #dc2626;
+}
+
+/* label text — override the per-template hard-coded colors */
+.sidebar .nav-item > a > div span,
+.sidebar .nav-item > button > div span { color: inherit !important; }
+
+/* icons */
+.sidebar .nav-item a div:first-child svg,
+.sidebar .nav-item button div:first-child svg {
+    height: 1.125rem !important;
+    width: 1.125rem !important;
+    color: #6b7280;
+    transition: color .15s ease;
+}
+.sidebar .nav-item > a:hover div:first-child svg,
+.sidebar .nav-item > button:hover div:first-child svg { color: #d1d5db; }
+.sidebar .nav-item > a.active div:first-child svg,
+.sidebar .nav-item > button.active div:first-child svg { color: #f87171; }
+
+/* chevron on expandable items */
+.sidebar .nav-item > button > div:last-child svg { height: .9rem; width: .9rem; transition: transform .2s ease; color: #6b7280; }
+
+/* --- section headings ------------------------------------------------------- */
+.sidebar ul > h2 {
+    margin: 1.15rem 0 .375rem !important;
+    padding: 0 .75rem !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: .13em !important;
+    text-transform: uppercase;
+    color: #565e6b !important;
+    background: transparent !important;
+}
+.sidebar ul > h2:first-child { margin-top: .25rem !important; }
+.sidebar ul > h2 svg { display: none !important; }
+
+/* --- sub-menu -------------------------------------------------------------- */
+.sidebar ul.sub-menu {
+    margin: 2px 0 6px 1.15rem;
+    padding-left: .75rem;
+    border-left: 1px solid rgba(255,255,255,.08);
+}
+.sidebar ul.sub-menu li a,
+.sidebar ul.sub-menu li button {
+    height: 2.25rem;
+    padding: 0 .5rem !important;
+    border-radius: .45rem;
+    font-size: 13px;
+    color: #9aa1ac;
+    gap: .5rem;
+}
+.sidebar ul.sub-menu li a::before,
+.sidebar ul.sub-menu li button::before { display: none !important; }
+.sidebar ul.sub-menu li a:hover,
+.sidebar ul.sub-menu li button:hover { background: rgba(255,255,255,.06); color: #fff; }
+.sidebar ul.sub-menu li a.active,
+.sidebar ul.sub-menu li button.active { color: #fca5a5 !important; font-weight: 600; }
+.sidebar ul.sub-menu li a svg,
+.sidebar ul.sub-menu li button svg { height: 1rem; width: 1rem; opacity: .6; flex: none; }
+
+/* --- scrollbar ----------------------------------------------------------- */
+.sidebar .perfect-scrollbar {
+    padding-left: .75rem !important;
+    padding-right: .75rem !important;
+    scrollbar-width: thin;
+    scrollbar-color: #2b2f38 transparent;
+}
+.sidebar .perfect-scrollbar::-webkit-scrollbar { width: 6px; }
+.sidebar .perfect-scrollbar::-webkit-scrollbar-thumb { background: #2b2f38; border-radius: 9999px; }
+.sidebar .perfect-scrollbar::-webkit-scrollbar-track { background: transparent; }
+
+/* --- collapsed rail (collapsible-vertical, not hovered, not toggled) --------
+   Icon-only rail: 40x40 centred hit targets, no labels, no section headers,
+   no clipped half-icons. Width still animates via `.sidebar { transition }`. */
+@media (min-width: 1024px) {
+    /* the rail is 72px; keep the scroll container flush so buttons truly centre */
+    .collapsible-vertical .sidebar { width: 72px; }
+    .collapsible-vertical .sidebar:hover,
+    .collapsible-vertical.toggle-sidebar .sidebar { width: 264px; }
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .perfect-scrollbar {
+        padding-left: .5rem !important;
+        padding-right: .5rem !important;
+        overflow: visible;
+    }
+
+    /* hide everything that isn't an icon */
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item > a > div > span,
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item > button > div > span,
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item > button > div:last-child,
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .main-logo > span:last-child,
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .side-cta span,
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) ul > h2 {
+        display: none !important;
+    }
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .side-cta {
+        width: 42px; height: 42px; margin: .5rem auto .75rem; padding: 0;
+    }
+
+    /* the nav rows become square icon buttons with breathing room */
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .perfect-scrollbar {
+        padding-top: .5rem !important;
+    }
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item > a,
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item > button {
+        width: 42px !important;
+        height: 42px !important;
+        margin: .875rem auto !important; /* my-3.5 -> ~28px between icons */
+        padding: 0 !important;
+        justify-content: center !important;
+        border-radius: .75rem;
+    }
+    /* collapse the extra wrapper <li><ul> nesting so its child spaces evenly too */
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) li.nav-item > ul {
+        margin: 0 !important;
+    }
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item > a > div,
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item > button > div:first-child {
+        justify-content: center;
+    }
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item a div:first-child svg,
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item button div:first-child svg {
+        height: 1.25rem !important;
+        width: 1.25rem !important;
+    }
+
+    /* active: solid brand-red chip + white icon (the red bar clips at this width) */
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item > a.active,
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item > button.active {
+        background: #dc2626 !important;
+        box-shadow: 0 4px 12px -2px rgba(220, 38, 38, .35);
+    }
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item > a.active::before,
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item > button.active::before {
+        display: none;
+    }
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item > a.active div:first-child svg,
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .nav-item > button.active div:first-child svg {
+        color: #ffffff !important;
+    }
+
+    /* group spacing: a hairline between menu groups instead of the headers */
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .perfect-scrollbar > li.nav-item + li.nav-item,
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .perfect-scrollbar > li.menu.nav-item {
+        margin-top: 0;
+    }
+
+    /* brand: just the "i" badge, centred */
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .main-logo {
+        justify-content: center;
+        width: 100%;
+        gap: 0;
+    }
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .main-logo > span:first-child {
+        margin: 0 auto;
+    }
+    /* take the (faded-out) collapse chevron out of flow so the badge truly centres */
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .collapse-icon {
+        position: absolute;
+        right: .5rem;
+    }
+    /* tighten the brand row height in the rail */
+    .collapsible-vertical:not(.toggle-sidebar) .sidebar:not(:hover) .main-logo {
+        padding: 0;
+    }
+}
+
+/* ============================================================================
+   CONTENT-AREA POLISH — applies to every panel page (superadmin/admin/user)
+   without touching per-page markup. Scoped to .main-content so it never
+   leaks into the sidebar / auth pages.
+   ========================================================================== */
+
+/* --- page card shells: kill drop shadows, use hairline borders ------------- */
+.main-content .panel,
+.main-content [class*="shadow-xs"].rounded-lg,
+.main-content [class*="shadow-sm"].rounded-lg,
+.main-content [class*="shadow-md"].rounded-lg,
+.main-content [class*="shadow-xs"].rounded-xl,
+.main-content [class*="shadow-sm"].rounded-xl {
+    box-shadow: none !important;
+}
+
+/* --- headings inside content ------------------------------------------------ */
+.main-content h1 { font-weight: 700; letter-spacing: -0.01em; }
+.main-content h2 { font-weight: 700; }
+
+/* --- tables: one consistent enterprise look ------------------------------- */
+.main-content table thead tr,
+.main-content table tfoot tr {
+    background: #fafafa !important;
+    border-bottom: 1px solid #e5e5e5 !important;
+}
+.dark .main-content table thead tr,
+.dark .main-content table tfoot tr {
+    background: rgba(255, 255, 255, .04) !important;
+    border-bottom-color: rgba(255, 255, 255, .08) !important;
+}
+.main-content table thead th,
+.main-content table thead tr th {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #737373 !important;
+    padding: .625rem .75rem !important;
+    white-space: nowrap;
+}
+.dark .main-content table thead th { color: #a3a3a3 !important; }
+.main-content table tbody td,
+.main-content table tbody tr td {
+    font-size: 13px;
+    padding: .625rem .75rem !important;
+    color: #404040;
+}
+.dark .main-content table tbody td { color: #d4d4d4; }
+.main-content table tbody tr {
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+.dark .main-content table tbody tr { border-bottom-color: rgba(255, 255, 255, .06) !important; }
+.main-content table tbody tr:hover { background: #fafafa !important; }
+.dark .main-content table tbody tr:hover { background: rgba(255, 255, 255, .03) !important; }
+
+/* --- form controls: red focus ring, consistent radius -------------------- */
+.main-content input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+.main-content select,
+.main-content textarea {
+    border-radius: .5rem;
+}
+.main-content input:not([type="checkbox"]):not([type="radio"]):focus,
+.main-content select:focus,
+.main-content textarea:focus {
+    outline: none;
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, .18) !important;
+}
+.main-content input[type="checkbox"]:checked,
+.main-content input[type="radio"]:checked {
+    background-color: #dc2626 !important;
+    border-color: #dc2626 !important;
+}
+.main-content input[type="checkbox"]:focus,
+.main-content input[type="radio"]:focus {
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, .18) !important;
+}
+
+/* --- generic scrollbars in content (many pages ship broken @apply rules) --- */
+.main-content ::-webkit-scrollbar { width: 8px; height: 8px; }
+.main-content ::-webkit-scrollbar-track { background: transparent; }
+.main-content ::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 9999px; }
+.main-content ::-webkit-scrollbar-thumb:hover { background: #a3a3a3; }
+.dark .main-content ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, .15); }
+
+/* --- links inside content default to the brand accent ------------------- */
+.main-content a.text-primary,
+.main-content .link { color: #dc2626; }
+
+/* ==========================================================================
+   PREMIUM PASS — depth, rhythm, motion. Applied app-wide via .main-content
+   and the shared component utilities. Turns the flat wireframe look into a
+   "$150k product" feel without touching per-page markup.
+   ========================================================================== */
+
+@theme {
+    --ease-fluid: cubic-bezier(0.32, 0.72, 0, 1);
+    --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+    --shadow-card: 0 1px 2px rgba(16, 23, 38, 0.04),
+                   0 6px 16px -8px rgba(16, 23, 38, 0.08),
+                   0 24px 48px -24px rgba(16, 23, 38, 0.10);
+    --shadow-card-hover: 0 2px 4px rgba(16, 23, 38, 0.05),
+                         0 12px 28px -8px rgba(16, 23, 38, 0.12),
+                         0 40px 64px -24px rgba(16, 23, 38, 0.14);
+    --shadow-pop: 0 4px 12px -2px rgba(16, 23, 38, 0.10),
+                  0 24px 48px -12px rgba(16, 23, 38, 0.18);
+}
+
+/* --- typography base ---------------------------------------------------- */
+body {
+    font-feature-settings: "cv11", "ss01";
+    letter-spacing: -0.006em;
+    background: #f6f6f7;
+}
+.dark body { background: #07090f; }
+
+.main-content h1 { font-size: 1.7rem; line-height: 1.15; font-weight: 700; letter-spacing: -0.025em; }
+.main-content h2 { font-weight: 700; letter-spacing: -0.02em; }
+.main-content h3 { font-weight: 650; letter-spacing: -0.015em; }
+
+/* --- the page canvas: soft, not flat --------------------------------- */
+.main-content {
+    background:
+        radial-gradient(120% 60% at 100% 0%, rgba(220, 38, 38, 0.035), transparent 60%),
+        #f6f6f7;
+}
+.dark .main-content {
+    background:
+        radial-gradient(120% 60% at 100% 0%, rgba(220, 38, 38, 0.06), transparent 55%),
+        #07090f;
+}
+
+/* --- panels / cards: floating, concentric, hairline ring ------------- */
+.panel {
+    border: none !important;
+    border-radius: 1rem !important;
+    background: #ffffff;
+    box-shadow: var(--shadow-card);
+    outline: 1px solid rgba(16, 23, 38, 0.05);
+    outline-offset: -1px;
+    transition: box-shadow 0.4s var(--ease-out-soft), transform 0.4s var(--ease-out-soft);
+}
+.dark .panel {
+    background: #0e1220;
+    outline-color: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px -16px rgba(0, 0, 0, 0.6);
+}
+
+/* white/bordered cards inside the content area get the same treatment */
+.main-content [class*="rounded-lg"][class*="border-neutral-200"],
+.main-content [class*="rounded-xl"][class*="border-neutral-200"],
+.main-content [class*="rounded-lg"][class*="bg-white"]:not(button):not(a),
+.main-content [class*="rounded-xl"][class*="bg-white"]:not(button):not(a) {
+    border-color: transparent !important;
+    border-radius: 1rem !important;
+    box-shadow: var(--shadow-card);
+    outline: 1px solid rgba(16, 23, 38, 0.05);
+    outline-offset: -1px;
+    transition: box-shadow 0.4s var(--ease-out-soft), transform 0.35s var(--ease-out-soft);
+}
+.dark .main-content [class*="rounded-lg"][class*="bg-white"]:not(button):not(a),
+.dark .main-content [class*="rounded-xl"][class*="bg-white"]:not(button):not(a) {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px -16px rgba(0, 0, 0, 0.55);
+    outline-color: rgba(255, 255, 255, 0.07);
+}
+
+/* KPI / stat tiles lift on hover */
+.main-content .grid > [class*="bg-white"]:hover,
+.main-content .grid > [class*="rounded-lg"]:hover,
+.main-content .grid > [class*="rounded-xl"]:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+}
+
+/* --- buttons: rounder, spring, press physics ------------------------- */
+.btn, button.btn, a.btn {
+    border-radius: 0.7rem !important;
+    transition: transform 0.18s var(--ease-fluid), background-color 0.2s var(--ease-fluid),
+                border-color 0.2s var(--ease-fluid), box-shadow 0.2s var(--ease-fluid) !important;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { box-shadow: 0 1px 2px rgba(16, 23, 38, 0.12), 0 8px 20px -8px rgba(16, 23, 38, 0.30); }
+.btn-primary:hover { box-shadow: 0 2px 4px rgba(220, 38, 38, 0.20), 0 12px 28px -8px rgba(220, 38, 38, 0.35); }
+
+/* generic (non-.btn) buttons/links styled as buttons inside content */
+.main-content button:not(.btn):not(.alert-del):not([class*="rounded-full"]),
+.main-content a[class*="rounded-lg"][class*="px-"],
+.main-content a[class*="rounded-xl"][class*="px-"] {
+    transition: transform 0.18s var(--ease-fluid), background-color 0.2s var(--ease-fluid),
+                box-shadow 0.2s var(--ease-fluid), border-color 0.2s var(--ease-fluid);
+}
+.main-content button:not(.btn):not(.alert-del):active { transform: scale(0.97); }
+
+/* --- form controls: taller, softer, glow focus --------------------- */
+.main-content input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+.main-content select,
+.main-content textarea {
+    border-radius: 0.7rem !important;
+    border-color: rgba(16, 23, 38, 0.12) !important;
+    background-color: #fff;
+    transition: border-color 0.2s var(--ease-fluid), box-shadow 0.2s var(--ease-fluid),
+                background-color 0.2s var(--ease-fluid) !important;
+}
+.dark .main-content input:not([type="checkbox"]):not([type="radio"]),
+.dark .main-content select,
+.dark .main-content textarea {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    background-color: rgba(255, 255, 255, 0.03);
+}
+.main-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.main-content select,
+.main-content textarea { min-height: 2.6rem; }
+.main-content input:focus, .main-content select:focus, .main-content textarea:focus {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12) !important;
+    background-color: #fff !important;
+}
+
+/* --- tables: airier, card-embedded ------------------------------------ */
+.main-content table thead th { padding: 0.75rem 1rem !important; }
+.main-content table tbody td { padding: 0.85rem 1rem !important; }
+.main-content table tbody tr { transition: background-color 0.15s var(--ease-fluid); }
+
+/* --- section headings: eyebrow rhythm ------------------------------- */
+.main-content .panel > h3:first-child,
+.main-content .panel > .flex:first-child > h3 { letter-spacing: 0.06em; }
+
+/* --- page entry motion: content fades up on load ------------------- */
+@keyframes pv-fade-up {
+    from { opacity: 0; transform: translateY(14px); filter: blur(4px); }
+    to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+.main-content > .p-4 > *,
+.main-content > .p-6 > *,
+.main-content > [class*="sm:p-6"] > * {
+    animation: pv-fade-up 0.6s var(--ease-out-soft) both;
+}
+@media (prefers-reduced-motion: reduce) {
+    .main-content > .p-4 > *, .main-content > .p-6 > *, .main-content > [class*="sm:p-6"] > * { animation: none; }
+}
+
+/* --- sidebar: dark rail depth (see the SIDEBAR block above for the palette) - */
+.sidebar {
+    box-shadow: 1px 0 0 rgba(255, 255, 255, 0.05), 10px 0 40px -14px rgba(0, 0, 0, 0.5) !important;
+    border-right: none !important;
+}
+.dark .sidebar { box-shadow: 1px 0 0 rgba(255, 255, 255, 0.05), 10px 0 40px -14px rgba(0, 0, 0, 0.6) !important; }
+
+/* --- header: sits on glass, subtle bottom shadow ------------------ */
+.main-content > header > div:first-child,
+.main-content header .sticky {
+    box-shadow: 0 1px 0 rgba(16, 23, 38, 0.05), 0 8px 24px -16px rgba(16, 23, 38, 0.12);
+}
+
+/* --- premium pass, round 2: refinements ---------------------------------- */
+
+/* dark cards that used bg-black -> a real elevated dark surface */
+.dark .main-content [class*="bg-black"]:not(button):not(a)[class*="rounded"] { background: #0e1220 !important; }
+.dark .main-content [class*="dark:bg-black"] { background: #0e1220 !important; }
+
+/* icon chips inside cards: squircle, not sharp */
+.main-content [class*="rounded-sm"][class*="bg-neutral-"],
+.main-content [class*="rounded-md"][class*="bg-neutral-1"],
+.main-content [class*="rounded-sm"][class*="bg-red-"] { border-radius: 0.7rem !important; }
+
+/* big KPI numbers: tabular, tight */
+.main-content [class*="text-2xl"][class*="font-bold"],
+.main-content [class*="text-3xl"][class*="font-bold"] {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+}
+
+/* status pills / badges: pill shape + weight */
+.main-content [class*="rounded"][class*="bg-red-50"][class*="text-red-6"],
+.main-content [class*="rounded"][class*="bg-green-50"],
+.main-content [class*="rounded"][class*="bg-neutral-100"][class*="text-[10px]"] {
+    border-radius: 9999px !important;
+    font-weight: 600;
+}
+
+/* card inner section dividers -> hairline, not heavy */
+.main-content .panel [class*="border-b"],
+.main-content [class*="rounded-2xl"] > [class*="border-b"] { border-color: rgba(16,23,38,0.06) !important; }
+.dark .main-content .panel [class*="border-b"] { border-color: rgba(255,255,255,0.06) !important; }
+
+/* the content wrapper: a touch more air + a max width so ultrawide stays readable */
+.main-content > .p-4, .main-content > [class*="sm:p-6"] { padding: 1.5rem clamp(1rem, 3vw, 2.25rem) 3rem; }
+
+/* scrollbars: thinner, on-brand */
+.main-content *::-webkit-scrollbar { width: 10px; height: 10px; }
+.main-content *::-webkit-scrollbar-thumb { background: rgba(16,23,38,0.16); border-radius: 9999px; border: 3px solid transparent; background-clip: content-box; }
+.main-content *::-webkit-scrollbar-thumb:hover { background: rgba(16,23,38,0.30); background-clip: content-box; }
+
+/* ==========================================================================
+   AUTH PAGES (auth_layout.dj) — not inside .main-content, style directly.
+   Keeps the black/white/red two-panel identity, adds depth + motion.
+   ========================================================================== */
+body.font-nunito .min-h-screen.bg-black { background: #08090c; }
+
+/* the white form card gets a soft float + concentric feel */
+.min-h-screen .bg-white.px-6 > div,
+.min-h-screen .bg-white.sm\:px-10 > div { animation: pv-fade-up 0.7s var(--ease-out-soft) both; }
+
+/* auth inputs: match the premium content-area treatment */
+.min-h-screen input:not([type="checkbox"]):not([type="radio"]),
+.min-h-screen select {
+    min-height: 2.7rem;
+    border-radius: 0.7rem !important;
+    transition: border-color 0.2s var(--ease-fluid), box-shadow 0.2s var(--ease-fluid) !important;
+}
+.min-h-screen input:focus, .min-h-screen select:focus {
+    box-shadow: 0 0 0 4px rgba(220,38,38,0.14) !important;
+}
+.min-h-screen button[type="submit"] {
+    border-radius: 0.7rem !important;
+    transition: transform 0.18s var(--ease-fluid), background-color 0.2s var(--ease-fluid), box-shadow 0.2s var(--ease-fluid) !important;
+    box-shadow: 0 1px 2px rgba(16,23,38,0.14), 0 12px 28px -10px rgba(16,23,38,0.35);
+}
+.min-h-screen button[type="submit"]:active { transform: scale(0.98); }
+
+/* brand panel red glow: make it breathe */
+@keyframes pv-glow { 0%,100% { opacity: 0.9; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+.min-h-screen .bg-red-600\/20.blur-3xl, .min-h-screen .bg-red-700\/10.blur-3xl {
+    animation: pv-glow 9s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   LIST-PAGE POLISH — propagates the redesigned dashboard's visual language
+   (hairline panels, tabular numbers, one button system, pill statuses) to
+   every list / table page without per-page rewrites. Scoped to .main-content.
+   ========================================================================== */
+
+/* --- one button system: kill the ad-hoc coloured "success/action" buttons - */
+.main-content :is(button,a,input[type="submit"]):is(
+    [class*="bg-green-5"],[class*="bg-green-6"],
+    [class*="bg-emerald-5"],[class*="bg-emerald-6"],
+    [class*="bg-teal-5"],[class*="bg-teal-6"],
+    [class*="bg-orange-5"],[class*="bg-orange-6"]),
+.main-content #applyFilters,
+.main-content #applyDateRange {
+    background-color: #111827 !important;
+    color: #fff !important;
+    border-radius: 0.6rem !important;
+}
+.main-content :is(button,a):is([class*="bg-green-5"],[class*="bg-green-6"],[class*="bg-emerald-5"],[class*="bg-emerald-6"],[class*="bg-teal-5"],[class*="bg-teal-6"],[class*="bg-orange-5"],[class*="bg-orange-6"]):hover,
+.main-content #applyFilters:hover,
+.main-content #applyDateRange:hover { background-color: #dc2626 !important; }
+.dark .main-content :is(button,a):is([class*="bg-green-5"],[class*="bg-green-6"],[class*="bg-emerald-5"],[class*="bg-emerald-6"],[class*="bg-teal-5"],[class*="bg-teal-6"],[class*="bg-orange-5"],[class*="bg-orange-6"]),
+.dark .main-content #applyFilters,
+.dark .main-content #applyDateRange { background-color: #fff !important; color: #111827 !important; }
+
+/* Bulk Export / secondary export buttons -> outline, whatever colour they shipped */
+.main-content #bulkExport,
+.main-content #exportOrderButton,
+.main-content :is(button,a)[class*="bg-cyan-5"],
+.main-content :is(button,a)[class*="bg-sky-5"] {
+    background-color: transparent !important;
+    color: #404040 !important;
+    border: 1px solid rgba(16,23,38,0.16) !important;
+    border-radius: 0.6rem !important;
+}
+.main-content #bulkExport:hover,
+.main-content #exportOrderButton:hover { background-color: #fafafa !important; }
+.dark .main-content #bulkExport,
+.dark .main-content #exportOrderButton { color: #d4d4d4 !important; border-color: rgba(255,255,255,0.16) !important; }
+
+/* Clear / reset button -> quiet ghost */
+.main-content #clearFilters {
+    background-color: transparent !important;
+    color: #737373 !important;
+    border-radius: 0.6rem !important;
+}
+.main-content #clearFilters:hover { background-color: #f5f5f5 !important; color: #171717 !important; }
+.dark .main-content #clearFilters:hover { background-color: rgba(255,255,255,0.06) !important; color: #fafafa !important; }
+
+/* --- filter drawers / floating sub-cards: hairline, soft, concentric ----- */
+.main-content [class*="rounded-2xl"][class*="shadow-lg"],
+.main-content [class*="rounded-2xl"][class*="shadow-xl"] {
+    border-radius: 1rem !important;
+    box-shadow: var(--shadow-card) !important;
+    outline: 1px solid rgba(16, 23, 38, 0.05);
+    outline-offset: -1px;
+    border-color: transparent !important;
+}
+.dark .main-content [class*="rounded-2xl"][class*="shadow-lg"] { outline-color: rgba(255,255,255,0.07); }
+
+/* --- tables: tabular figures everywhere -------------------------------- */
+.main-content table tbody td { font-variant-numeric: tabular-nums; }
+
+/* --- list-page card shells: stop the awkward narrow centering ----------- */
+.main-content [class*="max-w-7xl"][class*="mx-auto"][class*="bg-white"],
+.main-content [class*="max-w-7xl"][class*="mx-auto"][class*="dark:bg-neutral-9"] {
+    max-width: none !important;
 }

@@ -1,8 +1,8 @@
 <div class="manifest-section">
 
     <h1>
-        <img src="{{ logo }}" alt="IdiotShip Logo" width="50px" />
-        IdiotShip Manifest
+        <img src="{{ logo }}" alt="SwiftCourier Logo" width="50px" />
+        SwiftCourier Manifest
     </h1>
 
     <!-- HEADER -->
@@ -50,9 +50,9 @@
                     <td>{{ forloop.counter }}</td>
                     <td>{{ order.get_order_id }}</td>
                     <td>
-                        1. {{ order.items.first.product.name }}
+                        1. {{ order.items.all.0.product.name }}
                         <br>
-                        <small>SKU: {{ order.items.first.product.sku|default:"N/A" }}</small>
+                        <small>SKU: {{ order.items.all.0.product.sku|default:"N/A" }}</small>
                     </td>
                     <td>{{ order.awb_number }}</td>
                     <td>

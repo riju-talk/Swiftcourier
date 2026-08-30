@@ -1,10 +1,13 @@
 import logging
+from decimal import Decimal
 from typing import Union
 from django.contrib.auth.models import AbstractUser
 
+from .money import to_money
+
 from .managers import UserManager
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db import models
+from django.db import models, transaction as db_transaction
 from django.conf import settings
 from django_resized import ResizedImageField  # type: ignore
 from django.utils.timezone import now
@@ -778,8 +781,10 @@ class User(AbstractUser):
     # to create a transaction and then call credit() or debit() method on user instance
     # to update the balance.
     # This will ensure that the transaction is logged properly.
-    balance = models.FloatField(
-        default=0.00,
+    balance = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00"),
         validators=[
             MaxValueValidator(settings.MAXIMUM_WALLET_BALANCE),
         ],
@@ -790,8 +795,10 @@ class User(AbstractUser):
     # for the user, set this to a negative value.
     # For example, if you want to allow a maximum of -1000 balance, set this to -1000.00
     # If you want to allow only positive balance, set this to 0.00
-    _min_balance = models.FloatField(
-        default=0.00,
+    _min_balance = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00"),
         validators=[
             MaxValueValidator(0.00),
         ],
@@ -807,8 +814,10 @@ class User(AbstractUser):
     )
 
     # only for admin
-    commission = models.FloatField(
-        default=0.00,
+    commission = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0.00"),
         validators=[
             MinValueValidator(0.00),
         ],
@@ -937,22 +946,22 @@ class User(AbstractUser):
             value (float): The minimum balance value to set. Can be positive or negative;
                           will be converted to negative format.
         """
-        self._min_balance = -abs(value)
+        self._min_balance = -abs(to_money(value))
 
     @property
     def shipzee_code(self) -> str:
         """
-        Generate a unique idiotship code for the account.
+        Generate a unique swiftcourier code for the account.
 
         Returns:
             int: A unique code calculated by adding the account's ID to the base value of 51000.
         """
         if self.role == self.USER:
-            prefix = "ISC"
+            prefix = "SCU"
         elif self.role == self.ADMIN:
-            prefix = "ISA"
+            prefix = "SCA"
         else:
-            prefix = "ISS"
+            prefix = "SCS"
 
         return f"{prefix}{265254 + self.id}"
 
@@ -1059,7 +1068,7 @@ class User(AbstractUser):
             bool: True if the remaining balance would be greater than or equal to
                   the minimum balance threshold, False otherwise.
         """
-        return (self.balance - amount) >= self.min_balance
+        return (self.balance - to_money(amount)) >= self.min_balance
 
     def credit(self, amount: float) -> bool:
         """
@@ -1075,11 +1084,24 @@ class User(AbstractUser):
             The balance is rounded to 2 decimal places and persisted to the database
             upon successful credit.
         """
-        if (self.balance + amount) > settings.MAXIMUM_WALLET_BALANCE:
+        # Row-locked read-modify-write so concurrent credits/debits (multiple
+        # gunicorn workers + celery) cannot lose an update. Re-reads the
+        # authoritative balance inside the lock and writes only the balance
+        # column, never the whole user row.
+        amount = to_money(amount)
+        # A wallet movement is always a positive quantity; the direction lives in
+        # transaction_type. A <= 0 credit means a bad rate card / price_breakup
+        # upstream and would silently move the balance the wrong way.
+        if amount <= 0:
+            logger.error("User %s: refusing to credit non-positive %s", self.pk, amount)
             return False
-
-        self.balance = round(self.balance + amount, 2)
-        self.save()
+        with db_transaction.atomic():
+            user = User.objects.select_for_update().get(pk=self.pk)
+            if (user.balance + amount) > to_money(settings.MAXIMUM_WALLET_BALANCE):
+                return False
+            user.balance = to_money(user.balance + amount)
+            user.save(update_fields=["balance"])
+        self.balance = user.balance
         return True
 
     def debit(self, amount: float, forcefully=False) -> bool:
@@ -1098,12 +1120,20 @@ class User(AbstractUser):
             upon successful credit.
         """
 
-        # Ensure balance does not go below min_balance
-        if not forcefully and not self.have_balance(amount):
+        # Row-locked read-modify-write (see credit()). The balance check is
+        # re-done inside the lock so a stale have_balance() call by the caller
+        # can never let the wallet overdraw.
+        amount = to_money(amount)
+        if amount <= 0:
+            logger.error("User %s: refusing to debit non-positive %s", self.pk, amount)
             return False
-
-        self.balance = round(self.balance - amount, 2)
-        self.save()
+        with db_transaction.atomic():
+            user = User.objects.select_for_update().get(pk=self.pk)
+            if not forcefully and (user.balance - amount) < user.min_balance:
+                return False
+            user.balance = to_money(user.balance - amount)
+            user.save(update_fields=["balance"])
+        self.balance = user.balance
         return True
 
     def get_label_setting(self) -> LabelSetting:

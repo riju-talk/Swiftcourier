@@ -82,7 +82,7 @@ class Echo:
 # =========================
 def generate_bulk_export_response(
     orders: QuerySet[Order],
-    filename: str = "shipzee_bulk_orders_export",
+    filename: str = "swiftcourier_bulk_orders_export",
 ):
     """
     Optimized CSV export:

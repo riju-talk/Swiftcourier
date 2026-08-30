@@ -2,12 +2,14 @@ import logging
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from order_manager.webhook_events import log_carrier_webhook
 
 
 logger = logging.getLogger("my-logger")
 
 
 @csrf_exempt
+@log_carrier_webhook("lastmiles")
 def webhook(request):
     if request.method != "POST":
         return JsonResponse(

@@ -185,3 +185,10 @@ cython_debug/
 .pypirc
 .git_backup/
 .vs
+db.sqlite3.*.bak
+
+# Claude Code / agent tooling (local dev only)
+.claude/
+.agents/
+skills-lock.json
+.claude-plugin/

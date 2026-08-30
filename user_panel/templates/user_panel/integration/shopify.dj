@@ -87,16 +87,16 @@
       Add Another Store
     </button>
   </div>
-  <p class="text-sm text-gray-500 dark:text-gray-400 mb-8 pl-14 leading-relaxed">
+  <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-8 pl-14 leading-relaxed">
     Connect your Shopify store to sync orders, products, and analytics in real time.
   </p>
 
   <!-- ── Connect Panel ── -->
-  <div id="connectPanel" class="connect-panel bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-7 mb-7 shadow-xs">
+  <div id="connectPanel" class="connect-panel bg-white dark:bg-neutral-900 border border-white dark:border-white/10 rounded-2xl p-7 mb-7 shadow-xs">
     <div class="flex items-center justify-between mb-6">
-      <span class="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">Connect a Store</span>
+      <span class="text-xs font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500">Connect a Store</span>
       <button onclick="toggleConnectPanel()"
-        class="w-7 h-7 flex items-center justify-center rounded-md bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+        class="w-7 h-7 flex items-center justify-center rounded-md bg-neutral-100 dark:bg-neutral-900 border border-white dark:border-white/10 text-neutral-400 dark:text-neutral-500 hover:bg-white dark:hover:bg-black transition-colors">
         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
@@ -106,7 +106,7 @@
     <div class="options-grid">
 
       <!-- Option 1: Enter URL -->
-      <div class="flex flex-col gap-3 p-5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-green-500 dark:hover:border-green-500 hover:-translate-y-0.5 transition-all duration-200">
+      <div class="flex flex-col gap-3 p-5 rounded-xl border-2 border-white dark:border-white/10 bg-white dark:bg-neutral-900 hover:border-green-500 dark:hover:border-green-500 hover:-translate-y-0.5 transition-all duration-200">
         <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-green-50 dark:bg-green-950 shrink-0">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/>
@@ -115,12 +115,12 @@
           </svg>
         </div>
         <div>
-          <div class="text-sm font-bold text-gray-900 dark:text-gray-100">Enter Shop URL</div>
-          <div class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mt-0.5">Paste your myshopify URL and we'll install the app directly.</div>
+          <div class="text-sm font-bold text-black dark:text-white">Enter Shop URL</div>
+          <div class="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed mt-0.5">Paste your myshopify URL and we'll install the app directly.</div>
         </div>
         <div class="flex gap-2 mt-0.5">
           <input id="shopUrlInput" type="text" placeholder="yourstore.myshopify.com"
-            class="url-input flex-1 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-600 outline-hidden focus:border-green-500 dark:focus:border-green-400 focus:ring-2 focus:ring-green-500/10 dark:focus:ring-green-400/10 transition-all" />
+            class="url-input flex-1 px-3 py-2 text-sm rounded-lg border border-white dark:border-white/10 bg-gray-50 dark:bg-neutral-900 text-black dark:text-white placeholder-neutral-400 dark:placeholder-gray-600 outline-hidden focus:border-green-500 dark:focus:border-green-400 focus:ring-2 focus:ring-green-500/10 dark:focus:ring-green-400/10 transition-all" />
           <button onclick="handleConnect()"
             class="px-4 py-2 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white text-xs font-semibold rounded-lg whitespace-nowrap transition-colors active:scale-95">
             Connect
@@ -130,14 +130,14 @@
 
       <!-- OR divider -->
       <div class="or-divider flex flex-col items-center justify-center px-4 gap-2 shrink-0">
-        <div class="or-line w-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
-        <span class="text-xs font-bold tracking-wider text-gray-400 dark:text-gray-600 bg-white dark:bg-gray-900 py-1">OR</span>
-        <div class="or-line w-px flex-1 bg-gray-200 dark:bg-gray-700"></div>
+        <div class="or-line w-px flex-1 bg-white dark:bg-white/[0.06]"></div>
+        <span class="text-xs font-bold tracking-wider text-neutral-400 dark:text-neutral-600 bg-white dark:bg-neutral-900 py-1">OR</span>
+        <div class="or-line w-px flex-1 bg-white dark:bg-white/[0.06]"></div>
       </div>
 
       <!-- Option 2: App Store -->
-      <div class="flex flex-col gap-3 p-5 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-green-500 dark:hover:border-green-500 hover:-translate-y-0.5 transition-all duration-200">
-        <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-indigo-50 dark:bg-indigo-950 shrink-0">
+      <div class="flex flex-col gap-3 p-5 rounded-xl border-2 border-white dark:border-white/10 bg-white dark:bg-neutral-900 hover:border-green-500 dark:hover:border-green-500 hover:-translate-y-0.5 transition-all duration-200">
+        <div class="w-9 h-9 rounded-lg flex items-center justify-center bg-red-50 dark:bg-red-950 shrink-0">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
             <line x1="3" y1="6" x2="21" y2="6"/>
@@ -145,8 +145,8 @@
           </svg>
         </div>
         <div>
-          <div class="text-sm font-bold text-gray-900 dark:text-gray-100">Shopify App Store</div>
-          <div class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mt-0.5">Find our app on the official Shopify App Store and install it in one click.</div>
+          <div class="text-sm font-bold text-black dark:text-white">Shopify App Store</div>
+          <div class="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed mt-0.5">Find our app on the official Shopify App Store and install it in one click.</div>
         </div>
         <a href="https://apps.shopify.com" target="_blank" rel="noopener"
           class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg border-2 border-green-600 dark:border-green-500 text-green-600 dark:text-green-400 hover:bg-green-600 dark:hover:bg-green-500 hover:text-white dark:hover:text-white transition-all mt-0.5 w-fit active:scale-95">
@@ -161,7 +161,7 @@
   </div>
 
   <!-- ── Empty State ── -->
-  <div id="emptyState" class="empty-state bg-white dark:bg-gray-900 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl py-16 px-8 text-center mb-7">
+  <div id="emptyState" class="empty-state bg-white dark:bg-neutral-900 border-2 border-dashed border-white dark:border-white/10 rounded-2xl py-16 px-8 text-center mb-7">
     <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-green-50 dark:bg-green-950 flex items-center justify-center">
       <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
@@ -169,8 +169,8 @@
         <path d="M16 10a4 4 0 0 1-8 0"/>
       </svg>
     </div>
-    <h2 class="text-base font-bold text-gray-900 dark:text-gray-100 mb-2">No stores connected yet</h2>
-    <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">Connect your Shopify store to start syncing orders,<br>products, and real-time analytics.</p>
+    <h2 class="text-base font-bold text-black dark:text-white mb-2">No stores connected yet</h2>
+    <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-6 leading-relaxed">Connect your Shopify store to start syncing orders,<br>products, and real-time analytics.</p>
     <button onclick="openConnectFromEmpty()"
       class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white text-sm font-semibold rounded-xl transition-colors">
       <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -185,7 +185,7 @@
 
     <!-- Blur notice overlay -->
     <div class="blur-notice">
-      <div class="flex items-center gap-2.5 px-5 py-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl text-sm text-gray-500 dark:text-gray-400 font-medium">
+      <div class="flex items-center gap-2.5 px-5 py-4 bg-white dark:bg-neutral-900 border border-white dark:border-white/10 rounded-xl shadow-xl text-sm text-neutral-500 dark:text-neutral-400 font-medium">
         <svg class="w-4 h-4 text-orange-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
@@ -194,7 +194,7 @@
     </div>
 
     <!-- Tabs (rendered by JS, shown when >1 store) -->
-    <div id="tabsBar" class="tabs-bar items-center gap-1 border-b border-gray-200 dark:border-gray-700 mb-6"></div>
+    <div id="tabsBar" class="tabs-bar items-center gap-1 border-b border-white dark:border-white/10 mb-6"></div>
 
     <!-- Store panels (rendered by JS) -->
     <div id="storePanels"></div>
@@ -248,7 +248,7 @@
   const tagClass = {
     paid:      'bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-400',
     pending:   'bg-yellow-100 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-400',
-    fulfilled: 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400',
+    fulfilled: 'bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-400',
     refunded:  'bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400',
   };
 
@@ -280,8 +280,8 @@
       <div class="store-panel active">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <div class="text-base font-bold text-gray-900 dark:text-gray-100">${esc(s.name)}</div>
-            <div class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">${esc(s.url)}</div>
+            <div class="text-base font-bold text-black dark:text-white">${esc(s.name)}</div>
+            <div class="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">${esc(s.url)}</div>
           </div>
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${pillClass}">
             <span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>${pillLabel}
@@ -295,29 +295,29 @@
             {label:'Products Synced',  value:s.products,      change:'▲ 3 new',             up:true},
             {label:'Avg. Order Value', value:s.aov,           change:'▼ 2.1% this week',    up:false},
           ].map(t=>`
-            <div class="flex flex-col gap-1 p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
-              <div class="text-xs text-gray-400 dark:text-gray-500 font-medium">${t.label}</div>
-              <div class="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-gray-100">${t.value}</div>
+            <div class="flex flex-col gap-1 p-4 rounded-xl bg-white dark:bg-neutral-900 border border-white dark:border-white/10 hover:border-neutral-300 dark:hover:border-neutral-600 transition-colors">
+              <div class="text-xs text-neutral-400 dark:text-neutral-500 font-medium">${t.label}</div>
+              <div class="text-2xl font-extrabold tracking-tight text-black dark:text-white">${t.value}</div>
               <div class="text-xs font-semibold ${t.up ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}">${t.change}</div>
             </div>`).join('')}
         </div>
 
-        <div class="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div class="rounded-xl overflow-hidden border border-white dark:border-white/10">
           <table class="w-full text-sm border-collapse">
             <thead>
-              <tr class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+              <tr class="bg-gray-50 dark:bg-neutral-900 border-b border-white dark:border-white/10">
                 ${['Order','Customer','Date','Amount','Payment','Status'].map(h=>
-                  `<th class="px-4 py-2.5 text-left text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">${h}</th>`
+                  `<th class="px-4 py-2.5 text-left text-xs font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">${h}</th>`
                 ).join('')}
               </tr>
             </thead>
             <tbody>
               ${s.orders.map(o=>`
-                <tr class="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors last:border-0">
+                <tr class="border-b border-gray-100 dark:border-white/10-800 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors last:border-0">
                   <td class="px-4 py-3 font-semibold text-green-600 dark:text-green-400">${esc(o.id)}</td>
-                  <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${esc(o.customer)}</td>
-                  <td class="px-4 py-3 text-gray-500 dark:text-gray-400">${esc(o.date)}</td>
-                  <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${esc(o.amount)}</td>
+                  <td class="px-4 py-3 text-black dark:text-neutral-300">${esc(o.customer)}</td>
+                  <td class="px-4 py-3 text-neutral-500 dark:text-neutral-400">${esc(o.date)}</td>
+                  <td class="px-4 py-3 text-black dark:text-neutral-300">${esc(o.amount)}</td>
                   <td class="px-4 py-3"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${tagClass[o.payment]||''}">${cap(o.payment)}</span></td>
                   <td class="px-4 py-3"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${tagClass[o.status]||''}">${cap(o.status)}</span></td>
                 </tr>`).join('')}
@@ -355,7 +355,7 @@
         class="tab-btn inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-0 bg-transparent cursor-pointer
                ${i===activeTab
                  ? 'text-green-600 dark:text-green-400 font-semibold'
-                 : 'text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}">
+                 : 'text-neutral-400 dark:text-neutral-500 hover:text-black dark:hover:text-neutral-300'}">
         <span class="w-2 h-2 rounded-full bg-green-500 shrink-0"></span>
         ${esc(s.name)}
       </button>`).join('') : '';

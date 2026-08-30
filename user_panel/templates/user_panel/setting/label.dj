@@ -15,12 +15,12 @@
 
     <div x-data="{ tab: 'global' }" class="w-full space-y-6 px-4 py-6">
         <!-- Tabs -->
-        <div class="flex border-b border-gray-300 dark:border-gray-700">
+        <div class="flex border-b border-neutral-300 dark:border-white/10">
             <button @click="tab = 'global'"
-                    :class="tab === 'global' ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'"
+                    :class="tab === 'global' ? 'border-b-2 border-red-500 text-red-600 dark:text-red-400' : 'text-neutral-500 dark:text-neutral-400'"
                     class="px-4 py-2 font-semibold transition-colors">Global Label Setting</button>
             <button @click="tab = 'label'"
-                    :class="tab === 'label' ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'"
+                    :class="tab === 'label' ? 'border-b-2 border-red-500 text-red-600 dark:text-red-400' : 'text-neutral-500 dark:text-neutral-400'"
                     class="px-4 py-2 font-semibold transition-colors">Label Setting</button>
         </div>
 
@@ -28,9 +28,9 @@
         <div x-show="tab === 'global'" x-transition class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Left Section (Global) -->
-                <div class="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+                <div class="w-full bg-white dark:bg-neutral-900 border border-white dark:border-white/10 rounded-lg p-6">
                     <!-- CRM Panel -->
-                    <div class="w-full max-w-2xl bg-white dark:bg-gray-900 p-6 rounded-xl shadow-xl space-y-4 transition-colors duration-300">
+                    <div class="w-full max-w-2xl bg-white dark:bg-neutral-900 p-6 rounded-xl shadow-xl space-y-4 transition-colors duration-300">
                         <form id="preferencesForm"
                               method="post"
                               action="{% url 'account:save_label_setting' %}"
@@ -44,7 +44,7 @@
                                            name="show_logo"
                                            class="sr-only peer"
                                            {% if label_setting.show_logo %}checked{% endif %}>
-                                    <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                    <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-white/10 flex items-center justify-center transition-colors peer-checked:border-red-600 peer-checked:bg-red-600">
                                         <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                              fill="none"
                                              stroke="currentColor"
@@ -55,7 +55,7 @@
                                     </div>
                                     <div class="space-y-1">
                                         <p class="text-sm font-medium text-gray-900 dark:text-white">Show Logo on Label</p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        <p class="text-xs text-neutral-500 dark:text-neutral-400">
                                             Enable branding with your custom
                                             logo.
                                         </p>
@@ -65,7 +65,7 @@
 
                             <!-- Upload Field -->
                             <div id="logoUploadWrapper" class="hidden ml-8">
-                                <label class="block mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
+                                <label class="block mb-2 text-xs font-medium text-black dark:text-neutral-300">
                                     Upload
                                     Logo
                                 </label>
@@ -73,7 +73,7 @@
                                        accept="image/*"
                                        id="logoUploader"
                                        name="logo"
-                                       class="block w-full text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600" />
+                                       class="block w-full text-xs text-gray-900 border border-neutral-300 rounded-lg cursor-pointer bg-gray-50 dark:text-neutral-300 dark:bg-white/[0.06] dark:border-white/10" />
                             </div>
 
                             <!-- Settings Checkboxes -->
@@ -86,7 +86,7 @@
                                                id="showSupportInfo"
                                                name="show_support_info"
                                                class="sr-only peer">
-                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-white/10 flex items-center justify-center transition-colors peer-checked:border-red-600 peer-checked:bg-red-600">
                                             <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                  fill="none"
                                                  stroke="currentColor"
@@ -97,7 +97,7 @@
                                         </div>
                                         <div class="space-y-1">
                                             <p class="text-sm font-medium text-gray-900 dark:text-white">Show Support Info</p>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            <p class="text-xs text-neutral-500 dark:text-neutral-400">
                                                 Display support contact
                                                 information on label.
                                             </p>
@@ -107,24 +107,24 @@
 
                                 <div id="supportInfoFields" class="hidden ml-8 space-y-4">
                                     <div>
-                                        <label class="block mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
+                                        <label class="block mb-2 text-xs font-medium text-black dark:text-neutral-300">
                                             Support
                                             Email
                                         </label>
                                         <input type="email"
                                                id="supportEmail"
                                                name="support_email"
-                                               class="block w-full text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                                               class="block w-full text-xs text-gray-900 border border-neutral-300 rounded-lg cursor-pointer bg-gray-50 dark:text-neutral-300 dark:bg-white/[0.06] dark:border-white/10">
                                     </div>
                                     <div>
-                                        <label class="block mb-2 text-xs font-medium text-gray-700 dark:text-gray-300">
+                                        <label class="block mb-2 text-xs font-medium text-black dark:text-neutral-300">
                                             Support
                                             Mobile
                                         </label>
                                         <input type="tel"
                                                id="supportMobile"
                                                name="support_mobile"
-                                               class="block w-full text-xs text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                                               class="block w-full text-xs text-gray-900 border border-neutral-300 rounded-lg cursor-pointer bg-gray-50 dark:text-neutral-300 dark:bg-white/[0.06] dark:border-white/10">
                                     </div>
                                 </div>
 
@@ -135,7 +135,7 @@
                                                id="hideCustomerMobile"
                                                name="hide_customer_mobile"
                                                class="sr-only peer">
-                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-white/10 flex items-center justify-center transition-colors peer-checked:border-red-600 peer-checked:bg-red-600">
                                             <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                  fill="none"
                                                  stroke="currentColor"
@@ -149,7 +149,7 @@
                                                 Hide Customer
                                                 Mobile
                                             </p>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            <p class="text-xs text-neutral-500 dark:text-neutral-400">
                                                 Avoid showing customer's
                                                 phone number.
                                             </p>
@@ -164,7 +164,7 @@
                                                id="hidePicupReturnAddress"
                                                name="hide_pickup_address"
                                                class="sr-only peer">
-                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-white/10 flex items-center justify-center transition-colors peer-checked:border-red-600 peer-checked:bg-red-600">
                                             <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                  fill="none"
                                                  stroke="currentColor"
@@ -175,7 +175,7 @@
                                         </div>
                                         <div class="space-y-1">
                                             <p class="text-sm font-medium text-gray-900 dark:text-white">Hide Pickup Address</p>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            <p class="text-xs text-neutral-500 dark:text-neutral-400">
                                                 Remove sender's address from
                                                 printout.
                                             </p>
@@ -190,7 +190,7 @@
                                                id="hideDiscount"
                                                name="hide_discount"
                                                class="sr-only peer">
-                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-white/10 flex items-center justify-center transition-colors peer-checked:border-red-600 peer-checked:bg-red-600">
                                             <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                  fill="none"
                                                  stroke="currentColor"
@@ -201,7 +201,7 @@
                                         </div>
                                         <div class="space-y-1">
                                             <p class="text-sm font-medium text-gray-900 dark:text-white">Hide Discount Column</p>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            <p class="text-xs text-neutral-500 dark:text-neutral-400">
                                                 Remove Discount Column from product table.
                                             </p>
                                         </div>
@@ -215,7 +215,7 @@
                                                id="hidePoweredBy"
                                                name="hide_powered_by"
                                                class="sr-only peer">
-                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-white/10 flex items-center justify-center transition-colors peer-checked:border-red-600 peer-checked:bg-red-600">
                                             <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                  fill="none"
                                                  stroke="currentColor"
@@ -226,7 +226,7 @@
                                         </div>
                                         <div class="space-y-1">
                                             <p class="text-sm font-medium text-gray-900 dark:text-white">Hide Powered By</p>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            <p class="text-xs text-neutral-500 dark:text-neutral-400">
                                                 Remove Powered By text and Image
                                             </p>
                                         </div>
@@ -241,7 +241,7 @@
                                                id="hideProduct"
                                                name="hide_product"
                                                class="sr-only peer">
-                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                        <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-white/10 flex items-center justify-center transition-colors peer-checked:border-red-600 peer-checked:bg-red-600">
                                             <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                  fill="none"
                                                  stroke="currentColor"
@@ -252,7 +252,7 @@
                                         </div>
                                         <div class="space-y-1">
                                             <p class="text-sm font-medium text-gray-900 dark:text-white">Hide Product</p>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            <p class="text-xs text-neutral-500 dark:text-neutral-400">
                                                 Conceal product details for
                                                 privacy.
                                             </p>
@@ -269,7 +269,7 @@
                                                    id="hideTotalAmount"
                                                    name="hide_total_amount"
                                                    class="sr-only peer">
-                                            <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                            <div class="w-5 h-5 rounded-sm border-2 border-gray-400 dark:border-white/10 flex items-center justify-center transition-colors peer-checked:border-red-600 peer-checked:bg-red-600">
                                                 <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                      fill="none"
                                                      stroke="currentColor"
@@ -283,7 +283,7 @@
                                                     Hide Total
                                                     Amount
                                                 </p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                <p class="text-xs text-neutral-500 dark:text-neutral-400">
                                                     Avoid printing order
                                                     totals on label.
                                                 </p>
@@ -299,7 +299,7 @@
                                                        id="hideWeight"
                                                        name="hide_weight"
                                                        class="sr-only peer">
-                                                <div class="w-4 h-4 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                                <div class="w-4 h-4 rounded-sm border-2 border-gray-400 dark:border-white/10 flex items-center justify-center transition-colors peer-checked:border-red-600 peer-checked:bg-red-600">
                                                     <svg class="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                          fill="none"
                                                          stroke="currentColor"
@@ -310,7 +310,7 @@
                                                 </div>
                                                 <div class="space-y-1">
                                                     <p class="text-xs font-medium text-gray-900 dark:text-white">Hide Weight</p>
-                                                    <p class="text-[11px] text-gray-500 dark:text-gray-400">
+                                                    <p class="text-[11px] text-neutral-500 dark:text-neutral-400">
                                                         Prevent showing
                                                         product weight.
                                                     </p>
@@ -325,7 +325,7 @@
                                                        id="hideDimension"
                                                        name="hide_dimension"
                                                        class="sr-only peer">
-                                                <div class="w-4 h-4 rounded-sm border-2 border-gray-400 dark:border-gray-600 flex items-center justify-center transition-colors peer-checked:border-blue-600 peer-checked:bg-blue-600">
+                                                <div class="w-4 h-4 rounded-sm border-2 border-gray-400 dark:border-white/10 flex items-center justify-center transition-colors peer-checked:border-red-600 peer-checked:bg-red-600">
                                                     <svg class="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-150"
                                                          fill="none"
                                                          stroke="currentColor"
@@ -339,7 +339,7 @@
                                                         Hide
                                                         Dimension
                                                     </p>
-                                                    <p class="text-[11px] text-gray-500 dark:text-gray-400">
+                                                    <p class="text-[11px] text-neutral-500 dark:text-neutral-400">
                                                         Don't show size
                                                         of the product.
                                                     </p>
@@ -354,7 +354,7 @@
                             <div class="mt-6">
                                 <button type="submit"
                                         id="submitBtn"
-                                        class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-sm font-semibold text-white rounded-lg transition-all duration-200 shadow-md">
+                                        class="w-full py-2 px-4 bg-red-600 hover:bg-red-700 text-sm font-semibold text-white rounded-lg transition-all duration-200 shadow-md">
                                     Save Preferences
                                 </button>
                             </div>
@@ -365,7 +365,7 @@
 
                 </div>
                 <!-- Right Section (Global) -->
-                <div class="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+                <div class="w-full bg-white dark:bg-neutral-900 border border-white dark:border-white/10 rounded-lg p-6">
                     <!-- ▶️ Add Global Right Content Here -->
                     <div class="max-w-md mx-auto bg-white border-2 border-black p-2 space-y-2 font-sans"
                          id="labelContainer">
@@ -449,7 +449,7 @@
 
                         <!-- Support Info -->
                         <div class="text-center text-xs hide_support_info">
-                            <p class="font-bold">For queries: Mob 6576576765 | Email: support@idiotship.com</p>
+                            <p class="font-bold">For queries: Mob 6576576765 | Email: support@SwiftCourier.com</p>
                         </div>
 
                         <hr class="border-black my-1" />
@@ -459,10 +459,10 @@
                             store policy.
                         </p>
                         <div class="flex justify-between items-center powered_by_hide" id="powered_by">
-                            <p class="font-bold text-xs">Powered By Idiotship</p>
+                            <p class="font-bold text-xs">Powered By SwiftCourier</p>
                             <div id="idiotship_logo" class="ml-2">
                                 <img src="{% static 'images/logo/idiotship_logo.png' %}"
-                                     alt="Idiotship Logo"
+                                     alt="SwiftCourier Logo"
                                      class="h-6 object-contain">
                             </div>
                         </div>
@@ -475,11 +475,11 @@
         <div x-show="tab === 'label'" x-transition class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Left Section (Label) -->
-                <div class="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+                <div class="w-full bg-white dark:bg-neutral-900 border border-white dark:border-white/10 rounded-lg p-6">
                     <!-- ▶️ Add Label Left Content Here -->
                 </div>
                 <!-- Right Section (Label) -->
-                <div class="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+                <div class="w-full bg-white dark:bg-neutral-900 border border-white dark:border-white/10 rounded-lg p-6">
                     <!-- ▶️ Add Label Right Content Here -->
                 </div>
             </div>
@@ -497,10 +497,10 @@
 <div x-data="{ tab: 'global' }" class="w-full mt-10 px-4">
     <!-- Tabs -->
     <div class="flex border-b">
-        <button @click="tab = 'global'" :class="tab === 'global' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-600 hover:text-gray-800'" class="px-4 py-2 -mb-px border-b-2 font-medium transition">
+        <button @click="tab = 'global'" :class="tab === 'global' ? 'border-red-500 text-red-600' : 'border-transparent text-neutral-600 hover:text-gray-800'" class="px-4 py-2 -mb-px border-b-2 font-medium transition">
             Global Label Setting
         </button>
-        <button @click="tab = 'printer'" :class="tab === 'printer' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-600 hover:text-gray-800'" class="px-4 py-2 -mb-px border-b-2 font-medium transition">
+        <button @click="tab = 'printer'" :class="tab === 'printer' ? 'border-red-500 text-red-600' : 'border-transparent text-neutral-600 hover:text-gray-800'" class="px-4 py-2 -mb-px border-b-2 font-medium transition">
             Printer Setting
         </button>
     </div>
@@ -509,11 +509,11 @@
     <div x-show="tab === 'global'" class="mt-6" x-cloak>
         <div class="grid grid-cols-2 gap-6 w-full">
             <!-- Left section for Global Label -->
-            <div class="w-full h-64 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+            <div class="w-full h-64 bg-gray-50 dark:bg-white/[0.06] border border-white dark:border-white/10 rounded-lg p-4">
                 <!-- Add global label left content here -->
             </div>
             <!-- Right section for Global Label -->
-            <div class="w-full h-64 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+            <div class="w-full h-64 bg-gray-50 dark:bg-white/[0.06] border border-white dark:border-white/10 rounded-lg p-4">
                 <!-- Add global label right content here -->
                 <div class="max-w-md mx-auto bg-white border-2 border-black p-4 space-y-4 font-sans" id="labelContainer">
 
@@ -577,7 +577,7 @@
 
                     <!-- Product Table -->
                     <table class="w-full border-2 border-black text-xs">
-                        <thead class="bg-gray-100">
+                        <thead class="bg-neutral-100">
                             <tr>
                                 <th class="border-2 border-black p-1">SKU</th>
                                 <th class="border-2 border-black p-1">Item Name</th>
@@ -665,7 +665,7 @@
                             back or exchanged
                             as per the store's exchange/return policy
                         </p>
-                        <i class="font-bold">Powerd By Idiotship</i>
+                        <i class="font-bold">Powerd By SwiftCourier</i>
                     </div>
                 </div>
             </div>
@@ -676,11 +676,11 @@
     <div x-show="tab === 'printer'" class="mt-6" x-cloak>
         <div class="grid grid-cols-2 gap-6 w-full">
             <!-- Left section for Printer Setting -->
-            <div class="w-full h-64 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+            <div class="w-full h-64 bg-gray-50 dark:bg-white/[0.06] border border-white dark:border-white/10 rounded-lg p-4">
                 <!-- Add printer setting left content here -->
             </div>
             <!-- Right section for Printer Setting -->
-            <div class="w-full h-64 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+            <div class="w-full h-64 bg-gray-50 dark:bg-white/[0.06] border border-white dark:border-white/10 rounded-lg p-4">
                 <!-- Add printer setting right content here -->
             </div>
         </div>
@@ -825,7 +825,7 @@
                 });
 
                 // Update preview content
-                const email = supportEmailInput.value || 'support@idiotship.com';
+                const email = supportEmailInput.value || 'support@SwiftCourier.com';
                 const mobile = supportMobileInput.value || '6576576765';
                 supportPreview.textContent = `For queries: Mob ${mobile} | Email: ${email}`;
             }

@@ -1,5 +1,5 @@
 [project]
-name = "idiotship"
+name = "swiftcourier"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -37,6 +37,7 @@ dependencies = [
     "sentry-sdk[django]>=2.34.1",
     "tzdata>=2025.2",
     "weasyprint>=65.1",
+    "whitenoise>=6.8.2",
     "zeep>=4.3.2",
 ]
 
