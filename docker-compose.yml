@@ -21,6 +21,7 @@ services:
 
   web:
     build: .
+    image: swiftcourier:latest
     command: ["web"]
     env_file: [.env]
     environment:
@@ -41,6 +42,7 @@ services:
 
   # fast lane: default + inbound carrier webhooks
   worker-fast:
+    image: swiftcourier:latest
     build: .
     command: ["worker", "default,webhooks"]
     env_file: [.env]
@@ -55,6 +57,7 @@ services:
 
   # slow lane: ship / bulk-cancel — outbound carrier APIs
   worker-ship:
+    image: swiftcourier:latest
     build: .
     command: ["worker", "ship"]
     env_file: [.env]
@@ -68,6 +71,7 @@ services:
     restart: unless-stopped
 
   beat:
+    image: swiftcourier:latest
     build: .
     command: ["beat"]
     env_file: [.env]
