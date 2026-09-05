@@ -19,6 +19,8 @@
 
         <meta name='viewport' content='width=device-width, initial-scale=1'>
         <meta name='keywords' content='SwiftCourier,login'>
+        <meta name="description" content="{% block description %}SwiftCourier — multi-courier shipping platform for D2C and B2B businesses. Real-time tracking, COD reconciliation, and rate management across 15+ couriers.{% endblock description %}">
+        <meta name="robots" content="index, follow">
         <link rel="icon"
               type="image/x-icon"
               href="{% static 'favicon/favicon.ico' %}" />

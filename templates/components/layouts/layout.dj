@@ -20,6 +20,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="keywords"
               content="SwiftCourier, shipping, logistics, delivery, services" />
+        <meta name="description" content="{% block description %}SwiftCourier dashboard — manage orders, shipments, and courier rates in one place.{% endblock description %}" />
+        <meta name="robots" content="noindex, nofollow" />
         <link rel="icon"
               type="image/x-icon"
               href="{% static 'favicon/favicon.ico' %}" />

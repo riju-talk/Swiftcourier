@@ -1,8 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Track Shipment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Track your SwiftCourier shipment in real time — enter your AWB number for live delivery status." />
+    <meta name="robots" content="index, follow" />
+    <title>Track Shipment | SwiftCourier</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon/favicon.ico' %}" />
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
