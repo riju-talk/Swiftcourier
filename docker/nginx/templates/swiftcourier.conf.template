@@ -30,8 +30,16 @@ server {
 
     client_max_body_size 25M;
 
+    # Docker's embedded DNS (127.0.0.11) resolves `web` fresh on this short TTL.
+    # A bare `proxy_pass http://web:8000` instead resolves ONCE at nginx startup
+    # and caches that container IP forever - so recreating `web` (any rebuild/
+    # redeploy) silently 502s until nginx is restarted. The variable forces
+    # nginx to re-resolve on every request instead of caching the old IP.
+    resolver 127.0.0.11 valid=10s;
+    set $upstream_web web:8000;
+
     location / {
-        proxy_pass http://web:8000;
+        proxy_pass http://$upstream_web;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
