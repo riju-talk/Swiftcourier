@@ -18,7 +18,7 @@ logger = logging.getLogger("my-logger")
 def send_message(
     user: User,
     content: str,
-    subject: str = "Notification from IdiotShip",
+    subject: str = "Notification from SwiftCourier",
     send_email: bool = False,
     send_sms: bool = False,
 ) -> tuple[bool, bool]:
@@ -90,7 +90,7 @@ def send_registration_verification_otp(
         # Generate a random OTP (One Time Password) for email verification
         otp = randint(100000, 999999)
         # Prepare email subject and content
-        subject = "Welcome to IdiotShip! Verify Your Contact Details"
+        subject = "Welcome to SwiftCourier! Verify Your Contact Details"
         content = f"""
         <html>
           <body style="margin:0; padding:0; background-color:#f4f4f4;">
@@ -100,28 +100,28 @@ def send_registration_verification_otp(
                   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1); font-family:Arial, sans-serif;">
                     <!-- Header -->
                     <tr>
-                      <td align="center" style="background-color:#007BFF; padding:20px;">
-                        <h1 style="margin:0; font-size:24px; color:#ffffff;">IdiotShip</h1>
+                      <td align="center" style="background-color:#0a0a0a; padding:20px;">
+                        <h1 style="margin:0; font-size:24px; color:#ffffff;">Swift<span style="color:#dc2626;">Courier</span></h1>
                       </td>
                     </tr>
                     <!-- Body -->
                     <tr>
                       <td style="padding:30px; color:#333; font-size:16px; line-height:1.6;">
                         <p>Hello <strong>{user.full_name}</strong>,</p>
-                        <p>Thank you for registering with <strong>IdiotShip</strong>!</p>
+                        <p>Thank you for registering with <strong>SwiftCourier</strong>!</p>
                         <p>To complete your registration and verify your email address, please use the following One-Time Password (OTP):</p>
                         <p style="text-align:center; margin:30px 0;">
-                          <span style="display:inline-block; padding:14px 28px; font-size:28px; font-weight:bold; letter-spacing:6px; color:#ffffff; background-color:#007BFF; border-radius:6px;">{otp}</span>
+                          <span style="display:inline-block; padding:14px 28px; font-size:28px; font-weight:bold; letter-spacing:6px; color:#ffffff; background-color:#dc2626; border-radius:6px;">{otp}</span>
                         </p>
                         <p>Enter this OTP on our registration page to finalize your account setup. If you did not attempt to register, please ignore this message.</p>
-                        <p>If you need any assistance or have any questions, feel free to contact our support team at <a href="mailto:support@idiotship.tech" style="color:#007BFF; text-decoration:none;">support@idiotship.tech</a>.</p>
-                        <p>Best regards,<br><strong>The IdiotShip Team</strong></p>
+                        <p>If you need any assistance or have any questions, feel free to contact our support team at <a href="mailto:support@idiotship.tech" style="color:#dc2626; text-decoration:none;">support@idiotship.tech</a>.</p>
+                        <p>Best regards,<br><strong>The SwiftCourier Team</strong></p>
                       </td>
                     </tr>
                     <!-- Footer -->
                     <tr>
                       <td align="center" style="background-color:#f4f4f4; padding:15px; font-size:12px; color:#777;">
-                        © {datetime.datetime.now().year} IdiotShip. All rights reserved.
+                        © {datetime.datetime.now().year} SwiftCourier. All rights reserved.
                       </td>
                     </tr>
                   </table>
@@ -173,7 +173,7 @@ def send_forget_password_otp(
         # Create and store the new PasswordReset object
         pswdrst = PasswordReset.objects.create(user=user)
 
-        subject = "Reset Your IdiotShip Password"
+        subject = "Reset Your SwiftCourier Password"
         reset_link = f"{settings.SITE_SETTINGS['site']['SITE_LINK']}{reverse('account:reset_password', args=[user.id, pswdrst.token])}"
 
         # HTML email with professional design
@@ -186,35 +186,35 @@ def send_forget_password_otp(
                   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1); font-family:Arial, sans-serif;">
                     <!-- Header -->
                     <tr>
-                      <td align="center" style="background-color:#007BFF; padding:20px;">
-                        <h1 style="margin:0; font-size:24px; color:#ffffff;">IdiotShip</h1>
+                      <td align="center" style="background-color:#0a0a0a; padding:20px;">
+                        <h1 style="margin:0; font-size:24px; color:#ffffff;">Swift<span style="color:#dc2626;">Courier</span></h1>
                       </td>
                     </tr>
                     <!-- Body -->
                     <tr>
                       <td style="padding:30px; color:#333; font-size:16px; line-height:1.6;">
                         <p>Hello <strong>{user.full_name}</strong>,</p>
-                        <p>We received a request to reset your password for your <strong>IdiotShip</strong> account.</p>
+                        <p>We received a request to reset your password for your <strong>SwiftCourier</strong> account.</p>
                         <p>Please click the button below to reset your password:</p>
                         <p style="text-align:center; margin:30px 0;">
-                          <a href="{reset_link}" 
-                             style="display:inline-block; padding:14px 28px; font-size:16px; 
-                                    color:#ffffff; background-color:#007BFF; text-decoration:none; 
+                          <a href="{reset_link}"
+                             style="display:inline-block; padding:14px 28px; font-size:16px;
+                                    color:#ffffff; background-color:#dc2626; text-decoration:none;
                                     border-radius:6px; font-weight:bold;">
                              Reset Password
                           </a>
                         </p>
-                        <p>If you did not request this password reset, you can safely ignore this email. 
+                        <p>If you did not request this password reset, you can safely ignore this email.
                         Your current password will remain unchanged.</p>
-                        <p>If you need help or have any questions, feel free to contact our support team at 
-                        <a href="mailto:support@idiotship.tech" style="color:#007BFF; text-decoration:none;">support@idiotship.tech</a>.</p>
-                        <p>Best regards,<br><strong>The IdiotShip Team</strong></p>
+                        <p>If you need help or have any questions, feel free to contact our support team at
+                        <a href="mailto:support@idiotship.tech" style="color:#dc2626; text-decoration:none;">support@idiotship.tech</a>.</p>
+                        <p>Best regards,<br><strong>The SwiftCourier Team</strong></p>
                       </td>
                     </tr>
                     <!-- Footer -->
                     <tr>
                       <td align="center" style="background-color:#f4f4f4; padding:15px; font-size:12px; color:#777;">
-                        © {datetime.datetime.now().year} IdiotShip. All rights reserved.
+                        © {datetime.datetime.now().year} SwiftCourier. All rights reserved.
                       </td>
                     </tr>
                   </table>

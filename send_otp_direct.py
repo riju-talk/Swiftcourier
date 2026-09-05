@@ -34,18 +34,18 @@ def send_test_email(target_email, target_name):
     """Constructs and sends the actual email."""
     otp = randint(100000, 999999)
     
-    subject = "Welcome to IdiotShip! Verify Your Contact Details"
+    subject = "Welcome to SwiftCourier! Verify Your Contact Details"
     text_content = f"Hi {target_name},\n\nYour OTP is: {otp}\n\nIf you didn't request this, ignore this email."
-    
+
     html_content = f"""
     <html>
     <body style="font-family: Arial, sans-serif; line-height: 1.6;">
-        <h1 style="color:#007BFF;">Welcome to IdiotShip!</h1>
+        <h1 style="color:#0a0a0a;">Welcome to Swift<span style="color:#dc2626;">Courier</span>!</h1>
         <p>Hi <strong>{target_name}</strong>,</p>
         <p>Thank you for registering. Please use the following OTP to verify your email:</p>
-        <h2 style="color:#007BFF; font-size:32px; letter-spacing:5px; text-align:center; background-color:#f4f4f4; padding:20px; border-radius:5px;">{otp}</h2>
+        <h2 style="color:#dc2626; font-size:32px; letter-spacing:5px; text-align:center; background-color:#f4f4f4; padding:20px; border-radius:5px;">{otp}</h2>
         <p><em>If you didn't attempt to register, please ignore this message.</em></p>
-        <p>Best regards,<br><strong>The IdiotShip Team</strong></p>
+        <p>Best regards,<br><strong>The SwiftCourier Team</strong></p>
         <p>This is a test script/p>
     </body>
     </html>
