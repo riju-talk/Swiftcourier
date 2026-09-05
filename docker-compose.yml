@@ -1,5 +1,7 @@
 # SwiftCourier — Redis + Celery (tier 1). RabbitMQ available under `--profile tier2`.
 # The database is AWS RDS (external): set DATABASE_* in .env, not a service here.
+# nginx terminates TLS for PRIMARY_HOST and reverse-proxies to `web`; see DEPLOYMENT.md
+# for the one-time certbot bootstrap needed before nginx can start.
 #
 #   cp .env .env            # ensure DATABASE_*, REDIS_URL, CELERY_BROKER_URL, SECRET_KEY, DEBUG=False
 #   docker compose build
@@ -27,7 +29,7 @@ services:
     environment:
       REDIS_URL: redis://redis:6379
       CELERY_BROKER_URL: redis://redis:6379/0
-    ports: ["80:8000"]
+    expose: ["8000"]  # not published to the host — nginx is the public entrypoint
     depends_on:
       redis: {condition: service_healthy}
     volumes:
@@ -89,6 +91,36 @@ services:
       redis: {condition: service_healthy}
     restart: unless-stopped
 
+  # Public entrypoint: terminates TLS for PRIMARY_HOST, proxies everything to `web`.
+  # First boot needs a cert in the certbot-certs volume before this can start —
+  # see DEPLOYMENT.md for the one-time bootstrap.
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on: [web]
+    ports: ["80:80", "443:443"]
+    environment:
+      DOMAIN: ${PRIMARY_HOST:?set PRIMARY_HOST in .env, e.g. app.example.com}
+    volumes:
+      - ./docker/nginx/templates:/etc/nginx/templates:ro
+      - certbot-www:/var/www/certbot:ro
+      - certbot-certs:/etc/letsencrypt:ro
+    restart: unless-stopped
+
+  # Renews the Let's Encrypt cert via the shared webroot every 12h. Does NOT
+  # issue the first cert — that's a one-off `docker run --standalone` command
+  # (nginx isn't up yet on first boot). See DEPLOYMENT.md.
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - certbot-www:/var/www/certbot
+      - certbot-certs:/etc/letsencrypt
+    entrypoint: >
+      sh -c 'trap exit TERM; while :; do
+      certbot renew --webroot -w /var/www/certbot --quiet;
+      sleep 12h & wait $${!};
+      done'
+    restart: unless-stopped
+
   # ---- TIER 2 (optional): swap the Celery broker to RabbitMQ ----
   #   docker compose --profile tier2 up -d rabbitmq
   #   then in .env:  CELERY_BROKER_URL=amqp://swiftcourier:swiftcourier@rabbitmq:5672//
@@ -111,3 +143,5 @@ volumes:
   redis-data:
   rabbitmq-data:
   media:
+  certbot-www:
+  certbot-certs:

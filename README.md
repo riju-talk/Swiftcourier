@@ -122,6 +122,7 @@ If you face issues:
 * Configure Celery with **Redis**
 * Use environment variables for secrets
 * Ensure system dependencies for WeasyPrint are installed on server
+* Full AWS (EC2 + RDS) runbook, including domain + TLS setup: see [DEPLOYMENT.md](DEPLOYMENT.md)
 
 ---
 
