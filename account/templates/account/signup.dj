@@ -105,10 +105,14 @@
                     <label for="ConfirmPassword" class="mb-1.5 block text-sm font-medium text-black">Confirm password</label>
                     <input id="ConfirmPassword" name="confirm_password" type="password" placeholder="Re-enter password" required
                            class="block w-full rounded-lg border border-neutral-300 px-3.5 py-2.5 text-sm text-black placeholder:text-neutral-400 focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-600/20" />
+                    <p id="passwordMismatchTip"
+                       class="mt-1.5 max-h-0 overflow-hidden text-xs font-medium text-red-600 opacity-0 transition-all duration-200 ease-out">
+                        Passwords do not match
+                    </p>
                 </div>
 
-                <button type="submit"
-                        class="w-full rounded-lg bg-black px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-600">
+                <button type="submit" id="signupSubmitBtn"
+                        class="w-full rounded-lg bg-black px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-50">
                     Create account
                 </button>
             </form>
@@ -134,6 +138,24 @@ document.addEventListener('DOMContentLoaded', function () {
             toggleBtn.classList.toggle('text-black', showing);
             toggleBtn.classList.toggle('text-neutral-400', !showing);
         });
+    }
+
+    var confirmInput = document.getElementById('ConfirmPassword');
+    var tip = document.getElementById('passwordMismatchTip');
+    var submitBtn = document.getElementById('signupSubmitBtn');
+    function checkMatch() {
+        var mismatch = confirmInput.value.length > 0 && passwordInput.value !== confirmInput.value;
+        tip.classList.toggle('opacity-100', mismatch);
+        tip.classList.toggle('max-h-6', mismatch);
+        tip.classList.toggle('opacity-0', !mismatch);
+        tip.classList.toggle('max-h-0', !mismatch);
+        confirmInput.classList.toggle('border-red-600', mismatch);
+        confirmInput.classList.toggle('focus:ring-red-600/20', !mismatch);
+        submitBtn.disabled = mismatch;
+    }
+    if (passwordInput && confirmInput && tip && submitBtn) {
+        passwordInput.addEventListener('input', checkMatch);
+        confirmInput.addEventListener('input', checkMatch);
     }
 });
 </script>

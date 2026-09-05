@@ -56,6 +56,12 @@
         <script src="{% static 'assets/js/perfect-scrollbar.min.js' %}"></script>
         <script defer src="{% static 'assets/js/popper.min.js' %}"></script>
         <style>
+            /* Smoother default transitions site-wide, without touching every class. */
+            a, button, input, select, textarea, .transition-colors {
+                transition-property: color, background-color, border-color, box-shadow, transform, opacity;
+                transition-duration: 200ms;
+                transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            }
             select {
                 appearance: none;
                 /* For most browsers */
