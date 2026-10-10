@@ -26,7 +26,6 @@ dependencies = [
     "pandas>=2.2.3",
     "phonepe-sdk",
     "pillow>=11.2.1",
-    "psycopg2>=2.9.11",
     "psycopg2-binary>=2.9.10",
     "pypdf2>=3.0.1",
     "python-barcode>=0.15.1",
