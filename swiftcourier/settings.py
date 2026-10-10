@@ -27,14 +27,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # silently forces DEBUG=True / dev secrets. .env only fills what the env doesn't set.
 load_dotenv(dotenv_path=BASE_DIR / ".env", override=False)
 
+# Vercel sets VERCEL=1 at build and runtime. Serverless: read-only filesystem
+# (except /tmp), no Redis/Celery workers, short-lived processes.
+IS_VERCEL = bool(os.getenv("VERCEL"))
+
+# ---- DEMO-ONLY hardcoded fallbacks (used ONLY on Vercel, and only when the
+# matching env var is unset; real env vars always win). ROTATE ALL OF THESE and
+# delete this block before production - they live in git history.
+_DEMO_DATABASE_URL = (
+    "postgresql://neondb_owner:npg_OehmgE0UN6rl@"
+    "ep-dark-brook-b54vrcd3-pooler.c-7.us-east-2.aws.neon.tech/neondb"
+    "?sslmode=require&channel_binding=require"
+)
+_DEMO_SECRET_KEY = "pCiFwLAxSL-vwHv-FFWp87zi9TODGIgXoonuMljJ6w-jSEE_FISv-hC9u8nefmQaY00"
+_DEMO_ADMIN_PASSWORD = "mFn32Qj6HfSCnwE8IK6aCltx"
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", default="True") == "True"
+DEBUG = os.getenv("DEBUG", default="False" if IS_VERCEL else "True") == "True"
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY") or (_DEMO_SECRET_KEY if IS_VERCEL else None)
 if not SECRET_KEY:
     if DEBUG:
         SECRET_KEY = "xKQ4azxkpTqa7Jjv4i7rlyIllTwFImhr"  # dev-only fallback, never used when DEBUG=False
@@ -53,6 +68,8 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(
 PRIMARY_HOST = os.getenv("PRIMARY_HOST", "").strip().replace("https://", "").replace("http://", "").rstrip("/")
 if PRIMARY_HOST and PRIMARY_HOST not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(PRIMARY_HOST)
+if IS_VERCEL:
+    ALLOWED_HOSTS.append(".vercel.app")
 
 # Production hardening (env-overridable; secure-by-default once DEBUG=False).
 # HSTS starts at 1 hour rather than the usual 1 year so a botched HTTPS rollout
@@ -180,7 +197,7 @@ MIDDLEWARE = [
 
 # Behind an ALB / nginx doing TLS termination, trust the proto header so
 # request.is_secure() is correct (otherwise SECURE_SSL_REDIRECT loops forever).
-if os.getenv("TRUST_PROXY_SSL_HEADER", default="False" if DEBUG else "True") == "True":
+if IS_VERCEL or os.getenv("TRUST_PROXY_SSL_HEADER", default="False" if DEBUG else "True") == "True":
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 ROOT_URLCONF = "swiftcourier.urls"
@@ -208,7 +225,37 @@ WSGI_APPLICATION = "swiftcourier.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-if os.getenv("DATABASE_ENGINE") == "django.db.backends.postgresql":
+_DATABASE_URL = os.getenv("DATABASE_URL", "").strip() or (
+    _DEMO_DATABASE_URL if IS_VERCEL else ""
+)
+
+if _DATABASE_URL:
+    # Single-URL config (Vercel + Neon). Takes precedence over DATABASE_ENGINE.
+    # Neon's "-pooler" host is PgBouncer in transaction mode, so: no persistent
+    # connections, no server-side cursors, and no startup `options` (PgBouncer
+    # rejects them). Run migrations against the direct (non-pooler) host.
+    from urllib.parse import parse_qsl, unquote, urlparse
+
+    _u = urlparse(_DATABASE_URL)
+    _pooled = "-pooler" in (_u.hostname or "")
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": unquote(_u.path.lstrip("/")),
+            "USER": unquote(_u.username or ""),
+            "PASSWORD": unquote(_u.password or ""),
+            "HOST": _u.hostname,
+            "PORT": str(_u.port or 5432),
+            "CONN_MAX_AGE": int(os.getenv("DATABASE_CONN_MAX_AGE", "0")),
+            "DISABLE_SERVER_SIDE_CURSORS": _pooled,
+            "OPTIONS": {
+                "sslmode": "require",
+                "connect_timeout": int(os.getenv("DATABASE_CONNECT_TIMEOUT", "10")),
+                **dict(parse_qsl(_u.query)),
+            },
+        }
+    }
+elif os.getenv("DATABASE_ENGINE") == "django.db.backends.postgresql":
     # AWS RDS (PostgreSQL). Notes:
     #  - CONN_MAX_AGE keeps connections alive between requests (RDS charges a real
     #    TCP+TLS handshake per connect); pair with a PgBouncer/RDS Proxy in front
@@ -347,6 +394,8 @@ STATICFILES_DIRS = [
 ]
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "static_prod"
+# Serve straight from app/STATICFILES_DIRS when static_prod/ was not built (Vercel).
+WHITENOISE_USE_FINDERS = True
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media/"
@@ -390,11 +439,10 @@ if AWS_STORAGE_BUCKET_NAME:
 LOGIN_URL = "account:signin"
 
 # Assuming BASE_DIR is already defined in your settings
-LOGS_DIR = os.path.join(BASE_DIR, "logs")
+LOGS_DIR = "/tmp/logs" if IS_VERCEL else os.path.join(BASE_DIR, "logs")
 
 # Create the logs directory if it doesn't exist
-if not os.path.exists(LOGS_DIR):
-    os.makedirs(LOGS_DIR)
+os.makedirs(LOGS_DIR, exist_ok=True)
 
 # logger
 LOGGING = {
@@ -685,7 +733,9 @@ DEFAULT_ADMIN_USER = os.getenv(
     "DEFAULT_ADMIN_USER",
     f"defaultadminuser@{PRIMARY_HOST}" if PRIMARY_HOST else "defaultadminuser@shipee.tech",
 )
-DEFAULT_ADMIN_USER_PASSWORD = os.getenv("DEFAULT_ADMIN_USER_PASSWORD")
+DEFAULT_ADMIN_USER_PASSWORD = os.getenv("DEFAULT_ADMIN_USER_PASSWORD") or (
+    _DEMO_ADMIN_PASSWORD if IS_VERCEL else None
+)
 if not DEFAULT_ADMIN_USER_PASSWORD:
     if DEBUG:
         DEFAULT_ADMIN_USER_PASSWORD = "fun@ult@dmoutp@$$wd"  # dev-only fallback, never used when DEBUG=False
@@ -746,7 +796,7 @@ CACHES = {
     }
 }
 # fall back to local-memory if Redis is unreachable at import time in dev
-if os.getenv("DISABLE_REDIS_CACHE") == "1":
+if IS_VERCEL or os.getenv("DISABLE_REDIS_CACHE") == "1":
     CACHES["default"] = {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
 
 # TIER 1 — Celery task queue
@@ -784,6 +834,10 @@ CELERY_TASK_ROUTES = {
 }
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+if IS_VERCEL:
+    # No broker/worker on serverless: run .delay()/.apply_async() inline.
+    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_EAGER_PROPAGATES = False
 
 
 # Shopify Integration
@@ -816,6 +870,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://app.idiotship.tech",
     *_extra_origins,
 ]
+if IS_VERCEL:
+    CSRF_TRUSTED_ORIGINS.append("https://*.vercel.app")
 if DEBUG:
     CSRF_TRUSTED_ORIGINS += [
         "http://127.0.0.1:8000",

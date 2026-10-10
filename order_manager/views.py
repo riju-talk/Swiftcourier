@@ -25,8 +25,7 @@ from django.templatetags.static import static
 from django.views.decorators.csrf import csrf_exempt
 
 from collections import defaultdict
-from weasyprint import HTML
-from weasyprint.text.fonts import FontConfiguration
+from utils.lazy_weasyprint import HTML, FontConfiguration
 
 # Third-party imports
 from .tasks import (

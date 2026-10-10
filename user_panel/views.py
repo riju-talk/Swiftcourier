@@ -16,8 +16,7 @@ from typing import Optional
 from datetime import datetime, timedelta
 from io import BytesIO
 from PyPDF2 import PdfMerger
-from weasyprint import HTML
-from weasyprint.text.fonts import FontConfiguration
+from utils.lazy_weasyprint import HTML, FontConfiguration
 
 # Django imports
 from django.conf import settings

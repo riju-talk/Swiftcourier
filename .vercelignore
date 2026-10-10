@@ -1,0 +1,14 @@
+.venv
+.git
+db.sqlite3*
+media
+logs
+tmp
+static_prod
+node_modules
+theme/static_src/node_modules
+docker
+__pycache__
+*.pyc
+rds-ca-bundle.pem
+.env
