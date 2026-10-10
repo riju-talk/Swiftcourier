@@ -507,9 +507,8 @@ LOGGING = {
     },
 }
 
-TMP_DIR = BASE_DIR / "tmp"
-if not TMP_DIR.exists():
-    TMP_DIR.mkdir(parents=True, exist_ok=True)
+TMP_DIR = Path("/tmp/swiftcourier") if IS_VERCEL else BASE_DIR / "tmp"  # Vercel FS is read-only except /tmp
+TMP_DIR.mkdir(parents=True, exist_ok=True)
 
 XPRESSBEES_USERNAME = os.getenv("XPRESSBEES_USERNAME")
 XPRESSBEES_PASSWORD = os.getenv("XPRESSBEES_PASSWORD")
