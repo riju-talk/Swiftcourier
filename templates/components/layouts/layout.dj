@@ -74,6 +74,8 @@
             }
         </style>
 
+        <link rel="stylesheet" href="{% static 'css/motion.css' %}?v=20261010">
+
         {% block css %}
         {% endblock css %}
 

@@ -219,6 +219,18 @@ TEMPLATES = [
     },
 ]
 
+# Demo accounts shown on the sign-in / sign-up pages (click-to-fill). Created by
+# `manage.py seed_demo_users`. DEMO ONLY - set SHOW_DEMO_CREDENTIALS=False and
+# change these passwords before real users arrive.
+SHOW_DEMO_CREDENTIALS = (
+    os.getenv("SHOW_DEMO_CREDENTIALS", "True" if (IS_VERCEL or DEBUG) else "False") == "True"
+)
+DEMO_ACCOUNTS = [
+    {"label": "User", "role": "user", "email": "merchant@swiftcourier.app", "password": "MxYDCHHq_kN5Qz!1"},
+    {"label": "Admin", "role": "admin", "email": "ops@swiftcourier.app", "password": "OpC60kAXUZBInb!1"},
+    {"label": "Super Admin", "role": "super_admin", "email": "admin@swiftcourier.app", "password": "Sair9J6GQot9Jn!1"},
+]
+
 WSGI_APPLICATION = "swiftcourier.wsgi.application"
 
 

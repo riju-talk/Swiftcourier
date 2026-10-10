@@ -1,5 +1,9 @@
 def ctx_processor(request):
+    from django.conf import settings
+
     ctx = {
+        "show_demo_credentials": getattr(settings, "SHOW_DEMO_CREDENTIALS", False),
+        "demo_accounts": getattr(settings, "DEMO_ACCOUNTS", []),
         "notifications": [],
         "total_unread_notifications": 0,
         "activities": [],

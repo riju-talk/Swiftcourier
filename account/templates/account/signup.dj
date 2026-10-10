@@ -59,13 +59,13 @@
 
     <!-- Sign-up form panel -->
     <div class="flex min-h-screen items-center justify-center bg-white px-6 py-12 sm:px-10">
-        <div class="w-full max-w-sm">
+        <div class="w-full max-w-sm m-rise">
             <span class="text-xl font-extrabold tracking-tight text-black lg:hidden">Swift<span class="text-red-600">Courier</span></span>
 
             <h2 class="mt-8 text-2xl font-bold text-black">Create your account</h2>
             <p class="mt-1 text-sm text-neutral-500">Enter your details to get started</p>
 
-            <form class="mt-8 space-y-4" action="{% url 'account:signup' %}" method="post">
+            <form class="mt-8 space-y-4 m-stagger" action="{% url 'account:signup' %}" method="post">
                 {% csrf_token %}
 
                 <div>
@@ -121,6 +121,8 @@
                 Already have an account?
                 <a href="{% url 'account:signin' %}" class="font-semibold text-red-600 hover:text-red-700">Sign in</a>
             </p>
+
+            {% include "components/demo_credentials.dj" %}
         </div>
     </div>
 </div>
