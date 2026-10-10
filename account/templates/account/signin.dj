@@ -127,6 +127,13 @@
                 Don&rsquo;t have an account?
                 <a href="{% url 'account:signup' %}" class="font-semibold text-red-600 hover:text-red-700">Sign up</a>
             </p>
+
+            <div class="mt-5 flex items-center justify-center gap-3 border-t border-neutral-200 pt-5 text-sm">
+                <a href="{% url 'account:signin' %}?role=admin"
+                   class="rounded-lg border border-neutral-300 px-3.5 py-2 font-medium text-black transition-colors hover:border-red-600 hover:text-red-600">Login as Admin</a>
+                <a href="{% url 'account:superadmin_signin' %}"
+                   class="rounded-lg border border-neutral-300 px-3.5 py-2 font-medium text-black transition-colors hover:border-red-600 hover:text-red-600">Login as Super Admin</a>
+            </div>
         </div>
     </div>
 </div>
@@ -135,6 +142,17 @@
 {% block js %}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // ?role=admin preselects Admin; ?role=super_admin (set by the access guard) goes to the console sign-in.
+    const params = new URLSearchParams(window.location.search);
+    const wanted = params.get('role');
+    if (wanted === 'super_admin') {
+        window.location.replace("{% url 'account:superadmin_signin' %}" + window.location.search);
+        return;
+    }
+    const roleSelect = document.getElementById('UserRole');
+    if (roleSelect && wanted && [...roleSelect.options].some(o => o.value === wanted)) {
+        roleSelect.value = wanted;
+    }
     const passwordInput = document.getElementById('Password');
     const toggleBtn = document.getElementById('togglePasswordEye');
     if (passwordInput && toggleBtn) {
